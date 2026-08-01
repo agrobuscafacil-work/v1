@@ -1,3 +1,4 @@
+#
 # 🌱 AgroBuscaFácil v2
 
 **Marketplace B2B e B2C para o Agronegócio**
