@@ -40,7 +40,7 @@ export class AuthService {
       throw new ConflictException('Document already registered');
     }
 
-    const saltRounds = this.configService.get<number>('BCRYPT_SALT_ROUNDS') || 12;
+    const saltRounds = Number(this.configService.get('BCRYPT_SALT_ROUNDS')) || 12;
     const hashedPassword = await bcrypt.hash(dto.password, saltRounds);
 
     const user = await this.prisma.user.create({

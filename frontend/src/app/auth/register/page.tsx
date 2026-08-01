@@ -15,8 +15,14 @@ const registerSchema = z.object({
   email: z.string().email('E-mail inválido'),
   document: z.string().min(11, 'Documento inválido'),
   phone: z.string().min(10, 'Telefone inválido'),
-  password: z.string().min(6, 'A senha deve ter no mínimo 6 caracteres'),
-  confirmPassword: z.string().min(6, 'Confirme sua senha'),
+  password: z
+    .string()
+    .min(8, 'A senha deve ter no mínimo 8 caracteres')
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/,
+      'A senha deve conter letra maiúscula, minúscula, número e caractere especial',
+    ),
+  confirmPassword: z.string().min(8, 'Confirme sua senha'),
 }).refine((data) => data.password === data.confirmPassword, {
   message: 'Senhas não conferem',
   path: ['confirmPassword'],
@@ -47,6 +53,7 @@ export default function RegisterPage() {
   const [userType, setUserType] = useState<'buyer' | 'supplier'>('buyer');
   const [docValue, setDocValue] = useState('');
   const [phoneValue, setPhoneValue] = useState('');
+  const [passwordFocused, setPasswordFocused] = useState(false);
 
   const {
     register,
@@ -83,7 +90,11 @@ export default function RegisterPage() {
       toast.success('Cadastro realizado com sucesso!');
       router.push('/');
     } catch (error: any) {
-      const message = error?.response?.data?.message || 'Erro ao realizar cadastro.';
+      const data = error?.response?.data;
+      const validationError = data?.error?.errors?.[0];
+      const message = validationError
+        ? Object.values(validationError.constraints)[0]
+        : data?.error?.message || 'Erro ao realizar cadastro.';
       toast.error(message);
     } finally {
       setIsLoading(false);
@@ -187,16 +198,22 @@ export default function RegisterPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
+            <div onFocus={() => setPasswordFocused(true)} onBlur={() => setPasswordFocused(false)}>
               <label htmlFor="password" className="label-field">Senha</label>
               <input
                 id="password"
                 type="password"
                 autoComplete="new-password"
                 className="input-field"
-                placeholder="Mínimo 6 caracteres"
+                placeholder="Mín. 8: maiúscula, minúscula, nº e símbolo"
                 {...register('password')}
               />
+              {passwordFocused && (
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Mínimo 8 caracteres, com maiúscula, minúscula, número e um destes símbolos:{' '}
+                  <span className="font-mono">@ $ ! % * ? &amp; #</span>
+                </p>
+              )}
               {errors.password && <p className="text-sm text-red-500 mt-1">{errors.password.message}</p>}
             </div>
 

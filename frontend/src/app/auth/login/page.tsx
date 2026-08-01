@@ -37,7 +37,9 @@ export default function LoginPage() {
       toast.success('Login realizado com sucesso!');
       router.push('/');
     } catch (error: any) {
-      const message = error?.response?.data?.message || 'Erro ao fazer login. Verifique suas credenciais.';
+      const data = error?.response?.data;
+      const message =
+        data?.error?.message || data?.message || 'Erro ao fazer login. Verifique suas credenciais.';
       toast.error(message);
     } finally {
       setIsLoading(false);
