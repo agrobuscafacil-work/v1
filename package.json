@@ -1,0 +1,52 @@
+{
+  "name": "agrobuscafacil-v2",
+  "version": "2.0.0",
+  "private": true,
+  "description": "AgroBuscaFácil v2 - Marketplace B2B/B2C para o agronegócio",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run start:dev",
+    "build": "concurrently \"npm run build:frontend\" \"npm run build:backend\"",
+    "build:frontend": "cd frontend && npm run build",
+    "build:backend": "cd backend && npm run build",
+    "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+    "start:frontend": "cd frontend && npm run start",
+    "start:backend": "cd backend && npm run start:prod",
+    "lint": "concurrently \"npm run lint:frontend\" \"npm run lint:backend\"",
+    "lint:frontend": "cd frontend && npm run lint",
+    "lint:backend": "cd backend && npm run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,js,json,css,md}\"",
+    "db:migrate": "cd backend && npx prisma migrate dev",
+    "db:seed": "cd backend && npx prisma db seed",
+    "db:studio": "cd backend && npx prisma studio",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "test": "concurrently \"npm run test:backend\" \"npm run test:frontend\"",
+    "test:backend": "cd backend && npm run test",
+    "test:frontend": "cd frontend && npm run test",
+    "test:e2e": "cd backend && npm run test:e2e",
+    "commit": "cz"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "cz-conventional-changelog": "^3.3.0",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
+    "prettier": "^3.2.5"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.{json,css,md}": [
+      "prettier --write"
+    ]
+  }
+}
