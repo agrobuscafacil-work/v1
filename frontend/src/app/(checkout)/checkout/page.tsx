@@ -1,18 +1,17 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { ShoppingBag, MapPin, CreditCard, Truck, Shield, Loader2, ChevronRight } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { api } from '@/lib/api';
 
 const cartItems = [
   { id: '1', name: 'Semente de Soja Transgênica', price: 189.90, quantity: 2, image: 'SS' },
   { id: '2', name: 'Fertilizante NPK 20-10-10', price: 89.90, quantity: 1, image: 'NP' },
-  { id: '3', name: ' defensivo Agrícola Glifosato', price: 45.90, quantity: 3, image: 'GL' },
+  { id: '3', name: 'Defensivo Agrícola Glifosato', price: 45.90, quantity: 3, image: 'GL' },
 ];
 
 export default function CheckoutPage() {
-  const router = useRouter();
   const [step, setStep] = useState<'address' | 'payment' | 'confirm'>('address');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -22,10 +21,25 @@ export default function CheckoutPage() {
 
   const handlePlaceOrder = async () => {
     setIsLoading(true);
-    await new Promise((r) => setTimeout(r, 2000));
-    toast.success('Pedido realizado com sucesso!');
-    setIsLoading(false);
-    router.push('/orders');
+    try {
+      const items = cartItems.map((item) => ({
+        name: item.name,
+        quantity: item.quantity,
+        priceInCents: Math.round(item.price * 100),
+      }));
+      const res = await api.post('/stripe/create-checkout-session', { items });
+      const { url } = res.data.data;
+      if (url) {
+        window.location.href = url;
+        return;
+      }
+      toast.error('Não foi possível iniciar o pagamento.');
+      setIsLoading(false);
+    } catch (e: any) {
+      const msg = e?.response?.data?.message;
+      toast.error(typeof msg === 'string' ? msg : 'Erro ao iniciar o pagamento.');
+      setIsLoading(false);
+    }
   };
 
   return (

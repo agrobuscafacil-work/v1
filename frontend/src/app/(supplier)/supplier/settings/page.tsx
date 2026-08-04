@@ -3,11 +3,11 @@
 import { useState, useEffect } from 'react';
 import { Store, Save, Loader2, Upload, MessageCircle, Wifi, WifiOff, ToggleLeft, ToggleRight } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { getChatSettings, saveChatSettings, ChatSettings } from '@/lib/chat-settings';
+import { getChatSettings, saveChatSettings, ChatSettings, defaultChatSettings } from '@/lib/chat-settings';
 
 export default function SupplierSettingsPage() {
   const [isSaving, setIsSaving] = useState(false);
-  const [settings, setSettings] = useState<ChatSettings>(getChatSettings());
+  const [settings, setSettings] = useState<ChatSettings>(defaultChatSettings);
 
   useEffect(() => {
     setSettings(getChatSettings());

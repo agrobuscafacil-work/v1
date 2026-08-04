@@ -3,12 +3,16 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateConversationDto } from './dto/create-conversation.dto';
 import { SendMessageDto } from './dto/send-message.dto';
 import { MessageType } from '@prisma/client';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class ChatService {
   private readonly logger = new Logger(ChatService.name);
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private notificationsService: NotificationsService,
+  ) {}
 
   async createConversation(userId: string, currentUserRole: string, dto: CreateConversationDto) {
     const isSupplier = currentUserRole === 'SUPPLIER';
@@ -87,6 +91,17 @@ export class ChatService {
       where: { id: conversationId },
       data: { updatedAt: new Date() },
     });
+
+    const recipientId = conversation.customerId === userId ? conversation.supplierId : conversation.customerId;
+    if (recipientId) {
+      await this.notificationsService.create({
+        userId: recipientId,
+        type: 'MESSAGE_RECEIVED',
+        title: `Nova mensagem de ${message.sender?.name || 'fornecedor'}`,
+        message: message.content.slice(0, 120),
+        data: { conversationId },
+      }).catch(() => undefined);
+    }
 
     return message;
   }

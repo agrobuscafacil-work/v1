@@ -3,22 +3,29 @@
 import { useState, useEffect } from 'react';
 import { Search, Send, Mail, MailOpen, MessageCircle, Wifi, WifiOff } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { getChatSettings } from '@/lib/chat-settings';
+import { getChatSettings, defaultChatSettings } from '@/lib/chat-settings';
 import {
   getAllConversations, getConversationMessages, sendMessage,
-  markConversationRead, seedInitialConversations, ChatMessage,
+  markConversationRead, seedInitialConversations, ChatMessage, ChatConversation,
 } from '@/lib/chat-store';
 
 export default function AdminMessagesPage() {
   const [search, setSearch] = useState('');
-  const [conversations, setConversations] = useState(getAllConversations());
+  const [conversations, setConversations] = useState<ChatConversation[]>([]);
   const [selected, setSelected] = useState(conversations[0]?.id || '');
   const [reply, setReply] = useState('');
   const [messages, setMessages] = useState<Record<string, ChatMessage[]>>({});
+  const [chatSettings, setChatSettings] = useState(defaultChatSettings);
+
+  useEffect(() => {
+    setChatSettings(getChatSettings());
+  }, []);
 
   useEffect(() => {
     seedInitialConversations();
-    setConversations(getAllConversations());
+    const all = getAllConversations();
+    setConversations(all);
+    setSelected((prev) => prev || all[0]?.id || '');
   }, []);
 
   useEffect(() => {
@@ -81,7 +88,7 @@ export default function AdminMessagesPage() {
           <p className="text-sm text-gray-500 mt-1">Central de atendimento.</p>
         </div>
         <div className="flex items-center gap-2 text-sm">
-          {getChatSettings().online ? (
+          {chatSettings.online ? (
             <><Wifi className="h-4 w-4 text-green-500" /><span className="text-green-600 dark:text-green-400">Online</span></>
           ) : (
             <><WifiOff className="h-4 w-4 text-red-500" /><span className="text-red-600 dark:text-red-400">Offline</span></>

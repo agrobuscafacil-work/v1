@@ -10,13 +10,86 @@ Plataforma completa conectando fornecedores de produtos e serviços agrícolas a
 
 ```
 AgroBuscaFacil_v2/
-├── frontend/          # Next.js 14 (App Router)
-├── backend/           # NestJS + Prisma
-├── database/          # Migrations, seeds, schema
-├── docker/            # Dockerfiles e configs
-├── docs/              # Documentação técnica
-└── scripts/           # Scripts de deploy e backup
+├── frontend/              # Next.js 14 (App Router) + TypeScript
+├── backend/               # NestJS + Prisma + PostgreSQL
+├── database/              # Migrations, seeds, schema SQL
+├── docker/                # Dockerfiles, nginx, docker-compose
+├── docs/                  # Documentação técnica e fluxogramas
+├── scripts/               # Scripts de deploy e backup
+└── v1/                    # Versão legada (referência/backup)
 ```
+
+### Backend (NestJS — módulos em `backend/src/`)
+
+```
+backend/src/
+├── auth/           # Autenticação (JWT + refresh token, registro, roles)
+├── users/          # Gestão de usuários e perfis
+├── admin/          # Painel administrativo (gestão geral)
+├── suppliers/      # Cadastro, aprovação e perfis de fornecedores
+├── products/       # Produtos (CRUD, status, categorias)
+├── services/       # Serviços agrícolas
+├── categories/     # Categorias
+├── banner/         # Banners da home
+├── company/        # Dados institucionais da empresa
+├── institutional/  # Páginas institucionais (sobre, contato, FAQ, termos)
+├── cart/           # Carrinho de compras
+├── checkout/       # Checkout (endereço, frete, pagamento)
+├── orders/         # Pedidos (criação, status, histórico, cancelamento)
+├── payments/       # Pagamentos e conciliação
+├── stripe/         # Integração Stripe (checkout sessions, webhooks)
+├── shipping/       # Configuração de fretes
+├── dashboard/      # Métricas dos painéis
+├── reports/        # Relatórios e exportação
+├── reviews/        # Avaliações e respostas
+├── favorites/      # Favoritos
+├── chat/           # Chat em tempo real (REST + WebSocket gateway)
+├── notifications/  # Sistema de notificações (sino, unread, ler)
+├── support/        # Suporte / Helpdesk (tickets, notas, anexos)
+├── search/         # Busca unificada (produtos, fornecedores, serviços)
+├── common/         # Infra compartilhada (pipes, guards, interceptors)
+└── prisma/         # PrismaService
+```
+
+### Frontend (Next.js — rotas em `frontend/src/app/`)
+
+```
+frontend/src/app/
+├── (landing)/            # Home
+├── (auth)/               # login, register, forgot-password
+├── (admin)/admin/        # Painel admin (users, suppliers, products,
+│                         #   orders, reports, reviews, support, messages, settings)
+├── (supplier)/supplier/  # Painel fornecedor (dashboard, products, orders,
+│                         #   messages, reports, reviews, promotions, shipping, settings)
+├── (products)/products/  # Catálogo + [slug] detalhe
+├── (services)/services/  # Catálogo de serviços
+├── (suppliers)/suppliers/# Fornecedores + [id] página do fornecedor
+├── (search)/search/      # Resultados de busca
+├── (cart)/cart/          # Carrinho
+├── (checkout)/checkout/  # Checkout
+├── (orders)/orders/      # Meus pedidos
+├── (dashboard)/dashboard # Minha área
+├── (favorites)/favorites # Favoritos
+├── (reviews)/reviews/    # Avaliações
+├── (chat)/chat/          # Chat em tempo real
+├── (notifications)/      # Notificações
+├── (payments)/           # Pagamentos
+├── (reports)/reports/    # Relatórios
+├── (shipping)/shipping/  # Fretes
+├── (profile)/profile     # Perfil + suporte (meus relatos)
+├── (profile)/suporte     # Suporte (novo ticket, [id] detalhe)
+├── (banner)/             # Banners
+├── (categories)/categories  # Categorias
+├── (company)/            # Páginas da empresa
+├── (institutional)/      # Sobre, contato, FAQ, privacidade, termos, promoções
+└── payment-success | payment-failure   # Retorno do Stripe
+```
+
+### Banco de dados (Prisma — principais modelos)
+
+`User`, `CustomerProfile`, `SupplierProfile`, `Address`, `Category`, `Product`, `Service`, `Promotion`, `Coupon`, `WorkingHours`, `Cart`, `CartItem`, `Order`, `OrderItem`, `OrderCoupon`, `OrderStatusHistory`, `Review`, `ReviewResponse`, `Favorite`, `Conversation`, `Message`, `Payment`, `ChatSettings`, `Notification`, `Banner`, `AuditLog`, `SystemConfig`, `Report`, `SupportCategory`, `SupportType`, `SupportTicket`, `SupportAttachment`, `SupportTicketNote`, `SupportTicketStatusHistory`.
+
+---
 
 ## 🚀 Tecnologias
 
@@ -28,7 +101,7 @@ AgroBuscaFacil_v2/
 - **React Hook Form + Zod** - Formulários com validação
 - **Zustand** - Gerenciamento de estado global
 - **Framer Motion** - Animações
-- **Socket.io Client** - Chat em tempo real
+- **Socket.io Client** - Chat e notificações em tempo real
 - **next-themes** - Dark Mode
 - **Lucide Icons** - Iconografia
 
@@ -42,6 +115,7 @@ AgroBuscaFacil_v2/
 - **Passport** - Estratégias de autenticação
 - **Swagger** - Documentação de API
 - **Socket.io** - WebSockets para chat
+- **Stripe SDK** - Pagamentos online
 - **Winston** - Logging estruturado
 - **Helmet + Throttler** - Segurança
 
@@ -50,35 +124,53 @@ AgroBuscaFacil_v2/
 - **NGINX** - Proxy reverso
 - **CI/CD** - GitHub Actions
 
+---
+
 ## 📋 Funcionalidades
 
 ### 👤 Cliente
 - Cadastro e autenticação segura
 - Pesquisa avançada de produtos, fornecedores e serviços
-- Carrinho de compras e checkout
+- Catálogo de produtos e serviços com detalhes, avaliações e promoções
+- Carrinho de compras e **checkout com Stripe** (cartão de crédito/débito)
 - Favoritos
 - Chat em tempo real com fornecedores
 - Avaliação de produtos e fornecedores
-- Histórico de pedidos
-- Notificações
+- Histórico de pedidos e status
+- **Notificações em tempo real** (novas mensagens, pedidos e respostas de suporte)
+- **Suporte/Helpdesk** (relatar problema, acompanhar ticket, anexos)
+- Páginas institucionais (sobre, contato, FAQ, termos, privacidade)
 
 ### 🏪 Fornecedor
 - Painel administrativo próprio
 - Gerenciamento de produtos e serviços
-- Controle de estoque
-- Promoções e cupons
-- Gerenciamento de pedidos
-- Chat com clientes
-- Relatórios e métricas
-- Configuração de fretes
+- Controle de promoções
+- Gerenciamento de pedidos (novos pedidos chegam como notificação)
+- Chat com clientes (mensagens em tempo real)
+- Relatórios e métricas de vendas
+- Configuração de fretes e horários
+- Avaliações recebidas e respostas
+- Notificações de novos pedidos e mensagens
 
 ### 🔧 Administrador
 - Painel completo de administração
-- Gestão de usuários, fornecedores e clientes
-- Moderação de conteúdo
+- Gestão de usuários, fornecedores, produtos e pedidos
+- **Moderação de suporte/helpdesk** (tickets, notas internas, status)
+- **Banners da home**
 - Relatórios do sistema
-- Auditoria completa
-- Configurações gerais
+- Auditoria completa (AuditLog)
+- Configurações gerais (SystemConfig)
+- Notificações de mensagens de suporte
+
+### ⚙️ Sistema
+- **Notificações** (`notifications/`): criadas automaticamente para mensagens novas, pedidos criados e respostas de suporte; badge de não-lidas e marcação como lida
+- **Chat em tempo real** via WebSocket (`/chat`, gateway com JWT) + persistência em banco
+- **Pagamentos Stripe**: checkout session, webhook com `rawBody`, páginas de sucesso/falha
+- **Auditoria** de alterações em entidades sensíveis
+- **Soft delete** em todas as entidades
+- **RBAC** (UserRole: ADMIN, SUPER_ADMIN, SUPPLIER, CUSTOMER)
+
+---
 
 ## 🛠️ Instalação e Uso (Desenvolvimento)
 
@@ -103,6 +195,8 @@ cd frontend
 npm install
 npm run dev
 ```
+
+> **Stripe:** para testar pagamentos, preencha `STRIPE_SECRET_KEY` e `STRIPE_WEBHOOK_SECRET` em `backend/.env`.
 
 ### Acessos (após seed)
 
@@ -190,6 +284,8 @@ O arquivo de configuração Nginx de exemplo está em `docker/nginx/sites/agrobu
 - Redis 7+ (opcional)
 - 2GB RAM mínimo
 - Ubuntu 22.04+ ou similar
+
+---
 
 ## 📚 Documentação da API
 

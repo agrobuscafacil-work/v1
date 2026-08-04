@@ -25,6 +25,7 @@ import { CompanyModule } from './company/company.module';
 import { InstitutionalModule } from './institutional/institutional.module';
 import { BannerModule } from './banner/banner.module';
 import { SupportModule } from './support/support.module';
+import { StripeModule } from './stripe/stripe.module';
 import { RedisModule } from './common/redis/redis.module';
 
 @Module({
@@ -69,6 +70,7 @@ import { RedisModule } from './common/redis/redis.module';
     InstitutionalModule,
     BannerModule,
     SupportModule,
+    StripeModule,
   ],
   providers: [
     {

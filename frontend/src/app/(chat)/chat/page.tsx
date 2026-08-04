@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Search, Send, Mail, MailOpen, MessageCircle, Plus, Wifi, WifiOff, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '@/hooks/use-auth';
-import { getChatSettings } from '@/lib/chat-settings';
+import { getChatSettings, defaultChatSettings, ChatSettings } from '@/lib/chat-settings';
 import {
   getAllConversations, getConversationMessages, sendMessage,
   markConversationRead, addConversation, ChatConversation, ChatMessage,
@@ -22,6 +22,11 @@ export default function CustomerChatPage() {
   const [showNew, setShowNew] = useState(false);
   const [newSubject, setNewSubject] = useState('');
   const [newMessage, setNewMessage] = useState('');
+  const [settings, setSettings] = useState<ChatSettings>(defaultChatSettings);
+
+  useEffect(() => {
+    setSettings(getChatSettings());
+  }, []);
 
   useEffect(() => {
     const all = getAllConversations();
@@ -57,8 +62,6 @@ export default function CustomerChatPage() {
     }, 3000);
     return () => clearInterval(interval);
   }, [selected]);
-
-  const settings = getChatSettings();
 
   const myConvs = conversations.filter(
     (c) => c.id.startsWith(CUST_PREFIX) || c.email === user?.email

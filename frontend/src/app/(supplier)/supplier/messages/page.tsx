@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Search, Send, Mail, MailOpen, MessageCircle, Wifi, WifiOff } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { getChatSettings } from '@/lib/chat-settings';
+import { getChatSettings, defaultChatSettings } from '@/lib/chat-settings';
 import {
   getAllConversations, getConversationMessages, sendMessage,
   markConversationRead, addConversation, ChatConversation, ChatMessage,
@@ -35,6 +35,11 @@ export default function SupplierMessagesPage() {
   const [selected, setSelected] = useState('');
   const [reply, setReply] = useState('');
   const [messages, setMessages] = useState<Record<string, ChatMessage[]>>({});
+  const [settings, setSettings] = useState(defaultChatSettings);
+
+  useEffect(() => {
+    setSettings(getChatSettings());
+  }, []);
 
   useEffect(() => {
     seedSupplierConversations();
@@ -55,8 +60,6 @@ export default function SupplierMessagesPage() {
     }, 3000);
     return () => clearInterval(interval);
   }, [selected]);
-
-  const settings = getChatSettings();
 
   const filtered = conversations.filter((c) =>
     c.name.toLowerCase().includes(search.toLowerCase()) ||

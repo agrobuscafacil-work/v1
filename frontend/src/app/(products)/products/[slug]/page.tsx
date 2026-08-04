@@ -53,7 +53,7 @@ const MOCK_REVIEWS = Array.from({ length: 5 }, (_, i) => ({
   rating: 5 - (i % 2),
   title: ['Excelente produto', 'Bom custo-benefício', 'Entrega rápida', 'Produto de qualidade', 'Recomendo'][i],
   comment: 'Produto de altíssima qualidade, superou minhas expectativas. A entrega foi feita no prazo e o produto veio bem embalado.',
-  createdAt: new Date(Date.now() - i * 86400000).toISOString(),
+  createdAt: '2026-07-20T10:00:00.000Z',
 }));
 
 const RELATED_PRODUCTS = Array.from({ length: 4 }, (_, i) => ({

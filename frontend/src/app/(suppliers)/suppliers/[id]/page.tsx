@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { getChatSettings } from '@/lib/chat-settings';
 import { addPendingMessage } from '@/lib/chat-store';
@@ -59,13 +59,16 @@ const MOCK_REVIEWS = Array.from({ length: 4 }, (_, i) => ({
   user: { name: ['João Silva', 'Maria Oliveira', 'Carlos Souza', 'Ana Pereira'][i] },
   rating: 5 - (i % 2),
   comment: 'Excelente fornecedor, produtos de qualidade e entrega no prazo.',
-  createdAt: new Date(Date.now() - i * 86400000 * 3).toISOString(),
+  createdAt: '2026-07-20T10:00:00.000Z',
 }));
 
 export default function SupplierDetailPage({ params }: { params: { id: string } }) {
   const supplier = MOCK_SUPPLIER;
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [isOnline] = useState(getChatSettings().online);
+  const [isOnline, setIsOnline] = useState(true);
+  useEffect(() => {
+    setIsOnline(getChatSettings().online);
+  }, []);
   const [chatName, setChatName] = useState('');
   const [chatEmail, setChatEmail] = useState('');
   const [chatMessage, setChatMessage] = useState('');

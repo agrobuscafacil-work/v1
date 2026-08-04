@@ -1,0 +1,65 @@
+flowchart TB
+    V([Visitante]) -->|Registrar / Entrar| AUTH{Auth Guard}
+    AUTH -->|role CUSTOMER| C[Área do Cliente]
+    AUTH -->|role SUPPLIER| S[Painel do Fornecedor]
+    AUTH -->|role ADMIN / SUPER_ADMIN| A[Painel Administrativo]
+
+    subgraph CLIENTE[Cliente]
+        C --> BROWSE{Navegação}
+        BROWSE -->|Busca| SEARCH[Página de Busca]
+        BROWSE -->|Categorias| CAT[Categorias]
+        BROWSE -->|Fornecedores| SUP[Fornecedores]
+        SEARCH --> DETAIL[Detalhe do Produto]
+        CAT --> DETAIL
+        SUP --> SUP_DET[Perfil do Fornecedor]
+        SUP_DET --> DETAIL
+        DETAIL -->|Adicionar ao carrinho| CART[Carrinho]
+        CART --> CHECKOUT[Checkout]
+        CHECKOUT --> PAY{Pagamento aprovado?}
+        PAY -->|Não| FAIL[Reprovado - tentar novamente]
+        FAIL --> CHECKOUT
+        PAY -->|Sim| ORDER[Pedido criado]
+        ORDER --> TRACK[Acompanhar pedido]
+        TRACK -->|Entregue| REVIEW[Avaliar produto/fornecedor]
+        C --> FAV[Favoritos]
+        C --> CHATC[Chat com Admin/Fornecedor]
+    end
+
+    subgraph FORNECEDOR[Fornecedor]
+        S --> APPROVED{Loja aprovada?}
+        APPROVED -->|Não| PEND[Aguardando aprovação]
+        APPROVED -->|Sim| DASHF[Dashboard de Vendas]
+        DASHF --> SP[Gerenciar Produtos]
+        DASHF --> SO[Pedidos Recebidos - atualizar status]
+        DASHF --> SPROMO[Promoções]
+        DASHF --> SFREIGHT[Configurar Fretes]
+        DASHF --> CHATF[Chat com Clientes/Admin]
+        DASHF --> REPF[Relatórios]
+        DASHF --> CONFF[Config da Loja + Chat Settings]
+        SO -->|Enviado/Entregue| STATUS[Atualiza status]
+        STATUS --> CLIENT_VIEW[Cliente acompanha]
+    end
+
+    subgraph ADMIN[Admin]
+        A --> AD[Dashboard Geral]
+        A --> AU[Gestão de Usuários]
+        A --> AS[Gestão de Fornecedores]
+        AS --> APROV{Aprovar cadastro?}
+        APROV -->|Sim| OK[Fornecedor ativo]
+        APROV -->|Não| REJ[Fornecedor rejeitado]
+        A --> APROD[Moderar Produtos]
+        A --> AORD[Gestão de Pedidos]
+        A --> AREV[Moderação de Reviews]
+        A --> CHATA[Chat Central]
+        A --> AREP[Relatórios + Export]
+        A --> ASET[Configurações do Sistema]
+    end
+
+    subgraph CHAT_FLUXO[Chat em tempo real]
+        CHATC --> STORAGE[(Chat Store)]
+        CHATF --> STORAGE
+        CHATA --> STORAGE
+        STORAGE -->|auto-reply + polling 3s| CHATC
+        STORAGE --> CHATF
+        STORAGE --> CHATA
+    end

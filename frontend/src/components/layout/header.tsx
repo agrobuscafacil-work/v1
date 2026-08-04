@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { useCart } from '@/hooks/use-cart';
+import { useChatSocket } from '@/lib/chat-socket';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import type { Notification } from '@/types';
@@ -65,6 +66,13 @@ export function Header() {
   const unreadCount = unreadQuery.data || 0;
   const notifications = notifQuery.data || [];
 
+  useChatSocket({
+    onMessage: () => {
+      queryClient.invalidateQueries({ queryKey: ['notifications-unread'] });
+      queryClient.invalidateQueries({ queryKey: ['notifications-recent'] });
+    },
+  });
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -78,6 +86,14 @@ export function Header() {
       await api.put(`/notifications/${notification.id}/read`).catch(() => undefined);
       queryClient.invalidateQueries({ queryKey: ['notifications-unread'] });
       queryClient.invalidateQueries({ queryKey: ['notifications-recent'] });
+    }
+    if (notification.type === 'MESSAGE_RECEIVED') {
+      router.push('/chat');
+      return;
+    }
+    if (notification.type.startsWith('ORDER_')) {
+      router.push(user?.role === 'SUPPLIER' ? '/supplier/orders' : '/orders');
+      return;
     }
     const ticketId = notification.data?.ticketId;
     if (ticketId) {

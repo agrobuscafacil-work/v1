@@ -18,6 +18,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: new Logger('AgroBuscaFacil'),
     bufferLogs: true,
+    rawBody: true,
   });
 
   const configService = app.get(ConfigService);

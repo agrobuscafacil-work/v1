@@ -3,12 +3,16 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 import { OrderStatus, PaymentMethod } from '@prisma/client';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class OrdersService {
   private readonly logger = new Logger(OrdersService.name);
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private notificationsService: NotificationsService,
+  ) {}
 
   async create(userId: string, dto: CreateOrderDto) {
     const order = await this.prisma.order.create({
@@ -35,6 +39,24 @@ export class OrdersService {
       include: { items: true },
     });
     this.logger.log(`Order created: ${order.id}`);
+
+    if (order.supplierId) {
+      await this.notificationsService.create({
+        userId: order.supplierId,
+        type: 'ORDER_CREATED',
+        title: 'Novo pedido recebido',
+        message: `Você recebeu um novo pedido #${order.orderNumber} de R$ ${Number(order.total).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}.`,
+        data: { orderId: order.id, orderNumber: order.orderNumber },
+      }).catch(() => undefined);
+    }
+    await this.notificationsService.create({
+      userId,
+      type: 'ORDER_CREATED',
+      title: 'Pedido criado',
+      message: `Seu pedido #${order.orderNumber} foi criado com sucesso.`,
+      data: { orderId: order.id, orderNumber: order.orderNumber },
+    }).catch(() => undefined);
+
     return order;
   }
 

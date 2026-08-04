@@ -7,7 +7,7 @@ export interface ChatSettings {
 
 const SETTINGS_KEY = 'agro_chat_settings';
 
-const defaults: ChatSettings = {
+export const defaultChatSettings: ChatSettings = {
   online: true,
   autoReplyEnabled: true,
   autoReplyMessage: 'Obrigado pelo contato! Responderemos em breve.',
@@ -15,12 +15,12 @@ const defaults: ChatSettings = {
 };
 
 export function getChatSettings(): ChatSettings {
-  if (typeof window === 'undefined') return defaults;
+  if (typeof window === 'undefined') return defaultChatSettings;
   try {
     const raw = localStorage.getItem(SETTINGS_KEY);
-    return raw ? { ...defaults, ...JSON.parse(raw) } : defaults;
+    return raw ? { ...defaultChatSettings, ...JSON.parse(raw) } : defaultChatSettings;
   } catch {
-    return defaults;
+    return defaultChatSettings;
   }
 }
 
