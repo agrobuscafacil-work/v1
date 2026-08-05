@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AgroBuscaFácil — O marketplace do agronegócio brasileiro</title>
+<style>
+  :root {
+    --primary: #15803d;
+    --primary-dark: #166534;
+    --primary-light: #dcfce7;
+    --accent: #facc15;
+    --ink: #1f2937;
+    --muted: #6b7280;
+    --bg: #f9fafb;
+    --card: #ffffff;
+    --border: #e5e7eb;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+  }
+  .page { max-width: 900px; margin: 0 auto; background: #fff; box-shadow: 0 0 30px rgba(0,0,0,.08); }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #14532d 0%, #166534 45%, #15803d 100%);
+    color: #fff; text-align: center; padding: 64px 24px 56px;
+    position: relative; overflow: hidden;
+  }
+  .hero::after {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(circle at 80% 20%, rgba(250,204,21,.25), transparent 45%);
+  }
+  .hero .logo { font-size: 2.6rem; font-weight: 800; letter-spacing: -.5px; position: relative; z-index: 1; }
+  .hero .logo span { color: #facc15; }
+  .hero h1 { font-size: 1.15rem; font-weight: 500; margin-top: 8px; opacity: .95; position: relative; z-index: 1; }
+  .hero .tagline {
+    margin: 20px auto 0; max-width: 640px; font-size: 1.05rem; opacity: .92; position: relative; z-index: 1;
+  }
+  .badges { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 22px; position: relative; z-index: 1; }
+  .badge {
+    background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.35);
+    border-radius: 999px; padding: 6px 16px; font-size: .85rem; font-weight: 600;
+  }
+
+  /* SECTIONS */
+  section { padding: 40px 28px; }
+  .section-title { text-align: center; font-size: 1.5rem; font-weight: 800; color: var(--primary-dark); margin-bottom: 6px; }
+  .section-sub { text-align: center; color: var(--muted); margin-bottom: 28px; }
+
+  /* CARDS PILARES */
+  .pillars { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
+  .pillar { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; text-align: center; }
+  .pillar .ico { font-size: 1.9rem; }
+  .pillar h3 { margin-top: 8px; font-size: 1.05rem; color: var(--primary-dark); }
+  .pillar p { font-size: .85rem; color: var(--muted); margin-top: 4px; }
+
+  /* PROBLEMA */
+  .problem { background: #fefce8; border-left: 6px solid var(--accent); border-radius: 10px; padding: 18px 22px; font-size: .98rem; }
+
+  /* CHECKLIST DUPLO */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 720px) { .grid2 { grid-template-columns: 1fr; } }
+  .col { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 22px; }
+  .col h3 { color: var(--primary-dark); margin-bottom: 14px; font-size: 1.15rem; }
+  .col ul { list-style: none; }
+  .col li { padding: 6px 0 6px 26px; position: relative; font-size: .92rem; }
+  .col li::before {
+    content: '✓'; position: absolute; left: 0; top: 6px; width: 18px; height: 18px;
+    background: var(--primary-light); color: var(--primary); border-radius: 50%;
+    font-weight: 800; font-size: .7rem; text-align: center; line-height: 18px;
+  }
+
+  /* TABELA PLANOS */
+  .plans { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: .9rem; }
+  .plans th, .plans td { border: 1px solid var(--border); padding: 10px 12px; text-align: center; }
+  .plans th { background: var(--primary-dark); color: #fff; font-weight: 600; }
+  .plans td:first-child { text-align: left; font-weight: 600; color: var(--ink); background: var(--bg); }
+  .plans .featured { background: #f0fdf4; }
+  .check { color: var(--primary); font-weight: 800; }
+  .price-note { text-align: center; color: var(--muted); font-size: .85rem; margin-top: 10px; }
+
+  /* COMO COMEÇAR */
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+  .step { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; }
+  .step .n { width: 34px; height: 34px; border-radius: 50%; background: var(--primary); color: #fff; font-weight: 800; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+  .step h4 { font-size: .98rem; color: var(--primary-dark); margin-bottom: 6px; }
+  .step p { font-size: .86rem; color: var(--muted); }
+
+  /* CTA */
+  .cta {
+    background: linear-gradient(135deg, #14532d, #15803d); color: #fff; text-align: center;
+    padding: 40px 24px; border-radius: 0;
+  }
+  .cta h2 { font-size: 1.5rem; margin-bottom: 8px; }
+  .cta p { opacity: .92; margin-bottom: 20px; }
+  .btn {
+    display: inline-block; background: var(--accent); color: #14532d; font-weight: 800;
+    padding: 12px 30px; border-radius: 999px; text-decoration: none; font-size: 1rem;
+  }
+  .btn:hover { filter: brightness(1.05); }
+
+  /* FOOTER */
+  footer { text-align: center; padding: 22px; color: var(--muted); font-size: .85rem; border-top: 1px solid var(--border); }
+  footer strong { color: var(--primary); }
+
+  /* IMPRESSÃO */
+  @media print {
+    body { background: #fff; }
+    .page { box-shadow: none; max-width: 100%; }
+    section { padding: 24px 16px; page-break-inside: avoid; }
+    .hero { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .btn, .badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+
+    <!-- HERO -->
+    <header class="hero">
+      <div class="logo">Agro<span>BuscaFácil</span></div>
+      <h1>O marketplace do agronegócio brasileiro</h1>
+      <p class="tagline">
+        Conecte-se a fornecedores de produtos e serviços agrícolas de forma simples, rápida, segura e confiável —
+        do trator à semente, do fertilizante ao serviço de campo.
+      </p>
+      <div class="badges">
+        <span class="badge">Simplifique</span>
+        <span class="badge">Compre rápido</span>
+        <span class="badge">Pague seguro</span>
+        <span class="badge">Confie</span>
+      </div>
+    </header>
+
+    <!-- PROBLEMA -->
+    <section>
+      <h2 class="section-title">O problema que resolvemos</h2>
+      <p class="section-sub">O agro perde tempo e confiança na informalidade. A gente resolve.</p>
+      <div class="problem">
+        Produtores e fornecedores perdem tempo buscando, negociando e confiando em contatos informais.
+        Sem vitrine digital, falta visibilidade, comparação de preços e segurança na transação.
+        <strong>O AgroBuscaFácil resolve isso em um só lugar.</strong>
+      </div>
+    </section>
+
+    <!-- PILARES -->
+    <section>
+      <h2 class="section-title">Nossos pilares</h2>
+      <div class="pillars">
+        <div class="pillar"><div class="ico">🌱</div><h3>Simples</h3><p>Cadastro rápido e navegação intuitiva</p></div>
+        <div class="pillar"><div class="ico">⚡</div><h3>Rápido</h3><p>Compra em poucos cliques, checkout por cartão</p></div>
+        <div class="pillar"><div class="ico">🛡️</div><h3>Seguro</h3><p>Pagamento online via Stripe, dados protegidos</p></div>
+        <div class="pillar"><div class="ico">🤝</div><h3>Confiável</h3><p>Fornecedores verificados e avaliações reais</p></div>
+      </div>
+    </section>
+
+    <!-- PARA QUEM VENDE / COMPRA -->
+    <section>
+      <h2 class="section-title">Um só lugar, dois públicos</h2>
+      <p class="section-sub">Venda mais. Compre melhor.</p>
+      <div class="grid2">
+        <div class="col">
+          <h3>🏪 Para quem <em>Vende</em> (fornecedores)</h3>
+          <ul>
+            <li>Vitrine completa com fotos, preço e condições</li>
+            <li>Alcance clientes em todo o país</li>
+            <li>Pedidos em tempo real via notificação</li>
+            <li>Chat direto para negociação</li>
+            <li>Painel com vendas, faturamento e relatórios</li>
+            <li>Promoções e fretes sob seu controle</li>
+            <li>Pagamento protegido pelo Stripe</li>
+          </ul>
+        </div>
+        <div class="col">
+          <h3>🛒 Para quem <em>Compra</em> (clientes)</h3>
+          <ul>
+            <li>Busca inteligente por produtos, serviços e fornecedores</li>
+            <li>Comparação de preços e avaliações reais</li>
+            <li>Carrinho e checkout por cartão de crédito/débito</li>
+            <li>Meus pedidos com acompanhamento de status</li>
+            <li>Favoritos para o que não pode esquecer</li>
+            <li>Chat para tirar dúvidas antes de comprar</li>
+            <li>Suporte dedicado sempre que precisar</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- PLANOS -->
+    <section>
+      <h2 class="section-title">Planos para fornecedores</h2>
+      <p class="section-sub">Comece grátis. Você só paga quando vender.</p>
+      <table class="plans">
+        <thead>
+          <tr><th></th><th>Básico</th><th>Profissional</th><th>Premium</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Produtos / serviços</td><td>5 ativos</td><td class="featured">Ilimitado</td><td class="featured">Ilimitado</td></tr>
+          <tr><td>Comissão por venda</td><td>10%</td><td class="featured">6%</td><td class="featured">4%</td></tr>
+          <tr><td>Destaque em buscas</td><td>—</td><td class="featured check">✓</td><td class="featured check">✓ + vitrine da home</td></tr>
+          <tr><td>Relatórios</td><td>Simples</td><td class="featured">Avançados</td><td class="featured">Financeiro completo</td></tr>
+          <tr><td>Selo Verificado</td><td>—</td><td>—</td><td class="featured check">✓</td></tr>
+          <tr><td>Suporte</td><td>Comunitário</td><td class="featured">E-mail</td><td class="featured">Gerente de conta</td></tr>
+        </tbody>
+      </table>
+      <p class="price-note">Assinatura mensal: Profissional <strong>R$ 99</strong> · Premium <strong>R$ 249</strong> · Básico <strong>grátis</strong></p>
+    </section>
+
+    <!-- COMO COMEÇAR -->
+    <section>
+      <h2 class="section-title">Como começar</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="n">1</div>
+          <h4>Para vender</h4>
+          <p>Crie sua conta de fornecedor, complete o perfil, cadastre produtos/serviços e comece a receber pedidos.</p>
+        </div>
+        <div class="step">
+          <div class="n">2</div>
+          <h4>Para comprar</h4>
+          <p>Crie sua conta de cliente (grátis), busque produtos, serviços ou fornecedores e pague com cartão.</p>
+        </div>
+        <div class="step">
+          <div class="n">3</div>
+          <h4>Confie</h4>
+          <p>Pagamento via Stripe, fornecedores verificados, avaliações reais e suporte humano sempre presente.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <div class="cta">
+      <h2>Pronto para movimentar seu negócio no agro?</h2>
+      <p>Comece grátis hoje. Você só paga quando vender.</p>
+      <a class="btn" href="#">Quero me cadastrar</a>
+    </div>
+
+    <footer>
+      <p><strong>AgroBuscaFácil</strong> — contato@agrobuscafacil.com.br · Suporte pelo painel</p>
+      <p>Aproximando o campo e o mercado. Feito com 💚 pelo agronegócio brasileiro.</p>
+    </footer>
+
+  </div>
+</body>
+</html>
