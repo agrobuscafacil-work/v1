@@ -1,41 +1,71 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Heart, Star, Leaf, Trash2, ShoppingCart, ArrowLeft } from 'lucide-react';
+import { Heart, Star, Leaf, Trash2, ShoppingCart, ArrowLeft, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useCart } from '@/hooks/use-cart';
+import { api } from '@/lib/api';
+import { PRODUCT_FILE_URL } from '@/lib/products';
 
 interface FavoriteProduct {
   id: string;
   name: string;
   slug: string;
   price: number;
+  image: string;
   supplier: string;
+  supplierId?: string;
   rating: number;
   reviews: number;
   inStock: boolean;
-  addedAt: string;
 }
 
-const MOCK_FAVORITES: FavoriteProduct[] = [
-  { id: '1', name: 'Trator Agrícola 4x4 120cv', slug: 'trator-agricola-4x4', price: 249900, supplier: 'Máquinas Agrícolas LTDA', rating: 4.8, reviews: 42, inStock: true, addedAt: '2024-03-20' },
-  { id: '2', name: 'Fertilizante NPK 10-10-10 50kg', slug: 'fertilizante-npk', price: 189.90, supplier: 'AgroQuímica Brasil', rating: 4.6, reviews: 128, inStock: true, addedAt: '2024-03-18' },
-  { id: '3', name: 'Semente de Soja RR 40kg', slug: 'semente-soja-rr', price: 349.90, supplier: 'Sementes Selecta', rating: 4.9, reviews: 87, inStock: false, addedAt: '2024-03-15' },
-  { id: '4', name: 'Sistema de Irrigação por Gotejo', slug: 'irrigacao-gotejo', price: 15990, supplier: 'TechIrriga', rating: 4.7, reviews: 56, inStock: true, addedAt: '2024-03-10' },
-  { id: '5', name: 'Herbicida Glifosato 5L', slug: 'herbicida-glifosato', price: 89.90, supplier: 'Defensivos AgroFort', rating: 4.5, reviews: 203, inStock: true, addedAt: '2024-03-08' },
-  { id: '6', name: 'Arado de Aiveca 4 Discos', slug: 'arado-aiveca', price: 24990, supplier: 'Máquinas Agrícolas LTDA', rating: 4.4, reviews: 35, inStock: true, addedAt: '2024-03-05' },
-];
-
 export default function FavoritesPage() {
-  const [favorites, setFavorites] = useState<FavoriteProduct[]>(MOCK_FAVORITES);
-
-  const removeFavorite = (id: string, name: string) => {
-    setFavorites((prev) => prev.filter((f) => f.id !== id));
-    toast.success(`${name} removido dos favoritos`);
-  };
-
+  const [favorites, setFavorites] = useState<FavoriteProduct[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { addItem } = useCart();
+
+  useEffect(() => {
+    const load = async () => {
+      setIsLoading(true);
+      try {
+        const res = await api.get('/favorites', { params: { limit: 100 } });
+        const payload = res.data.data?.data ?? [];
+        setFavorites(
+          payload
+            .filter((f: any) => f.product)
+            .map((f: any) => ({
+              id: f.id,
+              name: f.product.name,
+              slug: f.product.slug,
+              price: Number(f.product.price) || 0,
+              image: Array.isArray(f.product.images) && f.product.images.length > 0 ? PRODUCT_FILE_URL(f.product.images[0]) : '',
+              supplier: f.supplier?.companyName || '',
+              supplierId: f.supplier?.id || undefined,
+              rating: Number(f.product.rating) || 0,
+              reviews: Number(f.product.totalReviews) || 0,
+              inStock: Number(f.product.stock) > 0 && f.product.status === 'ACTIVE',
+            })),
+        );
+      } catch {
+        setFavorites([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    load();
+  }, []);
+
+  const removeFavorite = async (id: string, name: string) => {
+    try {
+      await api.delete(`/favorites/${id}`);
+      setFavorites((prev) => prev.filter((f) => f.id !== id));
+      toast.success(`${name} removido dos favoritos`);
+    } catch {
+      toast.error('Não foi possível remover o favorito');
+    }
+  };
 
   const addToCart = (product: FavoriteProduct) => {
     addItem({
@@ -44,8 +74,9 @@ export default function FavoritesPage() {
       slug: product.slug,
       price: product.price,
       unit: 'un',
-      image: '',
+      image: product.image,
       supplierName: product.supplier,
+      supplierId: product.supplierId,
     });
   };
 
@@ -57,11 +88,15 @@ export default function FavoritesPage() {
         </div>
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Meus Favoritos</h1>
-          <p className="text-sm text-gray-500">{favorites.length} produto(s) salvos</p>
+          <p className="text-sm text-gray-500">{isLoading ? 'Carregando...' : `${favorites.length} produto(s) salvos`}</p>
         </div>
       </div>
 
-      {favorites.length === 0 ? (
+      {isLoading ? (
+        <div className="flex items-center justify-center py-16">
+          <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
+        </div>
+      ) : favorites.length === 0 ? (
         <div className="text-center py-16">
           <div className="inline-flex h-20 w-20 items-center justify-center rounded-2xl bg-gray-100 dark:bg-gray-800 mb-6">
             <Heart className="h-10 w-10 text-gray-400" />
@@ -81,7 +116,12 @@ export default function FavoritesPage() {
             >
               <Link href={`/products/${product.slug}`}>
                 <div className="aspect-[4/3] bg-gray-100 dark:bg-gray-800 flex items-center justify-center relative">
-                  <Leaf className="h-12 w-12 text-gray-400" />
+                  {product.image ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
+                  ) : (
+                    <Leaf className="h-12 w-12 text-gray-400" />
+                  )}
                   {!product.inStock && (
                     <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                       <span className="badge-red text-sm">Indisponível</span>
@@ -98,7 +138,7 @@ export default function FavoritesPage() {
               </button>
 
               <div className="p-4 space-y-2">
-                <p className="text-xs text-gray-500">{product.supplier}</p>
+                {product.supplier && <p className="text-xs text-gray-500 truncate">{product.supplier}</p>}
                 <Link href={`/products/${product.slug}`}>
                   <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 transition-colors line-clamp-2">
                     {product.name}
@@ -106,7 +146,7 @@ export default function FavoritesPage() {
                 </Link>
                 <div className="flex items-center gap-1">
                   <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{product.rating}</span>
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{product.rating.toFixed(1)}</span>
                   <span className="text-xs text-gray-500">({product.reviews})</span>
                 </div>
                 <p className="text-lg font-bold text-primary-600">

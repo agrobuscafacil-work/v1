@@ -1,24 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { getChatSettings } from '@/lib/chat-settings';
+import { api } from '@/lib/api';
 import {
   Users, Store, Package, ShoppingBag, TrendingUp, DollarSign,
   Activity, Star, ArrowUp, ArrowDown, SearchIcon, CheckCircle,
-  Clock, AlertTriangle, Eye, Download, MessageCircle, Send, X,
+  Clock, AlertTriangle, Eye, Download, MessageCircle, Send, X, Loader2,
 } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 
-const stats = [
-  { label: 'Usuários Totais', value: '1.247', change: '+12%', up: true, icon: Users, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-950' },
-  { label: 'Fornecedores', value: '86', change: '+5%', up: true, icon: Store, color: 'text-green-600', bg: 'bg-green-50 dark:bg-green-950' },
-  { label: 'Produtos', value: '3.452', change: '+18%', up: true, icon: Package, color: 'text-purple-600', bg: 'bg-purple-50 dark:bg-purple-950' },
-  { label: 'Pedidos', value: '892', change: '+23%', up: true, icon: ShoppingBag, color: 'text-orange-600', bg: 'bg-orange-50 dark:bg-orange-950' },
-  { label: 'Receita (mês)', value: 'R$ 127.890', change: '+15%', up: true, icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-950' },
-  { label: 'Taxa Conversão', value: '3,2%', change: '-0,5%', up: false, icon: TrendingUp, color: 'text-rose-600', bg: 'bg-rose-50 dark:bg-rose-950' },
-];
+interface AdminStats {
+  totalUsers: number;
+  totalSuppliers: number;
+  totalProducts: number;
+  totalOrders: number;
+  totalRevenue: number;
+}
 
 const monthlyData = [
   { month: 'Jan', revenue: 85000, orders: 520 },
@@ -28,32 +28,6 @@ const monthlyData = [
   { month: 'Mai', revenue: 95000, orders: 590 },
   { month: 'Jun', revenue: 112000, orders: 710 },
   { month: 'Jul', revenue: 127890, orders: 892 },
-];
-
-const topSuppliers = [
-  { name: 'Sementes Silva', products: 48, revenue: 'R$ 45.890', rating: 4.8, status: 'Ativo' },
-  { name: 'AgroQuímica Brasil', products: 78, revenue: 'R$ 67.200', rating: 4.8, status: 'Ativo' },
-  { name: 'NutriPlant Fertilizantes', products: 41, revenue: 'R$ 52.340', rating: 4.8, status: 'Ativo' },
-  { name: 'Defensivos Nacional', products: 56, revenue: 'R$ 43.100', rating: 4.7, status: 'Ativo' },
-  { name: 'Agro Tech Ltda', products: 24, revenue: 'R$ 32.450', rating: 4.6, status: 'Ativo' },
-  { name: 'IrrigaFácil', products: 32, revenue: 'R$ 28.900', rating: 4.9, status: 'Ativo' },
-  { name: 'Máquinas Agrícolas LTDA', products: 18, revenue: 'R$ 89.990', rating: 4.5, status: 'Ativo' },
-  { name: 'Fertilizantes ABC', products: 15, revenue: 'R$ 12.340', rating: 0, status: 'Pendente' },
-  { name: 'Sementes Genetix', products: 34, revenue: 'R$ 39.800', rating: 4.9, status: 'Ativo' },
-  { name: 'BioDefensivos Naturais', products: 22, revenue: 'R$ 18.650', rating: 4.6, status: 'Ativo' },
-];
-
-const recentOrders = [
-  { id: '1', orderNumber: 'ABF-2024-0010', customer: 'Lucas Mendes', total: 45990.00, status: 'PENDING', date: '29/07/2026' },
-  { id: '2', orderNumber: 'ABF-2024-0009', customer: 'João Silva', total: 1899.90, status: 'PENDING', date: '29/07/2026' },
-  { id: '3', orderNumber: 'ABF-2024-0008', customer: 'Fernanda Almeida', total: 7890.00, status: 'PROCESSING', date: '28/07/2026' },
-  { id: '4', orderNumber: 'ABF-2024-0007', customer: 'Maria Oliveira', total: 3499.90, status: 'PROCESSING', date: '28/07/2026' },
-  { id: '5', orderNumber: 'ABF-2024-0006', customer: 'Juliana Costa', total: 259.90, status: 'SHIPPED', date: '27/07/2026' },
-  { id: '6', orderNumber: 'ABF-2024-0005', customer: 'Carlos Pereira', total: 567.50, status: 'SHIPPED', date: '27/07/2026' },
-  { id: '7', orderNumber: 'ABF-2024-0004', customer: 'Ana Souza', total: 12589.90, status: 'DELIVERED', date: '25/07/2026' },
-  { id: '8', orderNumber: 'ABF-2024-0003', customer: 'Roberto Lima', total: 18990.00, status: 'DELIVERED', date: '24/07/2026' },
-  { id: '9', orderNumber: 'ABF-2024-0002', customer: 'Pedro Santos', total: 2599.80, status: 'CANCELLED', date: '22/07/2026' },
-  { id: '10', orderNumber: 'ABF-2024-0001', customer: 'João Silva', total: 112.30, status: 'CANCELLED', date: '20/07/2026' },
 ];
 
 const statusLabels: Record<string, { label: string; color: string }> = {
@@ -90,7 +64,73 @@ const convs = [
 export default function AdminDashboardPage() {
   const { user } = useAuth();
   const [activeSection, setActiveSection] = useState('overview');
+  const [loading, setLoading] = useState(true);
+  const [adminStats, setAdminStats] = useState<AdminStats | null>(null);
+  const [recentOrders, setRecentOrders] = useState<Array<{ id: string; orderNumber: string; customer: string; total: number; status: string; date: string }>>([]);
+  const [recentUsers, setRecentUsers] = useState<Array<{ name: string; email: string; role: string; status: string }>>([]);
+  const [topSuppliers, setTopSuppliers] = useState<Array<{ name: string; products: number; revenue: string; rating: number; status: string }>>([]);
   const maxRevenue = Math.max(...monthlyData.map((d) => d.revenue));
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const [statsRes, ordersRes, usersRes, suppliersRes] = await Promise.all([
+          api.get('/dashboard/admin'),
+          api.get('/orders/admin', { params: { limit: 10 } }),
+          api.get('/users', { params: { limit: 8 } }),
+          api.get('/suppliers/admin', { params: { limit: 10 } }),
+        ]);
+        setAdminStats(statsRes.data.data ?? null);
+        const orders = ordersRes.data.data?.data ?? [];
+        setRecentOrders(
+          orders.map((o: any) => ({
+            id: o.id,
+            orderNumber: o.orderNumber,
+            customer: o.customer?.name || '—',
+            total: Number(o.total),
+            status: o.status,
+            date: new Date(o.createdAt).toLocaleDateString('pt-BR'),
+          })),
+        );
+        const users = usersRes.data.data?.data ?? [];
+        setRecentUsers(
+          users.map((u: any) => ({
+            name: u.name,
+            email: u.email,
+            role: u.role,
+            status: u.active ? 'Ativo' : 'Bloqueado',
+          })),
+        );
+        const suppliers = suppliersRes.data.data?.data ?? [];
+        setTopSuppliers(
+          suppliers.map((s: any) => ({
+            name: s.companyName,
+            products: s.totalProducts,
+            revenue: '—',
+            rating: s.rating,
+            status: s.status === 'APPROVED' ? 'Ativo' : 'Pendente',
+          })),
+        );
+      } catch {
+        toast.error('Erro ao carregar o painel administrativo');
+        setRecentOrders([]);
+        setRecentUsers([]);
+        setTopSuppliers([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
+
+  const stats = [
+    { label: 'Usuários Totais', value: adminStats ? String(adminStats.totalUsers) : '—', change: '+12%', up: true, icon: Users, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-950' },
+    { label: 'Fornecedores', value: adminStats ? String(adminStats.totalSuppliers) : '—', change: '+5%', up: true, icon: Store, color: 'text-green-600', bg: 'bg-green-50 dark:bg-green-950' },
+    { label: 'Produtos', value: adminStats ? String(adminStats.totalProducts) : '—', change: '+18%', up: true, icon: Package, color: 'text-purple-600', bg: 'bg-purple-50 dark:bg-purple-950' },
+    { label: 'Pedidos', value: adminStats ? String(adminStats.totalOrders) : '—', change: '+23%', up: true, icon: ShoppingBag, color: 'text-orange-600', bg: 'bg-orange-50 dark:bg-orange-950' },
+    { label: 'Receita (mês)', value: adminStats ? `R$ ${Number(adminStats.totalRevenue).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}` : '—', change: '+15%', up: true, icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-950' },
+    { label: 'Taxa Conversão', value: '3,2%', change: '-0,5%', up: false, icon: TrendingUp, color: 'text-rose-600', bg: 'bg-rose-50 dark:bg-rose-950' },
+  ];
   const [chatConv, setChatConv] = useState<typeof convs[0] | null>(null);
   const [chatMsg, setChatMsg] = useState('');
   const [chatMessages, setChatMessages] = useState<{ id: string; sender: string; text: string; time: string }[]>([]);
@@ -117,6 +157,12 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="p-6 lg:p-8">
+      {loading && (
+        <div className="flex items-center justify-center gap-2 mb-6 text-gray-500">
+          <Loader2 className="h-5 w-5 animate-spin" />
+          <span className="text-sm">Carregando dados...</span>
+        </div>
+      )}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Painel Administrativo</h1>
@@ -225,17 +271,8 @@ export default function AdminDashboardPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {[
-                      { name: 'João Silva', email: 'joao@email.com', role: 'CUSTOMER', status: 'Ativo' },
-                      { name: 'Fazenda Boa Vista', email: 'contato@boavista.com', role: 'SUPPLIER', status: 'Pendente' },
-                      { name: 'Maria Oliveira', email: 'maria@email.com', role: 'CUSTOMER', status: 'Ativo' },
-                      { name: 'Agro Tech Ltda', email: 'admin@agrotech.com', role: 'SUPPLIER', status: 'Aprovado' },
-                      { name: 'Carlos Pereira', email: 'carlos@email.com', role: 'CUSTOMER', status: 'Bloqueado' },
-                      { name: 'Fernanda Almeida', email: 'fernanda@email.com', role: 'CUSTOMER', status: 'Ativo' },
-                      { name: 'Sementes Genetix', email: 'comercial@sementesgenetix.com', role: 'SUPPLIER', status: 'Aprovado' },
-                      { name: 'Roberto Lima', email: 'roberto@email.com', role: 'CUSTOMER', status: 'Bloqueado' },
-                    ].map((u, i) => (
-                      <tr key={i} className="border-b border-gray-50 dark:border-gray-800/50">
+                    {recentUsers.map((u) => (
+                      <tr key={u.email} className="border-b border-gray-50 dark:border-gray-800/50">
                         <td className="py-2.5 text-gray-900 dark:text-white">{u.name}</td>
                         <td className="py-2.5 text-gray-500">{u.email}</td>
                         <td className="py-2.5">

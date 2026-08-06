@@ -1,10 +1,11 @@
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+  moduleFormat = "cjs"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 enum UserRole {
@@ -148,6 +149,7 @@ model User {
   notifications   Notification[]
   supportTickets  SupportTicket[]
   supportNotes    SupportTicketNote[]
+  conversations   Conversation[]      @relation("CustomerConversations")
 
   @@index([email])
   @@index([document])
@@ -216,6 +218,7 @@ model SupplierProfile {
   reviews         Review[]
   reviewResponses ReviewResponse[]
   favorites       Favorite[]
+  conversations   Conversation[]      @relation("SupplierConversations")
   workingHours    WorkingHours[]
   coupons         Coupon[]
   categories      Category[]
@@ -635,6 +638,9 @@ model Conversation {
 
   messages Message[]
 
+  customer User            @relation("CustomerConversations", fields: [customerId], references: [id])
+  supplier SupplierProfile @relation("SupplierConversations", fields: [supplierId], references: [id])
+
   @@unique([supplierId, customerId])
   @@index([supplierId])
   @@index([customerId])
@@ -690,6 +696,7 @@ model ChatSettings {
   id               String          @id @default(uuid())
   supplierId       String          @unique
   supplier         SupplierProfile @relation(fields: [supplierId], references: [id])
+  online           Boolean         @default(true)
   autoReply        Boolean         @default(false)
   autoReplyMessage String?
   workingHoursOnly Boolean         @default(false)
@@ -697,6 +704,15 @@ model ChatSettings {
   welcomeMessage   String?
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
+}
+
+model SystemSetting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+
+  @@index([updatedAt])
 }
 
 model Notification {

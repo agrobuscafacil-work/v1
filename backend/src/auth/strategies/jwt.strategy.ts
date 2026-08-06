@@ -21,7 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: configService.get<string>('JWT_SECRET'),
+      secretOrKey: configService.get<string>('JWT_SECRET')!,
     });
   }
 
@@ -46,12 +46,22 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException('Account is inactive');
     }
 
+    let supplierId: string | undefined;
+    if (user.role === 'SUPPLIER') {
+      const supplier = await this.prisma.supplierProfile.findUnique({
+        where: { userId: user.id },
+        select: { id: true },
+      });
+      supplierId = supplier?.id;
+    }
+
     return {
       id: user.id,
       email: user.email,
       name: user.name,
       role: user.role,
       verified: user.verified,
+      supplierId,
     };
   }
 }

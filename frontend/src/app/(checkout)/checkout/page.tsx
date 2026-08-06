@@ -1,46 +1,116 @@
 ﻿'use client';
 
-import { useState } from 'react';
-import { ShoppingBag, MapPin, CreditCard, Truck, Shield, Loader2, ChevronRight } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { ShoppingBag, MapPin, CreditCard, Truck, Shield, Loader2, ChevronRight, Leaf } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { api } from '@/lib/api';
+import { useCart } from '@/hooks/use-cart';
 
-const cartItems = [
-  { id: '1', name: 'Semente de Soja Transgênica', price: 189.90, quantity: 2, image: 'SS' },
-  { id: '2', name: 'Fertilizante NPK 20-10-10', price: 89.90, quantity: 1, image: 'NP' },
-  { id: '3', name: 'Defensivo Agrícola Glifosato', price: 45.90, quantity: 3, image: 'GL' },
-];
+interface Address {
+  id: string;
+  label?: string;
+  street: string;
+  number: string;
+  complement?: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
+  isMain: boolean;
+}
 
 export default function CheckoutPage() {
+  const { items, subtotal, clearCart } = useCart();
   const [step, setStep] = useState<'address' | 'payment' | 'confirm'>('address');
   const [isLoading, setIsLoading] = useState(false);
+  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [selectedAddressId, setSelectedAddressId] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('CREDIT_CARD');
 
-  const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-  const shipping = 25.90;
-  const total = subtotal + shipping;
+  const shipping = subtotal() > 500 ? 0 : 29.9;
+  const discount = 0;
+  const total = subtotal() + shipping - discount;
+  const selectedAddress = addresses.find((a) => a.id === selectedAddressId);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await api.get('/shipping/addresses');
+        const data = res.data.data ?? res.data;
+        const list: Address[] = Array.isArray(data) ? data : [];
+        setAddresses(list);
+        const main = list.find((a) => a.isMain);
+        setSelectedAddressId((main?.id) || list[0]?.id || '');
+      } catch {
+        setAddresses([]);
+      }
+    };
+    load();
+  }, []);
 
   const handlePlaceOrder = async () => {
+    if (!items.length) {
+      toast.error('Seu carrinho está vazio.');
+      return;
+    }
+    if (!selectedAddress) {
+      toast.error('Selecione um endereço de entrega.');
+      return;
+    }
+    const supplierId = items[0].product.supplierId;
+    if (!supplierId) {
+      toast.error('Não foi possível identificar o fornecedor dos produtos.');
+      return;
+    }
     setIsLoading(true);
     try {
-      const items = cartItems.map((item) => ({
-        name: item.name,
-        quantity: item.quantity,
-        priceInCents: Math.round(item.price * 100),
+      const orderItems = items.map((i) => ({
+        productId: i.product.id,
+        quantity: i.quantity,
+        unitPrice: i.product.price,
+        totalPrice: i.product.price * i.quantity,
       }));
-      const res = await api.post('/stripe/create-checkout-session', { items });
-      const { url } = res.data.data;
+      const orderRes = await api.post('/orders', {
+        supplierId,
+        items: orderItems,
+        subtotal: subtotal(),
+        shippingCost: shipping,
+        total,
+        paymentMethod,
+      });
+      const order = orderRes.data.data;
+      const sessionRes = await api.post('/stripe/create-checkout-session', { orderId: order.id });
+      const { url } = sessionRes.data.data;
       if (url) {
+        clearCart();
         window.location.href = url;
         return;
       }
       toast.error('Não foi possível iniciar o pagamento.');
-      setIsLoading(false);
     } catch (e: any) {
       const msg = e?.response?.data?.message;
       toast.error(typeof msg === 'string' ? msg : 'Erro ao iniciar o pagamento.');
+    } finally {
       setIsLoading(false);
     }
   };
+
+  if (items.length === 0) {
+    return (
+      <div className="container-page py-16">
+        <div className="max-w-md mx-auto text-center">
+          <div className="inline-flex h-20 w-20 items-center justify-center rounded-2xl bg-gray-100 dark:bg-gray-800 mb-6">
+            <ShoppingBag className="h-10 w-10 text-gray-400" />
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Seu carrinho está vazio</h1>
+          <p className="text-gray-500 mb-8">Adicione produtos antes de finalizar o pedido.</p>
+          <Link href="/products" className="btn-primary">Ver Produtos</Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container-page py-8">
@@ -75,31 +145,52 @@ export default function CheckoutPage() {
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                   <MapPin className="h-5 w-5 text-primary-600" /> Endereço de Entrega
                 </h2>
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="col-span-2">
-                      <label className="label-field">Endereço</label>
-                      <input type="text" className="input-field" placeholder="Rua, número" defaultValue="Rua das Flores, 123" />
-                    </div>
-                    <div>
-                      <label className="label-field">Bairro</label>
-                      <input type="text" className="input-field" placeholder="Bairro" defaultValue="Centro" />
-                    </div>
-                    <div>
-                      <label className="label-field">Cidade</label>
-                      <input type="text" className="input-field" placeholder="Cidade" defaultValue="Ribeirão Preto" />
-                    </div>
-                    <div>
-                      <label className="label-field">Estado</label>
-                      <input type="text" className="input-field" placeholder="SP" defaultValue="SP" />
-                    </div>
-                    <div>
-                      <label className="label-field">CEP</label>
-                      <input type="text" className="input-field" placeholder="CEP" defaultValue="14000-000" />
-                    </div>
+                {addresses.length === 0 ? (
+                  <p className="text-sm text-gray-500 mb-4">
+                    Você ainda não possui endereços cadastrados.
+                  </p>
+                ) : (
+                  <div className="space-y-3 mb-4">
+                    {addresses.map((addr) => (
+                      <label
+                        key={addr.id}
+                        className={`flex items-start gap-3 p-4 rounded-lg border cursor-pointer transition-colors ${
+                          selectedAddressId === addr.id
+                            ? 'border-primary-500 bg-primary-50 dark:bg-primary-950'
+                            : 'border-gray-200 dark:border-gray-700 hover:border-primary-300'
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="address"
+                          checked={selectedAddressId === addr.id}
+                          onChange={() => setSelectedAddressId(addr.id)}
+                          className="accent-primary-600 mt-1"
+                        />
+                        <div>
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">
+                            {addr.label ? `${addr.label} - ` : ''}{addr.street}, {addr.number}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {addr.neighborhood} - {addr.city}/{addr.state} - CEP {addr.zipCode}
+                          </p>
+                        </div>
+                      </label>
+                    ))}
                   </div>
-                  <button onClick={() => setStep('payment')} className="btn-primary">Continuar para Pagamento</button>
-                </div>
+                )}
+                <button
+                  onClick={() => {
+                    if (!selectedAddress) {
+                      toast.error('Selecione um endereço de entrega.');
+                      return;
+                    }
+                    setStep('payment');
+                  }}
+                  className="btn-primary"
+                >
+                  Continuar para Pagamento
+                </button>
               </div>
             )}
 
@@ -110,12 +201,18 @@ export default function CheckoutPage() {
                 </h2>
                 <div className="space-y-3 mb-6">
                   {[
-                    { id: 'credit', label: 'Cartão de Crédito', desc: 'Parcele em até 12x' },
-                    { id: 'pix', label: 'Pix', desc: 'Desconto de 5% à vista' },
-                    { id: 'boleto', label: 'Boleto Bancário', desc: 'Vencimento em 3 dias úteis' },
+                    { id: 'CREDIT_CARD', label: 'Cartão de Crédito', desc: 'Parcele em até 12x' },
+                    { id: 'PIX', label: 'Pix', desc: 'Pagamento imediato' },
+                    { id: 'BOLETO', label: 'Boleto Bancário', desc: 'Vencimento em 3 dias úteis' },
                   ].map((p) => (
                     <label key={p.id} className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-gray-700 cursor-pointer hover:border-primary-300 transition-colors">
-                      <input type="radio" name="payment" defaultChecked={p.id === 'credit'} className="accent-primary-600" />
+                      <input
+                        type="radio"
+                        name="payment"
+                        checked={paymentMethod === p.id}
+                        onChange={() => setPaymentMethod(p.id)}
+                        className="accent-primary-600"
+                      />
                       <div>
                         <p className="text-sm font-medium text-gray-900 dark:text-white">{p.label}</p>
                         <p className="text-xs text-gray-500">{p.desc}</p>
@@ -135,22 +232,30 @@ export default function CheckoutPage() {
                 <div className="space-y-4">
                   <div className="rounded-lg bg-gray-50 dark:bg-gray-800 p-4">
                     <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">Entrega</p>
-                    <p className="text-sm text-gray-500">Rua das Flores, 123 - Centro, Ribeirão Preto - SP</p>
+                    <p className="text-sm text-gray-500">
+                      {selectedAddress ? `${selectedAddress.street}, ${selectedAddress.number} - ${selectedAddress.neighborhood}, ${selectedAddress.city}/${selectedAddress.state} - CEP ${selectedAddress.zipCode}` : 'Endereço não selecionado'}
+                    </p>
                   </div>
                   <div className="rounded-lg bg-gray-50 dark:bg-gray-800 p-4">
                     <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">Pagamento</p>
-                    <p className="text-sm text-gray-500">Cartão de Crédito - Parcelado em 6x</p>
+                    <p className="text-sm text-gray-500">
+                      {paymentMethod === 'CREDIT_CARD' ? 'Cartão de Crédito' : paymentMethod === 'PIX' ? 'Pix' : 'Boleto Bancário'}
+                    </p>
                   </div>
-                  {cartItems.map((item) => (
-                    <div key={item.id} className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-800 last:border-0">
+                  {items.map((item) => (
+                    <div key={item.product.id} className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-800 last:border-0">
                       <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-lg bg-primary-50 dark:bg-primary-950 flex items-center justify-center text-xs font-bold text-primary-600">{item.image}</div>
+                        <div className="h-10 w-10 rounded-lg bg-primary-50 dark:bg-primary-950 flex items-center justify-center text-xs font-bold text-primary-600">
+                          {item.product.image ? <img src={item.product.image} alt="" className="h-full w-full object-cover rounded-lg" /> : <Leaf className="h-5 w-5" />}
+                        </div>
                         <div>
-                          <p className="text-sm font-medium text-gray-900 dark:text-white">{item.name}</p>
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">{item.product.name}</p>
                           <p className="text-xs text-gray-500">Qtd: {item.quantity}</p>
                         </div>
                       </div>
-                      <p className="text-sm font-semibold text-gray-900 dark:text-white">R$ {(item.price * item.quantity).toFixed(2)}</p>
+                      <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                        R$ {(item.product.price * item.quantity).toFixed(2)}
+                      </p>
                     </div>
                   ))}
                   <button onClick={handlePlaceOrder} disabled={isLoading} className="btn-primary w-full gap-2">
@@ -166,12 +271,12 @@ export default function CheckoutPage() {
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Resumo</h3>
             <div className="space-y-3 text-sm">
               <div className="flex justify-between text-gray-600 dark:text-gray-400">
-                <span>Subtotal ({cartItems.length} itens)</span>
-                <span>R$ {subtotal.toFixed(2)}</span>
+                <span>Subtotal ({items.length} itens)</span>
+                <span>R$ {subtotal().toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-gray-600 dark:text-gray-400">
                 <span>Frete</span>
-                <span>R$ {shipping.toFixed(2)}</span>
+                <span>{shipping === 0 ? 'Grátis' : `R$ ${shipping.toFixed(2)}`}</span>
               </div>
               <div className="border-t border-gray-200 dark:border-gray-700 pt-3 flex justify-between font-semibold text-gray-900 dark:text-white">
                 <span>Total</span>

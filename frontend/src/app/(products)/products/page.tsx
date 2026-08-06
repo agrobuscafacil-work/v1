@@ -1,10 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Search, SlidersHorizontal, X, Star, Leaf, ChevronDown, Grid3X3, List, Loader2 } from 'lucide-react';
 import type { Metadata } from 'next';
+import { api } from '@/lib/api';
+import { PRODUCT_FILE_URL } from '@/lib/products';
 
 const sortOptions = [
   { value: 'relevance', label: 'Relevância' },
@@ -14,37 +16,21 @@ const sortOptions = [
   { value: 'newest', label: 'Mais Recentes' },
 ];
 
-const productCategories = ['maquinas', 'fertilizantes', 'sementes', 'defensivos', 'irrigacao', 'insumos', 'pecuaria', 'armazenagem', 'maquinas', 'fertilizantes', 'sementes', 'defensivos'];
-
-const MOCK_PRODUCTS = Array.from({ length: 12 }, (_, i) => ({
-  id: String(i + 1),
-  name: i % 2 === 0
-    ? 'Trator Agrícola 4x4 Motor Turbodiesel'
-    : 'Fertilizante NPK 10-10-10 50kg',
-  slug: 'product-' + (i + 1),
-  price: i % 2 === 0 ? 249900 : 189.90,
-  comparePrice: i % 2 === 0 ? 289900 : 229.90,
-  image: null,
-  supplier: i % 2 === 0 ? 'Máquinas Agrícolas LTDA' : 'AgroQuímica Brasil',
-  category: productCategories[i],
-  rating: (4 + (i % 5) * 0.2).toFixed(1),
-  reviews: i * 17 + 10,
-  unit: i % 2 === 0 ? 'un' : 'sc',
-  freeShipping: i % 3 === 0,
-  createdAt: new Date(2026, 6, 29 - i),
-}));
-
-const categories = [
-  { id: 'all', name: 'Todas as Categorias' },
-  { id: 'insumos', name: 'Insumos' },
-  { id: 'maquinas', name: 'Máquinas' },
-  { id: 'sementes', name: 'Sementes' },
-  { id: 'fertilizantes', name: 'Fertilizantes' },
-  { id: 'defensivos', name: 'Defensivos' },
-  { id: 'irrigacao', name: 'Irrigação' },
-  { id: 'pecuaria', name: 'Pecuária' },
-  { id: 'armazenagem', name: 'Armazenagem' },
-];
+interface DisplayProduct {
+  id: string;
+  name: string;
+  slug: string;
+  price: number;
+  comparePrice: number | null;
+  image: string | null;
+  supplier: string;
+  categoryId: string;
+  rating: number;
+  reviews: number;
+  unit: string;
+  freeShipping: boolean;
+  createdAt: Date;
+}
 
 export default function ProductsPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -54,12 +40,61 @@ export default function ProductsPage() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 500000]);
   const [minRating, setMinRating] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [products, setProducts] = useState<DisplayProduct[]>([]);
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>([
+    { id: 'all', name: 'Todas as Categorias' },
+  ]);
 
-  const filteredProducts = MOCK_PRODUCTS
+  useEffect(() => {
+    const load = async () => {
+      setIsLoading(true);
+      try {
+        const params: Record<string, string | number> = { limit: 50 };
+        if (selectedCategory !== 'all') params.categoryId = selectedCategory;
+        if (searchTerm) params.search = searchTerm;
+        if (priceRange[0] > 0) params.minPrice = priceRange[0];
+        if (priceRange[1] < 500000) params.maxPrice = priceRange[1];
+        const res = await api.get('/products', { params });
+        const data = res.data.data?.data ?? [];
+        setProducts(
+          data.map((p: any) => ({
+            id: p.id,
+            name: p.name,
+            slug: p.slug,
+            price: Number(p.price),
+            comparePrice: p.comparePrice != null ? Number(p.comparePrice) : null,
+            image: p.images?.[0] || null,
+            supplier: p.supplier?.companyName || 'Fornecedor',
+            categoryId: p.categoryId,
+            rating: Number(p.rating) || 0,
+            reviews: Number(p.totalReviews) || 0,
+            unit: p.unit || 'un',
+            freeShipping: !!p.freeShipping,
+            createdAt: p.createdAt ? new Date(p.createdAt) : new Date(),
+          })),
+        );
+      } catch {
+        setProducts([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    load();
+  }, [selectedCategory, searchTerm, priceRange]);
+
+  useEffect(() => {
+    api
+      .get('/categories')
+      .then((res) => {
+        const data = res.data.data ?? [];
+        setCategories([{ id: 'all', name: 'Todas as Categorias' }, ...data.map((c: any) => ({ id: c.id, name: c.name }))]);
+      })
+      .catch(() => {});
+  }, []);
+
+  const filteredProducts = products
     .filter((p) => {
-      if (searchTerm && !p.name.toLowerCase().includes(searchTerm.toLowerCase())) return false;
-      if (selectedCategory !== 'all' && p.category !== selectedCategory) return false;
       if (p.price < priceRange[0] || p.price > priceRange[1]) return false;
       if (Number(p.rating) < minRating) return false;
       return true;
@@ -68,7 +103,7 @@ export default function ProductsPage() {
       switch (sortBy) {
         case 'price-asc': return a.price - b.price;
         case 'price-desc': return b.price - a.price;
-        case 'rating': return Number(b.rating) - Number(a.rating);
+        case 'rating': return b.rating - a.rating;
         case 'newest': return b.createdAt.getTime() - a.createdAt.getTime();
         default: return 0;
       }
@@ -79,7 +114,7 @@ export default function ProductsPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Produtos</h1>
-          <p className="text-sm text-gray-500">{MOCK_PRODUCTS.length} produtos encontrados</p>
+          <p className="text-sm text-gray-500">{products.length} produtos encontrados</p>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -255,7 +290,15 @@ export default function ProductsPage() {
                   <div className={`bg-gray-100 dark:bg-gray-800 relative flex items-center justify-center ${
                     viewMode === 'grid' ? 'aspect-[4/3]' : 'w-48 shrink-0 aspect-square'
                   }`}>
-                    <Leaf className="h-12 w-12 text-gray-400" />
+                    {product.image ? (
+                      <img
+                        src={PRODUCT_FILE_URL(product.image)}
+                        alt={product.name}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <Leaf className="h-12 w-12 text-gray-400" />
+                    )}
                     {product.freeShipping && (
                       <span className="absolute top-2 left-2 badge-green text-xs">Frete Grátis</span>
                     )}

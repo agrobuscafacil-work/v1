@@ -1,33 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/use-auth';
 import { getChatSettings } from '@/lib/chat-settings';
+import { api } from '@/lib/api';
 import {
   Package, ShoppingBag, TrendingUp, DollarSign, Users,
   CheckCircle, Clock, XCircle, ArrowRight, Loader2, Store,
   MessageCircle, Send, X,
 } from 'lucide-react';
 
-const statsCards = [
-  { label: 'Produtos', value: '15', icon: Package, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-950' },
-  { label: 'Pedidos', value: '32', icon: ShoppingBag, color: 'text-green-600', bg: 'bg-green-50 dark:bg-green-950' },
-  { label: 'Vendas (mês)', value: 'R$ 18.740', icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-950' },
-  { label: 'Clientes', value: '198', icon: Users, color: 'text-purple-600', bg: 'bg-purple-50 dark:bg-purple-950' },
-  { label: 'Taxa Conversão', value: '6,8%', icon: TrendingUp, color: 'text-orange-600', bg: 'bg-orange-50 dark:bg-orange-950' },
-  { label: 'Avaliação', value: '4.8 ★', icon: TrendingUp, color: 'text-yellow-600', bg: 'bg-yellow-50 dark:bg-yellow-950' },
-];
-
-const recentOrders = [
-  { id: '1', orderNumber: 'ABF-2024-0010', status: 'PENDING', total: 45990.00, items: 1, customer: 'Lucas Mendes', createdAt: '2026-07-29T10:30:00' },
-  { id: '2', orderNumber: 'ABF-2024-0008', status: 'PROCESSING', total: 7890.00, items: 2, customer: 'Fernanda Almeida', createdAt: '2026-07-28T14:15:00' },
-  { id: '3', orderNumber: 'ABF-2024-0007', status: 'PROCESSING', total: 3499.90, items: 1, customer: 'Maria Oliveira', createdAt: '2026-07-28T09:45:00' },
-  { id: '4', orderNumber: 'ABF-2024-0006', status: 'SHIPPED', total: 259.90, items: 1, customer: 'Juliana Costa', createdAt: '2026-07-27T16:30:00' },
-  { id: '5', orderNumber: 'ABF-2024-0005', status: 'SHIPPED', total: 567.50, items: 1, customer: 'Carlos Pereira', createdAt: '2026-07-27T11:00:00' },
-  { id: '6', orderNumber: 'ABF-2024-0004', status: 'DELIVERED', total: 12589.90, items: 3, customer: 'Ana Souza', createdAt: '2026-07-25T08:20:00' },
-  { id: '7', orderNumber: 'ABF-2024-0003', status: 'DELIVERED', total: 18990.00, items: 1, customer: 'Roberto Lima', createdAt: '2026-07-24T13:40:00' },
-];
+const recentOrders = [] as Array<{ id: string; orderNumber: string; status: string; total: number; items: number; customer: string; createdAt: string }>;
 
 const statusLabels: Record<string, { label: string; color: string }> = {
   PENDING: { label: 'Pendente', color: 'text-yellow-600 bg-yellow-50 dark:bg-yellow-950' },
@@ -51,6 +35,47 @@ export default function SupplierDashboardPage() {
   const [chatCust, setChatCust] = useState<typeof custChats[0] | null>(null);
   const [chatMsg, setChatMsg] = useState('');
   const [chatMessages, setChatMessages] = useState<{ id: string; sender: string; text: string; time: string }[]>([]);
+  const [stats, setStats] = useState<{
+    totalProducts: number; totalServices: number; totalOrders: number; totalRevenue: number;
+  } | null>(null);
+  const [orders, setOrders] = useState<typeof recentOrders>([]);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const [statsRes, ordersRes] = await Promise.all([
+          api.get('/dashboard/supplier/stats'),
+          api.get('/orders'),
+        ]);
+        setStats(statsRes.data.data ?? null);
+        const ordersData = ordersRes.data.data?.data ?? [];
+        setOrders(
+          ordersData.map((o: any) => ({
+            id: o.id,
+            orderNumber: o.orderNumber,
+            status: o.status,
+            total: Number(o.total),
+            items: o.items?.length ?? 0,
+            customer: o.customer?.name || 'Cliente',
+            createdAt: o.createdAt,
+          })),
+        );
+      } catch {
+        setStats(null);
+        setOrders([]);
+      }
+    };
+    load();
+  }, []);
+
+  const statsCards = [
+    { label: 'Produtos', value: stats ? String(stats.totalProducts) : '—', icon: Package, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-950' },
+    { label: 'Serviços', value: stats ? String(stats.totalServices) : '—', icon: TrendingUp, color: 'text-orange-600', bg: 'bg-orange-50 dark:bg-orange-950' },
+    { label: 'Pedidos', value: stats ? String(stats.totalOrders) : '—', icon: ShoppingBag, color: 'text-green-600', bg: 'bg-green-50 dark:bg-green-950' },
+    { label: 'Vendas', value: stats ? `R$ ${Number(stats.totalRevenue).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}` : '—', icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-950' },
+    { label: 'Clientes', value: '—', icon: Users, color: 'text-purple-600', bg: 'bg-purple-50 dark:bg-purple-950' },
+    { label: 'Taxa Conversão', value: '—', icon: TrendingUp, color: 'text-yellow-600', bg: 'bg-yellow-50 dark:bg-yellow-950' },
+  ];
 
   function openChat(c: typeof custChats[0]) {
     setChatCust(c);
@@ -109,7 +134,10 @@ export default function SupplierDashboardPage() {
               <Link href="/supplier/orders" className="text-sm text-primary-600 hover:text-primary-700 font-medium">Ver todos</Link>
             </div>
             <div className="space-y-3">
-              {recentOrders.map((order) => {
+              {orders.length === 0 && (
+                <p className="text-sm text-gray-500">Nenhum pedido recebido ainda.</p>
+              )}
+              {orders.map((order) => {
                 const statusInfo = statusLabels[order.status] || statusLabels.PENDING;
                 return (
                   <div key={order.id} className="flex items-center justify-between rounded-lg border border-gray-100 dark:border-gray-800 p-3">

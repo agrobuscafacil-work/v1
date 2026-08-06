@@ -36,6 +36,9 @@ export class OrdersController {
     if (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') {
       return this.ordersService.findAll({ page, limit, status });
     }
+    if (user.role === 'SUPPLIER') {
+      return this.ordersService.findForSupplier(user.id, page, limit);
+    }
     return this.ordersService.findByUser(user.id, page, limit);
   }
 
@@ -56,21 +59,21 @@ export class OrdersController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get order by ID' })
-  async findById(@Param('id') id: string) {
-    return this.ordersService.findById(id);
+  async findById(@CurrentUser() user: any, @Param('id') id: string) {
+    return this.ordersService.findById(id, user);
   }
 
   @Put(':id/status')
   @ApiOperation({ summary: 'Update order status' })
-  async updateStatus(@Param('id') id: string, @Body() dto: UpdateOrderStatusDto) {
-    return this.ordersService.updateStatus(id, dto);
+  async updateStatus(@CurrentUser() user: any, @Param('id') id: string, @Body() dto: UpdateOrderStatusDto) {
+    return this.ordersService.updateStatus(id, dto, user);
   }
 
   @Post(':id/cancel')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Cancel order' })
-  async cancel(@Param('id') id: string) {
-    return this.ordersService.cancel(id);
+  async cancel(@CurrentUser() user: any, @Param('id') id: string) {
+    return this.ordersService.cancel(id, user);
   }
 
   @Delete(':id')

@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Prisma, ProductStatus, OrderStatus, SupplierStatus } from '@prisma/client';
+import { Prisma, ProductStatus, OrderStatus, SupplierStatus } from '../generated/prisma/client';
 
 @Injectable()
 export class DashboardService {

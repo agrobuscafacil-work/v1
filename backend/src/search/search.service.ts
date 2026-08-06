@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { parsePage, parseLimit } from '../common/utils/pagination';
 
 @Injectable()
 export class SearchService {
@@ -12,10 +13,12 @@ export class SearchService {
     minPrice?: number; maxPrice?: number; city?: string; state?: string;
     page?: number; limit?: number; sort?: string;
   }) {
-    const { q, categoryId, supplierId, minPrice, maxPrice, city, state, page = 1, limit = 20, sort } = params;
+    const { q, categoryId, supplierId, minPrice, maxPrice, city, state, page: rawPage = 1, limit: rawLimit = 20, sort } = params;
+    const page = parsePage(rawPage);
+    const limit = parseLimit(rawLimit, 20);
     const skip = (page - 1) * limit;
 
-    const productWhere: any = { deletedAt: null };
+    const productWhere: any = { deletedAt: null, status: 'ACTIVE' };
     const supplierWhere: any = {};
 
     if (q) {

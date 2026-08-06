@@ -11,10 +11,13 @@ import {
   RawBodyRequest,
   Logger,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { StripeService } from './stripe.service';
 import { CreateStripeSessionDto } from './dto/create-stripe-session.dto';
 import { Public } from '../common/decorators/public.decorator';
+import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { UseGuards } from '@nestjs/common';
 
 @ApiTags('Stripe')
 @Controller('stripe')
@@ -24,13 +27,16 @@ export class StripeController {
   constructor(private readonly stripeService: StripeService) {}
 
   @Post('create-checkout-session')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Create Stripe Checkout session' })
-  async createCheckoutSession(@Body() dto: CreateStripeSessionDto) {
+  async createCheckoutSession(@CurrentUser() user: any, @Body() dto: CreateStripeSessionDto) {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
     const successUrl = dto.successUrl || `${baseUrl}/payment-success?session_id={CHECKOUT_SESSION_ID}`;
     const cancelUrl = dto.cancelUrl || `${baseUrl}/checkout`;
     return this.stripeService.createCheckoutSession(
-      dto.items,
+      user.id,
+      dto.items || [],
       successUrl,
       cancelUrl,
       dto.orderId,
@@ -38,9 +44,11 @@ export class StripeController {
   }
 
   @Get('session-status/:sessionId')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Get Stripe checkout session status' })
-  async getSessionStatus(@Param('sessionId') sessionId: string) {
-    return this.stripeService.retrieveSession(sessionId);
+  async getSessionStatus(@CurrentUser() user: any, @Param('sessionId') sessionId: string) {
+    return this.stripeService.retrieveSession(sessionId, user.id);
   }
 
   @Public()

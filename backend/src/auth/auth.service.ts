@@ -51,7 +51,7 @@ export class AuthService {
           name: dto.name,
           document: dto.document,
           phone: dto.phone,
-          role: dto.role || 'CUSTOMER',
+          role: dto.role === 'SUPPLIER' ? 'SUPPLIER' : 'CUSTOMER',
         },
         select: {
           id: true,
@@ -186,7 +186,7 @@ export class AuthService {
       { ...payload, jti },
       {
         secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
-        expiresIn: this.configService.get<string>('JWT_REFRESH_EXPIRES_IN') || '7d',
+        expiresIn: (this.configService.get<string>('JWT_REFRESH_EXPIRES_IN') || '7d') as any,
       },
     );
 

@@ -10,8 +10,9 @@ import path from 'path';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { ProductStatus } from '@prisma/client';
+import { ProductStatus } from '../generated/prisma/client';
 import { PRODUCT_UPLOAD_PATH } from './products-upload.constants';
+import { parsePage, parseLimit } from '../common/utils/pagination';
 
 @Injectable()
 export class ProductsService {
@@ -50,14 +51,21 @@ export class ProductsService {
 
   async findAll(params: {
     page?: number; limit?: number; categoryId?: string; supplierId?: string;
-    search?: string; minPrice?: number; maxPrice?: number; status?: string;
+    search?: string; minPrice?: number; maxPrice?: number; status?: string; featured?: boolean;
   }) {
-    const { page = 1, limit = 10, categoryId, supplierId, search, minPrice, maxPrice, status } = params;
+    const { page: rawPage = 1, limit: rawLimit = 10, categoryId, supplierId, search, minPrice, maxPrice, status, featured } = params;
+    const page = parsePage(rawPage);
+    const limit = parseLimit(rawLimit);
     const skip = (page - 1) * limit;
     const where: any = { deletedAt: null };
+    if (status && status !== 'ALL') {
+      where.status = status;
+    } else if (!status) {
+      where.status = ProductStatus.ACTIVE;
+    }
     if (categoryId) where.categoryId = categoryId;
     if (supplierId) where.supplierId = supplierId;
-    if (status) where.status = status;
+    if (featured) where.featured = true;
     if (minPrice || maxPrice) {
       where.price = {};
       if (minPrice) where.price.gte = minPrice;
@@ -115,13 +123,43 @@ export class ProductsService {
     return product;
   }
 
-  async update(userId: string, id: string, dto: UpdateProductDto) {
+  async findBySlug(slug: string) {
+    const product = await this.prisma.product.findFirst({
+      where: { slug, deletedAt: null, status: ProductStatus.ACTIVE },
+      include: {
+        category: true,
+        supplier: {
+          select: {
+            id: true,
+            companyName: true,
+            tradingName: true,
+            logoUrl: true,
+            rating: true,
+            totalReviews: true,
+            totalProducts: true,
+            phone: true,
+            whatsapp: true,
+            addresses: {
+              select: { city: true, state: true },
+              where: { isMain: true },
+              take: 1,
+            },
+          },
+        },
+      },
+    });
+    if (!product) throw new NotFoundException('Product not found');
+    return product;
+  }
+
+  async update(user: { id: string; role?: string }, id: string, dto: UpdateProductDto) {
     const existing = await this.prisma.product.findUnique({
       where: { id },
       include: { supplier: { select: { userId: true } } },
     });
     if (!existing) throw new NotFoundException('Product not found');
-    if (existing.supplier.userId !== userId) {
+    const isAdmin = user.role === 'ADMIN' || user.role === 'SUPER_ADMIN';
+    if (!isAdmin && existing.supplier.userId !== user.id) {
       throw new ForbiddenException('Você não tem permissão para editar este produto');
     }
 
@@ -144,13 +182,14 @@ export class ProductsService {
     return product;
   }
 
-  async remove(userId: string, id: string) {
+  async remove(user: { id: string; role?: string }, id: string) {
     const product = await this.prisma.product.findUnique({
       where: { id },
       include: { supplier: { select: { userId: true } } },
     });
     if (!product) throw new NotFoundException('Product not found');
-    if (product.supplier.userId !== userId) {
+    const isAdmin = user.role === 'ADMIN' || user.role === 'SUPER_ADMIN';
+    if (!isAdmin && product.supplier.userId !== user.id) {
       throw new ForbiddenException('Você não tem permissão para excluir este produto');
     }
 

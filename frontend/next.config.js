@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  turbopack: {
+    root: __dirname,
+  },
+  output: 'standalone',
   images: {
     remotePatterns: [
       {
@@ -12,17 +16,11 @@ const nextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
   experimental: {
-    optimizePackageImports: [
-      'lucide-react',
-      'date-fns',
-      '@tanstack/react-query',
-    ],
-    scrollRestoration: true,
+    optimizePackageImports: ['lucide-react', 'date-fns', '@tanstack/react-query'],
   },
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
-  swcMinify: true,
   compress: true,
   poweredByHeader: false,
   reactStrictMode: true,

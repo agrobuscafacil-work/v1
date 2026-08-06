@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Package, Search, Loader2, ChevronDown, Eye, X, Store, DollarSign, CreditCard, Calendar, Hash, ShoppingBag } from 'lucide-react';
+import { Package, Search, Loader2, Eye, X, Store, DollarSign, CreditCard, Calendar, Hash, ShoppingBag } from 'lucide-react';
+import { api } from '@/lib/api';
 
 interface OrderItem {
   name: string;
@@ -22,13 +23,6 @@ interface Order {
   orderItems: OrderItem[];
 }
 
-const allOrders: Order[] = [
-  { id: '1', orderNumber: 'ABF-2024-0003', status: 'PROCESSING', total: 899.90, items: 2, supplier: 'Fazenda Boa Vista', createdAt: '25/07/2026', payment: 'Pix', orderItems: [{ name: 'Semente de Soja RR 25kg', quantity: 2, price: 189.90 }, { name: 'Fertilizante NPK 10-10-10 50kg', quantity: 1, price: 520.10 }] },
-  { id: '2', orderNumber: 'ABF-2024-0002', status: 'SHIPPED', total: 3499.90, items: 1, supplier: 'Agro Tech Ltda', createdAt: '20/07/2026', payment: 'Cartão', orderItems: [{ name: 'Trator Agrícola 4x4 Motor Turbodiesel', quantity: 1, price: 3499.90 }] },
-  { id: '3', orderNumber: 'ABF-2024-0001', status: 'DELIVERED', total: 12589.90, items: 3, supplier: 'Sementes Brasil', createdAt: '15/07/2026', payment: 'Boleto', orderItems: [{ name: 'Fertilizante NPK 10-10-10 50kg', quantity: 3, price: 189.90 }, { name: 'Semente de Soja RR 25kg', quantity: 2, price: 349.90 }, { name: 'Adubo Orgânico 25kg', quantity: 5, price: 49.90 }] },
-  { id: '4', orderNumber: 'ABF-2024-0000', status: 'CANCELLED', total: 159.90, items: 1, supplier: 'Fazenda Boa Vista', createdAt: '10/07/2026', payment: 'Pix', orderItems: [{ name: 'Herbicida Glifosato 5L', quantity: 1, price: 159.90 }] },
-];
-
 const statusConfig: Record<string, { label: string; color: string }> = {
   PENDING: { label: 'Pendente', color: 'badge-yellow' },
   CONFIRMED: { label: 'Confirmado', color: 'badge-blue' },
@@ -38,25 +32,72 @@ const statusConfig: Record<string, { label: string; color: string }> = {
   CANCELLED: { label: 'Cancelado', color: 'badge-red' },
 };
 
-const statusFilters = ['Todos', 'Pendente', 'Processando', 'Enviado', 'Entregue', 'Cancelado'];
+const paymentLabels: Record<string, string> = {
+  CREDIT_CARD: 'Cartão',
+  DEBIT_CARD: 'Cartão',
+  PIX: 'Pix',
+  BOLETO: 'Boleto',
+  BANK_TRANSFER: 'Transferência',
+  DEPOSIT: 'Depósito',
+  CASH: 'Dinheiro',
+};
+
+const statusFilters = [
+  { label: 'Todos', value: '' },
+  { label: 'Pendente', value: 'PENDING' },
+  { label: 'Processando', value: 'PROCESSING' },
+  { label: 'Enviado', value: 'SHIPPED' },
+  { label: 'Entregue', value: 'DELIVERED' },
+  { label: 'Cancelado', value: 'CANCELLED' },
+];
+
+function formatDate(value: string) {
+  if (!value) return '—';
+  const d = new Date(value);
+  if (isNaN(d.getTime())) return value;
+  return d.toLocaleDateString('pt-BR');
+}
 
 export default function OrdersPage() {
+  const [orders, setOrders] = useState<Order[]>([]);
   const [search, setSearch] = useState('');
-  const [filter, setFilter] = useState('Todos');
-  const [isLoading, setIsLoading] = useState(false);
+  const [filter, setFilter] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
   const [detailOrder, setDetailOrder] = useState<Order | null>(null);
 
-  const filtered = allOrders.filter((order) => {
-    if (filter !== 'Todos') {
-      const statusMap: Record<string, string> = {
-        Pendente: 'PENDING',
-        Processando: 'PROCESSING',
-        Enviado: 'SHIPPED',
-        Entregue: 'DELIVERED',
-        Cancelado: 'CANCELLED',
-      };
-      if (statusMap[filter] !== order.status) return false;
-    }
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await api.get('/orders');
+        const data = res.data.data?.data ?? [];
+        setOrders(
+          data.map((o: any) => ({
+            id: o.id,
+            orderNumber: o.orderNumber,
+            status: o.status,
+            total: Number(o.total),
+            items: o.items?.length ?? 0,
+            supplier: o.supplier?.tradingName || o.supplier?.companyName || 'Fornecedor',
+            createdAt: formatDate(o.createdAt),
+            payment: paymentLabels[o.paymentMethod] || o.paymentMethod || '—',
+            orderItems: (o.items || []).map((i: any) => ({
+              name: i.product?.name || 'Produto',
+              quantity: i.quantity,
+              price: Number(i.unitPrice),
+            })),
+          })),
+        );
+      } catch {
+        setOrders([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    load();
+  }, []);
+
+  const filtered = orders.filter((order) => {
+    if (filter && order.status !== filter) return false;
     if (search && !order.orderNumber.toLowerCase().includes(search.toLowerCase())) return false;
     return true;
   });
@@ -84,15 +125,15 @@ export default function OrdersPage() {
         <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0">
           {statusFilters.map((f) => (
             <button
-              key={f}
-              onClick={() => setFilter(f)}
+              key={f.label}
+              onClick={() => setFilter(f.value)}
               className={`px-3 py-1.5 text-sm rounded-lg font-medium whitespace-nowrap transition-colors ${
-                filter === f
+                filter === f.value
                   ? 'bg-primary-600 text-white'
                   : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
               }`}
             >
-              {f}
+              {f.label}
             </button>
           ))}
         </div>
@@ -112,7 +153,7 @@ export default function OrdersPage() {
       ) : (
         <div className="space-y-4">
           {filtered.map((order) => {
-            const status = statusConfig[order.status] || statusConfig.PENDING;
+            const status = statusConfig[order.status] || { label: order.status, color: 'badge-gray' };
             return (
               <button
                 key={order.id}
@@ -209,7 +250,7 @@ export default function OrdersPage() {
               </div>
               <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
                 <p className="text-xs text-gray-500">Status</p>
-                <span className={'text-xs px-2 py-1 rounded-full font-medium ' + (statusConfig[detailOrder.status]?.color || '')}>
+                <span className={'text-xs px-2 py-1 rounded-full font-medium ' + (statusConfig[detailOrder.status]?.color || 'badge-gray')}>
                   {statusConfig[detailOrder.status]?.label || detailOrder.status}
                 </span>
               </div>

@@ -25,9 +25,9 @@ AgroBuscaFacil_v2/
 backend/src/
 ├── auth/           # Autenticação (JWT + refresh token, registro, roles)
 ├── users/          # Gestão de usuários e perfis
-├── admin/          # Painel administrativo (gestão geral)
+├── admin/          # Painel administrativo (gestão geral, configs do sistema)
 ├── suppliers/      # Cadastro, aprovação e perfis de fornecedores
-├── products/       # Produtos (CRUD, status, categorias)
+├── products/       # Produtos (CRUD, status, categorias, filtro por status)
 ├── services/       # Serviços agrícolas
 ├── categories/     # Categorias
 ├── banner/         # Banners da home
@@ -41,11 +41,12 @@ backend/src/
 ├── shipping/       # Configuração de fretes
 ├── dashboard/      # Métricas dos painéis
 ├── reports/        # Relatórios e exportação
-├── reviews/        # Avaliações e respostas
+├── reviews/        # Avaliações e respostas (público + moderação admin)
 ├── favorites/      # Favoritos
-├── chat/           # Chat em tempo real (REST + WebSocket gateway)
+├── promotions/     # Promoções de fornecedores (CRUD próprio + públicas)
+├── chat/           # Chat em tempo real (REST + WebSocket gateway; settings + rotas admin)
 ├── notifications/  # Sistema de notificações (sino, unread, ler)
-├── support/        # Suporte / Helpdesk (tickets, notas, anexos)
+├── support/        # Suporte / Helpdesk (tickets, notas, anexos, rotas admin)
 ├── search/         # Busca unificada (produtos, fornecedores, serviços)
 ├── common/         # Infra compartilhada (pipes, guards, interceptors)
 └── prisma/         # PrismaService
@@ -87,7 +88,7 @@ frontend/src/app/
 
 ### Banco de dados (Prisma — principais modelos)
 
-`User`, `CustomerProfile`, `SupplierProfile`, `Address`, `Category`, `Product`, `Service`, `Promotion`, `Coupon`, `WorkingHours`, `Cart`, `CartItem`, `Order`, `OrderItem`, `OrderCoupon`, `OrderStatusHistory`, `Review`, `ReviewResponse`, `Favorite`, `Conversation`, `Message`, `Payment`, `ChatSettings`, `Notification`, `Banner`, `AuditLog`, `SystemConfig`, `Report`, `SupportCategory`, `SupportType`, `SupportTicket`, `SupportAttachment`, `SupportTicketNote`, `SupportTicketStatusHistory`.
+`User`, `CustomerProfile`, `SupplierProfile`, `Address`, `Category`, `Product`, `Service`, `Promotion`, `Coupon`, `WorkingHours`, `Cart`, `CartItem`, `Order`, `OrderItem`, `OrderCoupon`, `OrderStatusHistory`, `Review`, `ReviewResponse`, `Favorite`, `Conversation`, `Message`, `Payment`, `ChatSettings`, `SystemSetting`, `Notification`, `Banner`, `AuditLog`, `SystemConfig`, `Report`, `SupportCategory`, `SupportType`, `SupportTicket`, `SupportAttachment`, `SupportTicketNote`, `SupportTicketStatusHistory`.
 
 ---
 
@@ -144,27 +145,35 @@ frontend/src/app/
 ### 🏪 Fornecedor
 - Painel administrativo próprio
 - Gerenciamento de produtos e serviços
-- Controle de promoções
+- Controle de promoções (CRUD, tipo percentual/fixo, vigência)
 - Gerenciamento de pedidos (novos pedidos chegam como notificação)
-- Chat com clientes (mensagens em tempo real)
-- Relatórios e métricas de vendas
-- Configuração de fretes e horários
-- Avaliações recebidas e respostas
+- Chat com clientes (mensagens em tempo real, status online/offline)
+- Configuração de fretes
+- Relatórios e métricas de vendas (receita, ticket médio, top produtos)
+- Avaliações recebidas (filtradas pelo seu fornecedor)
+- Configurações da loja e do chat (resposta automática, mensagem de boas-vindas)
 - Notificações de novos pedidos e mensagens
 
 ### 🔧 Administrador
-- Painel completo de administração
-- Gestão de usuários, fornecedores, produtos e pedidos
-- **Moderação de suporte/helpdesk** (tickets, notas internas, status)
-- **Banners da home**
-- Relatórios do sistema
+- Painel completo de administração (dashboard com métricas em tempo real)
+- Gestão de usuários (papel e status ativo/inativo)
+- Aprovação e bloqueio de fornecedores
+- Gestão de produtos (filtro por status, edição, exclusão)
+- Gestão de pedidos (status, cancelamento, exportação CSV)
+- Moderação de avaliações (aprovar/rejeitar/sinalizar)
+- Moderação de suporte/helpdesk (tickets, notas internas, status)
+- Chat da central de atendimento (conversas cliente x fornecedor)
+- Relatórios do sistema (receita, ticket médio, comissão, top produtos/fornecedores)
+- Configurações gerais do sistema (`SystemSetting` + `SystemConfig`)
 - Auditoria completa (AuditLog)
-- Configurações gerais (SystemConfig)
 - Notificações de mensagens de suporte
 
 ### ⚙️ Sistema
 - **Notificações** (`notifications/`): criadas automaticamente para mensagens novas, pedidos criados e respostas de suporte; badge de não-lidas e marcação como lida
-- **Chat em tempo real** via WebSocket (`/chat`, gateway com JWT) + persistência em banco
+- **Chat em tempo real** via WebSocket (`/chat`, gateway com JWT) + persistência em banco; conversas com cliente/fornecedor e **rotas admin** (`/chat/admin/conversations` para central de atendimento)
+- **Configurações do chat** (`/chat/settings`): status online, resposta automática e mensagens por fornecedor (`ChatSettings`)
+- **Configurações do sistema** (`/admin/settings`): chave-valor em `SystemSetting` (JSON)
+- **Promoções** (`/promotions`): listagem pública e CRUD por fornecedor (`/promotions/mine`)
 - **Pagamentos Stripe**: checkout session, webhook com `rawBody`, páginas de sucesso/falha
 - **Auditoria** de alterações em entidades sensíveis
 - **Soft delete** em todas as entidades
@@ -291,6 +300,34 @@ O arquivo de configuração Nginx de exemplo está em `docker/nginx/sites/agrobu
 
 Com o servidor rodando, acesse:
 - **Swagger**: http://localhost:4000/docs
+
+### Endpoints recentes (admin e fornecedor)
+
+| Método | Rota | Descrição |
+|---|---|---|
+| `GET` | `/suppliers/admin` | Lista fornecedores para gestão (admin) |
+| `PUT` | `/suppliers/:id/approval` | Aprova/rejeita cadastro de fornecedor |
+| `PUT` | `/users/:id` | Admin atualiza papel/status do usuário |
+| `PUT` | `/products/:id` / `DELETE /products/:id` | Edição/exclusão por admin |
+| `GET` | `/products?status=ALL` | Lista produtos com filtro de status (admin) |
+| `GET` | `/reviews/admin` | Avaliações para moderação (admin) |
+| `PUT` | `/reviews/:id/moderate` | Modera avaliação (aprovado/rejeitado/sinalizado) |
+| `GET` | `/orders/admin` | Lista pedidos (admin) |
+| `PUT` | `/orders/:id/status` | Atualiza status do pedido (admin) |
+| `GET` | `/promotions/mine` | Promoções do fornecedor autenticado |
+| `POST` / `PUT` / `DELETE` | `/promotions` | CRUD de promoções (fornecedor) |
+| `GET` / `PUT` | `/chat/settings` | Configurações do chat (fornecedor) |
+| `GET` / `PUT` | `/admin/settings` | Configurações do sistema (admin) |
+| `GET` | `/support/admin/tickets` | Tickets de suporte (admin) |
+| `PATCH` | `/support/admin/tickets/:id/status` | Muda status do ticket (admin) |
+| `POST` | `/support/admin/tickets/:id/notes` | Nota interna (admin) |
+| `POST` | `/support/admin/tickets/:id/respond` | Responde ticket (admin) |
+| `GET` | `/chat/admin/conversations` | Conversas da central de atendimento (admin) |
+| `GET` | `/chat/admin/conversations/:id` | Conversa com mensagens (admin) |
+| `POST` | `/chat/admin/conversations/:id/messages` | Envia mensagem como admin |
+| `POST` | `/chat/admin/conversations/:id/read` | Marca conversa como lida (admin) |
+
+> Convenção: a API responde no formato `{ data: ... }` (via `TransformInterceptor`), prefixo `/api/v1`. Rotas sem `admin` exigem JWT; as admin exigem `ADMIN`/`SUPER_ADMIN`.
 
 ## 🧪 Testes
 

@@ -20,7 +20,7 @@ import {
   SupportAttachmentType,
   SupportTicketStatus,
   NotificationType,
-} from "@prisma/client";
+} from "../generated/prisma/client";
 import { unlink } from "fs/promises";
 
 export interface SupportUploadedFiles {

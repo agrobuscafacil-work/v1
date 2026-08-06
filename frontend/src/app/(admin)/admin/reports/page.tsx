@@ -1,50 +1,142 @@
 'use client';
 
-import { useState } from 'react';
-import { BarChart3, Download, TrendingUp, Users, DollarSign, ShoppingBag, FileText, FileSpreadsheet } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { BarChart3, Download, TrendingUp, Users, DollarSign, ShoppingBag, FileText, FileSpreadsheet, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { api } from '@/lib/api';
 import { exportCSV, exportPDF } from '@/lib/export';
 
-const reportCards = [
-  { label: 'Vendas do Mês', value: 'R$ 127.890', change: '+15%', up: true, icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-950' },
-  { label: 'Usuários Ativos', value: '1.247', change: '+12%', up: true, icon: Users, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-950' },
-  { label: 'Pedidos Realizados', value: '892', change: '+23%', up: true, icon: ShoppingBag, color: 'text-orange-600', bg: 'bg-orange-50 dark:bg-orange-950' },
-  { label: 'Taxa Conversão', value: '3,2%', change: '-0,5%', up: false, icon: TrendingUp, color: 'text-rose-600', bg: 'bg-rose-50 dark:bg-rose-950' },
-];
+const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
-const monthlyData = [
-  { month: 'Jan', revenue: 85000, orders: 520 },
-  { month: 'Fev', revenue: 92000, orders: 580 },
-  { month: 'Mar', revenue: 78000, orders: 490 },
-  { month: 'Abr', revenue: 101000, orders: 620 },
-  { month: 'Mai', revenue: 95000, orders: 590 },
-  { month: 'Jun', revenue: 112000, orders: 710 },
-  { month: 'Jul', revenue: 127890, orders: 892 },
-];
+interface OrderItem {
+  id: string;
+  quantity: number;
+  unitPrice: number;
+  product: {
+    id: string;
+    name: string;
+    images: string[];
+  };
+}
+
+interface Order {
+  id: string;
+  orderNumber: string;
+  status: string;
+  paymentStatus: string;
+  paymentMethod: string;
+  subtotal: number;
+  discount: number;
+  shippingCost: number;
+  total: number;
+  createdAt: string;
+  items: OrderItem[];
+  customer: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  supplier: {
+    id: string;
+    companyName: string;
+    tradingName: string;
+  };
+}
 
 const reportTypes = [
   { id: 'financial', label: 'Relatório Financeiro', icon: DollarSign },
   { id: 'usage', label: 'Relatório de Uso', icon: Users },
-  { id: 'searches', label: 'Itens Mais Buscados', icon: TrendingUp },
-];
-
-const topSearches = [
-  { term: 'Semente de Soja', count: 1234, trend: 'up' },
-  { term: 'Fertilizante NPK', count: 987, trend: 'up' },
-  { term: 'Trator Agrícola', count: 876, trend: 'up' },
-  { term: 'Defensivo Glifosato', count: 654, trend: 'down' },
-  { term: 'Sistema de Irrigação', count: 543, trend: 'up' },
-  { term: 'Arado de Disco', count: 432, trend: 'down' },
-  { term: 'Semente de Milho', count: 398, trend: 'up' },
-  { term: 'Pulverizador Agrícola', count: 312, trend: 'up' },
+  { id: 'searches', label: 'Produtos Mais Vendidos', icon: TrendingUp },
 ];
 
 export default function AdminReportsPage() {
   const [activeReport, setActiveReport] = useState('financial');
-
-  const maxRevenue = Math.max(...monthlyData.map((d) => d.revenue));
-  const maxOrders = Math.max(...monthlyData.map((d) => d.orders));
   const [exportMenu, setExportMenu] = useState<string | null>(null);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      try {
+        const res = await api.get('/orders/admin', { params: { limit: 500 } });
+        const payload = res.data.data?.data ?? [];
+        setOrders(payload);
+      } catch (e: any) {
+        const msg = e?.response?.data?.message;
+        toast.error(typeof msg === 'string' ? msg : 'Erro ao carregar relatórios.');
+        setOrders([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
+
+  const delivered = orders.filter((o) => o.status === 'DELIVERED');
+  const revenueOrders = delivered.length > 0 ? delivered : orders;
+  const totalRevenue = revenueOrders.reduce((sum, o) => sum + Number(o.total), 0);
+  const totalOrders = orders.length;
+  const avgTicket = revenueOrders.length > 0 ? totalRevenue / revenueOrders.length : 0;
+  const commission = totalRevenue * 0.05;
+
+  const monthlyData = Array.from(
+    orders.reduce((map, o) => {
+      const d = new Date(o.createdAt);
+      const key = d.getFullYear() * 12 + d.getMonth();
+      const label = monthNames[d.getMonth()] + '/' + String(d.getFullYear()).slice(2);
+      const current = map.get(key);
+      if (current) {
+        current.revenue += Number(o.total);
+        current.orders += 1;
+      } else {
+        map.set(key, { month: label, revenue: Number(o.total), orders: 1 });
+      }
+      return map;
+    }, new Map<number, { month: string; revenue: number; orders: number }>()),
+  )
+    .sort((a, b) => a[0] - b[0])
+    .map(([, value]) => value);
+
+  const topProducts = Array.from(
+    orders.reduce((map, o) => {
+      (o.items || []).forEach((item) => {
+        const name = item.product?.name || 'Produto sem nome';
+        const current = map.get(name);
+        const revenue = Number(item.unitPrice) * Number(item.quantity);
+        if (current) {
+          current.quantity += Number(item.quantity);
+          current.revenue += revenue;
+        } else {
+          map.set(name, { name, quantity: Number(item.quantity), revenue });
+        }
+      });
+      return map;
+    }, new Map<string, { name: string; quantity: number; revenue: number }>()),
+  )
+    .map(([, value]) => value)
+    .sort((a, b) => b.quantity - a.quantity)
+    .slice(0, 10);
+
+  const topSuppliers = Array.from(
+    orders.reduce((map, o) => {
+      const name = o.supplier?.companyName || 'Fornecedor removido';
+      map.set(name, (map.get(name) || 0) + Number(o.total));
+      return map;
+    }, new Map<string, number>()),
+  )
+    .map(([name, total]) => ({ name, total }))
+    .sort((a, b) => b.total - a.total);
+
+  const maxRevenue = monthlyData.length ? Math.max(...monthlyData.map((d) => d.revenue)) : 1;
+  const maxOrders = monthlyData.length ? Math.max(...monthlyData.map((d) => d.orders)) : 1;
+
+  const reportCards = [
+    { label: 'Vendas do Mês', value: 'R$ ' + totalRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 }), change: '+15%', up: true, icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-950' },
+    { label: 'Usuários Ativos', value: '1.247', change: '+12%', up: true, icon: Users, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-950' },
+    { label: 'Pedidos Realizados', value: totalOrders.toLocaleString('pt-BR'), change: '+23%', up: true, icon: ShoppingBag, color: 'text-orange-600', bg: 'bg-orange-50 dark:bg-orange-950' },
+    { label: 'Taxa Conversão', value: '3,2%', change: '-0,5%', up: false, icon: TrendingUp, color: 'text-rose-600', bg: 'bg-rose-50 dark:bg-rose-950' },
+  ];
 
   function doExportCSV(report: string) {
     const filename = 'relatorio-' + report + '-' + new Date().toISOString().slice(0, 10);
@@ -59,7 +151,7 @@ export default function AdminReportsPage() {
       ];
       exportCSV(filename, ['Métrica', 'Valor'], usageData);
     } else if (report === 'searches') {
-      exportCSV(filename, ['#', 'Termo', 'Buscas'], topSearches.map((s, i) => [String(i + 1), s.term, String(s.count)]));
+      exportCSV(filename, ['#', 'Produto', 'Vendidos'], topProducts.map((s, i) => [String(i + 1), s.name, String(s.quantity)]));
     }
     setExportMenu(null);
     toast.success('CSV exportado');
@@ -72,12 +164,24 @@ export default function AdminReportsPage() {
 
   return (
     <div className="p-6 lg:p-8">
+      {loading && (
+        <div className="flex items-center justify-center gap-2 mb-6 text-gray-500">
+          <Loader2 className="h-5 w-5 animate-spin" />
+          <span className="text-sm">Carregando dados...</span>
+        </div>
+      )}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Relatórios</h1>
           <p className="text-sm text-gray-500 mt-1">Análises e métricas da plataforma.</p>
         </div>
       </div>
+
+      {!loading && orders.length === 0 && (
+        <div className="rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950 p-4 mb-8 text-sm text-amber-700 dark:text-amber-300">
+          Nenhum pedido encontrado. Os relatórios serão exibidos assim que houver vendas registradas.
+        </div>
+      )}
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {reportCards.map((card) => (
@@ -96,7 +200,7 @@ export default function AdminReportsPage() {
 
       <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 mb-8">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Receita & Pedidos (2026)</h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Receita & Pedidos</h2>
           <div className="relative">
             <button onClick={() => setExportMenu(exportMenu === 'chart' ? null : 'chart')} className="btn-outline text-sm gap-2 inline-flex items-center">
               <Download className="h-4 w-4" /> Exportar
@@ -110,21 +214,27 @@ export default function AdminReportsPage() {
           </div>
         </div>
         <div className="h-64">
-          <div className="flex items-end gap-2 h-48 mb-2">
-            {monthlyData.map((d) => (
-              <div key={d.month} className="flex-1 flex flex-col items-center gap-1">
-                <div className="w-full flex flex-col items-center gap-0.5">
-                  <div className="w-full bg-primary-500 dark:bg-primary-600 rounded-t" style={{ height: (d.revenue / maxRevenue) * 100 + '%' }} />
-                  <div className="w-full bg-emerald-400 dark:bg-emerald-500 rounded-t" style={{ height: (d.orders / maxOrders) * 80 + '%' }} />
-                </div>
-                <span className="text-xs text-gray-500">{d.month}</span>
+          {monthlyData.length === 0 ? (
+            <div className="h-48 flex items-center justify-center text-sm text-gray-500">Sem dados de vendas no período.</div>
+          ) : (
+            <>
+              <div className="flex items-end gap-2 h-48 mb-2">
+                {monthlyData.map((d) => (
+                  <div key={d.month} className="flex-1 flex flex-col items-center gap-1">
+                    <div className="w-full flex flex-col items-center gap-0.5">
+                      <div className="w-full bg-primary-500 dark:bg-primary-600 rounded-t" style={{ height: (d.revenue / maxRevenue) * 100 + '%' }} />
+                      <div className="w-full bg-emerald-400 dark:bg-emerald-500 rounded-t" style={{ height: (d.orders / maxOrders) * 80 + '%' }} />
+                    </div>
+                    <span className="text-xs text-gray-500">{d.month}</span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-          <div className="flex items-center gap-4 text-xs text-gray-500 justify-center">
-            <div className="flex items-center gap-1"><div className="h-3 w-3 rounded bg-primary-500" /> Receita</div>
-            <div className="flex items-center gap-1"><div className="h-3 w-3 rounded bg-emerald-400" /> Pedidos</div>
-          </div>
+              <div className="flex items-center gap-4 text-xs text-gray-500 justify-center">
+                <div className="flex items-center gap-1"><div className="h-3 w-3 rounded bg-primary-500" /> Receita</div>
+                <div className="flex items-center gap-1"><div className="h-3 w-3 rounded bg-emerald-400" /> Pedidos</div>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
@@ -168,19 +278,19 @@ export default function AdminReportsPage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="rounded-lg bg-gray-50 dark:bg-gray-800 p-4">
                 <p className="text-sm text-gray-500">Receita Total (mês)</p>
-                <p className="text-xl font-bold text-green-600">R$ 127.890,00</p>
+                <p className="text-xl font-bold text-green-600">R$ {totalRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
               </div>
               <div className="rounded-lg bg-gray-50 dark:bg-gray-800 p-4">
                 <p className="text-sm text-gray-500">Ticket Médio</p>
-                <p className="text-xl font-bold text-primary-600">R$ 143,37</p>
+                <p className="text-xl font-bold text-primary-600">R$ {avgTicket.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
               </div>
               <div className="rounded-lg bg-gray-50 dark:bg-gray-800 p-4">
                 <p className="text-sm text-gray-500">Comissões (5%)</p>
-                <p className="text-xl font-bold text-orange-600">R$ 6.394,50</p>
+                <p className="text-xl font-bold text-orange-600">R$ {commission.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
               </div>
               <div className="rounded-lg bg-gray-50 dark:bg-gray-800 p-4">
                 <p className="text-sm text-gray-500">Receita Líquida</p>
-                <p className="text-xl font-bold text-emerald-600">R$ 121.495,50</p>
+                <p className="text-xl font-bold text-emerald-600">R$ {(totalRevenue - commission).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
               </div>
             </div>
           </div>
@@ -226,7 +336,7 @@ export default function AdminReportsPage() {
         {activeReport === 'searches' && (
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Itens Mais Buscados</h2>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Produtos Mais Vendidos</h2>
               <div className="relative">
                 <button onClick={() => setExportMenu(exportMenu === 'searches' ? null : 'searches')} className="btn-outline text-sm gap-2 inline-flex items-center">
                   <Download className="h-4 w-4" /> Exportar
@@ -239,19 +349,47 @@ export default function AdminReportsPage() {
                 )}
               </div>
             </div>
-            <div className="space-y-2">
-              {topSearches.map((item, i) => (
-                <div key={item.term} className="flex items-center gap-3 py-2 border-b border-gray-100 dark:border-gray-800 last:border-0">
-                  <span className="text-xs font-bold text-gray-400 w-5">{i + 1}</span>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">{item.term}</p>
-                    <div className="h-1.5 rounded-full bg-gray-100 dark:bg-gray-800 mt-1">
-                      <div className="h-1.5 rounded-full bg-primary-500" style={{ width: (item.count / topSearches[0].count) * 100 + '%' }} />
+            {topProducts.length === 0 ? (
+              <div className="py-8 text-center text-sm text-gray-500">Nenhum produto vendido no período.</div>
+            ) : (
+              <div className="space-y-2">
+                {topProducts.map((item, i) => (
+                  <div key={item.name} className="flex items-center gap-3 py-2 border-b border-gray-100 dark:border-gray-800 last:border-0">
+                    <span className="text-xs font-bold text-gray-400 w-5">{i + 1}</span>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">{item.name}</p>
+                      <div className="h-1.5 rounded-full bg-gray-100 dark:bg-gray-800 mt-1">
+                        <div className="h-1.5 rounded-full bg-primary-500" style={{ width: (item.quantity / topProducts[0].quantity) * 100 + '%' }} />
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm text-gray-500">{item.quantity} vendidos</p>
+                      <p className="text-xs text-gray-400">R$ {item.revenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
                     </div>
                   </div>
-                  <span className="text-sm text-gray-500">{item.count}</span>
+                ))}
+              </div>
+            )}
+            <div className="mt-6">
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Fornecedores com Maior Receita</h3>
+              {topSuppliers.length === 0 ? (
+                <p className="text-sm text-gray-500">Nenhum fornecedor com vendas no período.</p>
+              ) : (
+                <div className="space-y-2">
+                  {topSuppliers.map((item, i) => (
+                    <div key={item.name} className="flex items-center gap-3 py-2 border-b border-gray-100 dark:border-gray-800 last:border-0">
+                      <span className="text-xs font-bold text-gray-400 w-5">{i + 1}</span>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">{item.name}</p>
+                        <div className="h-1.5 rounded-full bg-gray-100 dark:bg-gray-800 mt-1">
+                          <div className="h-1.5 rounded-full bg-emerald-400" style={{ width: (item.total / topSuppliers[0].total) * 100 + '%' }} />
+                        </div>
+                      </div>
+                      <span className="text-sm text-gray-500">R$ {item.total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              )}
             </div>
           </div>
         )}

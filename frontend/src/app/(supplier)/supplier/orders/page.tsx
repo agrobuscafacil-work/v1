@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import { ShoppingBag, Search, Download, Eye, X, Package, User, DollarSign, CreditCard, Calendar, Hash } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { ShoppingBag, Search, Download, Eye, X, Package, User, DollarSign, CreditCard, Calendar, Hash, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { api } from '@/lib/api';
 
 interface OrderItem {
   name: string;
@@ -22,19 +23,6 @@ interface Order {
   orderItems: OrderItem[];
 }
 
-const orders: Order[] = [
-  { id: '1', orderNumber: 'ABF-2024-0010', status: 'PENDING', total: 45990.00, items: 1, customer: 'Lucas Mendes', createdAt: '29/07/2026', payment: 'Boleto', orderItems: [{ name: 'Drone Agrícola Pulverizador', quantity: 1, price: 45990.00 }] },
-  { id: '2', orderNumber: 'ABF-2024-0009', status: 'PENDING', total: 1899.90, items: 2, customer: 'João Silva', createdAt: '29/07/2026', payment: 'Pix', orderItems: [{ name: 'Semente de Soja RR 25kg', quantity: 1, price: 189.90 }, { name: 'Fertilizante NPK 10-10-10 50kg', quantity: 2, price: 1710.00 }] },
-  { id: '3', orderNumber: 'ABF-2024-0008', status: 'PROCESSING', total: 7890.00, items: 2, customer: 'Fernanda Almeida', createdAt: '28/07/2026', payment: 'Cartão', orderItems: [{ name: 'Conjunto de Grade Aradora', quantity: 1, price: 7890.00 }] },
-  { id: '4', orderNumber: 'ABF-2024-0007', status: 'PROCESSING', total: 3499.90, items: 1, customer: 'Maria Oliveira', createdAt: '28/07/2026', payment: 'Pix', orderItems: [{ name: 'Arado de Disco 4 Discos', quantity: 1, price: 3499.90 }] },
-  { id: '5', orderNumber: 'ABF-2024-0006', status: 'SHIPPED', total: 259.90, items: 1, customer: 'Juliana Costa', createdAt: '27/07/2026', payment: 'Pix', orderItems: [{ name: 'Semente de Milho Híbrido 5kg', quantity: 1, price: 259.90 }] },
-  { id: '6', orderNumber: 'ABF-2024-0005', status: 'SHIPPED', total: 567.50, items: 1, customer: 'Carlos Pereira', createdAt: '27/07/2026', payment: 'Cartão', orderItems: [{ name: 'Herbicida Glifosato 5L', quantity: 1, price: 567.50 }] },
-  { id: '7', orderNumber: 'ABF-2024-0004', status: 'DELIVERED', total: 12589.90, items: 3, customer: 'Ana Souza', createdAt: '25/07/2026', payment: 'Boleto', orderItems: [{ name: 'Fertilizante NPK 10-10-10 50kg', quantity: 3, price: 189.90 }, { name: 'Semente de Soja RR 25kg', quantity: 2, price: 349.90 }, { name: 'Adubo Orgânico 25kg', quantity: 5, price: 49.90 }] },
-  { id: '8', orderNumber: 'ABF-2024-0003', status: 'DELIVERED', total: 18990.00, items: 1, customer: 'Roberto Lima', createdAt: '24/07/2026', payment: 'Boleto', orderItems: [{ name: 'Silo Metálico 5000Kg', quantity: 1, price: 18990.00 }] },
-  { id: '9', orderNumber: 'ABF-2024-0002', status: 'CANCELLED', total: 2599.80, items: 2, customer: 'Pedro Santos', createdAt: '22/07/2026', payment: 'Cartão', orderItems: [{ name: 'Kit Irrigação por Gotejamento', quantity: 1, price: 1299.90 }, { name: 'Conector para Mangueira', quantity: 5, price: 47.00 }] },
-  { id: '10', orderNumber: 'ABF-2024-0001', status: 'CANCELLED', total: 112.30, items: 1, customer: 'João Silva', createdAt: '20/07/2026', payment: 'Pix', orderItems: [{ name: 'Fungicida Tratamento Sementes 1L', quantity: 1, price: 112.30 }] },
-];
-
 const statusLabels: Record<string, { label: string; color: string }> = {
   PENDING: { label: 'Pendente', color: 'text-yellow-600 bg-yellow-50 dark:bg-yellow-950' },
   CONFIRMED: { label: 'Confirmado', color: 'text-blue-600 bg-blue-50 dark:bg-blue-950' },
@@ -44,10 +32,65 @@ const statusLabels: Record<string, { label: string; color: string }> = {
   CANCELLED: { label: 'Cancelado', color: 'text-red-600 bg-red-50 dark:bg-red-950' },
 };
 
+const paymentLabels: Record<string, string> = {
+  CREDIT_CARD: 'Cartão',
+  DEBIT_CARD: 'Cartão',
+  PIX: 'Pix',
+  BOLETO: 'Boleto',
+  BANK_TRANSFER: 'Transferência',
+  DEPOSIT: 'Depósito',
+  CASH: 'Dinheiro',
+};
+
+const statusOptions = ['PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED', 'REFUNDED'];
+
+function formatDate(value: string) {
+  if (!value) return '—';
+  const d = new Date(value);
+  if (isNaN(d.getTime())) return value;
+  return d.toLocaleDateString('pt-BR');
+}
+
 export default function SupplierOrdersPage() {
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all');
   const [detailOrder, setDetailOrder] = useState<Order | null>(null);
+  const [newStatus, setNewStatus] = useState('');
+  const [savingStatus, setSavingStatus] = useState(false);
+
+  const load = async () => {
+    try {
+      const res = await api.get('/orders');
+      const data = res.data.data?.data ?? [];
+      setOrders(
+        data.map((o: any) => ({
+          id: o.id,
+          orderNumber: o.orderNumber,
+          customer: o.customer?.name || 'Cliente',
+          total: Number(o.total),
+          items: o.items?.length ?? 0,
+          status: o.status,
+          payment: paymentLabels[o.paymentMethod] || o.paymentMethod || '—',
+          createdAt: formatDate(o.createdAt),
+          orderItems: (o.items || []).map((i: any) => ({
+            name: i.product?.name || 'Produto',
+            quantity: i.quantity,
+            price: Number(i.unitPrice),
+          })),
+        })),
+      );
+    } catch {
+      setOrders([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    load();
+  }, []);
 
   const filtered = orders.filter((o) => {
     if (filter !== 'all' && o.status !== filter) return false;
@@ -56,7 +99,37 @@ export default function SupplierOrdersPage() {
   });
 
   const handleExport = () => {
+    const rows = filtered.map((o) => [o.orderNumber, o.customer, o.items, o.total, o.status, o.createdAt].join(';'));
+    const csv = ['Pedido;Cliente;Itens;Total;Status;Data', ...rows].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `pedidos-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
     toast.success('Relatório exportado com sucesso!');
+  };
+
+  const openDetail = (order: Order) => {
+    setDetailOrder(order);
+    setNewStatus(order.status);
+  };
+
+  const handleStatusChange = async () => {
+    if (!detailOrder || !newStatus || newStatus === detailOrder.status) return;
+    setSavingStatus(true);
+    try {
+      await api.put(`/orders/${detailOrder.id}/status`, { status: newStatus });
+      toast.success('Status atualizado com sucesso!');
+      setDetailOrder((prev) => (prev ? { ...prev, status: newStatus } : prev));
+      load();
+    } catch (e: any) {
+      const msg = e?.response?.data?.message;
+      toast.error(typeof msg === 'string' ? msg : 'Erro ao atualizar o status.');
+    } finally {
+      setSavingStatus(false);
+    }
   };
 
   return (
@@ -78,12 +151,9 @@ export default function SupplierOrdersPage() {
         </div>
         <select value={filter} onChange={(e) => setFilter(e.target.value)} className="input-field text-sm w-full sm:w-44">
           <option value="all">Todos os status</option>
-          <option value="PENDING">Pendente</option>
-          <option value="CONFIRMED">Confirmado</option>
-          <option value="PROCESSING">Processando</option>
-          <option value="SHIPPED">Enviado</option>
-          <option value="DELIVERED">Entregue</option>
-          <option value="CANCELLED">Cancelado</option>
+          {statusOptions.map((s) => (
+            <option key={s} value={s}>{statusLabels[s]?.label || s}</option>
+          ))}
         </select>
       </div>
 
@@ -104,7 +174,7 @@ export default function SupplierOrdersPage() {
             </thead>
             <tbody>
               {filtered.map((order) => {
-                const statusInfo = statusLabels[order.status] || statusLabels.PENDING;
+                const statusInfo = statusLabels[order.status] || { label: order.status, color: 'text-gray-500 bg-gray-100 dark:bg-gray-800' };
                 return (
                   <tr key={order.id} className="border-b border-gray-50 dark:border-gray-800/50 hover:bg-gray-50 dark:hover:bg-gray-800/50">
                     <td className="p-4 font-medium text-gray-900 dark:text-white">{order.orderNumber}</td>
@@ -115,7 +185,7 @@ export default function SupplierOrdersPage() {
                     <td className="p-4"><span className={`text-xs px-2 py-1 rounded-full font-medium ${statusInfo.color}`}>{statusInfo.label}</span></td>
                     <td className="p-4 text-gray-500">{order.createdAt}</td>
                     <td className="p-4">
-                      <button className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-primary-600" onClick={() => setDetailOrder(order)}>
+                      <button className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-primary-600" onClick={() => openDetail(order)}>
                         <Eye className="h-4 w-4" />
                       </button>
                     </td>
@@ -125,7 +195,12 @@ export default function SupplierOrdersPage() {
             </tbody>
           </table>
         </div>
-        {filtered.length === 0 && (
+        {loading && (
+          <div className="flex items-center justify-center py-12 gap-2 text-gray-500">
+            <Loader2 className="h-5 w-5 animate-spin" /> Carregando pedidos...
+          </div>
+        )}
+        {!loading && filtered.length === 0 && (
           <div className="text-center py-12">
             <ShoppingBag className="h-10 w-10 text-gray-300 mx-auto mb-3" />
             <p className="text-gray-500">Nenhum pedido encontrado.</p>
@@ -203,10 +278,21 @@ export default function SupplierOrdersPage() {
                 </div>
               </div>
               <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
-                <p className="text-xs text-gray-500">Status</p>
-                <span className={'text-xs px-2 py-1 rounded-full font-medium ' + (statusLabels[detailOrder.status]?.color || '')}>
-                  {statusLabels[detailOrder.status]?.label || detailOrder.status}
-                </span>
+                <p className="text-xs text-gray-500">Atualizar Status</p>
+                <div className="flex items-center gap-2">
+                  <select value={newStatus} onChange={(e) => setNewStatus(e.target.value)} className="input-field text-xs py-1.5">
+                    {statusOptions.map((s) => (
+                      <option key={s} value={s}>{statusLabels[s]?.label || s}</option>
+                    ))}
+                  </select>
+                  <button
+                    onClick={handleStatusChange}
+                    disabled={savingStatus || newStatus === detailOrder.status}
+                    className="btn-primary text-xs px-3 py-1.5 gap-1"
+                  >
+                    {savingStatus ? <Loader2 className="h-3 w-3 animate-spin" /> : null} Salvar
+                  </button>
+                </div>
               </div>
             </div>
             <div className="flex justify-end p-5 border-t border-gray-100 dark:border-gray-800">

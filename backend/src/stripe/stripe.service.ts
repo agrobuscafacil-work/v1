@@ -36,6 +36,7 @@ export class StripeService {
   }
 
   async createCheckoutSession(
+    userId: string,
     items: StripeLineItem[],
     successUrl: string,
     cancelUrl: string,
@@ -45,9 +46,29 @@ export class StripeService {
       throw new BadRequestException('Stripe não configurado no servidor');
     }
 
+    let lineItems: StripeLineItem[];
+    if (orderId) {
+      const order = await this.prisma.order.findUnique({
+        where: { id: orderId },
+        include: { items: { include: { product: { select: { id: true, name: true } } } } },
+      });
+      if (!order) throw new BadRequestException('Order not found');
+      if (order.customerId !== userId) {
+        throw new BadRequestException('You do not own this order');
+      }
+      lineItems = order.items.map((item) => ({
+        name: item.product?.name || 'Produto',
+        priceInCents: Math.round(Number(item.unitPrice) * 100),
+        quantity: item.quantity,
+      }));
+    } else {
+      if (!items?.length) throw new BadRequestException('No items provided');
+      lineItems = items;
+    }
+
     const session = await this.stripe.checkout.sessions.create({
       mode: 'payment',
-      line_items: items.map((item) => ({
+      line_items: lineItems.map((item) => ({
         price_data: {
           currency: item.currency || this.currency,
           product_data: {
@@ -71,11 +92,21 @@ export class StripeService {
     };
   }
 
-  async retrieveSession(sessionId: string) {
+  async retrieveSession(sessionId: string, userId?: string) {
     if (!this.isConfigured()) {
       throw new BadRequestException('Stripe não configurado no servidor');
     }
     const session = await this.stripe.checkout.sessions.retrieve(sessionId);
+    const orderId = session.metadata?.orderId;
+    if (userId && orderId) {
+      const order = await this.prisma.order.findUnique({
+        where: { id: orderId },
+        select: { customerId: true },
+      });
+      if (!order || order.customerId !== userId) {
+        throw new BadRequestException('You do not have access to this session');
+      }
+    }
     return {
       id: session.id,
       status: session.status,
@@ -125,6 +156,22 @@ export class StripeService {
 
     const method = this.mapMethod(session.payment_method_types?.[0]);
     const amount = (session.amount_total || 0) / 100;
+
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+      select: { total: true },
+    });
+    if (!order) {
+      this.logger.warn(`Order ${orderId} not found for checkout ${session.id}`);
+      return;
+    }
+    const expectedCents = Math.round(Number(order.total) * 100);
+    if (session.amount_total && Math.abs((session.amount_total || 0) - expectedCents) > 1) {
+      this.logger.warn(
+        `Amount mismatch for order ${orderId}: paid ${session.amount_total} expected ${expectedCents}`,
+      );
+      return;
+    }
 
     const existing = await this.prisma.payment
       .findUnique({ where: { orderId } })

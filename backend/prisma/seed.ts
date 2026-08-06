@@ -1,7 +1,11 @@
-import { PrismaClient, UserRole, SupplierStatus, ProductStatus } from '@prisma/client';
+import { PrismaClient, UserRole, SupplierStatus, ProductStatus } from '../src/generated/prisma/client';
+import { createPrismaPgAdapter } from '../src/common/utils/prisma-adapter';
 import * as bcrypt from 'bcrypt';
+import 'dotenv/config';
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({
+  adapter: createPrismaPgAdapter(process.env.DATABASE_URL, process.env.DATABASE_SSL === 'true'),
+});
 
 const SUPPLIERS = [
   { companyName: 'AgroQuímica Brasil', tradingName: 'AgroQuímica', email: 'contato@agroquimica.com.br', user: 'Carlos Almeida', document: '00.000.001/0001-01', phone: '(11) 91111-1111', city: 'Ribeirão Preto', state: 'SP', category: 'insumos', status: SupplierStatus.APPROVED, rating: 4.8, products: 78 },

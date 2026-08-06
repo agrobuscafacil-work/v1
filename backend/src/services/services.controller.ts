@@ -20,7 +20,7 @@ export class ServicesController {
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Create a service' })
   async create(@CurrentUser() user: any, @Body() dto: CreateServiceDto) {
-    return this.servicesService.create(user.supplierId || user.id, dto);
+    return this.servicesService.create(user.id, dto);
   }
 
   @Get()
@@ -50,8 +50,8 @@ export class ServicesController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Update service' })
-  async update(@Param('id') id: string, @Body() dto: UpdateServiceDto) {
-    return this.servicesService.update(id, dto);
+  async update(@CurrentUser() user: any, @Param('id') id: string, @Body() dto: UpdateServiceDto) {
+    return this.servicesService.update(id, dto, user);
   }
 
   @Delete(':id')
@@ -59,7 +59,7 @@ export class ServicesController {
   @ApiBearerAuth('JWT-auth')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Soft-delete service' })
-  async remove(@Param('id') id: string) {
-    return this.servicesService.remove(id);
+  async remove(@CurrentUser() user: any, @Param('id') id: string) {
+    return this.servicesService.remove(id, user);
   }
 }

@@ -1,32 +1,65 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Search, Star, MapPin, Store, Package, ArrowRight, SlidersHorizontal, X } from 'lucide-react';
+import { Search, Star, MapPin, Store, Package, ArrowRight, SlidersHorizontal, X, Loader2 } from 'lucide-react';
+import { api } from '@/lib/api';
 
-const MOCK_SUPPLIERS = Array.from({ length: 9 }, (_, i) => ({
-  id: String(i + 1),
-  companyName: ['AgroQuímica Brasil', 'Máquinas Agrícolas LTDA', 'Sementes Selecta', 'TechIrriga', 'Defensivos AgroFort', 'Pecuária Brasil', 'Fertilizantes Natural', 'Armazenagem Total', 'Logística Agro'][i],
-  tradingName: `Fornecedor ${i + 1}`,
-  rating: parseFloat((4 + ((i * 3) % 9) / 10).toFixed(1)),
-  totalReviews: ((i * 31) % 280) + 15,
-  totalProducts: ((i * 47) % 360) + 30,
-  city: ['Ribeirão Preto', 'Londrina', 'Cuiabá', 'Campinas', 'Uberlândia', 'Campo Grande', 'Goiânia', 'Passo Fundo', 'Sorriso'][i],
-  state: ['SP', 'PR', 'MT', 'SP', 'MG', 'MS', 'GO', 'RS', 'MT'][i],
-  featured: i < 3,
-  badges: ['Orgânico', 'Premium', 'Verificado'][i % 3],
-}));
+interface DisplaySupplier {
+  id: string;
+  companyName: string;
+  tradingName: string;
+  rating: number;
+  totalReviews: number;
+  totalProducts: number;
+  city: string;
+  state: string;
+  featured: boolean;
+  badges: string[];
+}
 
 export default function SuppliersPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedState, setSelectedState] = useState('');
   const [minRating, setMinRating] = useState(0);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [suppliers, setSuppliers] = useState<DisplaySupplier[]>([]);
 
   const states = ['SP', 'PR', 'MT', 'MG', 'MS', 'GO', 'RS', 'SC', 'BA', 'PA'];
 
-  const filtered = MOCK_SUPPLIERS.filter((s) => {
-    if (searchTerm && !s.companyName.toLowerCase().includes(searchTerm.toLowerCase())) return false;
+  useEffect(() => {
+    const load = async () => {
+      setIsLoading(true);
+      try {
+        const params: Record<string, string | number> = { limit: 50 };
+        if (searchTerm) params.search = searchTerm;
+        const res = await api.get('/suppliers', { params });
+        const data = res.data.data?.data ?? [];
+        setSuppliers(
+          data.map((s: any) => ({
+            id: s.id,
+            companyName: s.companyName,
+            tradingName: s.tradingName || '',
+            rating: Number(s.rating) || 0,
+            totalReviews: Number(s.totalReviews) || 0,
+            totalProducts: Number(s.totalProducts) || 0,
+            city: s.addresses?.[0]?.city || '',
+            state: s.addresses?.[0]?.state || '',
+            featured: !!s.featured,
+            badges: Array.isArray(s.badges) ? s.badges : [],
+          })),
+        );
+      } catch {
+        setSuppliers([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    load();
+  }, [searchTerm]);
+
+  const filtered = suppliers.filter((s) => {
     if (selectedState && s.state !== selectedState) return false;
     if (minRating && s.rating < minRating) return false;
     return true;
@@ -37,7 +70,7 @@ export default function SuppliersPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Fornecedores</h1>
-          <p className="text-sm text-gray-500">{MOCK_SUPPLIERS.length} fornecedores cadastrados</p>
+          <p className="text-sm text-gray-500">{suppliers.length} fornecedores cadastrados</p>
         </div>
         <button onClick={() => setMobileFiltersOpen(true)} className="btn-outline lg:hidden">
           <SlidersHorizontal className="h-4 w-4" />
@@ -97,7 +130,11 @@ export default function SuppliersPage() {
         </aside>
 
         <div className="flex-1">
-          {filtered.length === 0 ? (
+          {isLoading ? (
+            <div className="flex items-center justify-center py-16">
+              <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
+            </div>
+          ) : filtered.length === 0 ? (
             <div className="text-center py-16">
               <Store className="h-16 w-16 mx-auto text-gray-300 dark:text-gray-600 mb-4" />
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Nenhum fornecedor encontrado</h3>
@@ -119,7 +156,7 @@ export default function SuppliersPage() {
                       <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 transition-colors">
                         {supplier.companyName}
                       </h3>
-                      <p className="text-sm text-gray-500">{supplier.tradingName}</p>
+                      {supplier.tradingName && <p className="text-sm text-gray-500">{supplier.tradingName}</p>}
                     </div>
                     {supplier.featured && (
                       <span className="badge-yellow shrink-0">Destaque</span>
@@ -129,7 +166,7 @@ export default function SuppliersPage() {
                   <div className="flex items-center gap-4 text-sm mb-3">
                     <span className="flex items-center gap-1">
                       <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      <span className="font-medium text-gray-900 dark:text-white">{supplier.rating}</span>
+                      <span className="font-medium text-gray-900 dark:text-white">{supplier.rating.toFixed(1)}</span>
                       <span className="text-gray-500">({supplier.totalReviews})</span>
                     </span>
                     <span className="flex items-center gap-1 text-gray-500">
@@ -140,12 +177,14 @@ export default function SuppliersPage() {
 
                   <p className="flex items-center gap-1 text-sm text-gray-500 mb-3">
                     <MapPin className="h-4 w-4" />
-                    {supplier.city}, {supplier.state}
+                    {supplier.city || supplier.state ? `${supplier.city}, ${supplier.state}` : 'Localização não informada'}
                   </p>
 
-                  {supplier.badges && (
+                  {supplier.badges.length > 0 && (
                     <div className="flex gap-2">
-                      <span className="badge-green">{supplier.badges}</span>
+                      {supplier.badges.slice(0, 3).map((badge) => (
+                        <span key={badge} className="badge-green">{badge}</span>
+                      ))}
                     </div>
                   )}
                 </Link>
@@ -189,3 +228,4 @@ export default function SuppliersPage() {
     </div>
   );
 }
+

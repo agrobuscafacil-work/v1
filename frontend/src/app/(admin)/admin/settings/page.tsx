@@ -1,18 +1,85 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Settings, Save, Loader2, Bell, Shield, Globe, Palette, CreditCard } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { api } from '@/lib/api';
+
+const DEFAULTS: Record<string, any> = {
+  platformName: 'AgroBuscaFácil',
+  platformDescription: 'Marketplace do agronegócio brasileiro.',
+  baseUrl: 'https://agrobuscafacil.com.br',
+  defaultCommission: 5,
+  notificationsEmail: true,
+  notificationsNewOrders: true,
+  notificationsSupplierApproval: true,
+  notificationsWeeklyReports: true,
+  security2fa: true,
+  securityAutoLock: true,
+  securityAuditLogs: true,
+  theme: 'system',
+  primaryColor: '#059669',
+  paymentGateway: 'stripe',
+  paymentMaxInstallments: 12,
+  paymentMinInstallment: 100,
+};
 
 export default function AdminSettingsPage() {
   const [isSaving, setIsSaving] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('general');
+  const [settings, setSettings] = useState<Record<string, any>>(DEFAULTS);
+
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      try {
+        const res = await api.get('/admin/settings');
+        setSettings({ ...DEFAULTS, ...(res.data.data ?? {}) });
+      } catch (e: any) {
+        toast.error(e?.response?.data?.message || 'Erro ao carregar configurações');
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
+
+  const setField = (key: string, value: any) => {
+    setSettings((prev) => ({ ...prev, [key]: value }));
+  };
 
   const handleSave = async () => {
     setIsSaving(true);
-    await new Promise((r) => setTimeout(r, 1000));
-    toast.success('Configurações salvas!');
-    setIsSaving(false);
+    try {
+      const payload = {
+        settings: {
+          platformName: settings.platformName,
+          platformDescription: settings.platformDescription,
+          baseUrl: settings.baseUrl,
+          defaultCommission: Number(settings.defaultCommission),
+          notificationsEmail: settings.notificationsEmail,
+          notificationsNewOrders: settings.notificationsNewOrders,
+          notificationsSupplierApproval: settings.notificationsSupplierApproval,
+          notificationsWeeklyReports: settings.notificationsWeeklyReports,
+          security2fa: settings.security2fa,
+          securityAutoLock: settings.securityAutoLock,
+          securityAuditLogs: settings.securityAuditLogs,
+          theme: settings.theme,
+          primaryColor: settings.primaryColor,
+          paymentGateway: settings.paymentGateway,
+          paymentMaxInstallments: Number(settings.paymentMaxInstallments),
+          paymentMinInstallment: Number(settings.paymentMinInstallment),
+        },
+      };
+      const res = await api.put('/admin/settings', payload);
+      setSettings({ ...DEFAULTS, ...(res.data.data ?? {}) });
+      toast.success('Configurações salvas!');
+    } catch (e: any) {
+      toast.error(e?.response?.data?.message || 'Erro ao salvar configurações');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const tabs = [
@@ -22,6 +89,16 @@ export default function AdminSettingsPage() {
     { id: 'appearance', label: 'Aparência', icon: Palette },
     { id: 'payment', label: 'Pagamentos', icon: CreditCard },
   ];
+
+  if (loading) {
+    return (
+      <div className="p-6 lg:p-8 max-w-4xl">
+        <div className="flex items-center justify-center py-32">
+          <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 lg:p-8 max-w-4xl">
@@ -54,19 +131,19 @@ export default function AdminSettingsPage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2">
                 <label className="label-field">Nome da Plataforma</label>
-                <input type="text" className="input-field" defaultValue="AgroBuscaFácil" />
+                <input type="text" className="input-field" value={settings.platformName} onChange={(e) => setField('platformName', e.target.value)} />
               </div>
               <div className="col-span-2">
                 <label className="label-field">Descrição</label>
-                <textarea rows={3} className="input-field resize-none" defaultValue="Marketplace do agronegócio brasileiro." />
+                <textarea rows={3} className="input-field resize-none" value={settings.platformDescription} onChange={(e) => setField('platformDescription', e.target.value)} />
               </div>
               <div>
                 <label className="label-field">URL Base</label>
-                <input type="text" className="input-field" defaultValue="https://agrobuscafacil.com.br" />
+                <input type="text" className="input-field" value={settings.baseUrl} onChange={(e) => setField('baseUrl', e.target.value)} />
               </div>
               <div>
                 <label className="label-field">Comissão Padrão (%)</label>
-                <input type="number" className="input-field" defaultValue={5} />
+                <input type="number" className="input-field" value={Number(settings.defaultCommission)} onChange={(e) => setField('defaultCommission', e.target.value)} />
               </div>
             </div>
           </div>
@@ -77,17 +154,17 @@ export default function AdminSettingsPage() {
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Configurações de Notificações</h2>
             <div className="space-y-3">
               {[
-                { label: 'Notificações por e-mail', desc: 'Enviar e-mails automáticos para usuários' },
-                { label: 'Novos pedidos', desc: 'Notificar fornecedores sobre novos pedidos' },
-                { label: 'Aprovação de cadastro', desc: 'Notificar quando um fornecedor for aprovado' },
-                { label: 'Relatórios semanais', desc: 'Enviar relatórios de desempenho toda semana' },
+                { key: 'notificationsEmail', label: 'Notificações por e-mail', desc: 'Enviar e-mails automáticos para usuários' },
+                { key: 'notificationsNewOrders', label: 'Novos pedidos', desc: 'Notificar fornecedores sobre novos pedidos' },
+                { key: 'notificationsSupplierApproval', label: 'Aprovação de cadastro', desc: 'Notificar quando um fornecedor for aprovado' },
+                { key: 'notificationsWeeklyReports', label: 'Relatórios semanais', desc: 'Enviar relatórios de desempenho toda semana' },
               ].map((item) => (
                 <label key={item.label} className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
                   <div>
                     <p className="text-sm font-medium text-gray-900 dark:text-white">{item.label}</p>
                     <p className="text-xs text-gray-500">{item.desc}</p>
                   </div>
-                  <input type="checkbox" defaultChecked className="accent-primary-600 h-4 w-4" />
+                  <input type="checkbox" checked={!!settings[item.key]} onChange={(e) => setField(item.key, e.target.checked)} className="accent-primary-600 h-4 w-4" />
                 </label>
               ))}
             </div>
@@ -99,16 +176,16 @@ export default function AdminSettingsPage() {
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Configurações de Segurança</h2>
             <div className="space-y-3">
               {[
-                { label: 'Autenticação de dois fatores', desc: 'Exigir 2FA para administradores' },
-                { label: 'Bloqueio automático', desc: 'Bloquear conta após 5 tentativas de login' },
-                { label: 'Logs de auditoria', desc: 'Registrar todas as ações de administradores' },
+                { key: 'security2fa', label: 'Autenticação de dois fatores', desc: 'Exigir 2FA para administradores' },
+                { key: 'securityAutoLock', label: 'Bloqueio automático', desc: 'Bloquear conta após 5 tentativas de login' },
+                { key: 'securityAuditLogs', label: 'Logs de auditoria', desc: 'Registrar todas as ações de administradores' },
               ].map((item) => (
                 <label key={item.label} className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
                   <div>
                     <p className="text-sm font-medium text-gray-900 dark:text-white">{item.label}</p>
                     <p className="text-xs text-gray-500">{item.desc}</p>
                   </div>
-                  <input type="checkbox" defaultChecked className="accent-primary-600 h-4 w-4" />
+                  <input type="checkbox" checked={!!settings[item.key]} onChange={(e) => setField(item.key, e.target.checked)} className="accent-primary-600 h-4 w-4" />
                 </label>
               ))}
             </div>
@@ -121,7 +198,7 @@ export default function AdminSettingsPage() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="label-field">Tema Padrão</label>
-                <select className="input-field">
+                <select className="input-field" value={settings.theme} onChange={(e) => setField('theme', e.target.value)}>
                   <option value="system">Sistema</option>
                   <option value="light">Claro</option>
                   <option value="dark">Escuro</option>
@@ -129,7 +206,7 @@ export default function AdminSettingsPage() {
               </div>
               <div>
                 <label className="label-field">Cor Primária</label>
-                <input type="color" className="h-10 w-full rounded-lg border border-gray-200 dark:border-gray-700 cursor-pointer" defaultValue="#059669" />
+                <input type="color" className="h-10 w-full rounded-lg border border-gray-200 dark:border-gray-700 cursor-pointer" value={settings.primaryColor} onChange={(e) => setField('primaryColor', e.target.value)} />
               </div>
               <div>
                 <label className="label-field">Logo</label>
@@ -149,7 +226,7 @@ export default function AdminSettingsPage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2">
                 <label className="label-field">Gateway de Pagamento</label>
-                <select className="input-field">
+                <select className="input-field" value={settings.paymentGateway} onChange={(e) => setField('paymentGateway', e.target.value)}>
                   <option value="stripe">Stripe</option>
                   <option value="pagseguro">PagSeguro</option>
                   <option value="mercado-pago">Mercado Pago</option>
@@ -161,11 +238,11 @@ export default function AdminSettingsPage() {
               </div>
               <div>
                 <label className="label-field">Parcelamento máximo</label>
-                <input type="number" className="input-field" defaultValue={12} />
+                <input type="number" className="input-field" value={Number(settings.paymentMaxInstallments)} onChange={(e) => setField('paymentMaxInstallments', e.target.value)} />
               </div>
               <div>
                 <label className="label-field">Valor mínimo para parcelar</label>
-                <input type="number" className="input-field" defaultValue={100} />
+                <input type="number" className="input-field" value={Number(settings.paymentMinInstallment)} onChange={(e) => setField('paymentMinInstallment', e.target.value)} />
               </div>
             </div>
           </div>

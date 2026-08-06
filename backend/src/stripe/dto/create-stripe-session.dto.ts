@@ -32,10 +32,11 @@ export class StripeItemDto {
 }
 
 export class CreateStripeSessionDto {
+  @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => StripeItemDto)
-  items: StripeItemDto[];
+  items?: StripeItemDto[];
 
   @IsOptional()
   @IsString()

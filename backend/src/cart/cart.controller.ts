@@ -30,15 +30,15 @@ export class CartController {
 
   @Put('items/:itemId')
   @ApiOperation({ summary: 'Update cart item quantity' })
-  async updateItem(@Param('itemId') itemId: string, @Body() dto: UpdateCartItemDto) {
-    return this.cartService.updateItem(itemId, dto);
+  async updateItem(@CurrentUser() user: any, @Param('itemId') itemId: string, @Body() dto: UpdateCartItemDto) {
+    return this.cartService.updateItem(user.id, itemId, dto);
   }
 
   @Delete('items/:itemId')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Remove item from cart' })
-  async removeItem(@Param('itemId') itemId: string) {
-    return this.cartService.removeItem(itemId);
+  async removeItem(@CurrentUser() user: any, @Param('itemId') itemId: string) {
+    return this.cartService.removeItem(user.id, itemId);
   }
 
   @Delete()

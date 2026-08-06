@@ -3,7 +3,8 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { ModerateReviewDto } from './dto/moderate-review.dto';
-import { ReviewStatus } from '@prisma/client';
+import { ReviewStatus } from '../generated/prisma/client';
+import { parsePage, parseLimit } from '../common/utils/pagination';
 
 @Injectable()
 export class ReviewsService {
@@ -34,7 +35,9 @@ export class ReviewsService {
   async findAll(params: {
     page?: number; limit?: number; supplierId?: string; productId?: string; serviceId?: string; status?: string;
   }) {
-    const { page = 1, limit = 10, supplierId, productId, serviceId, status } = params;
+    const { page: rawPage = 1, limit: rawLimit = 10, supplierId, productId, serviceId, status } = params;
+    const page = parsePage(rawPage);
+    const limit = parseLimit(rawLimit);
     const skip = (page - 1) * limit;
     const where: any = {};
     if (supplierId) where.supplierId = supplierId;
@@ -45,7 +48,12 @@ export class ReviewsService {
     const [data, total] = await Promise.all([
       this.prisma.review.findMany({
         where, skip, take: limit,
-        include: { user: { select: { id: true, name: true, avatarUrl: true } } },
+        include: {
+          user: { select: { id: true, name: true, avatarUrl: true } },
+          product: { select: { id: true, name: true, images: true } },
+          service: { select: { id: true, name: true } },
+          supplier: { select: { id: true, companyName: true, tradingName: true, logoUrl: true } },
+        },
         orderBy: { createdAt: 'desc' },
       }),
       this.prisma.review.count({ where }),

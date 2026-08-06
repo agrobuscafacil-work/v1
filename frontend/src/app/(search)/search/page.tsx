@@ -4,34 +4,48 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Search as SearchIcon, Star, Leaf, SlidersHorizontal, X, Loader2 } from 'lucide-react';
+import { api } from '@/lib/api';
 
 function SearchContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get('q') || '';
   const [searchTerm, setSearchTerm] = useState(query);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState<any[]>([]);
 
   useEffect(() => {
     setSearchTerm(query);
-    setIsLoading(true);
-    const timer = setTimeout(() => {
-      setResults(
-        query
-          ? Array.from({ length: 8 }, (_, i) => ({
-              id: String(i + 1),
-              name: `${query} - Resultado ${i + 1}`,
-              slug: `result-${i + 1}`,
-              price: Math.floor(Math.random() * 50000) + 50,
-              supplier: 'Fornecedor Exemplo',
-              rating: parseFloat((4 + Math.random()).toFixed(1)),
-              reviews: Math.floor(Math.random() * 200),
-            }))
-          : []
-      );
+    if (!query) {
+      setResults([]);
       setIsLoading(false);
-    }, 1500);
-    return () => clearTimeout(timer);
+      return;
+    }
+    let cancelled = false;
+    const load = async () => {
+      setIsLoading(true);
+      try {
+        const res = await api.get('/search', { params: { q: query, limit: 12 } });
+        if (cancelled) return;
+        const payload = res.data.data?.products?.data ?? [];
+        setResults(
+          payload.map((p: any) => ({
+            id: p.id,
+            name: p.name,
+            slug: p.slug,
+            price: Number(p.price) || 0,
+            supplier: p.supplier?.companyName || '',
+            rating: Number(p.rating) || 0,
+            reviews: Number(p.totalReviews) || 0,
+          })),
+        );
+      } catch {
+        if (!cancelled) setResults([]);
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    };
+    load();
+    return () => { cancelled = true; };
   }, [query]);
 
   return (

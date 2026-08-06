@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, Logger } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -6,6 +6,10 @@ export class ShippingService {
   private readonly logger = new Logger(ShippingService.name);
 
   constructor(private prisma: PrismaService) {}
+
+  private isAdmin(role?: string) {
+    return role === 'ADMIN' || role === 'SUPER_ADMIN';
+  }
 
   async getConfig(supplierId: string) {
     const supplier = await this.prisma.supplierProfile.findUnique({
@@ -15,12 +19,21 @@ export class ShippingService {
     return supplier?.deliveryInfo || null;
   }
 
-  async updateConfig(supplierId: string, deliveryInfo: any) {
-    const supplier = await this.prisma.supplierProfile.update({
+  async updateConfig(supplierId: string, deliveryInfo: any, user: { id: string; role: string }) {
+    const supplier = await this.prisma.supplierProfile.findUnique({
+      where: { id: supplierId },
+      select: { id: true, userId: true },
+    });
+    if (!supplier) throw new NotFoundException('Supplier not found');
+    if (!this.isAdmin(user.role) && supplier.userId !== user.id) {
+      throw new ForbiddenException('You cannot update this supplier shipping config');
+    }
+    const updated = await this.prisma.supplierProfile.update({
       where: { id: supplierId },
       data: { deliveryInfo },
+      select: { deliveryInfo: true },
     });
-    return supplier.deliveryInfo;
+    return updated.deliveryInfo;
   }
 
   async calculateCost(supplierId: string, dto: { zipCode: string; weight?: number; subtotal: number }) {
@@ -54,7 +67,21 @@ export class ShippingService {
         data: { isMain: false },
       });
     }
-    return this.prisma.address.create({ data: { userId, ...dto } });
+    return this.prisma.address.create({
+      data: {
+        userId,
+        zipCode: dto.zipCode,
+        street: dto.street,
+        number: dto.number,
+        complement: dto.complement,
+        neighborhood: dto.neighborhood,
+        city: dto.city,
+        state: dto.state,
+        country: dto.country || 'Brasil',
+        isMain: !!dto.isMain,
+        label: dto.label,
+      },
+    });
   }
 
   async removeAddress(id: string, userId: string) {

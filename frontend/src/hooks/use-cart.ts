@@ -10,6 +10,7 @@ interface CartProduct {
   unit: string;
   image: string;
   supplierName: string;
+  supplierId?: string;
 }
 
 interface CartItem {

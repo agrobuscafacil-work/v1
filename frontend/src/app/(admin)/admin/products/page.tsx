@@ -1,57 +1,92 @@
 'use client';
 
-import { useState } from 'react';
-import { Package, Search, Edit2, X, Save, Loader2, CheckCircle, XCircle, Eye, Store, DollarSign, Package as PackageIcon, Tag, Hash } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Package, Search, Edit2, X, Save, Loader2, Eye, Store, DollarSign, Package as PackageIcon, Tag, Hash, ChevronLeft, ChevronRight, Trash2, Calendar, ShoppingBag } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { api } from '@/lib/api';
+import { PRODUCT_FILE_URL } from '@/lib/products';
 
 interface ProductItem {
   id: string;
   name: string;
-  supplier: string;
-  category: string;
   price: number;
   stock: number;
+  saleCount: number;
   status: string;
+  images: string[];
+  createdAt: string;
+  category: { id: string; name: string } | null;
+  supplier: { id: string; companyName: string } | null;
 }
 
-const data: ProductItem[] = [
-  { id: '1', name: 'Semente de Soja Transgênica RR', supplier: 'Sementes Silva', category: 'Sementes', price: 189.90, stock: 45, status: 'Ativo' },
-  { id: '2', name: 'Fertilizante NPK 20-10-10', supplier: 'Fertilizantes ABC', category: 'Fertilizantes', price: 89.90, stock: 120, status: 'Ativo' },
-  { id: '3', name: 'Defensivo Agrícola Glifosato', supplier: 'Agro Tech Ltda', category: 'Defensivos', price: 45.90, stock: 3, status: 'Inativo' },
-  { id: '4', name: 'Trator Agrícola 75cv', supplier: 'Máquinas Agrícolas LTDA', category: 'Máquinas', price: 89990.00, stock: 5, status: 'Ativo' },
-  { id: '5', name: 'Arado de Disco 4 Discos', supplier: 'Agro Tech Ltda', category: 'Implementos', price: 3499.90, stock: 10, status: 'Pendente' },
-  { id: '6', name: 'Sistema de Irrigação por Gotejamento', supplier: 'IrrigaFácil', category: 'Irrigação', price: 1299.90, stock: 8, status: 'Ativo' },
-  { id: '7', name: 'Milho Híbrido Safrinha', supplier: 'Sementes Genetix', category: 'Sementes', price: 259.90, stock: 72, status: 'Ativo' },
-  { id: '8', name: 'Inseticida Biológico Lagarta', supplier: 'BioDefensivos Naturais', category: 'Defensivos', price: 78.50, stock: 34, status: 'Ativo' },
-  { id: '9', name: 'Colheitadeira Automotriz', supplier: 'Máquinas Agrícolas LTDA', category: 'Máquinas', price: 349990.00, stock: 2, status: 'Ativo' },
-  { id: '10', name: 'Fungicida Tratamento Sementes', supplier: 'Defensivos Nacional', category: 'Defensivos', price: 112.30, stock: 56, status: 'Ativo' },
-  { id: '11', name: 'Ração para Gado Leiteiro', supplier: 'Pecuária Forte', category: 'Pecuária', price: 89.90, stock: 200, status: 'Ativo' },
-  { id: '12', name: 'Suplemento Mineral Bovino', supplier: 'Pecuária Forte', category: 'Pecuária', price: 145.00, stock: 88, status: 'Ativo' },
-  { id: '13', name: 'Kit Irrigação por Aspersão', supplier: 'IrrigaTech Solutions', category: 'Irrigação', price: 2450.00, stock: 6, status: 'Bloqueado' },
-  { id: '14', name: 'Pulverizador Costal 20L', supplier: 'Agro Tech Ltda', category: 'Implementos', price: 549.90, stock: 22, status: 'Ativo' },
-  { id: '15', name: 'Sistema de GPS Agrícola', supplier: 'AgroTec Sistemas', category: 'Tecnologia', price: 3899.00, stock: 7, status: 'Ativo' },
-  { id: '16', name: 'Silo Metálico 5000Kg', supplier: 'Armazenagem Total', category: 'Armazenagem', price: 18990.00, stock: 3, status: 'Ativo' },
-  { id: '17', name: 'Fertilizante Orgânico Húmus', supplier: 'Orgânicos do Vale', category: 'Fertilizantes', price: 42.50, stock: 0, status: 'Pendente' },
-  { id: '18', name: 'Defensivo Natural Neem', supplier: 'BioDefensivos Naturais', category: 'Defensivos', price: 36.90, stock: 41, status: 'Ativo' },
-  { id: '19', name: 'Adubo Foliar Líquido', supplier: 'NutriPlant Fertilizantes', category: 'Fertilizantes', price: 67.80, stock: 93, status: 'Ativo' },
-  { id: '20', name: 'Conjunto de Grade Aradora', supplier: 'Agro Tech Ltda', category: 'Implementos', price: 7890.00, stock: 4, status: 'Ativo' },
-  { id: '21', name: 'Cerca Elétrica Rural', supplier: 'Agro Tech Ltda', category: 'Diversos', price: 1299.00, stock: 15, status: 'Ativo' },
-  { id: '22', name: 'Dron Agrícola Pulverizador', supplier: 'AgroTec Sistemas', category: 'Tecnologia', price: 45990.00, stock: 2, status: 'Ativo' },
-  { id: '23', name: 'Veículo Utilitário Rural', supplier: 'Máquinas Agrícolas LTDA', category: 'Máquinas', price: 129990.00, stock: 1, status: 'Ativo' },
-  { id: '24', name: 'Semente de Pastagem Braquiária', supplier: 'Sementes Silva', category: 'Sementes', price: 79.90, stock: 155, status: 'Ativo' },
-];
+const STATUS_STYLES: Record<string, { label: string; className: string }> = {
+  ACTIVE: { label: 'Ativo', className: 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300' },
+  INACTIVE: { label: 'Inativo', className: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300' },
+  OUT_OF_STOCK: { label: 'Esgotado', className: 'bg-orange-50 text-orange-700 dark:bg-orange-950 dark:text-orange-300' },
+  DISCONTINUED: { label: 'Descontinuado', className: 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400' },
+  PENDING_REVIEW: { label: 'Pendente de revisão', className: 'bg-yellow-50 text-yellow-700 dark:bg-yellow-950 dark:text-yellow-300' },
+  REJECTED: { label: 'Rejeitado', className: 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300' },
+};
+
+const STATUS_OPTIONS = ['ACTIVE', 'INACTIVE', 'OUT_OF_STOCK', 'DISCONTINUED', 'PENDING_REVIEW', 'REJECTED'];
+
+function getErrorMessage(error: any): string {
+  if (typeof error?.response?.data?.message === 'string') return error.response.data.message;
+  return 'Erro inesperado. Tente novamente.';
+}
+
+function formatMoney(value: number) {
+  return Number(value).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+}
+
+function formatDate(value: string) {
+  const d = new Date(value);
+  if (isNaN(d.getTime())) return '—';
+  return d.toLocaleDateString('pt-BR');
+}
 
 export default function AdminProductsPage() {
-  const [items, setItems] = useState<ProductItem[]>(data);
+  const [items, setItems] = useState<ProductItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
   const [editItem, setEditItem] = useState<ProductItem | null>(null);
   const [detailItem, setDetailItem] = useState<ProductItem | null>(null);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
-  const filtered = items.filter((p) =>
-    p.name.toLowerCase().includes(search.toLowerCase()) ||
-    p.supplier.toLowerCase().includes(search.toLowerCase())
-  );
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      setLoading(true);
+      try {
+        const params: Record<string, string | number> = { page, limit: 10, status: statusFilter || 'ALL' };
+        if (search.trim()) params.search = search.trim();
+        const res = await api.get('/products', { params });
+        const payload = res.data.data;
+        if (cancelled) return;
+        setItems(payload.data ?? []);
+        setPage(payload.meta?.page || 1);
+        setTotalPages(payload.meta?.totalPages || 1);
+        setTotal(payload.meta?.total || 0);
+      } catch (error) {
+        if (!cancelled) {
+          setItems([]);
+          setTotalPages(1);
+          setTotal(0);
+          toast.error('Erro ao carregar produtos');
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+    load();
+    return () => { cancelled = true; };
+  }, [page, statusFilter, search, refreshKey]);
 
   function startEdit(p: ProductItem) {
     setEditItem({ ...p });
@@ -60,18 +95,36 @@ export default function AdminProductsPage() {
   async function saveEdit() {
     if (!editItem) return;
     setSaving(true);
-    await new Promise((r) => setTimeout(r, 800));
-    setItems(items.map((p) => (p.id === editItem.id ? editItem : p)));
-    toast.success('Produto atualizado');
-    setSaving(false);
-    setEditItem(null);
+    try {
+      await api.put(`/products/${editItem.id}`, {
+        name: editItem.name,
+        price: editItem.price,
+        stock: editItem.stock,
+        status: editItem.status,
+      });
+      toast.success('Produto atualizado');
+      setEditItem(null);
+      setRefreshKey((k) => k + 1);
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+    } finally {
+      setSaving(false);
+    }
   }
 
-  function doToggleStatus(p: ProductItem) {
-    const map: Record<string, string> = { 'Ativo': 'Inativo', 'Inativo': 'Ativo', 'Pendente': 'Ativo' };
-    const ns = map[p.status] || 'Ativo';
-    setItems(items.map((x) => (x.id === p.id ? { ...x, status: ns } : x)));
-    toast.success('Status alterado');
+  async function doDelete(p: ProductItem) {
+    if (!window.confirm(`Deseja excluir o produto "${p.name}"?`)) return;
+    setDeleting(true);
+    try {
+      await api.delete(`/products/${p.id}`);
+      toast.success('Produto excluído');
+      if (detailItem?.id === p.id) setDetailItem(null);
+      setRefreshKey((k) => k + 1);
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+    } finally {
+      setDeleting(false);
+    }
   }
 
   return (
@@ -81,12 +134,20 @@ export default function AdminProductsPage() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Produtos</h1>
           <p className="text-sm text-gray-500 mt-1">Gerencie todos os produtos da plataforma.</p>
         </div>
-        <div className="text-sm text-gray-500">Total: {items.length} produtos</div>
+        <div className="text-sm text-gray-500">Total: {total} produtos</div>
       </div>
 
-      <div className="relative mb-6">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-        <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar produtos ou fornecedores..." className="input-field pl-9 text-sm" />
+      <div className="flex flex-col sm:flex-row gap-4 mb-6">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <input type="text" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} placeholder="Buscar produtos..." className="input-field pl-9 text-sm" />
+        </div>
+        <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }} className="input-field text-sm w-full sm:w-44">
+          <option value="">Todos os status</option>
+          {STATUS_OPTIONS.map((s) => (
+            <option key={s} value={s}>{STATUS_STYLES[s]?.label || s}</option>
+          ))}
+        </select>
       </div>
 
       <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden">
@@ -95,49 +156,83 @@ export default function AdminProductsPage() {
             <thead>
               <tr className="text-left text-xs text-gray-500 uppercase border-b border-gray-100 dark:border-gray-800">
                 <th className="p-4 font-medium">Produto</th>
-                <th className="p-4 font-medium">Fornecedor</th>
                 <th className="p-4 font-medium">Categoria</th>
+                <th className="p-4 font-medium">Fornecedor</th>
                 <th className="p-4 font-medium">Preco</th>
                 <th className="p-4 font-medium">Estoque</th>
+                <th className="p-4 font-medium">Vendas</th>
                 <th className="p-4 font-medium">Status</th>
+                <th className="p-4 font-medium">Data</th>
                 <th className="p-4 font-medium">Acoes</th>
               </tr>
             </thead>
             <tbody>
-              {filtered.map((p) => (
-                <tr key={p.id} className="border-b border-gray-50 dark:border-gray-800/50 hover:bg-gray-50 dark:hover:bg-gray-800/50">
-                  <td className="p-4 font-medium text-gray-900 dark:text-white">{p.name}</td>
-                  <td className="p-4 text-gray-500">{p.supplier}</td>
-                  <td className="p-4 text-gray-500">{p.category}</td>
-                  <td className="p-4 font-semibold text-primary-600">R$ {p.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
-                  <td className="p-4"><span className={p.stock <= 5 ? 'text-red-600 font-medium' : 'text-gray-500'}>{p.stock}</span></td>
-                  <td className="p-4">
-                    <button onClick={() => doToggleStatus(p)} className={'text-xs px-2 py-0.5 rounded-full font-medium transition-colors ' + (p.status === 'Ativo' ? 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300 hover:bg-red-50 hover:text-red-700' : p.status === 'Pendente' ? 'bg-yellow-50 text-yellow-700 dark:bg-yellow-950 dark:text-yellow-300' : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 hover:bg-green-50 hover:text-green-700')}>
-                      {p.status}
-                    </button>
-                  </td>
-                  <td className="p-4">
-                    <div className="flex gap-1">
-                      <button onClick={() => setDetailItem(p)} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-blue-600">
-                        <Eye className="h-4 w-4" />
-                      </button>
-                      <button onClick={() => startEdit(p)} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-primary-600">
-                        <Edit2 className="h-4 w-4" />
-                      </button>
-                      <button onClick={() => doToggleStatus(p)} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-red-600">
-                        {p.status === 'Ativo' ? <XCircle className="h-4 w-4" /> : <CheckCircle className="h-4 w-4" />}
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+              {items.map((p) => {
+                const statusInfo = STATUS_STYLES[p.status] || { label: p.status, className: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300' };
+                return (
+                  <tr key={p.id} className="border-b border-gray-50 dark:border-gray-800/50 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                    <td className="p-4">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="h-10 w-10 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100 dark:bg-gray-800 flex items-center justify-center border border-gray-200 dark:border-gray-700">
+                          {p.images?.[0] ? (
+                            <img src={PRODUCT_FILE_URL(p.images[0])} alt={p.name} className="h-full w-full object-cover" />
+                          ) : (
+                            <Package className="h-5 w-5 text-gray-400" />
+                          )}
+                        </div>
+                        <p className="font-medium text-gray-900 dark:text-white truncate">{p.name}</p>
+                      </div>
+                    </td>
+                    <td className="p-4 text-gray-500">{p.category?.name || '—'}</td>
+                    <td className="p-4 text-gray-500">{p.supplier?.companyName || '—'}</td>
+                    <td className="p-4 font-semibold text-primary-600">R$ {formatMoney(p.price)}</td>
+                    <td className="p-4"><span className={p.stock <= 5 ? 'text-red-600 font-medium' : 'text-gray-500'}>{p.stock}</span></td>
+                    <td className="p-4 text-gray-500">{p.saleCount}</td>
+                    <td className="p-4">
+                      <span className={'text-xs px-2 py-0.5 rounded-full font-medium ' + statusInfo.className}>{statusInfo.label}</span>
+                    </td>
+                    <td className="p-4 text-gray-500">{formatDate(p.createdAt)}</td>
+                    <td className="p-4">
+                      <div className="flex gap-1">
+                        <button onClick={() => setDetailItem(p)} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-blue-600">
+                          <Eye className="h-4 w-4" />
+                        </button>
+                        <button onClick={() => startEdit(p)} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-primary-600">
+                          <Edit2 className="h-4 w-4" />
+                        </button>
+                        <button onClick={() => doDelete(p)} disabled={deleting} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-red-600">
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
-        {filtered.length === 0 && (
+        {loading && (
+          <div className="flex items-center justify-center py-12 gap-2 text-gray-500">
+            <Loader2 className="h-5 w-5 animate-spin" /> Carregando produtos...
+          </div>
+        )}
+        {!loading && items.length === 0 && (
           <div className="text-center py-12">
             <Package className="h-10 w-10 text-gray-300 mx-auto mb-3" />
             <p className="text-gray-500">Nenhum produto encontrado.</p>
+          </div>
+        )}
+        {!loading && totalPages > 1 && (
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 border-t border-gray-100 dark:border-gray-800">
+            <p className="text-sm text-gray-500">{total} produto(s) - pagina {page} de {totalPages}</p>
+            <div className="flex items-center gap-2">
+              <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1} className="btn-ghost p-1.5 disabled:opacity-40" aria-label="Pagina anterior">
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+              <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page >= totalPages} className="btn-ghost p-1.5 disabled:opacity-40" aria-label="Proxima pagina">
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
           </div>
         )}
       </div>
@@ -164,21 +259,21 @@ export default function AdminProductsPage() {
                   <Store className="h-5 w-5 text-gray-400" />
                   <div>
                     <p className="text-xs text-gray-500">Fornecedor</p>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">{detailItem.supplier}</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">{detailItem.supplier?.companyName || '—'}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
                   <PackageIcon className="h-5 w-5 text-gray-400" />
                   <div>
                     <p className="text-xs text-gray-500">Categoria</p>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">{detailItem.category}</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">{detailItem.category?.name || '—'}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
                   <DollarSign className="h-5 w-5 text-gray-400" />
                   <div>
                     <p className="text-xs text-gray-500">Preco</p>
-                    <p className="text-sm font-semibold text-primary-600">R$ {detailItem.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+                    <p className="text-sm font-semibold text-primary-600">R$ {formatMoney(detailItem.price)}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
@@ -188,10 +283,26 @@ export default function AdminProductsPage() {
                     <p className={'text-sm font-medium ' + (detailItem.stock <= 5 ? 'text-red-600' : 'text-gray-900 dark:text-white')}>{detailItem.stock} un</p>
                   </div>
                 </div>
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
+                  <ShoppingBag className="h-5 w-5 text-gray-400" />
+                  <div>
+                    <p className="text-xs text-gray-500">Vendas</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">{detailItem.saleCount}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
+                  <Calendar className="h-5 w-5 text-gray-400" />
+                  <div>
+                    <p className="text-xs text-gray-500">Criado em</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">{formatDate(detailItem.createdAt)}</p>
+                  </div>
+                </div>
               </div>
               <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
                 <p className="text-xs text-gray-500">Status</p>
-                <span className={'text-xs px-2 py-1 rounded-full font-medium ' + (detailItem.status === 'Ativo' ? 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300' : detailItem.status === 'Pendente' ? 'bg-yellow-50 text-yellow-700 dark:bg-yellow-950 dark:text-yellow-300' : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300')}>{detailItem.status}</span>
+                <span className={'text-xs px-2 py-1 rounded-full font-medium ' + (STATUS_STYLES[detailItem.status]?.className || 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300')}>
+                  {STATUS_STYLES[detailItem.status]?.label || detailItem.status}
+                </span>
               </div>
             </div>
             <div className="flex justify-end p-5 border-t border-gray-100 dark:border-gray-800">
@@ -218,18 +329,11 @@ export default function AdminProductsPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="label-field">Fornecedor</label>
-                  <input type="text" value={editItem.supplier} onChange={(e) => setEditItem({ ...editItem, supplier: e.target.value })} className="input-field" />
+                  <input type="text" value={editItem.supplier?.companyName || '—'} disabled className="input-field opacity-70" />
                 </div>
                 <div>
                   <label className="label-field">Categoria</label>
-                  <select value={editItem.category} onChange={(e) => setEditItem({ ...editItem, category: e.target.value })} className="input-field">
-                    <option value="Sementes">Sementes</option>
-                    <option value="Fertilizantes">Fertilizantes</option>
-                    <option value="Defensivos">Defensivos</option>
-                    <option value="Implementos">Implementos</option>
-                    <option value="Irrigacao">Irrigacao</option>
-                    <option value="Maquinas">Maquinas</option>
-                  </select>
+                  <input type="text" value={editItem.category?.name || '—'} disabled className="input-field opacity-70" />
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-4">
@@ -244,9 +348,9 @@ export default function AdminProductsPage() {
                 <div>
                   <label className="label-field">Status</label>
                   <select value={editItem.status} onChange={(e) => setEditItem({ ...editItem, status: e.target.value })} className="input-field">
-                    <option value="Ativo">Ativo</option>
-                    <option value="Inativo">Inativo</option>
-                    <option value="Pendente">Pendente</option>
+                    {STATUS_OPTIONS.map((s) => (
+                      <option key={s} value={s}>{STATUS_STYLES[s]?.label || s}</option>
+                    ))}
                   </select>
                 </div>
               </div>

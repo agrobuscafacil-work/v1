@@ -1,19 +1,21 @@
 'use client';
 
-import { useState } from 'react';
-import { Store, Search, CheckCircle, XCircle, Edit2, X, Save, Loader2, MessageCircle, Send, Phone, Mail, User } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Store, Search, CheckCircle, XCircle, X, Loader2, MessageCircle, Send, ChevronLeft, ChevronRight, MapPin } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { api } from '@/lib/api';
 import { getChatSettings } from '@/lib/chat-settings';
 
 interface SupplierItem {
   id: string;
   name: string;
   email: string;
-  category: string;
   products: number;
   rating: number;
   status: string;
   date: string;
+  city: string;
+  state: string;
 }
 
 interface ChatMessage {
@@ -23,35 +25,74 @@ interface ChatMessage {
   time: string;
 }
 
-const data: SupplierItem[] = [
-  { id: '1', name: 'AgroQuímica Brasil', email: 'contato@agroquimica.com.br', category: 'Insumos', products: 78, rating: 4.8, status: 'Aprovado', date: 'Jan/2023' },
-  { id: '2', name: 'Sementes Silva', email: 'vendas@sementessilva.com', category: 'Sementes', products: 48, rating: 4.8, status: 'Aprovado', date: 'Jan/2024' },
-  { id: '3', name: 'Agro Tech Ltda', email: 'admin@agrotech.com', category: 'Implementos', products: 24, rating: 4.6, status: 'Aprovado', date: 'Mar/2024' },
-  { id: '4', name: 'Fertilizantes ABC', email: 'contato@fertabc.com', category: 'Fertilizantes', products: 15, rating: 0, status: 'Pendente', date: 'Jul/2026' },
-  { id: '5', name: 'Fazenda Boa Vista', email: 'contato@boavista.com', category: 'Diversos', products: 0, rating: 0, status: 'Pendente', date: 'Jul/2026' },
-  { id: '6', name: 'IrrigaFácil', email: 'vendas@irrigafacil.com', category: 'Irrigação', products: 32, rating: 4.9, status: 'Aprovado', date: 'Fev/2024' },
-  { id: '7', name: 'Máquinas Agrícolas LTDA', email: 'contato@maquinasagri.com', category: 'Máquinas', products: 18, rating: 4.5, status: 'Aprovado', date: 'Abr/2024' },
-  { id: '8', name: 'Defensivos Nacional', email: 'pedidos@defensivosnac.com', category: 'Defensivos', products: 56, rating: 4.7, status: 'Aprovado', date: 'Jun/2023' },
-  { id: '9', name: 'Sementes Genetix', email: 'comercial@sementesgenetix.com', category: 'Sementes', products: 34, rating: 4.9, status: 'Aprovado', date: 'Set/2023' },
-  { id: '10', name: 'AgroTec Sistemas', email: 'vendas@agrotecsistemas.com', category: 'Tecnologia', products: 12, rating: 4.3, status: 'Aprovado', date: 'Out/2024' },
-  { id: '11', name: 'Pecuária Forte', email: 'contato@pecuariaforte.com', category: 'Pecuária', products: 24, rating: 4.5, status: 'Aprovado', date: 'Jul/2026' },
-  { id: '12', name: 'Transporte Rural Log', email: 'logistica@transporterural.com', category: 'Logística', products: 5, rating: 4.2, status: 'Aprovado', date: 'Nov/2024' },
-  { id: '13', name: 'Armazenagem Total', email: 'admin@armazenagemtotal.com', category: 'Armazenagem', products: 9, rating: 4.4, status: 'Aprovado', date: 'Dez/2024' },
-  { id: '14', name: 'Orgânicos do Vale', email: 'contato@organicosdovale.com', category: 'Orgânicos', products: 0, rating: 0, status: 'Pendente', date: 'Jul/2026' },
-  { id: '15', name: 'BioDefensivos Naturais', email: 'pedidos@biodefensivos.com', category: 'Defensivos', products: 22, rating: 4.6, status: 'Aprovado', date: 'Mar/2025' },
-  { id: '16', name: 'Tratores e Cia', email: 'vendas@tratoresecia.com', category: 'Máquinas', products: 14, rating: 4.5, status: 'Aprovado', date: 'Abr/2025' },
-  { id: '17', name: 'IrrigaTech Solutions', email: 'suporte@irrigatech.com', category: 'Irrigação', products: 28, rating: 4.7, status: 'Bloqueado', date: 'Fev/2023' },
-  { id: '18', name: 'NutriPlant Fertilizantes', email: 'admin@nutriplant.com', category: 'Fertilizantes', products: 41, rating: 4.8, status: 'Aprovado', date: 'Mai/2023' },
-];
+const STATUS_STYLES: Record<string, { label: string; className: string }> = {
+  PENDING: { label: 'Pendente', className: 'bg-yellow-50 text-yellow-700 dark:bg-yellow-950 dark:text-yellow-300' },
+  APPROVED: { label: 'Aprovado', className: 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300' },
+  REJECTED: { label: 'Rejeitado', className: 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300' },
+  BLOCKED: { label: 'Bloqueado', className: 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300' },
+};
+
+function getErrorMessage(error: any): string {
+  if (typeof error?.response?.data?.message === 'string') return error.response.data.message;
+  return 'Erro inesperado. Tente novamente.';
+}
+
+function formatDate(iso?: string): string {
+  if (!iso) return '-';
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return '-';
+  return d.toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' });
+}
 
 export default function AdminSuppliersPage() {
-  const [items, setItems] = useState<SupplierItem[]>(data);
+  const [items, setItems] = useState<SupplierItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [editItem, setEditItem] = useState<SupplierItem | null>(null);
-  const [saving, setSaving] = useState(false);
+  const [statusFilter, setStatusFilter] = useState('');
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [savingId, setSavingId] = useState<string | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
   const [chatSupplier, setChatSupplier] = useState<SupplierItem | null>(null);
   const [chatMessage, setChatMessage] = useState('');
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      setLoading(true);
+      try {
+        const params: Record<string, string | number> = { page, limit: 9 };
+        if (statusFilter) params.status = statusFilter;
+        if (search.trim()) params.search = search.trim();
+        const res = await api.get('/suppliers/admin', { params });
+        const payload = res.data.data;
+        if (cancelled) return;
+        setItems((payload.data ?? []).map((s: any) => ({
+          id: s.id,
+          name: s.companyName || s.tradingName || '-',
+          email: s.email,
+          products: Number(s.totalProducts) || 0,
+          rating: Number(s.rating) || 0,
+          status: s.status,
+          date: formatDate(s.createdAt),
+          city: s.addresses?.[0]?.city || '',
+          state: s.addresses?.[0]?.state || '',
+        })));
+        setTotalPages(payload.meta?.totalPages ?? 1);
+      } catch {
+        if (!cancelled) {
+          setItems([]);
+          setTotalPages(1);
+          toast.error('Erro ao carregar fornecedores');
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+    load();
+    return () => { cancelled = true; };
+  }, [page, statusFilter, search, refreshKey]);
 
   function openChat(supplier: SupplierItem) {
     setChatSupplier(supplier);
@@ -73,39 +114,43 @@ export default function AdminSuppliersPage() {
     }
   }
 
-  const filtered = items.filter((s) =>
-    s.name.toLowerCase().includes(search.toLowerCase()) ||
-    s.category.toLowerCase().includes(search.toLowerCase())
-  );
-
-  function startEdit(s: SupplierItem) {
-    setEditItem({ ...s });
-  }
-
-  async function saveEdit() {
-    if (!editItem) return;
-    setSaving(true);
-    await new Promise((r) => setTimeout(r, 800));
-    setItems(items.map((s) => (s.id === editItem.id ? editItem : s)));
-    toast.success('Fornecedor atualizado');
-    setSaving(false);
-    setEditItem(null);
+  async function updateApproval(id: string, approved: boolean, message: string) {
+    setSavingId(id);
+    try {
+      await api.put(`/suppliers/${id}/approval`, { approved });
+      toast.success(message);
+      setRefreshKey((k) => k + 1);
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+    } finally {
+      setSavingId(null);
+    }
   }
 
   function doApprove(s: SupplierItem) {
-    setItems(items.map((x) => (x.id === s.id ? { ...x, status: 'Aprovado' } : x)));
-    toast.success('Fornecedor aprovado');
+    return updateApproval(s.id, true, 'Fornecedor aprovado');
   }
 
   function doReject(s: SupplierItem) {
-    setItems(items.map((x) => (x.id === s.id ? { ...x, status: 'Bloqueado' } : x)));
-    toast.success('Fornecedor rejeitado');
+    return updateApproval(s.id, false, 'Fornecedor rejeitado');
   }
 
-  function doToggleStatus(s: SupplierItem) {
-    const ns = s.status === 'Aprovado' ? 'Bloqueado' : 'Aprovado';
-    setItems(items.map((x) => (x.id === s.id ? { ...x, status: ns } : x)));
-    toast.success('Status alterado');
+  function doActivate(s: SupplierItem) {
+    return updateApproval(s.id, true, 'Fornecedor ativado');
+  }
+
+  async function doBlock(s: SupplierItem) {
+    if (!window.confirm(`Deseja bloquear o fornecedor ${s.name}?`)) return;
+    setSavingId(s.id);
+    try {
+      await api.delete(`/suppliers/${s.id}`);
+      toast.success('Fornecedor bloqueado');
+      setRefreshKey((k) => k + 1);
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+    } finally {
+      setSavingId(null);
+    }
   }
 
   return (
@@ -117,13 +162,27 @@ export default function AdminSuppliersPage() {
         </div>
       </div>
 
-      <div className="relative mb-6">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-        <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar fornecedores..." className="input-field pl-9 text-sm" />
+      <div className="flex flex-col sm:flex-row gap-4 mb-6">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <input type="text" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} placeholder="Buscar fornecedores..." className="input-field pl-9 text-sm" />
+        </div>
+        <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }} className="input-field text-sm w-full sm:w-44">
+          <option value="">Todos os status</option>
+          <option value="PENDING">Pendente</option>
+          <option value="APPROVED">Aprovado</option>
+          <option value="REJECTED">Rejeitado</option>
+          <option value="BLOCKED">Bloqueado</option>
+        </select>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filtered.map((supplier) => (
+      {loading ? (
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {items.map((supplier) => (
           <div key={supplier.id} className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5">
             <div className="flex items-start gap-3 mb-4">
               <div className="h-10 w-10 rounded-lg bg-primary-50 dark:bg-primary-950 flex items-center justify-center text-sm font-bold text-primary-600 flex-shrink-0">{supplier.name.charAt(0)}</div>
@@ -132,20 +191,17 @@ export default function AdminSuppliersPage() {
                 <p className="text-xs text-gray-500">{supplier.email}</p>
               </div>
               <div className="flex flex-col items-end gap-1">
-                <span className={'text-xs px-2 py-0.5 rounded-full font-medium ' + (supplier.status === 'Aprovado' ? 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300' : 'bg-yellow-50 text-yellow-700 dark:bg-yellow-950 dark:text-yellow-300')}>
-                  {supplier.status}
+                <span className={'text-xs px-2 py-0.5 rounded-full font-medium ' + (STATUS_STYLES[supplier.status]?.className || 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300')}>
+                  {STATUS_STYLES[supplier.status]?.label || supplier.status}
                 </span>
                 <div className="flex gap-1">
                   <button onClick={() => openChat(supplier)} className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-green-600">
                     <MessageCircle className="h-3.5 w-3.5" />
                   </button>
-                  <button onClick={() => startEdit(supplier)} className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-primary-600">
-                    <Edit2 className="h-3.5 w-3.5" />
-                  </button>
                 </div>
               </div>
             </div>
-            <div className="grid grid-cols-3 gap-3 text-center mb-4">
+            <div className="grid grid-cols-3 gap-3 text-center mb-3">
               <div>
                 <p className="text-sm font-bold text-gray-900 dark:text-white">{supplier.products}</p>
                 <p className="text-xs text-gray-500">Produtos</p>
@@ -159,33 +215,50 @@ export default function AdminSuppliersPage() {
                 <p className="text-xs text-gray-500">Desde</p>
               </div>
             </div>
+            <p className="flex items-center justify-center gap-1 text-xs text-gray-500 mb-4">
+              <MapPin className="h-3.5 w-3.5" />
+              {supplier.city || supplier.state ? `${supplier.city}, ${supplier.state}` : 'Localização não informada'}
+            </p>
             <div className="flex gap-2">
-              {supplier.status === 'Pendente' && (
+              {supplier.status === 'PENDING' && (
                 <>
-                  <button onClick={() => doApprove(supplier)} className="flex-1 flex items-center justify-center gap-1 px-3 py-2 rounded-lg text-xs font-medium bg-green-50 text-green-700 hover:bg-green-100 dark:bg-green-950 dark:text-green-300 transition-colors">
-                    <CheckCircle className="h-3.5 w-3.5" /> Aprovar
+                  <button onClick={() => doApprove(supplier)} disabled={savingId === supplier.id} className="flex-1 flex items-center justify-center gap-1 px-3 py-2 rounded-lg text-xs font-medium bg-green-50 text-green-700 hover:bg-green-100 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-green-950 dark:text-green-300 transition-colors">
+                    {savingId === supplier.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <CheckCircle className="h-3.5 w-3.5" />} Aprovar
                   </button>
-                  <button onClick={() => doReject(supplier)} className="flex-1 flex items-center justify-center gap-1 px-3 py-2 rounded-lg text-xs font-medium bg-red-50 text-red-700 hover:bg-red-100 dark:bg-red-950 dark:text-red-300 transition-colors">
-                    <XCircle className="h-3.5 w-3.5" /> Rejeitar
+                  <button onClick={() => doReject(supplier)} disabled={savingId === supplier.id} className="flex-1 flex items-center justify-center gap-1 px-3 py-2 rounded-lg text-xs font-medium bg-red-50 text-red-700 hover:bg-red-100 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-red-950 dark:text-red-300 transition-colors">
+                    {savingId === supplier.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <XCircle className="h-3.5 w-3.5" />} Rejeitar
                   </button>
                 </>
               )}
-              {supplier.status !== 'Pendente' && (
-                <button onClick={() => doToggleStatus(supplier)} className={'flex-1 flex items-center justify-center gap-1 px-3 py-2 rounded-lg text-xs font-medium transition-colors ' + (supplier.status === 'Aprovado' ? 'bg-red-50 text-red-700 hover:bg-red-100 dark:bg-red-950 dark:text-red-300' : 'bg-green-50 text-green-700 hover:bg-green-100 dark:bg-green-950 dark:text-green-300')}>
-                  {supplier.status === 'Aprovado' ? <XCircle className="h-3.5 w-3.5" /> : <CheckCircle className="h-3.5 w-3.5" />}
-                  {supplier.status === 'Aprovado' ? 'Bloquear' : 'Ativar'}
+              {supplier.status !== 'PENDING' && (
+                <button onClick={() => (supplier.status === 'APPROVED' ? doBlock(supplier) : doActivate(supplier))} disabled={savingId === supplier.id} className={'flex-1 flex items-center justify-center gap-1 px-3 py-2 rounded-lg text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ' + (supplier.status === 'APPROVED' ? 'bg-red-50 text-red-700 hover:bg-red-100 dark:bg-red-950 dark:text-red-300' : 'bg-green-50 text-green-700 hover:bg-green-100 dark:bg-green-950 dark:text-green-300')}>
+                  {savingId === supplier.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : (supplier.status === 'APPROVED' ? <XCircle className="h-3.5 w-3.5" /> : <CheckCircle className="h-3.5 w-3.5" />)}
+                  {supplier.status === 'APPROVED' ? 'Bloquear' : 'Ativar'}
                 </button>
               )}
             </div>
           </div>
         ))}
-        {filtered.length === 0 && (
+        {items.length === 0 && (
           <div className="col-span-full text-center py-12">
             <Store className="h-10 w-10 text-gray-300 mx-auto mb-3" />
             <p className="text-gray-500">Nenhum fornecedor encontrado.</p>
           </div>
         )}
       </div>
+      )}
+
+      {!loading && totalPages > 1 && (
+        <div className="flex items-center justify-center gap-4 mt-8">
+          <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1} className="btn-outline text-sm gap-1 disabled:opacity-40 disabled:cursor-not-allowed">
+            <ChevronLeft className="h-4 w-4" /> Anterior
+          </button>
+          <span className="text-sm text-gray-500">Pagina {page} de {totalPages}</span>
+          <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page >= totalPages} className="btn-outline text-sm gap-1 disabled:opacity-40 disabled:cursor-not-allowed">
+            Proxima <ChevronRight className="h-4 w-4" />
+          </button>
+        </div>
+      )}
 
       {chatSupplier && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
@@ -224,57 +297,6 @@ export default function AdminSuppliersPage() {
         </div>
       )}
 
-      {editItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-          <div className="w-full max-w-lg rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-2xl">
-            <div className="flex items-center justify-between p-5 border-b border-gray-100 dark:border-gray-800">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Editar Fornecedor</h2>
-              <button onClick={() => setEditItem(null)} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400">
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-            <div className="p-5 space-y-4">
-              <div>
-                <label className="label-field">Nome</label>
-                <input type="text" value={editItem.name} onChange={(e) => setEditItem({ ...editItem, name: e.target.value })} className="input-field" />
-              </div>
-              <div>
-                <label className="label-field">Email</label>
-                <input type="email" value={editItem.email} onChange={(e) => setEditItem({ ...editItem, email: e.target.value })} className="input-field" />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="label-field">Categoria</label>
-                  <select value={editItem.category} onChange={(e) => setEditItem({ ...editItem, category: e.target.value })} className="input-field">
-                    <option value="Sementes">Sementes</option>
-                    <option value="Fertilizantes">Fertilizantes</option>
-                    <option value="Defensivos">Defensivos</option>
-                    <option value="Implementos">Implementos</option>
-                    <option value="Irrigacao">Irrigacao</option>
-                    <option value="Maquinas">Maquinas</option>
-                    <option value="Diversos">Diversos</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="label-field">Status</label>
-                  <select value={editItem.status} onChange={(e) => setEditItem({ ...editItem, status: e.target.value })} className="input-field">
-                    <option value="Pendente">Pendente</option>
-                    <option value="Aprovado">Aprovado</option>
-                    <option value="Bloqueado">Bloqueado</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center justify-end gap-3 p-5 border-t border-gray-100 dark:border-gray-800">
-              <button onClick={() => setEditItem(null)} className="btn-outline text-sm">Cancelar</button>
-              <button onClick={saveEdit} disabled={saving} className="btn-primary text-sm gap-2">
-                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                {saving ? 'Salvando...' : 'Salvar'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

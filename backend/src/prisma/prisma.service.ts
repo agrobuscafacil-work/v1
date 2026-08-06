@@ -1,6 +1,7 @@
 import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../generated/prisma/client';
+import { createPrismaPgAdapter } from '../common/utils/prisma-adapter';
 
 @Injectable()
 export class PrismaService
@@ -11,6 +12,10 @@ export class PrismaService
 
   constructor(private configService: ConfigService) {
     super({
+      adapter: createPrismaPgAdapter(
+        configService.get<string>('DATABASE_URL'),
+        configService.get<string>('DATABASE_SSL') === 'true',
+      ),
       log:
         configService.get('NODE_ENV') === 'development'
           ? ['query', 'info', 'warn', 'error']

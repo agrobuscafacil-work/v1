@@ -6,7 +6,9 @@ import { AdminService } from './admin.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { AdminActionDto } from './dto/admin-action.dto';
+import { UpdateSettingsDto } from './dto/update-settings.dto';
 
 @ApiTags('Admin')
 @ApiBearerAuth('JWT-auth')
@@ -41,5 +43,18 @@ export class AdminController {
   @ApiOperation({ summary: 'Activate/deactivate user' })
   async manageUserStatus(@Param('id') id: string, @Body() dto: AdminActionDto) {
     return this.adminService.manageUserStatus(id, dto.active);
+  }
+
+  @Get('settings')
+  @ApiOperation({ summary: 'Get platform settings' })
+  async getSettings() {
+    return this.adminService.getSettings();
+  }
+
+  @Put('settings')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Update platform settings' })
+  async updateSettings(@CurrentUser() user: any, @Body() dto: UpdateSettingsDto) {
+    return this.adminService.updateSettings(user.id, dto);
   }
 }

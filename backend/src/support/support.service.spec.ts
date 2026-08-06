@@ -3,7 +3,7 @@ import { BadRequestException, NotFoundException } from "@nestjs/common";
 import { SupportService } from "./support.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { NotificationsService } from "../notifications/notifications.service";
-import { SupportTicketStatus } from "@prisma/client";
+import { SupportTicketStatus } from "../generated/prisma/client";
 
 describe("SupportService", () => {
   let service: SupportService;

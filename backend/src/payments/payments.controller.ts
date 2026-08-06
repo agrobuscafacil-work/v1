@@ -16,19 +16,19 @@ export class PaymentsController {
   @Post('process/:orderId')
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Process payment for order' })
-  async processPayment(@Param('orderId') orderId: string, @Body('method') method: string) {
-    return this.paymentsService.processPayment(orderId, method);
+  async processPayment(@CurrentUser() user: any, @Param('orderId') orderId: string, @Body('method') method: string) {
+    return this.paymentsService.processPayment(orderId, method, user);
   }
 
   @Get('order/:orderId')
   @ApiOperation({ summary: 'Get payment by order' })
-  async findByOrder(@Param('orderId') orderId: string) {
-    return this.paymentsService.getPaymentStatus(orderId);
+  async findByOrder(@CurrentUser() user: any, @Param('orderId') orderId: string) {
+    return this.paymentsService.getPaymentStatus(orderId, user);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get payment by ID' })
-  async findById(@Param('id') id: string) {
-    return this.paymentsService.getPaymentStatus(id);
+  async findById(@CurrentUser() user: any, @Param('id') id: string) {
+    return this.paymentsService.getPaymentById(id, user);
   }
 }

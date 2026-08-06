@@ -1,6 +1,6 @@
 import { IsEnum, IsOptional, IsString, MaxLength } from "class-validator";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { SupportTicketStatus } from "@prisma/client";
+import { SupportTicketStatus } from "../../generated/prisma/client";
 
 export class UpdateSupportStatusDto {
   @ApiProperty({ enum: SupportTicketStatus })

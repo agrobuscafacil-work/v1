@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, ConflictException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AddFavoriteDto } from './dto/add-favorite.dto';
+import { parsePage, parseLimit } from '../common/utils/pagination';
 
 @Injectable()
 export class FavoritesService {
@@ -23,6 +24,8 @@ export class FavoritesService {
   }
 
   async findByUser(userId: string, page = 1, limit = 20) {
+    page = parsePage(page);
+    limit = parseLimit(limit, 20);
     const skip = (page - 1) * limit;
     const where = { userId };
 
@@ -30,7 +33,7 @@ export class FavoritesService {
       this.prisma.favorite.findMany({
         where, skip, take: limit,
         include: {
-          product: { select: { id: true, name: true, price: true, images: true } },
+          product: { select: { id: true, name: true, slug: true, price: true, images: true, rating: true, totalReviews: true, stock: true, status: true } },
           supplier: { select: { id: true, companyName: true, logoUrl: true } },
         },
         orderBy: { createdAt: 'desc' },

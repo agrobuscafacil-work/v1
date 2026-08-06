@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, Logger } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AddToCartDto } from './dto/add-to-cart.dto';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
@@ -38,8 +38,15 @@ export class CartService {
 
     const product = await this.prisma.product.findUnique({ where: { id: dto.productId } });
     if (!product) throw new NotFoundException('Product not found');
+    if (product.deletedAt || product.status !== 'ACTIVE') {
+      throw new BadRequestException('Product is not available');
+    }
 
     const existingItem = cart.items.find(i => i.productId === dto.productId);
+    const requestedQty = existingItem ? existingItem.quantity + dto.quantity : dto.quantity;
+    if (product.stock <= 0 || requestedQty > product.stock) {
+      throw new BadRequestException(`Insufficient stock (available: ${product.stock})`);
+    }
 
     if (existingItem) {
       return this.prisma.cartItem.update({
@@ -61,8 +68,10 @@ export class CartService {
     return item;
   }
 
-  async updateItem(itemId: string, dto: UpdateCartItemDto) {
-    const item = await this.prisma.cartItem.findUnique({ where: { id: itemId } });
+  async updateItem(userId: string, itemId: string, dto: UpdateCartItemDto) {
+    const item = await this.prisma.cartItem.findFirst({
+      where: { id: itemId, cart: { userId } },
+    });
     if (!item) throw new NotFoundException('Cart item not found');
 
     return this.prisma.cartItem.update({
@@ -71,8 +80,10 @@ export class CartService {
     });
   }
 
-  async removeItem(itemId: string) {
-    const item = await this.prisma.cartItem.findUnique({ where: { id: itemId } });
+  async removeItem(userId: string, itemId: string) {
+    const item = await this.prisma.cartItem.findFirst({
+      where: { id: itemId, cart: { userId } },
+    });
     if (!item) throw new NotFoundException('Cart item not found');
 
     await this.prisma.cartItem.delete({ where: { id: itemId } });

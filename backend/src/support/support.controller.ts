@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Patch,
   Body,
   Param,
   Query,
@@ -28,7 +29,13 @@ import { existsSync } from "fs";
 import path from "path";
 import { SupportService, SupportUploadedFiles } from "./support.service";
 import { CreateSupportTicketDto } from "./dto/create-support-ticket.dto";
+import { AdminSupportQueryDto } from "./dto/admin-support-query.dto";
+import { UpdateSupportStatusDto } from "./dto/update-support-status.dto";
+import { AddSupportNoteDto } from "./dto/add-support-note.dto";
+import { RespondSupportTicketDto } from "./dto/respond-support-ticket.dto";
 import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
+import { RolesGuard } from "../common/guards/roles.guard";
+import { Roles } from "../common/decorators/roles.decorator";
 import { CurrentUser } from "../common/decorators/current-user.decorator";
 import { Public } from "../common/decorators/public.decorator";
 import {
@@ -115,6 +122,59 @@ export class SupportController {
   @ApiOperation({ summary: "Get one of the current user support tickets" })
   async findOne(@CurrentUser() user: any, @Param("id") id: string) {
     return this.supportService.findMyTicket(user.id, id);
+  }
+
+  @Get("admin/tickets")
+  @UseGuards(RolesGuard)
+  @Roles("ADMIN", "SUPER_ADMIN")
+  @ApiOperation({ summary: "List all support tickets (admin)" })
+  async adminFindAll(@Query() query: AdminSupportQueryDto) {
+    return this.supportService.adminFindAll(query);
+  }
+
+  @Get("admin/tickets/:id")
+  @UseGuards(RolesGuard)
+  @Roles("ADMIN", "SUPER_ADMIN")
+  @ApiOperation({ summary: "Get support ticket detail (admin)" })
+  async adminFindOne(@Param("id") id: string) {
+    return this.supportService.adminFindOne(id);
+  }
+
+  @Patch("admin/tickets/:id/status")
+  @UseGuards(RolesGuard)
+  @Roles("ADMIN", "SUPER_ADMIN")
+  @ApiOperation({ summary: "Update support ticket status (admin)" })
+  async adminUpdateStatus(
+    @CurrentUser() user: any,
+    @Param("id") id: string,
+    @Body() dto: UpdateSupportStatusDto,
+  ) {
+    return this.supportService.adminUpdateStatus(user.id, id, dto);
+  }
+
+  @Post("admin/tickets/:id/notes")
+  @UseGuards(RolesGuard)
+  @Roles("ADMIN", "SUPER_ADMIN")
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: "Add internal note to support ticket (admin)" })
+  async adminAddNote(
+    @CurrentUser() user: any,
+    @Param("id") id: string,
+    @Body() dto: AddSupportNoteDto,
+  ) {
+    return this.supportService.adminAddNote(user.id, id, dto);
+  }
+
+  @Post("admin/tickets/:id/respond")
+  @UseGuards(RolesGuard)
+  @Roles("ADMIN", "SUPER_ADMIN")
+  @ApiOperation({ summary: "Respond to support ticket (admin)" })
+  async adminRespond(
+    @CurrentUser() user: any,
+    @Param("id") id: string,
+    @Body() dto: RespondSupportTicketDto,
+  ) {
+    return this.supportService.adminRespond(user.id, id, dto);
   }
 
   @Get("files/:filename")

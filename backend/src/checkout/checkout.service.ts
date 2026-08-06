@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '../generated/prisma/client';
 
 @Injectable()
 export class CheckoutService {
@@ -20,6 +20,9 @@ export class CheckoutService {
 
     const address = await this.prisma.address.findUnique({ where: { id: dto.addressId } });
     if (!address) throw new NotFoundException('Address not found');
+    if (address.userId !== userId) {
+      throw new BadRequestException('This address does not belong to you');
+    }
 
     const supplierId = cart.items[0].product.supplierId;
     const subtotal = cart.items.reduce((sum, item) => sum + Number(item.price) * item.quantity, 0);

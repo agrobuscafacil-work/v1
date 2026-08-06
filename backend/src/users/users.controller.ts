@@ -19,6 +19,7 @@ import {
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
+import { UpdateUserAdminDto } from './dto/update-user-admin.dto';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
@@ -60,6 +61,17 @@ export class UsersController {
   @ApiOperation({ summary: 'Get user by ID (admin)' })
   async findById(@Param('id') id: string) {
     return this.usersService.findById(id);
+  }
+
+  @Put(':id')
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @ApiOperation({ summary: 'Update user by ID (admin)' })
+  async updateById(
+    @Param('id') id: string,
+    @Body() dto: UpdateUserAdminDto,
+  ) {
+    return this.usersService.updateByAdmin(id, dto);
   }
 
   @Put('me')

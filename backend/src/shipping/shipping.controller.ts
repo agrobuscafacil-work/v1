@@ -1,5 +1,5 @@
 import {
-  Controller, Get, Post, Put, Body, Param, UseGuards, HttpCode, HttpStatus,
+  Controller, Get, Post, Put, Delete, Body, Param, UseGuards, HttpCode, HttpStatus,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { ShippingService } from './shipping.service';
@@ -17,8 +17,8 @@ export class ShippingController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Update shipping config' })
-  async updateConfig(@Param('supplierId') supplierId: string, @Body() deliveryInfo: any) {
-    return this.shippingService.updateConfig(supplierId, deliveryInfo);
+  async updateConfig(@CurrentUser() user: any, @Param('supplierId') supplierId: string, @Body() deliveryInfo: any) {
+    return this.shippingService.updateConfig(supplierId, deliveryInfo, user);
   }
 
   @Get('config/:supplierId')
@@ -51,5 +51,14 @@ export class ShippingController {
   @ApiOperation({ summary: 'Add user address' })
   async addAddress(@CurrentUser() user: any, @Body() dto: any) {
     return this.shippingService.addAddress(user.id, dto);
+  }
+
+  @Delete('addresses/:id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Delete user address' })
+  async removeAddress(@Param('id') id: string, @CurrentUser() user: any) {
+    return this.shippingService.removeAddress(id, user.id);
   }
 }

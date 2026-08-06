@@ -1,14 +1,30 @@
-import { Injectable, NotFoundException, Logger } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
-import { ProductStatus } from '@prisma/client';
+import { ProductStatus } from '../generated/prisma/client';
+import { parsePage, parseLimit } from '../common/utils/pagination';
 
 @Injectable()
 export class ServicesService {
   private readonly logger = new Logger(ServicesService.name);
 
   constructor(private prisma: PrismaService) {}
+
+  private isAdmin(role?: string) {
+    return role === 'ADMIN' || role === 'SUPER_ADMIN';
+  }
+
+  private async assertOwner(serviceId: string, user: { id: string; role: string }) {
+    const service = await this.prisma.service.findUnique({
+      where: { id: serviceId },
+      select: { supplier: { select: { userId: true } } },
+    });
+    if (!service) throw new NotFoundException('Service not found');
+    if (!this.isAdmin(user.role) && service.supplier?.userId !== user.id) {
+      throw new ForbiddenException('You do not have access to this service');
+    }
+  }
 
   async create(userId: string, dto: CreateServiceDto) {
     const supplier = await this.prisma.supplierProfile.findUnique({ where: { userId } });
@@ -38,7 +54,9 @@ export class ServicesService {
   async findAll(params: {
     page?: number; limit?: number; categoryId?: string; supplierId?: string; search?: string; status?: string;
   }) {
-    const { page = 1, limit = 10, categoryId, supplierId, search, status } = params;
+    const { page: rawPage = 1, limit: rawLimit = 10, categoryId, supplierId, search, status } = params;
+    const page = parsePage(rawPage);
+    const limit = parseLimit(rawLimit);
     const skip = (page - 1) * limit;
     const where: any = { deletedAt: null };
     if (categoryId) where.categoryId = categoryId;
@@ -75,8 +93,8 @@ export class ServicesService {
     return service;
   }
 
-  async update(id: string, dto: UpdateServiceDto) {
-    await this.findById(id);
+  async update(id: string, dto: UpdateServiceDto, user: { id: string; role: string }) {
+    await this.assertOwner(id, user);
     return this.prisma.service.update({
       where: { id },
       data: { ...dto, status: dto.status as ProductStatus },
@@ -84,8 +102,8 @@ export class ServicesService {
     });
   }
 
-  async remove(id: string) {
-    await this.findById(id);
+  async remove(id: string, user: { id: string; role: string }) {
+    await this.assertOwner(id, user);
     await this.prisma.service.update({
       where: { id },
       data: { deletedAt: new Date(), status: ProductStatus.DISCONTINUED },

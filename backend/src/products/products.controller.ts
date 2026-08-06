@@ -49,16 +49,21 @@ export class ProductsController {
   @ApiQuery({ name: 'search', required: false })
   @ApiQuery({ name: 'minPrice', required: false })
   @ApiQuery({ name: 'maxPrice', required: false })
+  @ApiQuery({ name: 'featured', required: false })
+  @ApiQuery({ name: 'status', required: false })
   async findAll(
     @Query('page') page?: number, @Query('limit') limit?: number,
     @Query('categoryId') categoryId?: string, @Query('supplierId') supplierId?: string,
     @Query('search') search?: string, @Query('minPrice') minPrice?: string,
-    @Query('maxPrice') maxPrice?: string,
+    @Query('maxPrice') maxPrice?: string, @Query('featured') featured?: string,
+    @Query('status') status?: string,
   ) {
     return this.productsService.findAll({
       page, limit, categoryId, supplierId, search,
       minPrice: minPrice ? parseFloat(minPrice) : undefined,
       maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
+      featured: featured === 'true',
+      status,
     });
   }
 
@@ -116,6 +121,13 @@ export class ProductsController {
     res.sendFile(filePath);
   }
 
+  @Get('slug/:slug')
+  @Public()
+  @ApiOperation({ summary: 'Get product by slug' })
+  async findBySlug(@Param('slug') slug: string) {
+    return this.productsService.findBySlug(slug);
+  }
+
   @Get(':id')
   @Public()
   @ApiOperation({ summary: 'Get product by ID' })
@@ -132,7 +144,7 @@ export class ProductsController {
     @Param('id') id: string,
     @Body() dto: UpdateProductDto,
   ) {
-    return this.productsService.update(user.id, id, dto);
+    return this.productsService.update(user, id, dto);
   }
 
   @Delete(':id')
@@ -141,6 +153,6 @@ export class ProductsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete product permanently' })
   async remove(@CurrentUser() user: any, @Param('id') id: string) {
-    return this.productsService.remove(user.id, id);
+    return this.productsService.remove(user, id);
   }
 }

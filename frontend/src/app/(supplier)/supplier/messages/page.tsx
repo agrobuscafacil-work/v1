@@ -1,108 +1,154 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Search, Send, Mail, MailOpen, MessageCircle, Wifi, WifiOff } from 'lucide-react';
+import { Search, Send, Mail, MailOpen, MessageCircle, Wifi, WifiOff, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { getChatSettings, defaultChatSettings } from '@/lib/chat-settings';
-import {
-  getAllConversations, getConversationMessages, sendMessage,
-  markConversationRead, addConversation, ChatConversation, ChatMessage,
-} from '@/lib/chat-store';
+import { api } from '@/lib/api';
+import { useAuth } from '@/hooks/use-auth';
 
-const SUPPLIER_PREFIX = 'supp_';
-const supplierSeed: ChatConversation[] = [
-  { id: SUPPLIER_PREFIX + 's1', name: 'João Silva', subject: 'Dúvida sobre entrega', lastMessage: 'Meu pedido chegou?', time: '5 min', unread: true },
-  { id: SUPPLIER_PREFIX + 's2', name: 'Maria Oliveira', subject: 'Troca de produto', lastMessage: 'Gostaria de trocar o item.', time: '1 hora', unread: true },
-  { id: SUPPLIER_PREFIX + 's3', name: 'Carlos Pereira', subject: 'Orçamento', lastMessage: 'Quanto custa o frete?', time: '1 dia', unread: false },
-  { id: SUPPLIER_PREFIX + 's4', name: 'Ana Souza', subject: 'Reclamação', lastMessage: 'Produto veio com defeito.', time: '2 dias', unread: false },
-  { id: SUPPLIER_PREFIX + 's5', name: 'Pedro Santos', subject: 'Disponibilidade', lastMessage: 'Tem em estoque?', time: '3 dias', unread: false },
-  { id: SUPPLIER_PREFIX + 's6', name: 'Juliana Costa', subject: 'Cancelamento', lastMessage: 'Quero cancelar o pedido.', time: '4 dias', unread: false },
-];
+interface Conversation {
+  id: string;
+  subject: string;
+  updatedAt: string;
+  customer: { id: string; name: string; avatarUrl?: string } | null;
+  messages?: { id: string; content: string; senderId: string; readAt: string | null; createdAt: string }[];
+}
 
-function seedSupplierConversations() {
-  const all = getAllConversations();
-  const hasSupplier = all.some((c) => c.id.startsWith(SUPPLIER_PREFIX));
-  if (!hasSupplier) {
-    for (const c of supplierSeed) {
-      addConversation(c);
-    }
-  }
+interface Message {
+  id: string;
+  content: string;
+  senderId: string;
+  createdAt: string;
+  sender?: { id: string; name: string; avatarUrl?: string };
+}
+
+function formatTime(value: string) {
+  const d = new Date(value);
+  const now = new Date();
+  const diff = now.getTime() - d.getTime();
+  if (diff < 60_000) return 'agora';
+  if (diff < 3_600_000) return `${Math.floor(diff / 60_000)} min`;
+  if (diff < 86_400_000) return `${Math.floor(diff / 3_600_000)} h`;
+  return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+}
+
+function timeOfDay(value: string) {
+  return new Date(value).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 }
 
 export default function SupplierMessagesPage() {
+  const { user } = useAuth();
   const [search, setSearch] = useState('');
-  const [conversations, setConversations] = useState<ChatConversation[]>([]);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selected, setSelected] = useState('');
   const [reply, setReply] = useState('');
-  const [messages, setMessages] = useState<Record<string, ChatMessage[]>>({});
-  const [settings, setSettings] = useState(defaultChatSettings);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [online, setOnline] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [sending, setSending] = useState(false);
 
-  useEffect(() => {
-    setSettings(getChatSettings());
+  const currentUserId = user?.id ?? null;
+
+  const loadConversations = useCallback(async () => {
+    try {
+      const res = await api.get('/chat/conversations');
+      setConversations(res.data.data ?? []);
+      if (res.data.data?.length > 0 && !selected) {
+        setSelected(res.data.data[0].id);
+      }
+    } catch {
+      toast.error('Erro ao carregar conversas.');
+    }
+  }, [selected]);
+
+  const loadMessages = useCallback(async (convId: string) => {
+    try {
+      const res = await api.get(`/chat/conversations/${convId}`);
+      setMessages(res.data.data?.messages ?? []);
+    } catch {
+      toast.error('Erro ao carregar mensagens.');
+    }
   }, []);
 
   useEffect(() => {
-    seedSupplierConversations();
-    const all = getAllConversations();
-    setConversations(all);
-    if (all.length > 0 && !selected) setSelected(all[0].id);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    let cancelled = false;
+    (async () => {
+      try {
+        const [convRes, settingsRes] = await Promise.all([
+          api.get('/chat/conversations'),
+          api.get('/chat/settings'),
+        ]);
+        if (cancelled) return;
+        const data = convRes.data.data ?? [];
+        setConversations(data);
+        setOnline(settingsRes.data.data?.online ?? false);
+        if (data.length > 0) setSelected(data[0].id);
+      } catch {
+        toast.error('Erro ao carregar conversas.');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (!selected) return;
-    setMessages((prev) => ({ ...prev, [selected]: getConversationMessages(selected) }));
-  }, [selected]);
+    loadMessages(selected);
+  }, [selected, loadMessages]);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setConversations(getAllConversations());
-      if (selected) setMessages((prev) => ({ ...prev, [selected]: getConversationMessages(selected) }));
-    }, 3000);
+      loadConversations();
+      if (selected) loadMessages(selected);
+    }, 5000);
     return () => clearInterval(interval);
-  }, [selected]);
+  }, [selected, loadConversations, loadMessages]);
 
   const filtered = conversations.filter((c) =>
-    c.name.toLowerCase().includes(search.toLowerCase()) ||
+    c.customer?.name?.toLowerCase().includes(search.toLowerCase()) ||
     c.subject.toLowerCase().includes(search.toLowerCase())
   );
 
   function handleSelect(id: string) {
     setSelected(id);
-    markConversationRead(id);
-    setConversations(getAllConversations());
+    api.post(`/chat/conversations/${id}/read`).catch(() => undefined);
+    setConversations((prev) => prev.map((c) => (c.id === id ? { ...c } : c)));
   }
 
-  function handleSend() {
+  async function handleSend() {
     if (!reply.trim() || !selected) return;
+    setSending(true);
     try {
-      sendMessage(selected, reply, true);
-      setConversations(getAllConversations());
-      setMessages((prev) => ({ ...prev, [selected]: getConversationMessages(selected) }));
+      await api.post(`/chat/conversations/${selected}/messages`, { content: reply.trim() });
       setReply('');
-
-      if (settings.autoReplyEnabled) {
-        setTimeout(() => {
-          try {
-            sendMessage(selected, settings.autoReplyMessage, false);
-            setConversations(getAllConversations());
-            setMessages((prev) => ({ ...prev, [selected]: getConversationMessages(selected) }));
-          } catch {}
-        }, 2000);
-      }
-    } catch {
-      toast.error('Erro ao enviar mensagem.');
+      await loadMessages(selected);
+      await loadConversations();
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || 'Erro ao enviar mensagem.');
+    } finally {
+      setSending(false);
     }
   }
 
   const conv = conversations.find((c) => c.id === selected);
-  const activeMessages = messages[selected] || [];
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-16">
+        <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 lg:p-8">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Chat</h1>
         <div className="flex items-center gap-2 text-sm">
-          {settings.online ? (
+          {online ? (
             <><Wifi className="h-4 w-4 text-green-500" /><span className="text-green-600 dark:text-green-400">Online</span></>
           ) : (
             <><WifiOff className="h-4 w-4 text-red-500" /><span className="text-red-600 dark:text-red-400">Offline</span></>
@@ -122,20 +168,24 @@ export default function SupplierMessagesPage() {
               {filtered.length === 0 && (
                 <div className="text-center py-8 text-sm text-gray-400">Nenhuma conversa encontrada.</div>
               )}
-              {filtered.map((c) => (
-                <button
-                  key={c.id}
-                  onClick={() => handleSelect(c.id)}
-                  className={'w-full text-left p-3 border-b border-gray-50 dark:border-gray-800/50 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors ' + (selected === c.id ? 'bg-primary-50 dark:bg-primary-950' : '')}
-                >
-                  <div className="flex items-center gap-2 mb-0.5">
-                    {c.unread ? <Mail className="h-3.5 w-3.5 text-primary-600" /> : <MailOpen className="h-3.5 w-3.5 text-gray-400" />}
-                    <p className={'text-sm flex-1 truncate ' + (c.unread ? 'font-semibold text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-300')}>{c.name}</p>
-                    <span className="text-xs text-gray-500 flex-shrink-0">{c.time}</span>
-                  </div>
-                  <p className="text-xs text-gray-500 truncate">{c.subject}</p>
-                </button>
-              ))}
+              {filtered.map((c) => {
+                const last = c.messages?.[0];
+                const unread = !!last && last.senderId !== currentUserId && !last.readAt;
+                return (
+                  <button
+                    key={c.id}
+                    onClick={() => handleSelect(c.id)}
+                    className={'w-full text-left p-3 border-b border-gray-50 dark:border-gray-800/50 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors ' + (selected === c.id ? 'bg-primary-50 dark:bg-primary-950' : '')}
+                  >
+                    <div className="flex items-center gap-2 mb-0.5">
+                      {unread ? <Mail className="h-3.5 w-3.5 text-primary-600" /> : <MailOpen className="h-3.5 w-3.5 text-gray-400" />}
+                      <p className={'text-sm flex-1 truncate ' + (unread ? 'font-semibold text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-300')}>{c.customer?.name ?? 'Cliente'}</p>
+                      <span className="text-xs text-gray-500 flex-shrink-0">{formatTime(last?.createdAt ?? c.updatedAt)}</span>
+                    </div>
+                    <p className="text-xs text-gray-500 truncate">{last?.content ?? c.subject}</p>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -143,16 +193,16 @@ export default function SupplierMessagesPage() {
             {conv ? (
               <>
                 <div className="p-4 border-b border-gray-200 dark:border-gray-800">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">{conv.name}</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">{conv.customer?.name ?? 'Cliente'}</p>
                   <p className="text-xs text-gray-500">{conv.subject}</p>
                 </div>
                 <div className="flex-1 overflow-y-auto p-4">
                   <div className="space-y-4">
-                    {activeMessages.map((msg) => (
-                      <div key={msg.id} className={'flex ' + (msg.sentByMe ? 'justify-end' : 'justify-start')}>
-                        <div className={'max-w-md rounded-xl px-4 py-2.5 text-sm ' + (msg.sentByMe ? 'bg-primary-500 text-white rounded-br-sm' : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-bl-sm')}>
-                          <p>{msg.text}</p>
-                          <p className={'text-xs mt-1 ' + (msg.sentByMe ? 'text-primary-100' : 'text-gray-400')}>{msg.time}</p>
+                    {messages.map((msg) => (
+                      <div key={msg.id} className={'flex ' + (msg.senderId === currentUserId ? 'justify-end' : 'justify-start')}>
+                        <div className={'max-w-md rounded-xl px-4 py-2.5 text-sm ' + (msg.senderId === currentUserId ? 'bg-primary-500 text-white rounded-br-sm' : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-bl-sm')}>
+                          <p>{msg.content}</p>
+                          <p className={'text-xs mt-1 ' + (msg.senderId === currentUserId ? 'text-primary-100' : 'text-gray-400')}>{timeOfDay(msg.createdAt)}</p>
                         </div>
                       </div>
                     ))}
@@ -168,7 +218,7 @@ export default function SupplierMessagesPage() {
                       className="flex-1 px-4 py-2.5 text-sm rounded-lg bg-gray-50 dark:bg-gray-800 border-0 focus:ring-2 focus:ring-primary-500"
                       onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                     />
-                    <button onClick={handleSend} disabled={!reply.trim()} className="p-2.5 rounded-lg bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50">
+                    <button onClick={handleSend} disabled={!reply.trim() || sending} className="p-2.5 rounded-lg bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50">
                       <Send className="h-4 w-4" />
                     </button>
                   </div>

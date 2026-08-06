@@ -21,6 +21,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { SearchModule } from './search/search.module';
 import { ServicesModule } from './services/services.module';
 import { FavoritesModule } from './favorites/favorites.module';
+import { PromotionsModule } from './promotions/promotions.module';
 import { CompanyModule } from './company/company.module';
 import { InstitutionalModule } from './institutional/institutional.module';
 import { BannerModule } from './banner/banner.module';
@@ -66,6 +67,7 @@ import { RedisModule } from './common/redis/redis.module';
     NotificationsModule,
     SearchModule,
     FavoritesModule,
+    PromotionsModule,
     CompanyModule,
     InstitutionalModule,
     BannerModule,

@@ -1,7 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
-import { NotificationType } from '@prisma/client';
+import { NotificationType } from '../generated/prisma/client';
+import { parsePage, parseLimit } from '../common/utils/pagination';
 
 @Injectable()
 export class NotificationsService {
@@ -23,6 +24,8 @@ export class NotificationsService {
   }
 
   async findByUser(userId: string, page = 1, limit = 20) {
+    page = parsePage(page);
+    limit = parseLimit(limit, 20);
     const skip = (page - 1) * limit;
     const where = { userId };
 

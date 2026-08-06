@@ -2,8 +2,10 @@ import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
+import { UpdateUserAdminDto } from './dto/update-user-admin.dto';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
+import { parsePage, parseLimit } from '../common/utils/pagination';
 
 @Injectable()
 export class UsersService {
@@ -20,7 +22,9 @@ export class UsersService {
     role?: string;
     search?: string;
   }) {
-    const { page = 1, limit = 10, role, search } = params;
+    const { page: rawPage = 1, limit: rawLimit = 10, role, search } = params;
+    const page = parsePage(rawPage);
+    const limit = parseLimit(rawLimit);
     const skip = (page - 1) * limit;
 
     const where: any = { deletedAt: null };
@@ -117,8 +121,30 @@ export class UsersService {
     return user;
   }
 
-  async updatePassword(id: string, dto: UpdatePasswordDto) {
-    const user = await this.prisma.user.findUnique({ where: { id } });
+  async updateByAdmin(id: string, dto: UpdateUserAdminDto) {
+    await this.findById(id);
+
+    const user = await this.prisma.user.update({
+      where: { id },
+      data: dto,
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        document: true,
+        phone: true,
+        avatarUrl: true,
+        role: true,
+        active: true,
+        verified: true,
+        updatedAt: true,
+      },
+    });
+
+    return user;
+  }
+
+  async updatePassword(id: string, dto: UpdatePasswordDto) {    const user = await this.prisma.user.findUnique({ where: { id } });
 
     if (!user) {
       throw new NotFoundException('User not found');

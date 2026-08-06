@@ -1,7 +1,7 @@
 import { Type } from "class-transformer";
 import { IsInt, IsOptional, IsString, Min, Max, IsEnum } from "class-validator";
 import { ApiPropertyOptional } from "@nestjs/swagger";
-import { SupportTicketStatus } from "@prisma/client";
+import { SupportTicketStatus } from "../../generated/prisma/client";
 
 export class AdminSupportQueryDto {
   @ApiPropertyOptional()

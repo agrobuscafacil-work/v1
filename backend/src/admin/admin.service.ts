@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { SupplierStatus, ReviewStatus } from '@prisma/client';
+import { SupplierStatus, ReviewStatus } from '../generated/prisma/client';
+import { parsePage, parseLimit } from '../common/utils/pagination';
 
 @Injectable()
 export class AdminService {
@@ -31,6 +32,8 @@ export class AdminService {
   }
 
   async getAuditLogs(page = 1, limit = 20) {
+    page = parsePage(page, 1);
+    limit = parseLimit(limit, 20);
     const skip = (page - 1) * limit;
     const [data, total] = await Promise.all([
       this.prisma.auditLog.findMany({
@@ -65,5 +68,29 @@ export class AdminService {
       }),
     ]);
     return { suppliers, reviews };
+  }
+
+  async getSettings() {
+    const rows = await this.prisma.systemSetting.findMany();
+    const settings: Record<string, any> = {};
+    for (const row of rows) {
+      settings[row.key] = row.value;
+    }
+    return settings;
+  }
+
+  async updateSettings(userId: string, dto: { settings: Record<string, any> }) {
+    const entries = dto.settings || {};
+    await Promise.all(
+      Object.keys(entries).map((key) =>
+        this.prisma.systemSetting.upsert({
+          where: { key },
+          create: { key, value: entries[key], updatedBy: userId },
+          update: { value: entries[key], updatedBy: userId },
+        }),
+      ),
+    );
+    this.logger.log(`Settings updated by ${userId}`);
+    return this.getSettings();
   }
 }
