@@ -43,24 +43,41 @@ export class AuthService {
     const saltRounds = Number(this.configService.get('BCRYPT_SALT_ROUNDS')) || 12;
     const hashedPassword = await bcrypt.hash(dto.password, saltRounds);
 
-    const user = await this.prisma.user.create({
-      data: {
-        email: dto.email,
-        password: hashedPassword,
-        name: dto.name,
-        document: dto.document,
-        phone: dto.phone,
-        role: dto.role || 'CUSTOMER',
-      },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        role: true,
-        document: true,
-        phone: true,
-        createdAt: true,
-      },
+    const user = await this.prisma.$transaction(async (tx) => {
+      const createdUser = await tx.user.create({
+        data: {
+          email: dto.email,
+          password: hashedPassword,
+          name: dto.name,
+          document: dto.document,
+          phone: dto.phone,
+          role: dto.role || 'CUSTOMER',
+        },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          role: true,
+          document: true,
+          phone: true,
+          createdAt: true,
+        },
+      });
+
+      if (createdUser.role === 'SUPPLIER') {
+        await tx.supplierProfile.create({
+          data: {
+            userId: createdUser.id,
+            companyName: dto.name,
+            document: dto.document,
+            phone: dto.phone || '',
+            email: dto.email,
+          },
+        });
+        this.logger.log(`Supplier profile auto-created for: ${createdUser.email}`);
+      }
+
+      return createdUser;
     });
 
     const tokens = await this.generateTokens(user);

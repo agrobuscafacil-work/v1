@@ -29,7 +29,11 @@ async function bootstrap() {
 
   app.setGlobalPrefix(`${apiPrefix}/${apiVersion}`, { exclude: ['/'] });
 
-  app.use(helmet());
+  app.use(
+    helmet({
+      crossOriginResourcePolicy: { policy: 'cross-origin' },
+    }),
+  );
   app.use(compression());
   app.use(cookieParser());
 

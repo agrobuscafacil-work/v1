@@ -1,8 +1,17 @@
-import { Injectable, NotFoundException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+  BadRequestException,
+  Logger,
+} from '@nestjs/common';
+import { existsSync, unlinkSync } from 'fs';
+import path from 'path';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductStatus } from '@prisma/client';
+import { PRODUCT_UPLOAD_PATH } from './products-upload.constants';
 
 @Injectable()
 export class ProductsService {
@@ -77,27 +86,24 @@ export class ProductsService {
     return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
   }
 
-  async findBySlug(slug: string) {
-    const product = await this.prisma.product.findUnique({
-      where: { slug },
-      include: {
-        category: true,
-        supplier: {
-          include: {
-            user: { select: { id: true, name: true } },
-            reviews: { take: 5, orderBy: { createdAt: 'desc' }, select: { rating: true, comment: true } },
-          },
-        },
-        reviews: {
-          where: { status: 'APPROVED' },
-          take: 10,
-          orderBy: { createdAt: 'desc' },
-          include: { user: { select: { id: true, name: true, avatarUrl: true } } },
-        },
-      },
+  async findMine(userId: string) {
+    const supplier = await this.prisma.supplierProfile.findUnique({
+      where: { userId },
     });
-    if (!product) throw new NotFoundException('Product not found');
-    return product;
+    if (!supplier) {
+      return { data: [], meta: { total: 0 } };
+    }
+
+    const data = await this.prisma.product.findMany({
+      where: { supplierId: supplier.id, deletedAt: null },
+      include: {
+        category: { select: { id: true, name: true, slug: true } },
+        supplier: { select: { id: true, companyName: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return { data, meta: { total: data.length } };
   }
 
   async findById(id: string) {
@@ -109,8 +115,16 @@ export class ProductsService {
     return product;
   }
 
-  async update(id: string, dto: UpdateProductDto) {
-    await this.findById(id);
+  async update(userId: string, id: string, dto: UpdateProductDto) {
+    const existing = await this.prisma.product.findUnique({
+      where: { id },
+      include: { supplier: { select: { userId: true } } },
+    });
+    if (!existing) throw new NotFoundException('Product not found');
+    if (existing.supplier.userId !== userId) {
+      throw new ForbiddenException('Você não tem permissão para editar este produto');
+    }
+
     const product = await this.prisma.product.update({
       where: { id },
       data: {
@@ -119,16 +133,63 @@ export class ProductsService {
       },
       include: { category: true, supplier: true },
     });
+
+    if (dto.images) {
+      const removed = (existing.images || []).filter(
+        (img) => !dto.images!.includes(img),
+      );
+      this.deleteImageFiles(removed);
+    }
+
     return product;
   }
 
-  async remove(id: string) {
-    await this.findById(id);
-    await this.prisma.product.update({
+  async remove(userId: string, id: string) {
+    const product = await this.prisma.product.findUnique({
       where: { id },
-      data: { deletedAt: new Date(), status: ProductStatus.DISCONTINUED },
+      include: { supplier: { select: { userId: true } } },
     });
-    this.logger.log(`Product soft deleted: ${id}`);
+    if (!product) throw new NotFoundException('Product not found');
+    if (product.supplier.userId !== userId) {
+      throw new ForbiddenException('Você não tem permissão para excluir este produto');
+    }
+
+    this.deleteImageFiles(product.images || []);
+
+    try {
+      await this.prisma.product.delete({ where: { id } });
+    } catch (err: any) {
+      if (err?.code === 'P2003') {
+        await this.prisma.cartItem.deleteMany({ where: { productId: id } });
+        await this.prisma.favorite.deleteMany({ where: { productId: id } });
+        await this.prisma.review.deleteMany({ where: { productId: id } });
+        await this.prisma.promotion.deleteMany({ where: { productId: id } });
+        await this.prisma.coupon.deleteMany({ where: { productId: id } });
+        try {
+          await this.prisma.product.delete({ where: { id } });
+        } catch {
+          throw new BadRequestException(
+            'Este produto possui pedidos registrados e não pode ser excluído.',
+          );
+        }
+      } else {
+        throw err;
+      }
+    }
+
+    this.logger.log(`Product deleted: ${id}`);
     return { message: 'Product deleted successfully' };
+  }
+
+  private deleteImageFiles(images: string[]) {
+    for (const img of images) {
+      try {
+        const filename = path.basename(img);
+        const filePath = path.join(PRODUCT_UPLOAD_PATH, filename);
+        if (existsSync(filePath)) unlinkSync(filePath);
+      } catch (err) {
+        this.logger.warn(`Falha ao remover arquivo de imagem: ${img} - ${err}`);
+      }
+    }
   }
 }
