@@ -44,6 +44,8 @@ api.interceptors.response.use(
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         if (typeof window !== 'undefined') {
+          // Axios interceptor runs outside React; a full redirect is required here.
+          // eslint-disable-next-line @next/next/no-location-assign-relative-destination
           window.location.href = '/auth/login';
         }
       }

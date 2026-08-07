@@ -291,10 +291,12 @@ export default function ProductsPage() {
                     viewMode === 'grid' ? 'aspect-[4/3]' : 'w-48 shrink-0 aspect-square'
                   }`}>
                     {product.image ? (
-                      <img
+                      <Image
                         src={PRODUCT_FILE_URL(product.image)}
                         alt={product.name}
-                        className="h-full w-full object-cover"
+                        fill
+                        sizes={viewMode === 'grid' ? '(max-width: 640px) 50vw, 25vw' : '192px'}
+                        className="object-cover"
                       />
                     ) : (
                       <Leaf className="h-12 w-12 text-gray-400" />

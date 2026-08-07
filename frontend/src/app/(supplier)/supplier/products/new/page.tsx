@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Package, Loader2, Upload, Save, X, AlertTriangle } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -235,11 +236,9 @@ export default function NewProductPage() {
           />
           {preview ? (
             <div className="flex items-center gap-4">
-              <img
-                src={preview}
-                alt="Pré-visualização"
-                className="h-24 w-24 rounded-lg object-cover border border-gray-200 dark:border-gray-700"
-              />
+              <div className="relative h-24 w-24 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 flex-shrink-0">
+                <Image src={preview} alt="Pré-visualização" fill sizes="96px" className="object-cover" />
+              </div>
               <div className="flex-1">
                 <p className="text-sm text-gray-700 dark:text-gray-300">Imagem pronta para envio.</p>
                 <div className="flex items-center gap-3 mt-2">

@@ -89,7 +89,39 @@ export default function SupplierOrdersPage() {
   };
 
   useEffect(() => {
-    load();
+    let cancelled = false;
+    void api
+      .get('/orders')
+      .then((res) => {
+        if (cancelled) return;
+        const data = res.data.data?.data ?? [];
+        setOrders(
+          data.map((o: any) => ({
+            id: o.id,
+            orderNumber: o.orderNumber,
+            customer: o.customer?.name || 'Cliente',
+            total: Number(o.total),
+            items: o.items?.length ?? 0,
+            status: o.status,
+            payment: paymentLabels[o.paymentMethod] || o.paymentMethod || '—',
+            createdAt: formatDate(o.createdAt),
+            orderItems: (o.items || []).map((i: any) => ({
+              name: i.product?.name || 'Produto',
+              quantity: i.quantity,
+              price: Number(i.unitPrice),
+            })),
+          })),
+        );
+      })
+      .catch(() => {
+        if (!cancelled) setOrders([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const filtered = orders.filter((o) => {

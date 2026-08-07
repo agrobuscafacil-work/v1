@@ -73,8 +73,22 @@ export default function SupplierPromotionsPage() {
   }, []);
 
   useEffect(() => {
-    load();
-  }, [load]);
+    let cancelled = false;
+    api
+      .get('/promotions/mine')
+      .then((res) => {
+        if (!cancelled) setPromotions(res.data.data ?? []);
+      })
+      .catch(() => {
+        if (!cancelled) toast.error('Erro ao carregar promoções.');
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   async function submitForm() {
     if (!form.title.trim()) return toast.error('Informe o título.');

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ShoppingBag, MapPin, CreditCard, Truck, Shield, Loader2, ChevronRight, Leaf } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { api } from '@/lib/api';
@@ -245,8 +246,8 @@ export default function CheckoutPage() {
                   {items.map((item) => (
                     <div key={item.product.id} className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-800 last:border-0">
                       <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-lg bg-primary-50 dark:bg-primary-950 flex items-center justify-center text-xs font-bold text-primary-600">
-                          {item.product.image ? <img src={item.product.image} alt="" className="h-full w-full object-cover rounded-lg" /> : <Leaf className="h-5 w-5" />}
+                        <div className="h-10 w-10 rounded-lg bg-primary-50 dark:bg-primary-950 flex items-center justify-center text-xs font-bold text-primary-600 relative overflow-hidden">
+                          {item.product.image ? <Image src={item.product.image} alt="" fill sizes="40px" className="object-cover" /> : <Leaf className="h-5 w-5" />}
                         </div>
                         <div>
                           <p className="text-sm font-medium text-gray-900 dark:text-white">{item.product.name}</p>

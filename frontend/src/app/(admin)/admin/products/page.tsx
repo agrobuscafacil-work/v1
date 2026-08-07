@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { Package, Search, Edit2, X, Save, Loader2, Eye, Store, DollarSign, Package as PackageIcon, Tag, Hash, ChevronLeft, ChevronRight, Trash2, Calendar, ShoppingBag } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { api } from '@/lib/api';
@@ -173,9 +174,9 @@ export default function AdminProductsPage() {
                   <tr key={p.id} className="border-b border-gray-50 dark:border-gray-800/50 hover:bg-gray-50 dark:hover:bg-gray-800/50">
                     <td className="p-4">
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="h-10 w-10 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100 dark:bg-gray-800 flex items-center justify-center border border-gray-200 dark:border-gray-700">
+                        <div className="h-10 w-10 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100 dark:bg-gray-800 flex items-center justify-center border border-gray-200 dark:border-gray-700 relative">
                           {p.images?.[0] ? (
-                            <img src={PRODUCT_FILE_URL(p.images[0])} alt={p.name} className="h-full w-full object-cover" />
+                            <Image src={PRODUCT_FILE_URL(p.images[0])} alt={p.name} fill sizes="40px" className="object-cover" />
                           ) : (
                             <Package className="h-5 w-5 text-gray-400" />
                           )}

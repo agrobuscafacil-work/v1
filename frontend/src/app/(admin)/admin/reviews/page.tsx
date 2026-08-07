@@ -49,8 +49,26 @@ export default function AdminReviewsPage() {
   }, [page, filter]);
 
   useEffect(() => {
-    fetchReviews();
-  }, [fetchReviews]);
+    let cancelled = false;
+    api
+      .get('/reviews/admin', {
+        params: { page, limit: 10, status: filter === 'all' ? undefined : filter },
+      })
+      .then((res) => {
+        if (cancelled) return;
+        setReviews(res.data.data?.data ?? []);
+        setTotalPages(res.data.data?.meta?.totalPages ?? 1);
+      })
+      .catch(() => {
+        if (!cancelled) toast.error('Erro ao carregar avaliações');
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [page, filter]);
 
   const filtered = reviews.filter((r) => {
     if (search) {

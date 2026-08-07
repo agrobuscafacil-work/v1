@@ -22,11 +22,7 @@ export default function CustomerChatPage() {
   const [showNew, setShowNew] = useState(false);
   const [newSubject, setNewSubject] = useState('');
   const [newMessage, setNewMessage] = useState('');
-  const [settings, setSettings] = useState<ChatSettings>(defaultChatSettings);
-
-  useEffect(() => {
-    setSettings(getChatSettings());
-  }, []);
+  const [settings, setSettings] = useState<ChatSettings>(() => getChatSettings());
 
   useEffect(() => {
     const all = getAllConversations();
@@ -43,17 +39,15 @@ export default function CustomerChatPage() {
       };
       addConversation(newConv);
       sendMessage(newConv.id, 'Olá! Bem-vindo ao atendimento AgroBuscaFácil. Como podemos ajudar?', false);
-      setSelected(newConv.id);
-    } else {
-      setSelected(custConvs[0].id);
     }
-    setConversations(getAllConversations());
+    queueMicrotask(() => {
+      const convs = getAllConversations();
+      const first = convs.filter((c) => c.id.startsWith(CUST_PREFIX) || c.email === user?.email)[0];
+      setSelected(first?.id ?? '');
+      setConversations(convs);
+      if (first) setMessages((prev) => ({ ...prev, [first.id]: getConversationMessages(first.id) }));
+    });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    if (!selected) return;
-    setMessages((prev) => ({ ...prev, [selected]: getConversationMessages(selected) }));
-  }, [selected]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -76,6 +70,7 @@ export default function CustomerChatPage() {
     setSelected(id);
     markConversationRead(id);
     setConversations(getAllConversations());
+    setMessages((prev) => ({ ...prev, [id]: getConversationMessages(id) }));
   }
 
   function handleSend() {

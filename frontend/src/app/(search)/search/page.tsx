@@ -10,21 +10,15 @@ function SearchContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get('q') || '';
   const [searchTerm, setSearchTerm] = useState(query);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(!!query);
   const [results, setResults] = useState<any[]>([]);
 
   useEffect(() => {
-    setSearchTerm(query);
-    if (!query) {
-      setResults([]);
-      setIsLoading(false);
-      return;
-    }
+    if (!query) return;
     let cancelled = false;
-    const load = async () => {
-      setIsLoading(true);
-      try {
-        const res = await api.get('/search', { params: { q: query, limit: 12 } });
+    api
+      .get('/search', { params: { q: query, limit: 12 } })
+      .then((res) => {
         if (cancelled) return;
         const payload = res.data.data?.products?.data ?? [];
         setResults(
@@ -38,13 +32,13 @@ function SearchContent() {
             reviews: Number(p.totalReviews) || 0,
           })),
         );
-      } catch {
+      })
+      .catch(() => {
         if (!cancelled) setResults([]);
-      } finally {
+      })
+      .finally(() => {
         if (!cancelled) setIsLoading(false);
-      }
-    };
-    load();
+      });
     return () => { cancelled = true; };
   }, [query]);
 

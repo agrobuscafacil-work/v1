@@ -46,10 +46,6 @@ export default function AdminUsersPage() {
     load();
   }, [page, roleFilter, search]);
 
-  useEffect(() => {
-    setPage(1);
-  }, [roleFilter, search]);
-
   function startEdit(u: User) {
     setEditUser({ ...u });
   }
@@ -97,9 +93,9 @@ export default function AdminUsersPage() {
       <div className="flex flex-col sm:flex-row gap-4 mb-6">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar por nome ou email..." className="input-field pl-9 text-sm" />
+          <input type="text" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} placeholder="Buscar por nome ou email..." className="input-field pl-9 text-sm" />
         </div>
-        <select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)} className="input-field text-sm w-full sm:w-44">
+        <select value={roleFilter} onChange={(e) => { setRoleFilter(e.target.value); setPage(1); }} className="input-field text-sm w-full sm:w-44">
           <option value="all">Todos os tipos</option>
           <option value="CUSTOMER">Clientes</option>
           <option value="SUPPLIER">Fornecedores</option>

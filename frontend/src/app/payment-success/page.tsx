@@ -12,17 +12,18 @@ function PaymentSuccessContent() {
   const [status, setStatus] = useState<'loading' | 'confirmed' | 'error'>('loading');
 
   useEffect(() => {
-    if (!sessionId) {
-      setStatus('error');
-      return;
-    }
+    let cancelled = false;
     api
-      .get(`/stripe/session-status/${sessionId}`)
+      .get(sessionId ? `/stripe/session-status/${sessionId}` : '/stripe/session-status/none')
       .then((res) => {
+        if (cancelled) return;
         const session = res.data?.data;
         setStatus(session?.paymentStatus === 'paid' ? 'confirmed' : 'error');
       })
-      .catch(() => setStatus('error'));
+      .catch(() => {
+        if (!cancelled) setStatus('error');
+      });
+    return () => { cancelled = true; };
   }, [sessionId]);
 
   return (

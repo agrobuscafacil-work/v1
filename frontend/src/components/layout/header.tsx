@@ -45,7 +45,8 @@ export function Header() {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    setMounted(true);
+    const t = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(t);
   }, []);
 
   const unreadQuery = useQuery({

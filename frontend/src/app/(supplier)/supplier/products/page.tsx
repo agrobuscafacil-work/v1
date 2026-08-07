@@ -1,7 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Package, Search, Plus, Edit2, Trash2, Save, Loader2, Eye, X, DollarSign, Tag, Hash, Upload } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { fetchMyProducts, updateProduct, removeProduct, fetchCategories, uploadProductImage, PRODUCT_FILE_URL } from '@/lib/products';
@@ -33,33 +34,35 @@ export default function SupplierProductsPage() {
   const [uploadingEditImage, setUploadingEditImage] = useState(false);
   const editFileRef = useRef<HTMLInputElement>(null);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    try {
-      const [prods, cats] = await Promise.all([fetchMyProducts(), fetchCategories()]);
-      setCategories(cats.filter((c) => c.active));
-      setItems(
-        prods.map((p) => ({
-          id: p.id,
-          name: p.name,
-          categoryId: p.categoryId,
-          categoryName: p.category?.name || '',
-          price: Number(p.price),
-          stock: Number(p.stock),
-          status: p.status,
-          images: p.images ?? [],
-        })),
-      );
-    } catch {
-      toast.error('Erro ao carregar produtos.');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
-    load();
-  }, [load]);
+    let cancelled = false;
+    Promise.all([fetchMyProducts(), fetchCategories()])
+      .then(([prods, cats]) => {
+        if (cancelled) return;
+        setCategories(cats.filter((c) => c.active));
+        setItems(
+          prods.map((p) => ({
+            id: p.id,
+            name: p.name,
+            categoryId: p.categoryId,
+            categoryName: p.category?.name || '',
+            price: Number(p.price),
+            stock: Number(p.stock),
+            status: p.status,
+            images: p.images ?? [],
+          })),
+        );
+      })
+      .catch(() => {
+        if (!cancelled) toast.error('Erro ao carregar produtos.');
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const filtered = items.filter(
     (p) =>
@@ -143,11 +146,9 @@ export default function SupplierProductsPage() {
   const CardImage = ({ p }: { p: EditableProduct }) => {
     if (p.images?.[0]) {
       return (
-        <img
-          src={PRODUCT_FILE_URL(p.images[0])}
-          alt={p.name}
-          className="h-12 w-12 rounded-lg object-cover border border-gray-200 dark:border-gray-700 flex-shrink-0"
-        />
+        <div className="relative h-12 w-12 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 flex-shrink-0">
+          <Image src={PRODUCT_FILE_URL(p.images[0])} alt={p.name} fill sizes="48px" className="object-cover" />
+        </div>
       );
     }
     return (
@@ -367,11 +368,9 @@ export default function SupplierProductsPage() {
                   <div className="space-y-2">
                     {editItem.images.map((img, idx) => (
                       <div key={`${img}-${idx}`} className="flex items-center gap-3 rounded-lg border border-gray-200 dark:border-gray-700 p-2">
-                        <img
-                          src={PRODUCT_FILE_URL(img)}
-                          alt="Imagem do produto"
-                          className="h-14 w-14 rounded-md object-cover border border-gray-200 dark:border-gray-700 flex-shrink-0"
-                        />
+                        <div className="relative h-14 w-14 rounded-md overflow-hidden flex-shrink-0 border border-gray-200 dark:border-gray-700">
+                          <Image src={PRODUCT_FILE_URL(img)} alt="Imagem do produto" fill sizes="56px" className="object-cover" />
+                        </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-xs text-gray-500 truncate">{img.split('/').pop()}</p>
                           <button

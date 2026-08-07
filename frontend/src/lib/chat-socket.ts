@@ -67,9 +67,12 @@ interface UseChatSocketOptions {
 }
 
 export function useChatSocket(opts: UseChatSocketOptions = {}) {
-  const [connected, setConnected] = useState(false);
-  const handlersRef = useRef(opts);
-  handlersRef.current = opts;
+  const [connected, setConnected] = useState(() => getSocket()?.connected ?? false);
+  const optsRef = useRef(opts);
+
+  useEffect(() => {
+    optsRef.current = opts;
+  }, [opts]);
 
   useEffect(() => {
     const s = connectSocket();
@@ -77,10 +80,10 @@ export function useChatSocket(opts: UseChatSocketOptions = {}) {
 
     const handleConnect = () => setConnected(true);
     const handleDisconnect = () => setConnected(false);
-    const handleMessage = (data: any) => handlersRef.current.onMessage?.(data);
-    const handleTyping = (data: any) => handlersRef.current.onTyping?.(data);
-    const handleRead = (data: any) => handlersRef.current.onRead?.(data);
-    const handleConversationUpdated = (data: any) => handlersRef.current.onConversationUpdated?.(data);
+    const handleMessage = (data: any) => optsRef.current.onMessage?.(data);
+    const handleTyping = (data: any) => optsRef.current.onTyping?.(data);
+    const handleRead = (data: any) => optsRef.current.onRead?.(data);
+    const handleConversationUpdated = (data: any) => optsRef.current.onConversationUpdated?.(data);
 
     s.on('connect', handleConnect);
     s.on('disconnect', handleDisconnect);
@@ -88,8 +91,6 @@ export function useChatSocket(opts: UseChatSocketOptions = {}) {
     s.on('typing', handleTyping);
     s.on('read', handleRead);
     s.on('conversation:updated', handleConversationUpdated);
-
-    setConnected(s.connected);
 
     return () => {
       s.off('connect', handleConnect);

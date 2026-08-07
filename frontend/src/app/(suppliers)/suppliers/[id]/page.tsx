@@ -155,10 +155,7 @@ export default function SupplierDetailPage({ params }: { params: { id: string } 
   }, [params.id]);
 
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [isOnline, setIsOnline] = useState(true);
-  useEffect(() => {
-    setIsOnline(getChatSettings().online);
-  }, []);
+  const [isOnline, setIsOnline] = useState(() => getChatSettings().online);
   const [chatName, setChatName] = useState('');
   const [chatEmail, setChatEmail] = useState('');
   const [chatMessage, setChatMessage] = useState('');

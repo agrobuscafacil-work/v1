@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ShoppingBag, Search, Download, Eye, X, Package, User, Store, DollarSign, CreditCard, Calendar, Hash, Loader2, Truck, StickyNote, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { api } from '@/lib/api';
@@ -93,28 +93,32 @@ export default function AdminOrdersPage() {
   const [savingStatus, setSavingStatus] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
-  const fetchOrders = useCallback(async () => {
-    setLoading(true);
-    try {
-      const params: Record<string, string | number> = { page, limit: 10 };
-      if (statusFilter !== 'all') params.status = statusFilter;
-      const res = await api.get('/orders/admin', { params });
-      const payload = res.data.data;
-      setOrders(payload.data || []);
-      setPage(payload.meta?.page || 1);
-      setTotalPages(payload.meta?.totalPages || 1);
-    } catch (e: any) {
-      const msg = e?.response?.data?.message;
-      toast.error(typeof msg === 'string' ? msg : 'Erro ao carregar pedidos.');
-      setOrders([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [page, statusFilter]);
-
   useEffect(() => {
-    fetchOrders();
-  }, [fetchOrders]);
+    let cancelled = false;
+    const params: Record<string, string | number> = { page, limit: 10 };
+    if (statusFilter !== 'all') params.status = statusFilter;
+    api
+      .get('/orders/admin', { params })
+      .then((res) => {
+        if (cancelled) return;
+        const payload = res.data.data;
+        setOrders(payload.data || []);
+        setPage(payload.meta?.page || 1);
+        setTotalPages(payload.meta?.totalPages || 1);
+      })
+      .catch((e: any) => {
+        if (cancelled) return;
+        const msg = e?.response?.data?.message;
+        toast.error(typeof msg === 'string' ? msg : 'Erro ao carregar pedidos.');
+        setOrders([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [page, statusFilter]);
 
   const filtered = orders.filter((o) => {
     if (search && !o.orderNumber.toLowerCase().includes(search.toLowerCase()) && !(o.customer?.name || '').toLowerCase().includes(search.toLowerCase())) return false;

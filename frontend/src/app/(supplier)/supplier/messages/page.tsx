@@ -96,8 +96,19 @@ export default function SupplierMessagesPage() {
 
   useEffect(() => {
     if (!selected) return;
-    loadMessages(selected);
-  }, [selected, loadMessages]);
+    let cancelled = false;
+    api
+      .get(`/chat/conversations/${selected}`)
+      .then((res) => {
+        if (!cancelled) setMessages(res.data.data?.messages ?? []);
+      })
+      .catch(() => {
+        if (!cancelled) toast.error('Erro ao carregar mensagens.');
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [selected]);
 
   useEffect(() => {
     const interval = setInterval(() => {
