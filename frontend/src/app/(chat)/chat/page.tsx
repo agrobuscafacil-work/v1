@@ -1,19 +1,19 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Search, Send, Mail, MailOpen, MessageCircle, Plus, Wifi, WifiOff, X } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { Search, Send, Mail, MailOpen, MessageCircle, Plus, Wifi, WifiOff, X, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '@/hooks/use-auth';
-import { getChatSettings, defaultChatSettings, ChatSettings } from '@/lib/chat-settings';
 import {
-  getAllConversations, getConversationMessages, sendMessage,
-  markConversationRead, addConversation, ChatConversation, ChatMessage,
-} from '@/lib/chat-store';
-
-const CUST_PREFIX = 'cust_';
+  fetchConversations, fetchConversationMessages, createConversation,
+  sendMessage, markConversationRead, fetchFirstApprovedSupplier,
+  ChatConversation, ChatMessage,
+} from '@/lib/chat-api';
+import { useChatSocket, joinConversation, leaveConversation, sendViaSocket, emitRead } from '@/lib/chat-socket';
 
 export default function CustomerChatPage() {
   const { user, isAuthenticated } = useAuth();
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [conversations, setConversations] = useState<ChatConversation[]>([]);
   const [selected, setSelected] = useState('');
@@ -22,94 +22,152 @@ export default function CustomerChatPage() {
   const [showNew, setShowNew] = useState(false);
   const [newSubject, setNewSubject] = useState('');
   const [newMessage, setNewMessage] = useState('');
-  const [settings, setSettings] = useState<ChatSettings>(() => getChatSettings());
+  const [online, setOnline] = useState(false);
+  const [sending, setSending] = useState(false);
 
-  useEffect(() => {
-    const all = getAllConversations();
-    const custConvs = all.filter((c) => c.id.startsWith(CUST_PREFIX) || c.email === user?.email);
-    if (custConvs.length === 0) {
-      const newConv: ChatConversation = {
-        id: CUST_PREFIX + Date.now(),
-        name: user?.name || 'Cliente',
-        email: user?.email || '',
-        subject: 'Bem-vindo ao chat',
-        lastMessage: 'Como podemos ajudar?',
-        time: 'Agora mesmo',
-        unread: false,
-      };
-      addConversation(newConv);
-      sendMessage(newConv.id, 'Olá! Bem-vindo ao atendimento AgroBuscaFácil. Como podemos ajudar?', false);
-    }
-    queueMicrotask(() => {
-      const convs = getAllConversations();
-      const first = convs.filter((c) => c.id.startsWith(CUST_PREFIX) || c.email === user?.email)[0];
-      setSelected(first?.id ?? '');
-      setConversations(convs);
-      if (first) setMessages((prev) => ({ ...prev, [first.id]: getConversationMessages(first.id) }));
-    });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const myUserId = user?.id ?? '';
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setConversations(getAllConversations());
-      if (selected) setMessages((prev) => ({ ...prev, [selected]: getConversationMessages(selected) }));
-    }, 3000);
-    return () => clearInterval(interval);
-  }, [selected]);
+  const refreshConversations = useCallback(async () => {
+    const convs = await fetchConversations(myUserId);
+    setConversations(convs);
+    return convs;
+  }, [myUserId]);
 
-  const myConvs = conversations.filter(
-    (c) => c.id.startsWith(CUST_PREFIX) || c.email === user?.email
+  const loadMessages = useCallback(
+    async (conversationId: string) => {
+      const msgs = await fetchConversationMessages(conversationId, myUserId);
+      setMessages((prev) => ({ ...prev, [conversationId]: msgs }));
+      return msgs;
+    },
+    [myUserId],
   );
 
-  const filtered = myConvs.filter((c) =>
-    c.name.toLowerCase().includes(search.toLowerCase()) ||
-    c.subject.toLowerCase().includes(search.toLowerCase())
+  useChatSocket({
+    onMessage: (data) => {
+      const convId = data.conversationId;
+      setMessages((prev) => {
+        const existing = prev[convId] ?? [];
+        if (existing.some((m) => m.id === data.message.id)) return prev;
+        return {
+          ...prev,
+          [convId]: [
+            ...existing,
+            {
+              id: data.message.id,
+              conversationId: convId,
+              content: data.message.content,
+              senderId: data.message.senderId,
+              sentByMe: data.message.senderId === myUserId,
+              createdAt: data.message.createdAt,
+            },
+          ],
+        };
+      });
+      refreshConversations();
+    },
+    onConversationUpdated: (data) => {
+      if (data.conversationId === selected) loadMessages(data.conversationId);
+    },
+  });
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!isAuthenticated) return;
+    (async () => {
+      try {
+        const supplier = await fetchFirstApprovedSupplier();
+        if (supplier?.chatSettings) setOnline(supplier.chatSettings.online);
+        let convs = await fetchConversations(myUserId);
+        if (convs.length === 0 && supplier) {
+          const created = await createConversation(supplier.id, 'Bem-vindo ao chat');
+          convs = [created, ...convs];
+        }
+        if (cancelled) return;
+        setConversations(convs);
+        const first = convs[0];
+        if (first) {
+          setSelected(first.id);
+          loadMessages(first.id);
+        }
+      } catch {
+        if (!cancelled) toast.error('Erro ao carregar conversas.');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [isAuthenticated, myUserId, loadMessages]);
+
+  useEffect(() => {
+    if (selected) joinConversation(selected);
+    return () => {
+      if (selected) leaveConversation(selected);
+    };
+  }, [selected]);
+
+  const filtered = conversations.filter((c) =>
+    (c.otherPartyName.toLowerCase().includes(search.toLowerCase()) ||
+      (c.subject ?? '').toLowerCase().includes(search.toLowerCase()))
   );
 
   function handleSelect(id: string) {
     setSelected(id);
-    markConversationRead(id);
-    setConversations(getAllConversations());
-    setMessages((prev) => ({ ...prev, [id]: getConversationMessages(id) }));
+    markConversationRead(id).catch(() => undefined);
+    emitRead(id);
+    setMessages((prev) => ({ ...prev, [id]: [] }));
+    loadMessages(id);
   }
 
-  function handleSend() {
-    if (!reply.trim() || !selected) return;
+  async function handleSend() {
+    if (!reply.trim() || !selected || sending) return;
+    setSending(true);
+    const content = reply.trim();
+    setReply('');
+    setMessages((prev) => ({
+      ...prev,
+      [selected]: [
+        ...(prev[selected] ?? []),
+        { id: 'temp-' + Date.now(), conversationId: selected, content, senderId: myUserId, sentByMe: true, createdAt: new Date().toISOString() },
+      ],
+    }));
+    sendViaSocket({ conversationId: selected, content });
     try {
-      sendMessage(selected, reply, true);
-      setConversations(getAllConversations());
-      setMessages((prev) => ({ ...prev, [selected]: getConversationMessages(selected) }));
-      setReply('');
+      await sendMessage(selected, content);
+      loadMessages(selected);
     } catch {
       toast.error('Erro ao enviar mensagem.');
+    } finally {
+      setSending(false);
     }
   }
 
-  function handleNewConversation(e: React.FormEvent) {
+  async function handleNewConversation(e: React.FormEvent) {
     e.preventDefault();
     if (!newSubject.trim() || !newMessage.trim()) return;
-    const id = CUST_PREFIX + Date.now();
-    const conv: ChatConversation = {
-      id,
-      name: user?.name || 'Cliente',
-      email: user?.email || '',
-      subject: newSubject.trim(),
-      lastMessage: newMessage.trim(),
-      time: 'Agora mesmo',
-      unread: true,
-    };
-    addConversation(conv);
-    sendMessage(id, newMessage.trim(), true);
-    setConversations(getAllConversations());
-    setSelected(id);
-    setMessages((prev) => ({ ...prev, [id]: getConversationMessages(id) }));
-    setShowNew(false);
-    setNewSubject('');
-    setNewMessage('');
-    toast.success('Conversa iniciada!');
+    try {
+      const supplier = await fetchFirstApprovedSupplier();
+      if (!supplier) {
+        toast.error('Nenhum fornecedor disponível no momento.');
+        return;
+      }
+      const conv = await createConversation(supplier.id, newSubject.trim());
+      setConversations((prev) => [conv, ...prev]);
+      setSelected(conv.id);
+      setMessages((prev) => ({ ...prev, [conv.id]: [] }));
+      await sendMessage(conv.id, newMessage.trim());
+      await loadMessages(conv.id);
+      setShowNew(false);
+      setNewSubject('');
+      setNewMessage('');
+      toast.success('Conversa iniciada!');
+    } catch {
+      toast.error('Erro ao iniciar conversa.');
+    }
   }
 
-  const conv = myConvs.find((c) => c.id === selected);
+  const conv = conversations.find((c) => c.id === selected);
   const activeMessages = messages[selected] || [];
 
   if (!isAuthenticated) {
@@ -118,6 +176,14 @@ export default function CustomerChatPage() {
         <MessageCircle className="h-16 w-16 text-gray-300 mx-auto mb-4" />
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Chat</h1>
         <p className="text-gray-500">Faça login para acessar o chat.</p>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="container-page py-16 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
       </div>
     );
   }
@@ -131,7 +197,7 @@ export default function CustomerChatPage() {
         </div>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 text-sm">
-            {settings.online ? (
+            {online ? (
               <><Wifi className="h-4 w-4 text-green-500" /><span className="text-green-600 dark:text-green-400">Online</span></>
             ) : (
               <><WifiOff className="h-4 w-4 text-red-500" /><span className="text-red-600 dark:text-red-400">Offline</span></>
@@ -164,8 +230,8 @@ export default function CustomerChatPage() {
                 >
                   <div className="flex items-center gap-2 mb-0.5">
                     {c.unread ? <Mail className="h-3.5 w-3.5 text-primary-600" /> : <MailOpen className="h-3.5 w-3.5 text-gray-400" />}
-                    <p className={'text-sm flex-1 truncate ' + (c.unread ? 'font-semibold text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-300')}>{c.subject}</p>
-                    <span className="text-xs text-gray-500 flex-shrink-0">{c.time}</span>
+                    <p className={'text-sm flex-1 truncate ' + (c.unread ? 'font-semibold text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-300')}>{c.subject || c.otherPartyName}</p>
+                    <span className="text-xs text-gray-500 flex-shrink-0">{new Date(c.updatedAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
                   </div>
                   <p className="text-xs text-gray-500 truncate">{c.lastMessage}</p>
                 </button>
@@ -177,16 +243,16 @@ export default function CustomerChatPage() {
             {conv ? (
               <>
                 <div className="p-4 border-b border-gray-200 dark:border-gray-800">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">{conv.subject}</p>
-                  <p className="text-xs text-gray-500">Atendimento AgroBuscaFácil</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">{conv.subject || conv.otherPartyName}</p>
+                  <p className="text-xs text-gray-500">{conv.otherPartyName}</p>
                 </div>
                 <div className="flex-1 overflow-y-auto p-4">
                   <div className="space-y-4">
                     {activeMessages.map((msg) => (
                       <div key={msg.id} className={'flex ' + (msg.sentByMe ? 'justify-end' : 'justify-start')}>
                         <div className={'max-w-md rounded-xl px-4 py-2.5 text-sm ' + (msg.sentByMe ? 'bg-primary-500 text-white rounded-br-sm' : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-bl-sm')}>
-                          <p>{msg.text}</p>
-                          <p className={'text-xs mt-1 ' + (msg.sentByMe ? 'text-primary-100' : 'text-gray-400')}>{msg.time}</p>
+                          <p>{msg.content}</p>
+                          <p className={'text-xs mt-1 ' + (msg.sentByMe ? 'text-primary-100' : 'text-gray-400')}>{new Date(msg.createdAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</p>
                         </div>
                       </div>
                     ))}
@@ -202,7 +268,7 @@ export default function CustomerChatPage() {
                       className="flex-1 px-4 py-2.5 text-sm rounded-lg bg-gray-50 dark:bg-gray-800 border-0 focus:ring-2 focus:ring-primary-500"
                       onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                     />
-                    <button onClick={handleSend} disabled={!reply.trim()} className="p-2.5 rounded-lg bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50">
+                    <button onClick={handleSend} disabled={!reply.trim() || sending} className="p-2.5 rounded-lg bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50">
                       <Send className="h-4 w-4" />
                     </button>
                   </div>

@@ -3,8 +3,8 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import { getChatSettings } from '@/lib/chat-settings';
-import { addPendingMessage } from '@/lib/chat-store';
+import { useAuth } from '@/hooks/use-auth';
+import { openSupplierConversation, sendMessage as sendChatMessage } from '@/lib/chat-api';
 import { api } from '@/lib/api';
 import { PRODUCT_FILE_URL } from '@/lib/products';
 import {
@@ -34,6 +34,9 @@ interface SupplierInfo {
   featured: boolean;
   businessHours: { day?: string; hours?: string }[] | null;
   deliveryInfo: any;
+  online: boolean;
+  autoReplyMessage?: string | null;
+  welcomeMessage?: string | null;
 }
 
 interface SupplierProduct {
@@ -68,12 +71,44 @@ const DEFAULT_BUSINESS_HOURS = [
 ];
 
 export default function SupplierDetailPage({ params }: { params: { id: string } }) {
+  const { user, isAuthenticated } = useAuth();
   const [supplier, setSupplier] = useState<SupplierInfo | null>(null);
   const [products, setProducts] = useState<SupplierProduct[]>([]);
   const [services, setServices] = useState<SupplierService[]>([]);
   const [reviews, setReviews] = useState<SupplierReview[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isOnline, setIsOnline] = useState(true);
+  const [chatMessage, setChatMessage] = useState('');
+  const [chatSent, setChatSent] = useState(false);
+  const [chatSending, setChatSending] = useState(false);
+  const [chatHistory, setChatHistory] = useState<{ text: string; sentByMe: boolean }[]>([]);
+  const [chatConvId, setChatConvId] = useState('');
+
+  async function handleChatSend() {
+    if (!chatMessage.trim() || chatSending || !supplier) return;
+    setChatSending(true);
+    const text = chatMessage.trim();
+    setChatMessage('');
+    setChatHistory((prev) => [
+      ...prev,
+      { text: 'Olá! Como podemos ajudar?', sentByMe: false },
+      { text, sentByMe: true },
+    ]);
+    try {
+      if (!chatConvId) {
+        const conv = await openSupplierConversation(supplier.id, user?.id ?? '', 'Chat - ' + supplier.companyName);
+        setChatConvId(conv.id);
+      }
+      await sendChatMessage(chatConvId, text);
+      setChatSent(true);
+    } catch {
+      toast.error('Erro ao enviar mensagem.');
+    } finally {
+      setChatSending(false);
+    }
+  }
 
   useEffect(() => {
     const load = async () => {
@@ -110,7 +145,11 @@ export default function SupplierDetailPage({ params }: { params: { id: string } 
           featured: !!sup.featured,
           businessHours: Array.isArray(sup.businessHours) ? sup.businessHours : null,
           deliveryInfo: sup.deliveryInfo,
+          online: sup.chatSettings?.online ?? true,
+          autoReplyMessage: sup.chatSettings?.autoReplyMessage ?? null,
+          welcomeMessage: sup.chatSettings?.welcomeMessage ?? null,
         });
+        setIsOnline(sup.chatSettings?.online ?? true);
 
         const productsPayload = p.data.data?.data ?? [];
         setProducts(
@@ -153,14 +192,6 @@ export default function SupplierDetailPage({ params }: { params: { id: string } 
     };
     load();
   }, [params.id]);
-
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [isOnline, setIsOnline] = useState(() => getChatSettings().online);
-  const [chatName, setChatName] = useState('');
-  const [chatEmail, setChatEmail] = useState('');
-  const [chatMessage, setChatMessage] = useState('');
-  const [chatSent, setChatSent] = useState(false);
-  const [chatHistory, setChatHistory] = useState<{ text: string; sentByMe: boolean }[]>([]);
 
   if (isLoading) {
     return (
@@ -434,18 +465,11 @@ export default function SupplierDetailPage({ params }: { params: { id: string } 
                 <X className="h-5 w-5" />
               </button>
             </div>
-            {!chatName || !chatEmail ? (
-              <div className="space-y-4">
-                <p className="text-sm text-gray-600 dark:text-gray-400">Identifique-se para iniciar o chat:</p>
-                <div>
-                  <label className="label-field">Seu nome</label>
-                  <input type="text" value={chatName} onChange={(e) => setChatName(e.target.value)} className="input-field" placeholder="Digite seu nome" />
-                </div>
-                <div>
-                  <label className="label-field">Seu email</label>
-                  <input type="email" value={chatEmail} onChange={(e) => setChatEmail(e.target.value)} className="input-field" placeholder="Digite seu email" />
-                </div>
-                <button onClick={() => { if (!chatName.trim() || !chatEmail.trim()) { toast.error('Preencha seu nome e email'); return; } toast.success('Bem-vindo!'); }} className="btn-primary w-full">Iniciar Chat</button>
+            {!isAuthenticated ? (
+              <div className="space-y-4 text-center py-4">
+                <MessageCircle className="h-12 w-12 text-gray-300 mx-auto mb-2" />
+                <p className="text-sm text-gray-600 dark:text-gray-400">Faça login para iniciar o chat com o fornecedor.</p>
+                <Link href="/auth/login" className="btn-primary w-full">Entrar</Link>
               </div>
             ) : chatSent ? (
               <div className="text-center py-8">
@@ -477,9 +501,9 @@ export default function SupplierDetailPage({ params }: { params: { id: string } 
                     type="text" value={chatMessage} onChange={(e) => setChatMessage(e.target.value)}
                     placeholder="Digite sua mensagem..."
                     className="flex-1 px-4 py-2 text-sm rounded-lg bg-gray-50 dark:bg-gray-800 border-0 focus:ring-2 focus:ring-primary-500"
-                    onKeyDown={(e) => { if (e.key === 'Enter' && chatMessage.trim()) { addPendingMessage({ supplierId: supplier.id, supplierName: supplier.companyName, customerName: chatName, customerEmail: chatEmail, text: chatMessage }); setChatHistory((prev) => [...prev, { text: chatMessage, sentByMe: true }]); setChatMessage(''); } }}
+                    onKeyDown={(e) => { if (e.key === 'Enter') handleChatSend(); }}
                   />
-                  <button onClick={() => { if (chatMessage.trim()) { addPendingMessage({ supplierId: supplier.id, supplierName: supplier.companyName, customerName: chatName, customerEmail: chatEmail, text: chatMessage }); setChatHistory((prev) => [...prev, { text: chatMessage, sentByMe: true }]); setChatMessage(''); } }} className="p-2 rounded-lg bg-primary-600 text-white hover:bg-primary-700">
+                  <button onClick={handleChatSend} disabled={!chatMessage.trim() || chatSending} className="p-2 rounded-lg bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50">
                     <Send className="h-4 w-4" />
                   </button>
                 </div>
@@ -495,13 +519,9 @@ export default function SupplierDetailPage({ params }: { params: { id: string } 
                   <textarea value={chatMessage} onChange={(e) => setChatMessage(e.target.value)} className="input-field min-h-[100px]" placeholder="Digite sua mensagem..." />
                 </div>
                 <button
-                  onClick={() => {
-                    if (!chatMessage.trim()) { toast.error('Digite uma mensagem'); return; }
-                    addPendingMessage({ supplierId: supplier.id, supplierName: supplier.companyName, customerName: chatName, customerEmail: chatEmail, text: chatMessage });
-                    setChatSent(true);
-                    toast.success('Mensagem enviada com sucesso!');
-                  }}
-                  className="btn-primary w-full"
+                  onClick={handleChatSend}
+                  disabled={!chatMessage.trim() || chatSending}
+                  className="btn-primary w-full disabled:opacity-50"
                 >
                   Enviar Mensagem
                 </button>

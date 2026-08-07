@@ -32,6 +32,9 @@ const publicSupplierSelect: Prisma.SupplierProfileSelect = {
     where: { isMain: true },
     take: 1,
   },
+  chatSettings: {
+    select: { online: true, autoReply: true, autoReplyMessage: true, welcomeMessage: true },
+  },
 };
 
 const adminSupplierSelect: Prisma.SupplierProfileSelect = {
