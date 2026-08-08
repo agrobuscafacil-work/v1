@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Search, SlidersHorizontal, X, Star, Leaf, ChevronDown, Grid3X3, List, Loader2 } from 'lucide-react';
@@ -46,16 +46,20 @@ export default function ProductsPage() {
     { id: 'all', name: 'Todas as Categorias' },
   ]);
 
+  const firstLoad = useRef(true);
+
   useEffect(() => {
+    const ctrl = new AbortController();
     const load = async () => {
-      setIsLoading(true);
+      if (firstLoad.current) {
+        setIsLoading(true);
+        firstLoad.current = false;
+      }
       try {
         const params: Record<string, string | number> = { limit: 50 };
         if (selectedCategory !== 'all') params.categoryId = selectedCategory;
         if (searchTerm) params.search = searchTerm;
-        if (priceRange[0] > 0) params.minPrice = priceRange[0];
-        if (priceRange[1] < 500000) params.maxPrice = priceRange[1];
-        const res = await api.get('/products', { params });
+        const res = await api.get('/products', { params, signal: ctrl.signal });
         const data = res.data.data?.data ?? [];
         setProducts(
           data.map((p: any) => ({
@@ -75,13 +79,24 @@ export default function ProductsPage() {
           })),
         );
       } catch {
-        setProducts([]);
+        if (!ctrl.signal.aborted) {
+          setProducts((prev) => (prev.length > 0 ? prev : []));
+        }
       } finally {
-        setIsLoading(false);
+        if (!ctrl.signal.aborted) setIsLoading(false);
       }
     };
     load();
-  }, [selectedCategory, searchTerm, priceRange]);
+    return () => ctrl.abort();
+  }, [selectedCategory, searchTerm]);
+
+  const priceCap = useMemo(() => {
+    const max = products.reduce((m, p) => Math.max(m, p.price), 0);
+    return max > 0 ? Math.ceil(max / 1000) * 1000 : 500000;
+  }, [products]);
+
+  const effMin = Math.min(priceRange[0], priceCap);
+  const effMax = Math.min(priceRange[1], priceCap);
 
   useEffect(() => {
     api
@@ -95,7 +110,7 @@ export default function ProductsPage() {
 
   const filteredProducts = products
     .filter((p) => {
-      if (p.price < priceRange[0] || p.price > priceRange[1]) return false;
+      if (p.price < effMin || p.price > effMax) return false;
       if (Number(p.rating) < minRating) return false;
       return true;
     })
@@ -114,7 +129,7 @@ export default function ProductsPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Produtos</h1>
-          <p className="text-sm text-gray-500">{products.length} produtos encontrados</p>
+          <p className="text-sm text-gray-500">{filteredProducts.length} produtos encontrados</p>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -189,26 +204,26 @@ export default function ProductsPage() {
             <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Faixa de Preço</h3>
             <div className="space-y-2">
               <div>
-                <label className="text-xs text-gray-500">Mínimo: R$ {priceRange[0].toLocaleString('pt-BR')}</label>
+                <label className="text-xs text-gray-500">Mínimo: R$ {effMin.toLocaleString('pt-BR')}</label>
                 <input
                   type="range"
                   min={0}
-                  max={500000}
+                  max={priceCap}
                   step={100}
-                  value={priceRange[0]}
-                  onChange={(e) => setPriceRange([Number(e.target.value), priceRange[1]])}
+                  value={effMin}
+                  onChange={(e) => setPriceRange([Math.min(Number(e.target.value), effMax), priceRange[1]])}
                   className="w-full accent-primary-600"
                 />
               </div>
               <div>
-                <label className="text-xs text-gray-500">Máximo: R$ {priceRange[1].toLocaleString('pt-BR')}</label>
+                <label className="text-xs text-gray-500">Máximo: R$ {effMax.toLocaleString('pt-BR')}</label>
                 <input
                   type="range"
                   min={0}
-                  max={500000}
+                  max={priceCap}
                   step={100}
-                  value={priceRange[1]}
-                  onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
+                  value={effMax}
+                  onChange={(e) => setPriceRange([priceRange[0], Math.max(Number(e.target.value), effMin)])}
                   className="w-full accent-primary-600"
                 />
               </div>
@@ -238,7 +253,7 @@ export default function ProductsPage() {
             onClick={() => {
               setSearchTerm('');
               setSelectedCategory('all');
-              setPriceRange([0, 500000]);
+              setPriceRange([0, priceCap]);
               setMinRating(0);
             }}
             className="btn-ghost text-sm w-full"
@@ -268,7 +283,7 @@ export default function ProductsPage() {
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Nenhum produto encontrado</h3>
               <p className="text-gray-500 mb-4">Tente ajustar sua busca ou limpar os filtros.</p>
               <button
-                onClick={() => { setSearchTerm(''); setSelectedCategory('all'); setPriceRange([0, 500000]); setMinRating(0); }}
+                onClick={() => { setSearchTerm(''); setSelectedCategory('all'); setPriceRange([0, priceCap]); setMinRating(0); }}
                 className="btn-primary"
               >
                 Limpar Filtros
@@ -380,7 +395,7 @@ export default function ProductsPage() {
                 </div>
               </div>
               <button
-                onClick={() => { setSearchTerm(''); setSelectedCategory('all'); setPriceRange([0, 500000]); setMinRating(0); setMobileFiltersOpen(false); }}
+                onClick={() => { setSearchTerm(''); setSelectedCategory('all'); setPriceRange([0, priceCap]); setMinRating(0); setMobileFiltersOpen(false); }}
                 className="btn-primary w-full"
               >
                 Aplicar Filtros

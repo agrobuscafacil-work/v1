@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, Logger } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
@@ -144,7 +144,8 @@ export class UsersService {
     return user;
   }
 
-  async updatePassword(id: string, dto: UpdatePasswordDto) {    const user = await this.prisma.user.findUnique({ where: { id } });
+  async updatePassword(id: string, dto: UpdatePasswordDto) {
+    const user = await this.prisma.user.findUnique({ where: { id } });
 
     if (!user) {
       throw new NotFoundException('User not found');
@@ -156,11 +157,10 @@ export class UsersService {
     );
 
     if (!isPasswordValid) {
-      throw new NotFoundException('Current password is incorrect');
+      throw new UnauthorizedException('Senha atual incorreta');
     }
 
-    const saltRounds =
-      this.configService.get<number>('BCRYPT_SALT_ROUNDS') || 12;
+    const saltRounds = Number(this.configService.get('BCRYPT_SALT_ROUNDS')) || 12;
     const hashedPassword = await bcrypt.hash(dto.newPassword, saltRounds);
 
     await this.prisma.user.update({

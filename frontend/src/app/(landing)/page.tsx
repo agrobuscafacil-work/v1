@@ -1,9 +1,11 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { Search, Shield, Truck, Leaf, ArrowRight, Star, Clock, TrendingUp, Store, Sprout, Wheat, Sun, Wind } from 'lucide-react';
 import { api } from '@/lib/api';
+import { PRODUCT_FILE_URL } from '@/lib/products';
 
 const categoryIcons: Record<string, any> = {
   insumos: Sprout,
@@ -34,6 +36,7 @@ interface FeaturedProduct {
   name: string;
   slug: string;
   price: number;
+  image: string | null;
   supplier: string;
   rating: number;
   reviews: number;
@@ -60,9 +63,7 @@ export default function HomePage() {
           api.get('/categories').catch(() => null),
           api.get('/products', { params: { featured: true, limit: 4 } }).catch(() => null),
           api.get('/suppliers', { params: { limit: 50 } }).catch(() => null),
-        ]);
-
-        if (catRes) {
+        ]);        if (catRes) {
           const payload = Array.isArray(catRes.data.data) ? catRes.data.data : [];
           setCategories(
             payload
@@ -77,13 +78,18 @@ export default function HomePage() {
         }
 
         if (prodRes) {
-          const payload = prodRes.data.data?.data ?? [];
+          let payload = prodRes.data.data?.data ?? [];
+          if (payload.length === 0) {
+            const fallback = await api.get('/products', { params: { limit: 4 } }).catch(() => null);
+            if (fallback) payload = fallback.data.data?.data ?? [];
+          }
           setFeaturedProducts(
             payload.map((p: any) => ({
               id: p.id,
               name: p.name,
               slug: p.slug,
               price: Number(p.price) || 0,
+              image: p.images?.[0] || null,
               supplier: p.supplier?.companyName || '',
               rating: Number(p.rating) || 0,
               reviews: Number(p.totalReviews) || 0,
@@ -245,9 +251,19 @@ export default function HomePage() {
                   className="group rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 overflow-hidden card-hover hover:border-primary-200 dark:hover:border-primary-800"
                 >
                   <div className="aspect-[4/3] bg-gradient-to-br from-primary-100 to-green-50 dark:from-primary-950 dark:to-green-950 relative overflow-hidden">
-                    <div className="absolute inset-0 flex items-center justify-center text-primary-300 dark:text-primary-700">
-                      <Leaf className="h-16 w-16 group-hover:scale-110 transition-transform duration-500" />
-                    </div>
+                    {product.image ? (
+                      <Image
+                        src={PRODUCT_FILE_URL(product.image)}
+                        alt={product.name}
+                        fill
+                        sizes="(max-width: 640px) 50vw, 25vw"
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center text-primary-300 dark:text-primary-700">
+                        <Leaf className="h-16 w-16 group-hover:scale-110 transition-transform duration-500" />
+                      </div>
+                    )}
                     <div className="absolute top-3 right-3 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-lg px-2 py-1 text-xs font-semibold text-primary-600">
                       Destaque
                     </div>
