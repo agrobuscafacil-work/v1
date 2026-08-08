@@ -431,7 +431,9 @@ export const ModelName = {
   SupportTicket: 'SupportTicket',
   SupportAttachment: 'SupportAttachment',
   SupportTicketNote: 'SupportTicketNote',
-  SupportTicketStatusHistory: 'SupportTicketStatusHistory'
+  SupportTicketStatusHistory: 'SupportTicketStatusHistory',
+  SearchLog: 'SearchLog',
+  SessionLog: 'SessionLog'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -447,7 +449,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "customerProfile" | "supplierProfile" | "address" | "category" | "product" | "service" | "promotion" | "coupon" | "workingHours" | "cart" | "cartItem" | "order" | "orderItem" | "orderCoupon" | "orderStatusHistory" | "review" | "reviewResponse" | "favorite" | "conversation" | "message" | "payment" | "chatSettings" | "systemSetting" | "notification" | "banner" | "auditLog" | "systemConfig" | "report" | "supportCategory" | "supportType" | "supportTicket" | "supportAttachment" | "supportTicketNote" | "supportTicketStatusHistory"
+    modelProps: "user" | "customerProfile" | "supplierProfile" | "address" | "category" | "product" | "service" | "promotion" | "coupon" | "workingHours" | "cart" | "cartItem" | "order" | "orderItem" | "orderCoupon" | "orderStatusHistory" | "review" | "reviewResponse" | "favorite" | "conversation" | "message" | "payment" | "chatSettings" | "systemSetting" | "notification" | "banner" | "auditLog" | "systemConfig" | "report" | "supportCategory" | "supportType" | "supportTicket" | "supportAttachment" | "supportTicketNote" | "supportTicketStatusHistory" | "searchLog" | "sessionLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -3041,6 +3043,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    SearchLog: {
+      payload: Prisma.$SearchLogPayload<ExtArgs>
+      fields: Prisma.SearchLogFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SearchLogFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SearchLogPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SearchLogFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SearchLogPayload>
+        }
+        findFirst: {
+          args: Prisma.SearchLogFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SearchLogPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SearchLogFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SearchLogPayload>
+        }
+        findMany: {
+          args: Prisma.SearchLogFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SearchLogPayload>[]
+        }
+        create: {
+          args: Prisma.SearchLogCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SearchLogPayload>
+        }
+        createMany: {
+          args: Prisma.SearchLogCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SearchLogCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SearchLogPayload>[]
+        }
+        delete: {
+          args: Prisma.SearchLogDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SearchLogPayload>
+        }
+        update: {
+          args: Prisma.SearchLogUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SearchLogPayload>
+        }
+        deleteMany: {
+          args: Prisma.SearchLogDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SearchLogUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SearchLogUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SearchLogPayload>[]
+        }
+        upsert: {
+          args: Prisma.SearchLogUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SearchLogPayload>
+        }
+        aggregate: {
+          args: Prisma.SearchLogAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSearchLog>
+        }
+        groupBy: {
+          args: Prisma.SearchLogGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SearchLogGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SearchLogCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SearchLogCountAggregateOutputType> | number
+        }
+      }
+    }
+    SessionLog: {
+      payload: Prisma.$SessionLogPayload<ExtArgs>
+      fields: Prisma.SessionLogFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SessionLogFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SessionLogPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SessionLogFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SessionLogPayload>
+        }
+        findFirst: {
+          args: Prisma.SessionLogFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SessionLogPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SessionLogFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SessionLogPayload>
+        }
+        findMany: {
+          args: Prisma.SessionLogFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SessionLogPayload>[]
+        }
+        create: {
+          args: Prisma.SessionLogCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SessionLogPayload>
+        }
+        createMany: {
+          args: Prisma.SessionLogCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SessionLogCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SessionLogPayload>[]
+        }
+        delete: {
+          args: Prisma.SessionLogDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SessionLogPayload>
+        }
+        update: {
+          args: Prisma.SessionLogUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SessionLogPayload>
+        }
+        deleteMany: {
+          args: Prisma.SessionLogDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SessionLogUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SessionLogUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SessionLogPayload>[]
+        }
+        upsert: {
+          args: Prisma.SessionLogUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SessionLogPayload>
+        }
+        aggregate: {
+          args: Prisma.SessionLogAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSessionLog>
+        }
+        groupBy: {
+          args: Prisma.SessionLogGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SessionLogGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SessionLogCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SessionLogCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -3729,6 +3879,31 @@ export const SupportTicketStatusHistoryScalarFieldEnum = {
 export type SupportTicketStatusHistoryScalarFieldEnum = (typeof SupportTicketStatusHistoryScalarFieldEnum)[keyof typeof SupportTicketStatusHistoryScalarFieldEnum]
 
 
+export const SearchLogScalarFieldEnum = {
+  id: 'id',
+  term: 'term',
+  count: 'count',
+  createdAt: 'createdAt'
+} as const
+
+export type SearchLogScalarFieldEnum = (typeof SearchLogScalarFieldEnum)[keyof typeof SearchLogScalarFieldEnum]
+
+
+export const SessionLogScalarFieldEnum = {
+  id: 'id',
+  sessionId: 'sessionId',
+  userId: 'userId',
+  userAgent: 'userAgent',
+  device: 'device',
+  browser: 'browser',
+  pagePath: 'pagePath',
+  createdAt: 'createdAt',
+  lastActivity: 'lastActivity'
+} as const
+
+export type SessionLogScalarFieldEnum = (typeof SessionLogScalarFieldEnum)[keyof typeof SessionLogScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -4227,6 +4402,8 @@ export type GlobalOmitConfig = {
   supportAttachment?: Prisma.SupportAttachmentOmit
   supportTicketNote?: Prisma.SupportTicketNoteOmit
   supportTicketStatusHistory?: Prisma.SupportTicketStatusHistoryOmit
+  searchLog?: Prisma.SearchLogOmit
+  sessionLog?: Prisma.SessionLogOmit
 }
 
 /* Types for Logging */

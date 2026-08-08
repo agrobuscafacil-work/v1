@@ -1,10 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Store, Search, CheckCircle, XCircle, X, Loader2, MessageCircle, Send, ChevronLeft, ChevronRight, MapPin } from 'lucide-react';
+import { Store, Search, CheckCircle, XCircle, X, Loader2, MessageCircle, Send, ChevronLeft, ChevronRight, MapPin, Pencil } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { api } from '@/lib/api';
-import { getChatSettings } from '@/lib/chat-settings';
 
 interface SupplierItem {
   id: string;
@@ -16,6 +15,16 @@ interface SupplierItem {
   date: string;
   city: string;
   state: string;
+}
+
+interface SupplierForm {
+  companyName: string;
+  tradingName: string;
+  phone: string;
+  whatsapp: string;
+  email: string;
+  website: string;
+  description: string;
 }
 
 interface ChatMessage {
@@ -56,6 +65,10 @@ export default function AdminSuppliersPage() {
   const [chatSupplier, setChatSupplier] = useState<SupplierItem | null>(null);
   const [chatMessage, setChatMessage] = useState('');
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [editSupplier, setEditSupplier] = useState<SupplierItem | null>(null);
+  const [editForm, setEditForm] = useState<SupplierForm>({
+    companyName: '', tradingName: '', phone: '', whatsapp: '', email: '', website: '', description: '',
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -96,22 +109,56 @@ export default function AdminSuppliersPage() {
 
   function openChat(supplier: SupplierItem) {
     setChatSupplier(supplier);
-    setChatMessages([
-      { id: '1', sender: 'supplier', text: `Olá! Como posso ajudar?`, time: '10:00' },
-    ]);
+    setChatMessages([]);
+    (async () => {
+      try {
+        const list = await api.get('/chat/admin/conversations');
+        const conv = (list.data.data ?? []).find((c: any) => c.supplierId === supplier.id);
+        if (conv) {
+          const detail = await api.get(`/chat/admin/conversations/${conv.id}`);
+          const messages = detail.data.data?.messages ?? [];
+          setChatMessages(
+            messages.map((m: any) => ({
+              id: m.id,
+              sender: m.senderId ? (m.senderId === localStorage.getItem('uid') ? 'admin' : 'supplier') : 'supplier',
+              text: m.content,
+              time: new Date(m.createdAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+            })),
+          );
+        } else {
+          setChatMessages([{ id: '0', sender: 'supplier', text: 'Nenhuma conversa ainda. Envie a primeira mensagem.', time: '' }]);
+        }
+      } catch {
+        setChatMessages([{ id: '0', sender: 'supplier', text: 'Nenhuma conversa ainda. Envie a primeira mensagem.', time: '' }]);
+      }
+    })();
   }
 
   function sendChat() {
     if (!chatMessage.trim()) return;
-    const msg: ChatMessage = { id: Date.now().toString(), sender: 'admin', text: chatMessage.trim(), time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) };
+    const msg: ChatMessage = { id: 'opt-' + Date.now().toString(), sender: 'admin', text: chatMessage.trim(), time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) };
     setChatMessages((prev) => [...prev, msg]);
     setChatMessage('');
-    const settings = getChatSettings();
-    if (settings.autoReplyEnabled) {
-      setTimeout(() => {
-        setChatMessages((prev) => [...prev, { id: (Date.now() + 1).toString(), sender: 'supplier', text: settings.autoReplyMessage, time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) }]);
-      }, 1500);
-    }
+    if (!chatSupplier) return;
+    (async () => {
+      try {
+        let convId = '';
+        const list = await api.get('/chat/admin/conversations');
+        const found = (list.data.data ?? []).find((c: any) => c.supplierId === chatSupplier.id);
+        if (found) {
+          convId = found.id;
+        } else {
+          const created = await api.post('/chat/conversations', { otherPartyId: chatSupplier.id });
+          convId = created.data.data?.id || created.data.data?.data?.id;
+        }
+        const sent = await api.post(`/chat/admin/conversations/${convId}/messages`, { content: msg.text, messageType: 'TEXT' });
+        if (sent.data.data?.id) {
+          setChatMessages((prev) => prev.map((m) => (m.id === msg.id ? { ...m, id: sent.data.data.id } : m)));
+        }
+      } catch {
+        toast.error('Erro ao enviar mensagem');
+      }
+    })();
   }
 
   async function updateApproval(id: string, approved: boolean, message: string) {
@@ -145,6 +192,61 @@ export default function AdminSuppliersPage() {
     try {
       await api.delete(`/suppliers/${s.id}`);
       toast.success('Fornecedor bloqueado');
+      setRefreshKey((k) => k + 1);
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+    } finally {
+      setSavingId(null);
+    }
+  }
+
+  function openEdit(s: SupplierItem) {
+    setEditSupplier(s);
+    setEditForm({
+      companyName: s.name,
+      tradingName: s.name,
+      phone: '',
+      whatsapp: '',
+      email: s.email,
+      website: '',
+      description: '',
+    });
+    api.get(`/suppliers/${s.id}`)
+      .then((res) => {
+        const sup = res.data.data ?? {};
+        setEditForm((prev) => ({
+          ...prev,
+          companyName: sup.companyName || prev.companyName,
+          tradingName: sup.tradingName || prev.companyName,
+          phone: sup.phone || '',
+          whatsapp: sup.whatsapp || '',
+          website: sup.website || '',
+          description: sup.description || '',
+        }));
+      })
+      .catch(() => undefined);
+  }
+
+  const setEditField = (key: keyof SupplierForm, value: string) => {
+    setEditForm((prev) => ({ ...prev, [key]: value }));
+  };
+
+  async function saveEdit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editSupplier) return;
+    setSavingId(editSupplier.id);
+    try {
+      const payload: Partial<SupplierForm> = {};
+      if (editForm.companyName.trim()) payload.companyName = editForm.companyName.trim();
+      if (editForm.tradingName.trim()) payload.tradingName = editForm.tradingName.trim();
+      if (editForm.phone.trim()) payload.phone = editForm.phone.trim();
+      if (editForm.whatsapp.trim()) payload.whatsapp = editForm.whatsapp.trim();
+      if (editForm.email.trim()) payload.email = editForm.email.trim();
+      if (editForm.website.trim()) payload.website = editForm.website.trim();
+      if (editForm.description.trim()) payload.description = editForm.description.trim();
+      await api.put(`/suppliers/${editSupplier.id}`, payload);
+      toast.success('Fornecedor atualizado!');
+      setEditSupplier(null);
       setRefreshKey((k) => k + 1);
     } catch (error) {
       toast.error(getErrorMessage(error));
@@ -195,6 +297,9 @@ export default function AdminSuppliersPage() {
                   {STATUS_STYLES[supplier.status]?.label || supplier.status}
                 </span>
                 <div className="flex gap-1">
+                  <button onClick={() => openEdit(supplier)} className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-primary-600" title="Editar fornecedor">
+                    <Pencil className="h-3.5 w-3.5" />
+                  </button>
                   <button onClick={() => openChat(supplier)} className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-green-600">
                     <MessageCircle className="h-3.5 w-3.5" />
                   </button>
@@ -257,6 +362,64 @@ export default function AdminSuppliersPage() {
           <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page >= totalPages} className="btn-outline text-sm gap-1 disabled:opacity-40 disabled:cursor-not-allowed">
             Proxima <ChevronRight className="h-4 w-4" />
           </button>
+        </div>
+      )}
+
+      {editSupplier && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+          <div className="w-full max-w-lg rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-2xl flex flex-col" style={{ maxHeight: '640px' }}>
+            <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-800">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-sm font-bold text-primary-600">{editSupplier.name.charAt(0)}</div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-900 dark:text-white">Editar Fornecedor</p>
+                  <p className="text-xs text-gray-500">{editSupplier.name}</p>
+                </div>
+              </div>
+              <button onClick={() => setEditSupplier(null)} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <form onSubmit={saveEdit} className="flex-1 overflow-y-auto p-4 space-y-4" style={{ minHeight: 0 }}>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="col-span-2">
+                  <label className="label-field">Razão Social</label>
+                  <input type="text" className="input-field text-sm" value={editForm.companyName} onChange={(e) => setEditField('companyName', e.target.value)} />
+                </div>
+                <div className="col-span-2">
+                  <label className="label-field">Nome Fantasia</label>
+                  <input type="text" className="input-field text-sm" value={editForm.tradingName} onChange={(e) => setEditField('tradingName', e.target.value)} />
+                </div>
+                <div>
+                  <label className="label-field">E-mail</label>
+                  <input type="email" className="input-field text-sm" value={editForm.email} onChange={(e) => setEditField('email', e.target.value)} />
+                </div>
+                <div>
+                  <label className="label-field">Telefone</label>
+                  <input type="text" className="input-field text-sm" value={editForm.phone} onChange={(e) => setEditField('phone', e.target.value)} />
+                </div>
+                <div>
+                  <label className="label-field">WhatsApp</label>
+                  <input type="text" className="input-field text-sm" value={editForm.whatsapp} onChange={(e) => setEditField('whatsapp', e.target.value)} />
+                </div>
+                <div>
+                  <label className="label-field">Site</label>
+                  <input type="text" className="input-field text-sm" value={editForm.website} onChange={(e) => setEditField('website', e.target.value)} />
+                </div>
+                <div className="col-span-2">
+                  <label className="label-field">Descrição</label>
+                  <textarea rows={3} className="input-field resize-none text-sm" value={editForm.description} onChange={(e) => setEditField('description', e.target.value)} />
+                </div>
+              </div>
+              <div className="flex gap-2 pt-2">
+                <button type="button" onClick={() => setEditSupplier(null)} className="btn-outline flex-1 text-sm">Cancelar</button>
+                <button type="submit" disabled={savingId === editSupplier.id} className="btn-primary flex-1 gap-2 text-sm">
+                  {savingId === editSupplier.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Pencil className="h-4 w-4" />}
+                  Salvar Alterações
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
 

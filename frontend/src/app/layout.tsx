@@ -2,11 +2,13 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { Providers } from '@/lib/providers';
 import { AuthInitializer } from '@/components/auth/auth-initializer';
+import { PageViewTracker } from '@/components/tracking/page-view-tracker';
 import '@/styles/globals.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://agrobuscafacil.com.br'),
   title: {
     default: 'AgroBuscaFácil - Marketplace do Agronegócio',
     template: '%s | AgroBuscaFácil',
@@ -67,10 +69,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning>
+    <html lang="pt-BR" suppressHydrationWarning data-scroll-behavior="smooth">
       <body className={`${inter.variable} font-sans`}>
         <Providers>
-          <AuthInitializer>{children}</AuthInitializer>
+          <AuthInitializer>
+            <PageViewTracker />
+            {children}
+          </AuthInitializer>
         </Providers>
       </body>
     </html>

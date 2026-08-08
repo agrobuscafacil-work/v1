@@ -26,6 +26,7 @@ import { CompanyModule } from './company/company.module';
 import { InstitutionalModule } from './institutional/institutional.module';
 import { BannerModule } from './banner/banner.module';
 import { SupportModule } from './support/support.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 import { StripeModule } from './stripe/stripe.module';
 import { RedisModule } from './common/redis/redis.module';
 
@@ -70,8 +71,9 @@ import { RedisModule } from './common/redis/redis.module';
     PromotionsModule,
     CompanyModule,
     InstitutionalModule,
-    BannerModule,
+BannerModule,
     SupportModule,
+    AnalyticsModule,
     StripeModule,
   ],
   providers: [
