@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import toast from 'react-hot-toast';
 import { useAuth } from '@/hooks/use-auth';
 import { openSupplierConversation, sendMessage as sendChatMessage } from '@/lib/chat-api';
@@ -70,7 +70,8 @@ const DEFAULT_BUSINESS_HOURS = [
   { day: 'Domingo', hours: 'Fechado' },
 ];
 
-export default function SupplierDetailPage({ params }: { params: { id: string } }) {
+export default function SupplierDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const { user, isAuthenticated } = useAuth();
   const [supplier, setSupplier] = useState<SupplierInfo | null>(null);
   const [products, setProducts] = useState<SupplierProduct[]>([]);
@@ -115,10 +116,10 @@ export default function SupplierDetailPage({ params }: { params: { id: string } 
       setIsLoading(true);
       try {
         const [s, p, sv, r] = await Promise.all([
-          api.get(`/suppliers/${params.id}`),
-          api.get('/products', { params: { supplierId: params.id, limit: 6 } }),
-          api.get('/services', { params: { supplierId: params.id, limit: 10 } }),
-          api.get('/reviews', { params: { supplierId: params.id, limit: 10 } }),
+          api.get(`/suppliers/${id}`),
+          api.get('/products', { params: { supplierId: id, limit: 6 } }),
+          api.get('/services', { params: { supplierId: id, limit: 10 } }),
+          api.get('/reviews', { params: { supplierId: id, limit: 10 } }),
         ]);
 
         const sup = s.data.data;
@@ -191,7 +192,7 @@ export default function SupplierDetailPage({ params }: { params: { id: string } 
       }
     };
     load();
-  }, [params.id]);
+  }, [id]);
 
   if (isLoading) {
     return (

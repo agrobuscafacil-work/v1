@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Search as SearchIcon, Star, Leaf, SlidersHorizontal, X, Loader2 } from 'lucide-react';
 import { api } from '@/lib/api';
+import { trackSearch } from '@/lib/analytics';
 
 function SearchContent() {
   const searchParams = useSearchParams();
@@ -15,6 +16,7 @@ function SearchContent() {
 
   useEffect(() => {
     if (!query) return;
+    trackSearch(query);
     let cancelled = false;
     api
       .get('/search', { params: { q: query, limit: 12 } })

@@ -54,14 +54,19 @@ export default function AdminReportsPage() {
   const [exportMenu, setExportMenu] = useState<string | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [dashboardStats, setDashboardStats] = useState<Record<string, any>>({});
 
   useEffect(() => {
     const load = async () => {
       setLoading(true);
       try {
-        const res = await api.get('/orders/admin', { params: { limit: 500 } });
-        const payload = res.data.data?.data ?? [];
+        const [ordersRes, dashboardRes] = await Promise.all([
+          api.get('/orders/admin', { params: { limit: 500 } }),
+          api.get('/dashboard/admin'),
+        ]);
+        const payload = ordersRes.data.data?.data ?? [];
         setOrders(payload);
+        setDashboardStats(dashboardRes.data.data ?? {});
       } catch (e: any) {
         const msg = e?.response?.data?.message;
         toast.error(typeof msg === 'string' ? msg : 'Erro ao carregar relatórios.');
@@ -131,11 +136,18 @@ export default function AdminReportsPage() {
   const maxRevenue = monthlyData.length ? Math.max(...monthlyData.map((d) => d.revenue)) : 1;
   const maxOrders = monthlyData.length ? Math.max(...monthlyData.map((d) => d.orders)) : 1;
 
+  const dashboard = dashboardStats || {};
+  const activeUsers = Number(dashboard.activeUsers) || 0;
+  const newUsersMonth = Number(dashboard.newUsersMonth) || 0;
+  const sessionsThisMonth = Number(dashboard.sessions?.thisMonth) || 0;
+  const conversionRate = Number(dashboard.conversionRate) || 0;
+  const reviews = Number(dashboard.reviews) || 0;
+
   const reportCards = [
-    { label: 'Vendas do Mês', value: 'R$ ' + totalRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 }), change: '+15%', up: true, icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-950' },
-    { label: 'Usuários Ativos', value: '1.247', change: '+12%', up: true, icon: Users, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-950' },
-    { label: 'Pedidos Realizados', value: totalOrders.toLocaleString('pt-BR'), change: '+23%', up: true, icon: ShoppingBag, color: 'text-orange-600', bg: 'bg-orange-50 dark:bg-orange-950' },
-    { label: 'Taxa Conversão', value: '3,2%', change: '-0,5%', up: false, icon: TrendingUp, color: 'text-rose-600', bg: 'bg-rose-50 dark:bg-rose-950' },
+    { label: 'Vendas do Mês', value: 'R$ ' + totalRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 }), change: `${dashboard.revenueChange >= 0 ? '+' : ''}${dashboard.revenueChange ?? 0}%`, up: (dashboard.revenueChange ?? 0) >= 0, icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-950' },
+    { label: 'Usuários Ativos', value: activeUsers ? activeUsers.toLocaleString('pt-BR') : '0', change: '—', up: true, icon: Users, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-950' },
+    { label: 'Pedidos Realizados', value: totalOrders.toLocaleString('pt-BR'), change: `${dashboard.ordersChange >= 0 ? '+' : ''}${dashboard.ordersChange ?? 0}%`, up: (dashboard.ordersChange ?? 0) >= 0, icon: ShoppingBag, color: 'text-orange-600', bg: 'bg-orange-50 dark:bg-orange-950' },
+    { label: 'Taxa Conversão', value: `${conversionRate.toLocaleString('pt-BR')}%`, change: 'das sessões', up: true, icon: TrendingUp, color: 'text-rose-600', bg: 'bg-rose-50 dark:bg-rose-950' },
   ];
 
   function doExportCSV(report: string) {
@@ -144,10 +156,10 @@ export default function AdminReportsPage() {
       exportCSV(filename, ['Mês', 'Receita', 'Pedidos'], monthlyData.map((d) => [d.month, String(d.revenue), String(d.orders)]));
     } else if (report === 'usage') {
       const usageData = [
-        ['Usuários Ativos', '1.247'],
-        ['Novos Cadastros', '+124'],
-        ['Sessões (mês)', '8.342'],
-        ['Tempo Médio', '4m 32s'],
+        ['Usuários Ativos', String(activeUsers)],
+        ['Novos Cadastros', String(newUsersMonth)],
+        ['Sessões (mês)', String(sessionsThisMonth)],
+        ['Avaliações', String(reviews)],
       ];
       exportCSV(filename, ['Métrica', 'Valor'], usageData);
     } else if (report === 'searches') {
@@ -314,20 +326,20 @@ export default function AdminReportsPage() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="rounded-lg bg-gray-50 dark:bg-gray-800 p-4">
-                <p className="text-sm text-gray-500">Usuários Ativos (mês)</p>
-                <p className="text-xl font-bold text-blue-600">1.247</p>
+                <p className="text-sm text-gray-500">Usuários Ativos</p>
+                <p className="text-xl font-bold text-blue-600">{activeUsers.toLocaleString('pt-BR')}</p>
               </div>
               <div className="rounded-lg bg-gray-50 dark:bg-gray-800 p-4">
-                <p className="text-sm text-gray-500">Novos Cadastros</p>
-                <p className="text-xl font-bold text-green-600">+124</p>
+                <p className="text-sm text-gray-500">Novos Cadastros (mês)</p>
+                <p className="text-xl font-bold text-green-600">+{newUsersMonth.toLocaleString('pt-BR')}</p>
               </div>
               <div className="rounded-lg bg-gray-50 dark:bg-gray-800 p-4">
                 <p className="text-sm text-gray-500">Sessões (mês)</p>
-                <p className="text-xl font-bold text-purple-600">8.342</p>
+                <p className="text-xl font-bold text-purple-600">{sessionsThisMonth.toLocaleString('pt-BR')}</p>
               </div>
               <div className="rounded-lg bg-gray-50 dark:bg-gray-800 p-4">
-                <p className="text-sm text-gray-500">Tempo Médio</p>
-                <p className="text-xl font-bold text-orange-600">4m 32s</p>
+                <p className="text-sm text-gray-500">Avaliações Aprovadas</p>
+                <p className="text-xl font-bold text-orange-600">{reviews.toLocaleString('pt-BR')}</p>
               </div>
             </div>
           </div>

@@ -214,3 +214,13 @@ export type SupportTicketNote = Prisma.SupportTicketNoteModel
  * 
  */
 export type SupportTicketStatusHistory = Prisma.SupportTicketStatusHistoryModel
+/**
+ * Model SearchLog
+ * 
+ */
+export type SearchLog = Prisma.SearchLogModel
+/**
+ * Model SessionLog
+ * 
+ */
+export type SessionLog = Prisma.SessionLogModel

@@ -85,7 +85,9 @@ export const ModelName = {
   SupportTicket: 'SupportTicket',
   SupportAttachment: 'SupportAttachment',
   SupportTicketNote: 'SupportTicketNote',
-  SupportTicketStatusHistory: 'SupportTicketStatusHistory'
+  SupportTicketStatusHistory: 'SupportTicketStatusHistory',
+  SearchLog: 'SearchLog',
+  SessionLog: 'SessionLog'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -751,6 +753,31 @@ export const SupportTicketStatusHistoryScalarFieldEnum = {
 } as const
 
 export type SupportTicketStatusHistoryScalarFieldEnum = (typeof SupportTicketStatusHistoryScalarFieldEnum)[keyof typeof SupportTicketStatusHistoryScalarFieldEnum]
+
+
+export const SearchLogScalarFieldEnum = {
+  id: 'id',
+  term: 'term',
+  count: 'count',
+  createdAt: 'createdAt'
+} as const
+
+export type SearchLogScalarFieldEnum = (typeof SearchLogScalarFieldEnum)[keyof typeof SearchLogScalarFieldEnum]
+
+
+export const SessionLogScalarFieldEnum = {
+  id: 'id',
+  sessionId: 'sessionId',
+  userId: 'userId',
+  userAgent: 'userAgent',
+  device: 'device',
+  browser: 'browser',
+  pagePath: 'pagePath',
+  createdAt: 'createdAt',
+  lastActivity: 'lastActivity'
+} as const
+
+export type SessionLogScalarFieldEnum = (typeof SessionLogScalarFieldEnum)[keyof typeof SessionLogScalarFieldEnum]
 
 
 export const SortOrder = {

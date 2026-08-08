@@ -232,9 +232,8 @@ export default function AdminSettingsPage() {
                   <option value="mercado-pago">Mercado Pago</option>
                 </select>
               </div>
-              <div className="col-span-2">
-                <label className="label-field">Chave de API</label>
-                <input type="password" className="input-field" defaultValue="sk_live_xxxxxxxxxxxxx" />
+              <div className="col-span-2 rounded-lg bg-gray-50 dark:bg-gray-800 p-3 text-xs text-gray-500">
+                A chave de API do gateway de pagamento é gerenciada por variáveis de ambiente no servidor e não fica exposta no painel.
               </div>
               <div>
                 <label className="label-field">Parcelamento máximo</label>

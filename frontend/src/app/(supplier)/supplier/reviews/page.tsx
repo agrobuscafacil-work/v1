@@ -36,7 +36,7 @@ export default function SupplierReviewsPage() {
         }
         const res = await api.get(`/reviews?supplierId=${supplierId}&limit=50`);
         if (cancelled) return;
-        setReviews(res.data.data ?? []);
+        setReviews(res.data.data?.data ?? []);
       } catch (err: any) {
         if (cancelled) return;
         toast.error(err?.response?.data?.message || 'Erro ao carregar avaliações.');

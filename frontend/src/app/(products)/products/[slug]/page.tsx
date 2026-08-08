@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import {
   Star, Truck, Shield, Package, Minus, Plus, ShoppingCart, Heart, Share2, MapPin, Leaf, Clock,
@@ -68,7 +68,8 @@ interface RelatedProduct {
   image: string;
 }
 
-export default function ProductDetailPage({ params }: { params: { slug: string } }) {
+export default function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = use(params);
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const [isFavorited, setIsFavorited] = useState(false);
@@ -85,7 +86,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
     const load = async () => {
       setIsLoading(true);
       try {
-        const pRes = await api.get(`/products/slug/${params.slug}`);
+        const pRes = await api.get(`/products/slug/${slug}`);
         const p = pRes.data.data;
         if (cancelled) return;
 
@@ -180,7 +181,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
     };
     load();
     return () => { cancelled = true; };
-  }, [params.slug]);
+  }, [slug]);
 
   if (isLoading) {
     return (

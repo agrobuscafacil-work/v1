@@ -909,3 +909,28 @@ model SupportTicketStatusHistory {
   @@index([status])
   @@index([createdAt])
 }
+
+model SearchLog {
+  id        String   @id @default(uuid())
+  term      String   @unique
+  count     Int      @default(1)
+  createdAt DateTime @default(now())
+
+  @@index([count])
+}
+
+model SessionLog {
+  id            String   @id @default(uuid())
+  sessionId     String?
+  userId        String?
+  userAgent     String?
+  device        String?
+  browser       String?
+  pagePath      String?
+  createdAt     DateTime @default(now())
+  lastActivity  DateTime @default(now())
+
+  @@index([sessionId])
+  @@index([userId])
+  @@index([createdAt])
+}
