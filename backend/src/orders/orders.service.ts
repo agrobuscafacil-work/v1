@@ -1,8 +1,9 @@
 import { Injectable, NotFoundException, BadRequestException, ForbiddenException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { Prisma } from '../generated/prisma/client';
+import { OrderStatus, PaymentMethod } from '../generated/prisma/client';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
-import { OrderStatus, PaymentMethod, Prisma } from '../generated/prisma/client';
 import { NotificationsService } from '../notifications/notifications.service';
 import { parsePage, parseLimit } from '../common/utils/pagination';
 
@@ -17,6 +18,46 @@ export class OrdersService {
 
   private isAdmin(role?: string) {
     return role === 'ADMIN' || role === 'SUPER_ADMIN';
+  }
+
+  private async computeShippingCost(supplierId: string, subtotal: number): Promise<number> {
+    const supplier = await this.prisma.supplierProfile.findUnique({
+      where: { id: supplierId },
+      select: { deliveryInfo: true },
+    });
+
+    const config = supplier?.deliveryInfo as any;
+    if (config && Array.isArray(config.methods) && config.methods.length > 0) {
+      let minCost = Infinity;
+      for (const method of config.methods) {
+        let cost = Number(method.baseCost) || 0;
+        if (method.freeShippingMin && subtotal >= Number(method.freeShippingMin)) {
+          cost = 0;
+        }
+        minCost = Math.min(minCost, cost);
+      }
+      return minCost === Infinity ? 0 : Math.max(minCost, 0);
+    }
+
+    return subtotal >= 500 ? 0 : 29.9;
+  }
+
+  private async computeDiscount(supplierId: string, subtotal: number, couponCode?: string): Promise<number> {
+    if (!couponCode || subtotal <= 0) return 0;
+
+    const coupon = await this.prisma.coupon.findUnique({ where: { code: couponCode } });
+    if (!coupon) return 0;
+    if (!coupon.active) return 0;
+    if (new Date() < coupon.startDate || new Date() > coupon.endDate) return 0;
+    if (coupon.supplierId !== supplierId) return 0;
+    if (coupon.minOrderValue && subtotal < Number(coupon.minOrderValue)) return 0;
+    if (coupon.maxUses && coupon.usedCount >= coupon.maxUses) return 0;
+
+    const discount = coupon.discountType === 'PERCENTAGE'
+      ? (subtotal * Number(coupon.discountValue)) / 100
+      : Number(coupon.discountValue);
+
+    return Math.min(Math.max(discount, 0), subtotal);
   }
 
   async create(userId: string, dto: CreateOrderDto) {
@@ -53,8 +94,9 @@ export class OrdersService {
       (sum, item) => sum + Number(productMap.get(item.productId)!.price) * item.quantity,
       0,
     );
-    const shippingCost = dto.shippingCost || 0;
-    const discount = Math.min(dto.discount || 0, subtotal);
+    // Pricing is always computed server-side and never trusted from the client.
+    const shippingCost = await this.computeShippingCost(dto.supplierId, subtotal);
+    const discount = await this.computeDiscount(dto.supplierId, subtotal, dto.couponCode);
     const total = subtotal + shippingCost - discount;
 
     const order = await this.prisma.order.create({

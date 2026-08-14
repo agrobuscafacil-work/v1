@@ -39,8 +39,18 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   async handleConnection(client: AuthSocket) {
     try {
+      const cookieHeader = typeof client.handshake.headers?.cookie === 'string'
+        ? client.handshake.headers.cookie
+        : '';
+      const fromCookie = cookieHeader
+        .split(';')
+        .map((part) => part.trim())
+        .find((part) => part.startsWith('accessToken='));
+      const cookieToken = fromCookie ? fromCookie.slice('accessToken='.length) : undefined;
       const token =
-        client.handshake.auth?.token || client.handshake.headers?.authorization?.replace('Bearer ', '');
+        client.handshake.auth?.token ||
+        client.handshake.headers?.authorization?.replace('Bearer ', '') ||
+        cookieToken;
       if (!token) throw new UnauthorizedException('Missing token');
 
       const payload = this.jwtService.verify(token, {

@@ -11,11 +11,8 @@ export function connectSocket(): Socket | null {
   if (typeof window === 'undefined') return null;
   if (socket) return socket;
 
-  const token = localStorage.getItem('accessToken');
-  if (!token) return null;
-
   socket = io(`${SOCKET_URL}/chat`, {
-    auth: { token },
+    withCredentials: true,
     transports: ['websocket', 'polling'],
     reconnectionAttempts: 5,
     timeout: 10000,

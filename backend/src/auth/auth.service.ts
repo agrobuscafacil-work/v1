@@ -147,15 +147,50 @@ export class AuthService {
         throw new UnauthorizedException('User not found');
       }
 
+      if (!user.active) {
+        throw new UnauthorizedException('Account is inactive');
+      }
+
       this.refreshTokenStore.delete(payload.jti);
 
-      return this.generateTokens(user);
+      const tokens = await this.generateTokens(user);
+      return {
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role,
+          verified: user.verified,
+        },
+        ...tokens,
+      };
     } catch (error) {
       if (error instanceof UnauthorizedException) {
         throw error;
       }
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
+  }
+
+  async me(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        phone: true,
+        role: true,
+        verified: true,
+        active: true,
+        document: true,
+        createdAt: true,
+      },
+    });
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+    return user;
   }
 
   async logout(userId: string, refreshToken?: string) {
@@ -167,8 +202,18 @@ export class AuthService {
         }
       } catch {}
     }
-
     this.logger.log(`User logged out: ${userId}`);
+    return { message: 'Logged out successfully' };
+  }
+
+  async logoutByToken(refreshToken: string) {
+    for (const [key, value] of this.refreshTokenStore.entries()) {
+      if (value.token === refreshToken) {
+        this.refreshTokenStore.delete(key);
+        this.logger.log('Refresh token revoked on logout');
+        break;
+      }
+    }
     return { message: 'Logged out successfully' };
   }
 

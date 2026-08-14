@@ -11,14 +11,57 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductStatus } from '../generated/prisma/client';
-import { PRODUCT_UPLOAD_PATH } from './products-upload.constants';
+import { PRODUCT_UPLOAD_PATH, PRODUCT_ALLOWED_EXTENSIONS } from './products-upload.constants';
 import { parsePage, parseLimit } from '../common/utils/pagination';
+
+const INTERNAL_IMAGE_PATTERN = /^\/products\/images\/[A-Za-z0-9._-]+$/;
+const EXTERNAL_IMAGE_PATTERN = /^https?:\/\/.+/i;
 
 @Injectable()
 export class ProductsService {
   private readonly logger = new Logger(ProductsService.name);
 
   constructor(private prisma: PrismaService) {}
+
+  private sanitizeImages(images?: string[]): string[] {
+    if (!Array.isArray(images)) return [];
+    const safe: string[] = [];
+    for (const img of images) {
+      if (typeof img !== 'string') continue;
+      if (!INTERNAL_IMAGE_PATTERN.test(img) && !EXTERNAL_IMAGE_PATTERN.test(img)) {
+        throw new BadRequestException(`Imagem inválida: ${img}`);
+      }
+      safe.push(img);
+    }
+    return safe;
+  }
+
+  private async safeDeleteImageFiles(images: string[], exceptProductId?: string) {
+    for (const img of images) {
+      if (typeof img !== 'string' || !INTERNAL_IMAGE_PATTERN.test(img)) continue;
+      const filename = img.slice('/products/images/'.length);
+      if (!filename || filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
+        continue;
+      }
+      const ext = path.extname(filename).toLowerCase();
+      if (!PRODUCT_ALLOWED_EXTENSIONS.has(ext)) continue;
+
+      // Never delete a file still referenced by another product.
+      if (exceptProductId) {
+        const referencedElsewhere = await this.prisma.product.count({
+          where: { id: { not: exceptProductId }, images: { has: img } },
+        });
+        if (referencedElsewhere > 0) continue;
+      }
+
+      const filePath = path.join(PRODUCT_UPLOAD_PATH, filename);
+      try {
+        if (existsSync(filePath)) unlinkSync(filePath);
+      } catch (err) {
+        this.logger.warn(`Falha ao remover arquivo de imagem: ${img} - ${err}`);
+      }
+    }
+  }
 
   async create(userId: string, dto: CreateProductDto) {
     const supplier = await this.prisma.supplierProfile.findUnique({ where: { userId } });
@@ -36,7 +79,7 @@ export class ProductsService {
         stock: dto.stock || 0,
         categoryId: dto.categoryId,
         brand: dto.brand,
-        images: dto.images || [],
+        images: this.sanitizeImages(dto.images),
         tags: dto.tags || [],
         specifications: dto.specifications || {},
         unit: dto.unit || 'un',
@@ -163,21 +206,20 @@ export class ProductsService {
       throw new ForbiddenException('Você não tem permissão para editar este produto');
     }
 
+    const existingImages = existing.images || [];
+    const nextImages = dto.images !== undefined ? this.sanitizeImages(dto.images) : existingImages;
+    const removed = existingImages.filter((img) => !nextImages.includes(img));
+    await this.safeDeleteImageFiles(removed, id);
+
     const product = await this.prisma.product.update({
       where: { id },
       data: {
         ...dto,
+        images: nextImages,
         status: dto.status as ProductStatus,
       },
       include: { category: true, supplier: true },
     });
-
-    if (dto.images) {
-      const removed = (existing.images || []).filter(
-        (img) => !dto.images!.includes(img),
-      );
-      this.deleteImageFiles(removed);
-    }
 
     return product;
   }
@@ -193,7 +235,7 @@ export class ProductsService {
       throw new ForbiddenException('Você não tem permissão para excluir este produto');
     }
 
-    this.deleteImageFiles(product.images || []);
+    await this.safeDeleteImageFiles(product.images || [], id);
 
     try {
       await this.prisma.product.delete({ where: { id } });
@@ -218,17 +260,5 @@ export class ProductsService {
 
     this.logger.log(`Product deleted: ${id}`);
     return { message: 'Product deleted successfully' };
-  }
-
-  private deleteImageFiles(images: string[]) {
-    for (const img of images) {
-      try {
-        const filename = path.basename(img);
-        const filePath = path.join(PRODUCT_UPLOAD_PATH, filename);
-        if (existsSync(filePath)) unlinkSync(filePath);
-      } catch (err) {
-        this.logger.warn(`Falha ao remover arquivo de imagem: ${img} - ${err}`);
-      }
-    }
   }
 }

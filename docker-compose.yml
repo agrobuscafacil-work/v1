@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   frontend:
     build:
@@ -66,7 +64,7 @@ services:
     container_name: agrobuscafacil-redis
     ports:
       - '6379:6379'
-    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-}
+    command: /bin/sh -c 'if [ -n "$$REDIS_PASSWORD" ]; then exec redis-server --appendonly yes --requirepass "$$REDIS_PASSWORD"; else exec redis-server --appendonly yes; fi'
     volumes:
       - redis-data:/data
     networks:

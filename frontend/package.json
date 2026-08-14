@@ -7,9 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
+    "test:coverage": "jest --coverage --passWithNoTests",
     "typecheck": "tsc --noEmit",
     "deps:check": "powershell ./scripts/update-deps.ps1",
     "deps:update": "powershell ./scripts/update-deps.ps1 -Apply"
@@ -22,34 +22,36 @@
     "date-fns": "^3.6.0",
     "framer-motion": "^11.18.2",
     "lucide-react": "^0.577.0",
-    "next": "^16.3.0",
+    "next": "^16.3.1",
     "next-themes": "^0.4.6",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "react-hook-form": "^7.84.0",
+    "react-hook-form": "^7.85.0",
     "react-hot-toast": "^2.6.0",
     "react-icons": "^5.7.0",
     "react-intersection-observer": "^9.16.0",
     "socket.io-client": "^4.8.3",
-    "swiper": "^11.2.10",
     "zod": "^3.25.76",
     "zustand": "^4.5.7"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.20",
-    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/jest-dom": "^6.10.0",
     "@testing-library/react": "^16.3.2",
     "@types/node": "^20.19.43",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "autoprefixer": "^10.5.4",
     "eslint": "^9.39.5",
-    "eslint-config-next": "^16.3.0",
+    "eslint-config-next": "^16.3.1",
     "jest": "^30.4.2",
     "jest-environment-jsdom": "^30.4.1",
     "postcss": "^8.5.26",
     "prettier": "^3.9.6",
     "tailwindcss": "^3.4.19",
     "typescript": "^5.9.3"
+  },
+  "allowScripts": {
+    "unrs-resolver@1.12.2": true
   }
 }

@@ -223,11 +223,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   };
 
   const toggleFavorite = async () => {
-    const token = localStorage.getItem('accessToken');
-    if (!token) {
-      toast.error('Faça login para favoritar produtos');
-      return;
-    }
     try {
       if (isFavorited) {
         if (!favoriteId) {
@@ -241,7 +236,11 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
       }
       setIsFavorited(!isFavorited);
       toast(isFavorited ? 'Removido dos favoritos' : 'Adicionado aos favoritos');
-    } catch {
+    } catch (err: any) {
+      if (err?.response?.status === 401) {
+        toast.error('Faça login para favoritar produtos');
+        return;
+      }
       toast.error('Não foi possível atualizar os favoritos');
     }
   };
