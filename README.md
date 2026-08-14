@@ -12,7 +12,7 @@ Marketplace B2B/B2C para o agronegócio. Plataforma onde fornecedores anunciam p
 | Cache/Sessão| Redis 7                                                |
 | Pagamento   | Stripe                                                 |
 | Proxy/HTTP  | NGINX (reverse proxy + SSL)                            |
-| Deploy      | Docker + Docker Compose                                |
+| Deploy      | Frontend no Vercel · Backend no Docker + Docker Compose |
 
 ## 📁 Estrutura do Projeto
 
@@ -28,8 +28,10 @@ AgroBuscaFacil_v2/
 ├── docker/                  # Dockerfiles (backend/frontend), NGINX, init.sql
 ├── docs/                    # Arquitetura, API e fluxogramas
 ├── scripts/                 # Backup e deploy
-├── docker-compose.yml       # Stack de produção
-└── docker-compose.override.yml  # Stack de desenvolvimento
+├── docker-compose.yml       # Stack de produção (backend + Postgres + Redis + NGINX)
+├── docker-compose.override.yml  # Stack de desenvolvimento
+├── frontend/vercel.json     # Rewrites de produção (frontend no Vercel -> backend)
+└── frontend/.env.example    # Variáveis de ambiente do frontend (Vercel)
 ```
 
 ## 🚀 Rodando em Desenvolvimento
@@ -102,9 +104,43 @@ Scripts equivalentes também existem dentro de `backend/` e `frontend/` (ex.: `n
 
 ## ☁️ Executando em Produção
 
-### 1. Configure as variáveis de ambiente
+A arquitetura de produção é dividida em duas partes:
 
-Crie um arquivo `.env` na raiz do projeto (junto ao `docker-compose.yml`) com pelo menos:
+| Camada     | Onde roda                | URL                                    |
+|------------|--------------------------|----------------------------------------|
+| **Frontend (Next.js)** | Vercel                 | `https://www.agrobuscafacil.com.br`    |
+| **Backend (NestJS)** | Servidor (Docker + NGINX) | `https://api.agrobuscafacil.com.br` |
+| Postgres / Redis | Servidor (Docker)     | interno à rede do compose              |
+
+O frontend no Vercel chama a própria URL `<domínio>/api/*`; o **`vercel.json`** faz o rewrite encaminhando `/api/*` e `/socket.io/*` para `api.agrobuscafacil.com.br`. Isso mantém os cookies (`httpOnly + SameSite=None; Secure`) no mesmo domínio do navegador, essencial para o fluxo de autenticação.
+
+### 1. Variáveis de ambiente no Vercel
+
+No painel do Vercel (**Settings → General → Root Directory = `frontend`**), adicione em **Environment Variables** (Production e Preview):
+
+```env
+NEXT_PUBLIC_API_URL=/api/v1
+NEXT_PUBLIC_SOCKET_URL=
+NEXT_PUBLIC_APP_NAME=AgroBuscaFácil
+NEXT_PUBLIC_APP_URL=https://www.agrobuscafacil.com.br
+```
+
+Referência em `frontend/.env.example`. O `vercel.json` aponta os rewrites para `https://api.agrobuscafacil.com.br` — ajuste as rotas se o domínio mudar.
+
+### 2. Variáveis de ambiente no backend
+
+Copie `backend/.env.production.example` para `backend/.env` no servidor e ajuste os valores:
+
+```env
+NODE_ENV=production
+DATABASE_URL="postgresql://agrobusca:agrobusca123@postgres:5432/agrobuscafacil?schema=public"
+CORS_ORIGIN=https://www.agrobuscafacil.com.br
+JWT_SECRET=<chave-forte-aleatoria>
+JWT_REFRESH_SECRET=<outra-chave-forte-aleatoria>
+SWAGGER_ENABLED=true
+```
+
+Crie também o `.env` na raiz do projeto (junto ao `docker-compose.yml`), que alimenta os segredos usados pelo compose:
 
 ```env
 JWT_SECRET=<chave-forte-aleatoria>
@@ -112,21 +148,18 @@ JWT_REFRESH_SECRET=<outra-chave-forte-aleatoria>
 REDIS_PASSWORD=<senha-do-redis>
 ```
 
-Para o backend, preencha também as variáveis de `backend/.env` (copie de `.env.example`):
+> **Importante:** gere segredos fortes com `openssl rand -base64 48` e nunca os versione.
 
-```env
-DATABASE_URL=postgresql://agrobusca:agrobusca123@postgres:5432/agrobuscafacil?schema=public
-CORS_ORIGIN=https://agrobuscafacil.com.br
-STRIPE_SECRET_KEY=sk_live_...
-STRIPE_WEBHOOK_SECRET=whsec_...
-SMTP_HOST=...            # para e-mails transacionais
-SMTP_USER=...
-SMTP_PASS=...
-```
+### 3. DNS e certificados
 
-> **Importante:** em produção use segredos fortes (ex.: `openssl rand -base64 48`) e nunca os versione.
+1. Crie o registro DNS **`api.agrobuscafacil.com.br`** apontando para o IP do servidor.
+2. Configure o SSL no servidor (Let's Encrypt / certbot):
+   ```bash
+   mkdir -p docker/nginx/ssl
+   # Copie fullchain.pem e privkey.pem para docker/nginx/ssl/
+   ```
 
-### 2. Suba a stack de produção
+### 4. Suba a stack no servidor
 
 ```bash
 # Usa apenas o docker-compose.yml (ignora o override de desenvolvimento)
@@ -134,47 +167,53 @@ docker compose -f docker-compose.yml up -d --build
 
 # Aplique as migrações do banco
 docker compose -f docker-compose.yml exec backend npx prisma migrate deploy
+
+# Recarregue o nginx após colocar os certificados SSL
+docker compose -f docker-compose.yml restart nginx
 ```
 
 Serviços iniciados:
 
-- **frontend** — Next.js standalone, porta `3000`
-- **backend** — API NestJS, porta `4000`
+- **backend** — API NestJS, porta `4000` (exposto via `api.agrobuscafacil.com.br`)
 - **postgres** — banco de dados, porta `5432`
 - **redis** — cache/sessão, porta `6379`
-- **nginx** — reverse proxy, portas `80`/`443`
+- **nginx** — reverse proxy SSL, portas `80`/`443`
+- **frontend** — mantido no compose para dev/local; em produção o frontend ativo é o do Vercel
 
-### 3. Configure o NGINX e o SSL
+O nginx (`docker/nginx/sites/agrobuscafacil.conf`) roteia no domínio `api.agrobuscafacil.com.br`:
 
-Coloque os certificados TLS no caminho esperado pelo nginx e recarregue o serviço:
+| Rota              | Destino                  |
+|-------------------|--------------------------|
+| `/api/`           | Backend (NestJS)         |
+| `/socket.io/`     | Backend (chat WebSocket) |
+| `/docs`           | Swagger do backend       |
+| `/uploads/`       | Imagens enviadas         |
+
+### 5. Deploy do frontend no Vercel
 
 ```bash
-mkdir -p docker/nginx/ssl
-# Copie fullchain.pem e privkey.pem (ex.: Let's Encrypt / certbot) para docker/nginx/ssl/
+# Na raiz do repositório
+git add frontend/vercel.json frontend/.env.example
+git commit -m "chore: configurar deploy Vercel"
+git push
 ```
 
-A configuração do proxy (`docker/nginx/sites/agrobuscafacil.conf`) já roteia:
+O Vercel detecta o push, usa **Root Directory = `frontend`** e publica automaticamente. Caso não tenha importado o repositório ainda: **New Project → repositório → Root Directory `frontend`** → adicione as variáveis da etapa 1 → Deploy.
 
-| Rota              | Destino                        |
-|-------------------|--------------------------------|
-| `/`               | Frontend (Next.js)             |
-| `/api/`           | Backend (NestJS)               |
-| `/socket.io/`     | Backend (chat WebSocket)       |
-| `/docs`           | Swagger do backend             |
-| `/` assets estáticos | Cacheado 1 ano (immutable)  |
-
-Ajuste o `server_name` e os caminhos SSL conforme seu domínio.
-
-### 4. Atualizações / Deploy incremental
+### 6. Atualizações / Deploy incremental
 
 ```bash
 git pull                      # traga as alterações
+
+# Backend (servidor)
 docker compose -f docker-compose.yml build
 docker compose -f docker-compose.yml up -d
 docker compose -f docker-compose.yml exec backend npx prisma migrate deploy
+
+# Frontend: automaticamente no Vercel por push
 ```
 
-Também existe um script auxiliar: `scripts/deploy/deploy.sh` (para Linux) e `scripts/backup/backup-db.sh` (backup do banco).
+Também existem os scripts auxiliares `scripts/deploy/deploy.sh` (Linux) e `scripts/backup/backup-db.sh` (backup do banco).
 
 ## 🧪 Testes e Verificação
 
@@ -187,6 +226,7 @@ npm run lint                               # lint em ambos
 ## 🛡️ Segurança
 
 - JWT (15 min) + Refresh Token (7 dias) com rotação
+- Refresh token em **cookie httpOnly** (SameSite=None; Secure em produção) — nunca exposto ao JS
 - Senhas com bcrypt (12 rounds)
 - Helmet (headers de segurança) + CORS restrito
 - Rate limiting (Throttler)

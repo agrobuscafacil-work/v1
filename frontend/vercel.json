@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "https://api.agrobuscafacil.com.br/api/:path*" },
+    { "source": "/socket.io/:path*", "destination": "https://api.agrobuscafacil.com.br/socket.io/:path*" }
+  ]
+}
