@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Package, Search, Plus, Edit2, Trash2, Save, Loader2, Eye, X, DollarSign, Tag, Hash, Upload } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { toast } from '@/lib/toast';
 import { fetchMyProducts, updateProduct, removeProduct, fetchCategories, uploadProductImage, PRODUCT_FILE_URL } from '@/lib/products';
 import type { Product, Category } from '@/types';
 

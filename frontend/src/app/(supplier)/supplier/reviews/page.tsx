@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Star, MessageSquare, Loader2 } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { toast } from '@/lib/toast';
 import { api } from '@/lib/api';
 
 interface SupplierReview {

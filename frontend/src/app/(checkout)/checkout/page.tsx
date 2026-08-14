@@ -1,12 +1,14 @@
-﻿'use client';
+'use client';
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ShoppingBag, MapPin, CreditCard, Truck, Shield, Loader2, ChevronRight, Leaf } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
+import { ShoppingBag, MapPin, CreditCard, Truck, Shield, Loader2, ChevronRight, Leaf, Star } from 'lucide-react';
+import { toast } from '@/lib/toast';
 import { api } from '@/lib/api';
 import { useCart } from '@/hooks/use-cart';
+import { getCardToken } from '@/lib/card-token';
 
 interface Address {
   id: string;
@@ -22,13 +24,41 @@ interface Address {
   isMain: boolean;
 }
 
+interface CardInfo {
+  id: string;
+  provider: string;
+  brand: string;
+  last4: string;
+  expMonth: number;
+  expYear: number;
+  isDefault: boolean;
+  expired?: boolean;
+  createdAt: string;
+}
+
+const emptyNewCard = {
+  number: '',
+  holderName: '',
+  expMonth: '',
+  expYear: '',
+  securityCode: '',
+};
+
 export default function CheckoutPage() {
+  const router = useRouter();
   const { items, subtotal, clearCart } = useCart();
   const [step, setStep] = useState<'address' | 'payment' | 'confirm'>('address');
   const [isLoading, setIsLoading] = useState(false);
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [selectedAddressId, setSelectedAddressId] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('CREDIT_CARD');
+  const [cards, setCards] = useState<CardInfo[]>([]);
+  const [cardsLoading, setCardsLoading] = useState(false);
+  const [selectedCardId, setSelectedCardId] = useState('');
+  const [useNewCard, setUseNewCard] = useState(false);
+  const [newCard, setNewCard] = useState(emptyNewCard);
+  const [installments, setInstallments] = useState(1);
+  const [idempotencyKey, setIdempotencyKey] = useState('');
 
   const shipping = subtotal() > 500 ? 0 : 29.9;
   const discount = 0;
@@ -50,6 +80,40 @@ export default function CheckoutPage() {
     };
     load();
   }, []);
+
+  const loadCards = async () => {
+    setCardsLoading(true);
+    try {
+      const res = await api.get('/payments/cards');
+      const list: CardInfo[] = Array.isArray(res.data.data) ? res.data.data : [];
+      setCards(list);
+      const def = list.find((c) => c.isDefault) || list[0];
+      if (def) setSelectedCardId(def.id);
+    } catch {
+      setCards([]);
+    } finally {
+      setCardsLoading(false);
+    }
+  };
+
+  const goToPayment = () => {
+    if (!selectedAddress) {
+      toast.error('Selecione um endereço de entrega.');
+      return;
+    }
+    if (paymentMethod === 'CREDIT_CARD') loadCards();
+    setStep('payment');
+  };
+
+  const validateNewCard = () => {
+    const { number, holderName, expMonth, expYear, securityCode } = newCard;
+    if (!number.replace(/\D/g, '').match(/^\d{13,19}$/)) return 'Número do cartão inválido';
+    if (!holderName.trim()) return 'Informe o nome impresso no cartão';
+    if (!/^\d{2}$/.test(expMonth) || !/^\d{4}$/.test(expYear) || !/^\d{3,4}$/.test(securityCode)) {
+      return 'Preencha validade e código de segurança';
+    }
+    return null;
+  };
 
   const handlePlaceOrder = async () => {
     if (!items.length) {
@@ -82,6 +146,50 @@ export default function CheckoutPage() {
         paymentMethod,
       });
       const order = orderRes.data.data;
+
+      if (paymentMethod === 'CREDIT_CARD') {
+        const cardError = validateNewCard();
+        if (useNewCard && cardError) {
+          toast.error(cardError);
+          setStep('payment');
+          return;
+        }
+        if (!useNewCard && !selectedCardId) {
+          toast.error('Selecione um cartão ou cadastre um novo.');
+          setStep('payment');
+          return;
+        }
+        const key = idempotencyKey || crypto.randomUUID();
+        setIdempotencyKey(key);
+        const body: Record<string, unknown> = { orderId: order.id, installments };
+        if (useNewCard) {
+          body.cardToken = await getCardToken({
+            number: newCard.number,
+            holderName: newCard.holderName.trim(),
+            expMonth: newCard.expMonth,
+            expYear: newCard.expYear,
+            securityCode: newCard.securityCode,
+          });
+          body.saveCard = true;
+        } else {
+          body.cardId = selectedCardId;
+        }
+        const payRes = await api.post('/payments', body, { headers: { 'Idempotency-Key': key } });
+        const payment = payRes.data.data;
+        clearCart();
+        if (payment.status === 'APPROVED') {
+          toast.success('Pagamento aprovado!');
+          router.push('/orders');
+        } else if (payment.status === 'PENDING') {
+          toast.success('Pagamento em análise. Acompanhe em seus pedidos.');
+          router.push('/orders');
+        } else {
+          toast.error(payment.message || 'Não foi possível concluir o pagamento.');
+          router.push('/orders');
+        }
+        return;
+      }
+
       const sessionRes = await api.post('/stripe/create-checkout-session', { orderId: order.id });
       const { url } = sessionRes.data.data;
       if (url) {
@@ -91,8 +199,12 @@ export default function CheckoutPage() {
       }
       toast.error('Não foi possível iniciar o pagamento.');
     } catch (e: any) {
-      const msg = e?.response?.data?.message;
-      toast.error(typeof msg === 'string' ? msg : 'Erro ao iniciar o pagamento.');
+      const msg =
+        e?.response?.data?.error?.message ||
+        e?.response?.data?.message ||
+        'Erro ao processar o pagamento. Tente novamente.';
+      toast.error(typeof msg === 'string' ? msg : 'Erro ao processar o pagamento. Tente novamente.');
+      if (e?.response?.data?.path === '/api/v1/payments') setStep('payment');
     } finally {
       setIsLoading(false);
     }
@@ -112,6 +224,8 @@ export default function CheckoutPage() {
       </div>
     );
   }
+
+  const selectedCard = cards.find((c) => c.id === selectedCardId);
 
   return (
     <div className="container-page py-8">
@@ -180,16 +294,7 @@ export default function CheckoutPage() {
                     ))}
                   </div>
                 )}
-                <button
-                  onClick={() => {
-                    if (!selectedAddress) {
-                      toast.error('Selecione um endereço de entrega.');
-                      return;
-                    }
-                    setStep('payment');
-                  }}
-                  className="btn-primary"
-                >
+                <button onClick={goToPayment} className="btn-primary">
                   Continuar para Pagamento
                 </button>
               </div>
@@ -221,6 +326,147 @@ export default function CheckoutPage() {
                     </label>
                   ))}
                 </div>
+
+                {paymentMethod === 'CREDIT_CARD' && (
+                  <div className="space-y-4 mb-6">
+                    {cardsLoading ? (
+                      <div className="flex items-center justify-center py-4">
+                        <Loader2 className="h-5 w-5 animate-spin text-primary-600" />
+                      </div>
+                    ) : cards.length > 0 && (
+                      <div className="space-y-3">
+                        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Cartões salvos</p>
+                        {cards.map((card) => (
+                          <label
+                            key={card.id}
+                            className={`flex items-center gap-3 p-4 rounded-lg border cursor-pointer transition-colors ${
+                              !useNewCard && selectedCardId === card.id
+                                ? 'border-primary-500 bg-primary-50 dark:bg-primary-950'
+                                : 'border-gray-200 dark:border-gray-700 hover:border-primary-300'
+                            }`}
+                          >
+                            <input
+                              type="radio"
+                              name="savedCard"
+                              checked={!useNewCard && selectedCardId === card.id}
+                              onChange={() => {
+                                setUseNewCard(false);
+                                setSelectedCardId(card.id);
+                              }}
+                              className="accent-primary-600"
+                            />
+                            <CreditCard className="h-5 w-5 text-primary-600" />
+                            <span className="text-sm font-medium text-gray-900 dark:text-white capitalize">
+                              {card.brand} •••• {card.last4}
+                            </span>
+                            {card.isDefault && (
+                              <span className="badge-blue flex items-center gap-1">
+                                <Star className="h-3 w-3" /> Principal
+                              </span>
+                            )}
+                          </label>
+                        ))}
+                      </div>
+                    )}
+
+                    <label
+                      className={`flex items-center gap-3 p-4 rounded-lg border cursor-pointer transition-colors ${
+                        useNewCard ? 'border-primary-500 bg-primary-50 dark:bg-primary-950' : 'border-gray-200 dark:border-gray-700 hover:border-primary-300'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="savedCard"
+                        checked={useNewCard}
+                        onChange={() => setUseNewCard(true)}
+                        className="accent-primary-600"
+                      />
+                      <span className="text-sm font-medium text-gray-900 dark:text-white">Usar um cartão novo</span>
+                    </label>
+
+                    {useNewCard && (
+                      <div className="rounded-lg border border-gray-200 dark:border-gray-700 p-4 space-y-4">
+                        <div>
+                          <label className="label-field">Número do cartão *</label>
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            className="input-field"
+                            placeholder="0000 0000 0000 0000"
+                            value={newCard.number}
+                            onChange={(e) =>
+                              setNewCard({ ...newCard, number: e.target.value.replace(/[^\d ]/g, '').slice(0, 19) })
+                            }
+                          />
+                        </div>
+                        <div>
+                          <label className="label-field">Nome impresso no cartão *</label>
+                          <input
+                            type="text"
+                            className="input-field"
+                            placeholder="Como aparece no cartão"
+                            value={newCard.holderName}
+                            onChange={(e) => setNewCard({ ...newCard, holderName: e.target.value })}
+                          />
+                        </div>
+                        <div className="grid grid-cols-3 gap-4">
+                          <div>
+                            <label className="label-field">Mês *</label>
+                            <input
+                              type="text"
+                              inputMode="numeric"
+                              className="input-field"
+                              placeholder="12"
+                              maxLength={2}
+                              value={newCard.expMonth}
+                              onChange={(e) => setNewCard({ ...newCard, expMonth: e.target.value.replace(/\D/g, '') })}
+                            />
+                          </div>
+                          <div>
+                            <label className="label-field">Ano *</label>
+                            <input
+                              type="text"
+                              inputMode="numeric"
+                              className="input-field"
+                              placeholder="2030"
+                              maxLength={4}
+                              value={newCard.expYear}
+                              onChange={(e) => setNewCard({ ...newCard, expYear: e.target.value.replace(/\D/g, '') })}
+                            />
+                          </div>
+                          <div>
+                            <label className="label-field">CVV *</label>
+                            <input
+                              type="password"
+                              inputMode="numeric"
+                              className="input-field"
+                              placeholder="123"
+                              maxLength={4}
+                              value={newCard.securityCode}
+                              onChange={(e) => setNewCard({ ...newCard, securityCode: e.target.value.replace(/\D/g, '') })}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    <div>
+                      <label className="label-field">Parcelas</label>
+                      <select
+                        className="input-field"
+                        value={installments}
+                        onChange={(e) => setInstallments(Number(e.target.value))}
+                      >
+                        {Array.from({ length: 12 }, (_, i) => i + 1).map((n) => (
+                          <option key={n} value={n}>
+                            {n}x de R$ {(total / n).toFixed(2)}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                )}
+
                 <button onClick={() => setStep('confirm')} className="btn-primary">Revisar Pedido</button>
               </div>
             )}
@@ -239,9 +485,20 @@ export default function CheckoutPage() {
                   </div>
                   <div className="rounded-lg bg-gray-50 dark:bg-gray-800 p-4">
                     <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">Pagamento</p>
-                    <p className="text-sm text-gray-500">
-                      {paymentMethod === 'CREDIT_CARD' ? 'Cartão de Crédito' : paymentMethod === 'PIX' ? 'Pix' : 'Boleto Bancário'}
-                    </p>
+                    {paymentMethod === 'CREDIT_CARD' ? (
+                      <p className="text-sm text-gray-500">
+                        {useNewCard && newCard.number
+                          ? `Cartão •••• ${newCard.number.replace(/\D/g, '').slice(-4)}`
+                          : selectedCard
+                            ? `${selectedCard.brand} •••• ${selectedCard.last4}`
+                            : 'Cartão de Crédito'}
+                        {` - ${installments}x`}
+                      </p>
+                    ) : (
+                      <p className="text-sm text-gray-500">
+                        {paymentMethod === 'PIX' ? 'Pix' : 'Boleto Bancário'}
+                      </p>
+                    )}
                   </div>
                   {items.map((item) => (
                     <div key={item.product.id} className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-800 last:border-0">

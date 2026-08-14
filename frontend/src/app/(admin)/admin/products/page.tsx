@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Package, Search, Edit2, X, Save, Loader2, Eye, Store, DollarSign, Package as PackageIcon, Tag, Hash, ChevronLeft, ChevronRight, Trash2, Calendar, ShoppingBag } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { toast } from '@/lib/toast';
 import { api } from '@/lib/api';
 import { PRODUCT_FILE_URL } from '@/lib/products';
 

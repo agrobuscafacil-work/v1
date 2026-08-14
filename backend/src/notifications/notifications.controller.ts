@@ -1,5 +1,5 @@
 import {
-  Controller, Get, Put, Param, Query, UseGuards, HttpCode, HttpStatus,
+  Controller, Get, Put, Delete, Param, Query, UseGuards, HttpCode, HttpStatus,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { NotificationsService } from './notifications.service';
@@ -42,5 +42,12 @@ export class NotificationsController {
   @ApiOperation({ summary: 'Mark all notifications as read' })
   async markAllAsRead(@CurrentUser() user: any) {
     return this.notificationsService.markAllAsRead(user.id);
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Delete notification' })
+  async remove(@Param('id') id: string, @CurrentUser() user: any) {
+    return this.notificationsService.remove(id, user.id);
   }
 }

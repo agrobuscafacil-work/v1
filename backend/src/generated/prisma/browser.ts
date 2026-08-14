@@ -128,6 +128,21 @@ export type Message = Prisma.MessageModel
  */
 export type Payment = Prisma.PaymentModel
 /**
+ * Model PaymentCustomer
+ * 
+ */
+export type PaymentCustomer = Prisma.PaymentCustomerModel
+/**
+ * Model PaymentCard
+ * 
+ */
+export type PaymentCard = Prisma.PaymentCardModel
+/**
+ * Model PaymentEvent
+ * 
+ */
+export type PaymentEvent = Prisma.PaymentEventModel
+/**
  * Model ChatSettings
  * 
  */

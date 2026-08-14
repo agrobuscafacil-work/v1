@@ -4,10 +4,11 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import toast from 'react-hot-toast';
-import { User, Mail, Phone, MapPin, Lock, Package, Save, Loader2, Plus, Pencil, Trash2, X } from 'lucide-react';
+import { toast } from '@/lib/toast';
+import { User, Mail, Phone, MapPin, Lock, Package, Save, Loader2, Plus, Pencil, Trash2, X, CreditCard, Star } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { api } from '@/lib/api';
+import { getCardToken } from '@/lib/card-token';
 import Link from 'next/link';
 
 const profileSchema = z.object({
@@ -15,20 +16,36 @@ const profileSchema = z.object({
   phone: z.string().min(10, 'Telefone inválido'),
 });
 
-const passwordSchema = z.object({
-  currentPassword: z.string().min(1, 'Informe a senha atual'),
-  newPassword: z
-    .string()
-    .min(8, 'Nova senha deve ter no mínimo 8 caracteres')
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/,
-      'Deve conter letra maiúscula, minúscula, número e caractere especial',
-    ),
-  confirmPassword: z.string().min(1, 'Confirme a nova senha'),
-}).refine((data) => data.newPassword === data.confirmPassword, {
-  message: 'Senhas não conferem',
-  path: ['confirmPassword'],
-});
+const passwordSchema = z
+  .object({
+    currentPassword: z.string().min(1, 'Informe a senha atual'),
+    newPassword: z
+      .string()
+      .min(8, 'Nova senha deve ter no mínimo 8 caracteres')
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/,
+        'Deve conter letra maiúscula, minúscula, número e caractere especial',
+      ),
+    confirmPassword: z.string().min(1, 'Confirme a nova senha'),
+  })
+  .superRefine((data, ctx) => {
+    if (data.newPassword && data.newPassword === data.currentPassword) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'A nova senha não pode ser igual à senha atual',
+        path: ['newPassword'],
+      });
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'A nova senha não pode ser igual à senha atual',
+        path: ['confirmPassword'],
+      });
+    }
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: 'Senhas não conferem',
+    path: ['confirmPassword'],
+  });
 
 type ProfileFormData = z.infer<typeof profileSchema>;
 type PasswordFormData = z.infer<typeof passwordSchema>;
@@ -54,6 +71,18 @@ interface AddressInfo {
   isMain: boolean;
 }
 
+interface CardInfo {
+  id: string;
+  provider: string;
+  brand: string;
+  last4: string;
+  expMonth: number;
+  expYear: number;
+  isDefault: boolean;
+  expired?: boolean;
+  createdAt: string;
+}
+
 const statusLabels: Record<string, { label: string; color: string }> = {
   PENDING: { label: 'Pendente', color: 'badge-yellow' },
   CONFIRMED: { label: 'Confirmado', color: 'badge-blue' },
@@ -76,8 +105,8 @@ const emptyAddress = {
 };
 
 export default function ProfilePage() {
-  const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState<'profile' | 'orders' | 'addresses' | 'password'>('profile');
+  const { user, setUser } = useAuth();
+  const [activeTab, setActiveTab] = useState<'profile' | 'orders' | 'addresses' | 'password' | 'cards'>('profile');
   const [saving, setSaving] = useState(false);
   const [orders, setOrders] = useState<OrderInfo[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
@@ -85,6 +114,17 @@ export default function ProfilePage() {
   const [addressesLoading, setAddressesLoading] = useState(false);
   const [addressModalOpen, setAddressModalOpen] = useState(false);
   const [newAddress, setNewAddress] = useState(emptyAddress);
+  const [cards, setCards] = useState<CardInfo[]>([]);
+  const [cardsLoading, setCardsLoading] = useState(false);
+  const [cardModalOpen, setCardModalOpen] = useState(false);
+  const [savingCard, setSavingCard] = useState(false);
+  const [newCard, setNewCard] = useState({
+    number: '',
+    holderName: '',
+    expMonth: '',
+    expYear: '',
+    securityCode: '',
+  });
 
   const profileForm = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
@@ -96,6 +136,7 @@ export default function ProfilePage() {
 
   const passwordForm = useForm<PasswordFormData>({
     resolver: zodResolver(passwordSchema),
+    mode: 'onChange',
   });
 
   useEffect(() => {
@@ -140,19 +181,38 @@ export default function ProfilePage() {
     }
   };
 
-  const onTabChange = (tab: 'profile' | 'orders' | 'addresses' | 'password') => {
+  const loadCards = async () => {
+    setCardsLoading(true);
+    try {
+      const res = await api.get('/payments/cards');
+      const payload = res.data.data ?? [];
+      setCards(payload);
+    } catch {
+      setCards([]);
+    } finally {
+      setCardsLoading(false);
+    }
+  };
+
+  const onTabChange = (tab: 'profile' | 'orders' | 'addresses' | 'password' | 'cards') => {
     setActiveTab(tab);
     if (tab === 'orders' && orders.length === 0) loadOrders();
     if (tab === 'addresses' && addresses.length === 0) loadAddresses();
+    if (tab === 'cards' && cards.length === 0) loadCards();
   };
 
   const onProfileSubmit = async (data: ProfileFormData) => {
     setSaving(true);
     try {
-      await api.put('/users/me', { name: data.name, phone: data.phone });
+      const res = await api.put('/users/me', { name: data.name, phone: data.phone });
+      setUser(res.data.data);
       toast.success('Perfil atualizado com sucesso!');
-    } catch {
-      toast.error('Não foi possível atualizar o perfil');
+    } catch (err: any) {
+      const msg =
+        err?.response?.data?.error?.message ||
+        err?.response?.data?.message ||
+        'Não foi possível atualizar o perfil';
+      toast.error(msg);
     } finally {
       setSaving(false);
     }
@@ -168,7 +228,11 @@ export default function ProfilePage() {
       toast.success('Senha alterada com sucesso!');
       passwordForm.reset();
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || 'Não foi possível alterar a senha');
+      const msg =
+        err?.response?.data?.error?.message ||
+        err?.response?.data?.message ||
+        'Não foi possível alterar a senha';
+      toast.error(msg);
     } finally {
       setSaving(false);
     }
@@ -200,10 +264,79 @@ export default function ProfilePage() {
     }
   };
 
+  const submitCard = async () => {
+    const { number, holderName, expMonth, expYear, securityCode } = newCard;
+    if (!number.replace(/\D/g, '').match(/^\d{13,19}$/)) {
+      toast.error('Número do cartão inválido');
+      return;
+    }
+    if (!holderName.trim()) {
+      toast.error('Informe o nome impresso no cartão');
+      return;
+    }
+    if (!/^\d{2}$/.test(expMonth) || !/^\d{4}$/.test(expYear) || !/^\d{3,4}$/.test(securityCode)) {
+      toast.error('Preencha validade e código de segurança');
+      return;
+    }
+    setSavingCard(true);
+    try {
+      const token = await getCardToken({
+        number,
+        holderName: holderName.trim(),
+        expMonth,
+        expYear,
+        securityCode,
+        identification: user?.document || undefined,
+      });
+      await api.post('/payments/cards', { token });
+      toast.success('Cartão adicionado com sucesso!');
+      setCardModalOpen(false);
+      setNewCard({ number: '', holderName: '', expMonth: '', expYear: '', securityCode: '' });
+      loadCards();
+    } catch (err: any) {
+      const msg =
+        err?.response?.data?.error?.message ||
+        err?.response?.data?.message ||
+        'Não foi possível adicionar o cartão';
+      toast.error(msg);
+    } finally {
+      setSavingCard(false);
+    }
+  };
+
+  const removeCard = async (id: string) => {
+    try {
+      await api.delete(`/payments/cards/${id}`);
+      setCards((prev) => prev.filter((c) => c.id !== id));
+      toast.success('Cartão removido');
+    } catch (err: any) {
+      const msg =
+        err?.response?.data?.error?.message ||
+        err?.response?.data?.message ||
+        'Não foi possível remover o cartão';
+      toast.error(msg);
+    }
+  };
+
+  const setDefaultCard = async (id: string) => {
+    try {
+      await api.patch(`/payments/cards/${id}/default`);
+      setCards((prev) => prev.map((c) => ({ ...c, isDefault: c.id === id })));
+      toast.success('Cartão definido como principal');
+    } catch (err: any) {
+      const msg =
+        err?.response?.data?.error?.message ||
+        err?.response?.data?.message ||
+        'Não foi possível definir o cartão principal';
+      toast.error(msg);
+    }
+  };
+
   const tabs = [
     { key: 'profile' as const, label: 'Meus Dados', icon: User },
     { key: 'orders' as const, label: 'Pedidos', icon: Package },
     { key: 'addresses' as const, label: 'Endereços', icon: MapPin },
+    { key: 'cards' as const, label: 'Meus Cartões', icon: CreditCard },
     { key: 'password' as const, label: 'Senha', icon: Lock },
   ];
 
@@ -354,6 +487,62 @@ export default function ProfilePage() {
             </div>
           )}
 
+          {activeTab === 'cards' && (
+            <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Meus Cartões</h2>
+                <button onClick={() => setCardModalOpen(true)} className="btn-primary text-sm gap-1">
+                  <Plus className="h-4 w-4" /> Novo Cartão
+                </button>
+              </div>
+              {cardsLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="h-6 w-6 animate-spin text-primary-600" />
+                </div>
+              ) : cards.length === 0 ? (
+                <p className="text-sm text-gray-500 text-center py-8">Nenhum cartão cadastrado.</p>
+              ) : (
+                <div className="space-y-4">
+                  {cards.map((card) => (
+                    <div key={card.id} className="flex items-start justify-between rounded-lg border border-gray-100 dark:border-gray-800 p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-lg bg-primary-50 dark:bg-primary-950 flex items-center justify-center">
+                          <CreditCard className="h-5 w-5 text-primary-600" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <p className="font-medium text-gray-900 dark:text-white capitalize">
+                              {card.brand} •••• {card.last4}
+                            </p>
+                            {card.isDefault && (
+                              <span className="badge-blue flex items-center gap-1">
+                                <Star className="h-3 w-3" /> Principal
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-sm text-gray-500 mt-0.5">
+                            Válido até {String(card.expMonth).padStart(2, '0')}/{card.expYear}
+                            {card.expired ? ' (vencido)' : ''}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        {!card.isDefault && (
+                          <button onClick={() => setDefaultCard(card.id)} className="btn-ghost p-1.5 text-primary-600" title="Definir como principal">
+                            <Star className="h-4 w-4" />
+                          </button>
+                        )}
+                        <button onClick={() => removeCard(card.id)} className="btn-ghost p-1.5 text-red-500" title="Remover cartão">
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
           {activeTab === 'password' && (
             <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Alterar Senha</h2>
@@ -388,6 +577,90 @@ export default function ProfilePage() {
           )}
         </div>
       </div>
+
+      {cardModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setCardModalOpen(false)} />
+          <div className="relative w-full max-w-lg rounded-xl bg-white dark:bg-gray-900 shadow-xl p-6 mx-4 animate-slide-up">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Novo Cartão</h2>
+              <button onClick={() => setCardModalOpen(false)} className="btn-ghost p-1">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="label-field">Número do cartão *</label>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  className="input-field"
+                  placeholder="0000 0000 0000 0000"
+                  value={newCard.number}
+                  onChange={(e) =>
+                    setNewCard({ ...newCard, number: e.target.value.replace(/[^\d ]/g, '').slice(0, 19) })
+                  }
+                />
+              </div>
+              <div>
+                <label className="label-field">Nome impresso no cartão *</label>
+                <input
+                  type="text"
+                  className="input-field"
+                  placeholder="Como aparece no cartão"
+                  value={newCard.holderName}
+                  onChange={(e) => setNewCard({ ...newCard, holderName: e.target.value })}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="label-field">Validade (MM) *</label>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    className="input-field"
+                    placeholder="12"
+                    maxLength={2}
+                    value={newCard.expMonth}
+                    onChange={(e) => setNewCard({ ...newCard, expMonth: e.target.value.replace(/\D/g, '') })}
+                  />
+                </div>
+                <div>
+                  <label className="label-field">Validade (AAAA) *</label>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    className="input-field"
+                    placeholder="2030"
+                    maxLength={4}
+                    value={newCard.expYear}
+                    onChange={(e) => setNewCard({ ...newCard, expYear: e.target.value.replace(/\D/g, '') })}
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="label-field">Código de segurança (CVV) *</label>
+                <input
+                  type="password"
+                  inputMode="numeric"
+                  className="input-field"
+                  placeholder="123"
+                  maxLength={4}
+                  value={newCard.securityCode}
+                  onChange={(e) => setNewCard({ ...newCard, securityCode: e.target.value.replace(/\D/g, '') })}
+                />
+                <p className="text-xs text-gray-500 mt-2">
+                  Seus dados de cartão são tokenizados com segurança e nunca são armazenados pelo AgroBuscaFácil.
+                </p>
+              </div>
+              <button onClick={submitCard} disabled={savingCard} className="btn-primary w-full gap-2">
+                {savingCard ? <Loader2 className="h-4 w-4 animate-spin" /> : <CreditCard className="h-4 w-4" />}
+                {savingCard ? 'Salvando...' : 'Salvar Cartão'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {addressModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">

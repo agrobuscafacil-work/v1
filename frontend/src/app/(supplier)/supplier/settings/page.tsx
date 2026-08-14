@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Store, Save, Loader2, Upload, MessageCircle, Wifi, WifiOff, ToggleLeft, ToggleRight } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { toast } from '@/lib/toast';
 import { ChatSettings, defaultChatSettings } from '@/lib/chat-settings';
 import { api } from '@/lib/api';
 

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Minus, Plus, Trash2, ShoppingCart as CartIcon, Leaf, ArrowLeft, ArrowRight, Shield, Truck } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { toast } from '@/lib/toast';
 import { useCart } from '@/hooks/use-cart';
 
 export default function CartPage() {

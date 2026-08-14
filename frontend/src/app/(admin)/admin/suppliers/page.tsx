@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Store, Search, CheckCircle, XCircle, X, Loader2, MessageCircle, Send, ChevronLeft, ChevronRight, MapPin, Pencil } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { toast } from '@/lib/toast';
 import { api } from '@/lib/api';
 
 interface SupplierItem {

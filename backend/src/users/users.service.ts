@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UnauthorizedException, Logger } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException, BadRequestException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
@@ -158,6 +158,15 @@ export class UsersService {
 
     if (!isPasswordValid) {
       throw new UnauthorizedException('Senha atual incorreta');
+    }
+
+    const isSameAsCurrent = await bcrypt.compare(
+      dto.newPassword,
+      user.password,
+    );
+
+    if (isSameAsCurrent) {
+      throw new BadRequestException('A nova senha não pode ser igual à senha atual');
     }
 
     const saltRounds = Number(this.configService.get('BCRYPT_SALT_ROUNDS')) || 12;

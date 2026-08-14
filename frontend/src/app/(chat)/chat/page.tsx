@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Search, Send, Mail, MailOpen, MessageCircle, Plus, Wifi, WifiOff, X, Loader2 } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { toast } from '@/lib/toast';
 import { useAuth } from '@/hooks/use-auth';
 import {
   fetchConversations, fetchConversationMessages, createConversation,

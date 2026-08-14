@@ -107,6 +107,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </aside>
 
       <main className="flex-1 overflow-auto">
+        <div className="sticky top-0 z-30 border-b border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-950/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
+          <div className="flex items-center justify-between px-6 py-3">
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="btn-ghost text-sm gap-2"
+              aria-label="Voltar para a página anterior"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              <span>Voltar</span>
+            </button>
+            <Link href="/" className="text-sm text-gray-500 hover:text-primary-600">
+              Ir para o site
+            </Link>
+          </div>
+        </div>
         {children}
       </main>
     </div>

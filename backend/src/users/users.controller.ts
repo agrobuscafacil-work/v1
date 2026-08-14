@@ -63,6 +63,15 @@ export class UsersController {
     return this.usersService.findById(id);
   }
 
+  @Put('me')
+  @ApiOperation({ summary: 'Update current user profile' })
+  async updateProfile(
+    @CurrentUser() user: any,
+    @Body() dto: UpdateUserDto,
+  ) {
+    return this.usersService.update(user.id, dto);
+  }
+
   @Put(':id')
   @UseGuards(RolesGuard)
   @Roles('ADMIN', 'SUPER_ADMIN')
@@ -72,15 +81,6 @@ export class UsersController {
     @Body() dto: UpdateUserAdminDto,
   ) {
     return this.usersService.updateByAdmin(id, dto);
-  }
-
-  @Put('me')
-  @ApiOperation({ summary: 'Update current user profile' })
-  async updateProfile(
-    @CurrentUser() user: any,
-    @Body() dto: UpdateUserDto,
-  ) {
-    return this.usersService.update(user.id, dto);
   }
 
   @Put('me/password')

@@ -73,6 +73,9 @@ export const ModelName = {
   Conversation: 'Conversation',
   Message: 'Message',
   Payment: 'Payment',
+  PaymentCustomer: 'PaymentCustomer',
+  PaymentCard: 'PaymentCard',
+  PaymentEvent: 'PaymentEvent',
   ChatSettings: 'ChatSettings',
   SystemSetting: 'SystemSetting',
   Notification: 'Notification',
@@ -538,6 +541,7 @@ export const PaymentScalarFieldEnum = {
   status: 'status',
   gateway: 'gateway',
   gatewayId: 'gatewayId',
+  idempotencyKey: 'idempotencyKey',
   gatewayResponse: 'gatewayResponse',
   pixCode: 'pixCode',
   pixQrCode: 'pixQrCode',
@@ -553,6 +557,51 @@ export const PaymentScalarFieldEnum = {
 } as const
 
 export type PaymentScalarFieldEnum = (typeof PaymentScalarFieldEnum)[keyof typeof PaymentScalarFieldEnum]
+
+
+export const PaymentCustomerScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  provider: 'provider',
+  providerCustomerId: 'providerCustomerId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PaymentCustomerScalarFieldEnum = (typeof PaymentCustomerScalarFieldEnum)[keyof typeof PaymentCustomerScalarFieldEnum]
+
+
+export const PaymentCardScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  paymentCustomerId: 'paymentCustomerId',
+  provider: 'provider',
+  providerCardId: 'providerCardId',
+  brand: 'brand',
+  last4: 'last4',
+  expMonth: 'expMonth',
+  expYear: 'expYear',
+  isDefault: 'isDefault',
+  active: 'active',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PaymentCardScalarFieldEnum = (typeof PaymentCardScalarFieldEnum)[keyof typeof PaymentCardScalarFieldEnum]
+
+
+export const PaymentEventScalarFieldEnum = {
+  id: 'id',
+  paymentId: 'paymentId',
+  provider: 'provider',
+  providerEventId: 'providerEventId',
+  eventType: 'eventType',
+  status: 'status',
+  processedAt: 'processedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type PaymentEventScalarFieldEnum = (typeof PaymentEventScalarFieldEnum)[keyof typeof PaymentEventScalarFieldEnum]
 
 
 export const ChatSettingsScalarFieldEnum = {

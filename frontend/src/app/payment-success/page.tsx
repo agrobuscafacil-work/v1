@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { CheckCircle, Loader2, ShoppingBag } from 'lucide-react';
 import { api } from '@/lib/api';
+import { PageNav } from '@/components/layout/page-nav';
 
 function PaymentSuccessContent() {
   const searchParams = useSearchParams();
@@ -27,8 +28,10 @@ function PaymentSuccessContent() {
   }, [sessionId]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 p-4">
-      <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-8 text-center">
+    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950">
+      <PageNav />
+      <div className="flex-1 flex items-center justify-center p-4">
+        <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-8 text-center">
         {status === 'loading' && (
           <>
             <Loader2 className="h-14 w-14 text-primary-600 animate-spin mx-auto mb-4" />
@@ -55,6 +58,7 @@ function PaymentSuccessContent() {
             <Link href="/orders" className="btn-primary w-full">Ir para pedidos</Link>
           </>
         )}
+        </div>
       </div>
     </div>
   );

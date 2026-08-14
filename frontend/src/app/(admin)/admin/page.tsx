@@ -9,7 +9,7 @@ import {
   Clock, AlertTriangle, Eye, Download, MessageCircle, Send, X, Loader2,
 } from 'lucide-react';
 import Link from 'next/link';
-import toast from 'react-hot-toast';
+import { toast } from '@/lib/toast';
 
 interface AdminStats {
   totalUsers: number;

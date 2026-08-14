@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Heart, Star, Leaf, Trash2, ShoppingCart, ArrowLeft, Loader2 } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { toast } from '@/lib/toast';
 import { useCart } from '@/hooks/use-cart';
 import { api } from '@/lib/api';
 import { PRODUCT_FILE_URL } from '@/lib/products';

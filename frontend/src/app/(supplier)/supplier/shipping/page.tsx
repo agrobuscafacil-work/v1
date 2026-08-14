@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Truck, Plus, MapPin, Loader2, Trash2, ToggleLeft, ToggleRight, Save } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { toast } from '@/lib/toast';
 import { api } from '@/lib/api';
 
 interface ShippingMethod {

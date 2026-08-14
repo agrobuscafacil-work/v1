@@ -14,6 +14,7 @@ import { CheckoutModule } from './checkout/checkout.module';
 import { ChatModule } from './chat/chat.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { PaymentsModule } from './payments/payments.module';
+import { PaymentProviderModule } from './payments/payment-provider.module';
 import { ShippingModule } from './shipping/shipping.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { AdminModule } from './admin/admin.module';
@@ -29,6 +30,7 @@ import { SupportModule } from './support/support.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { StripeModule } from './stripe/stripe.module';
 import { RedisModule } from './common/redis/redis.module';
+import { RedisThrottlerStorage } from './common/redis/redis-throttler.storage';
 
 @Module({
   imports: [
@@ -37,15 +39,16 @@ import { RedisModule } from './common/redis/redis.module';
       envFilePath: '.env',
     }),
     ThrottlerModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
+      imports: [ConfigModule, RedisModule],
+      inject: [ConfigService, 'REDIS_CLIENT'],
+      useFactory: (config: ConfigService, redis: any) => ({
         throttlers: [
           {
             ttl: config.get<number>('THROTTLE_TTL') || 60000,
             limit: config.get<number>('THROTTLE_LIMIT') || 100,
           },
         ],
+        storage: new RedisThrottlerStorage(redis),
       }),
     }),
     PrismaModule,
@@ -62,6 +65,7 @@ import { RedisModule } from './common/redis/redis.module';
     ChatModule,
     ReviewsModule,
     PaymentsModule,
+    PaymentProviderModule,
     ShippingModule,
     DashboardModule,
     AdminModule,

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { Percent, Plus, Trash2, Clock, Loader2, X, Save, Tag } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { toast } from '@/lib/toast';
 import { api } from '@/lib/api';
 
 interface Promotion {

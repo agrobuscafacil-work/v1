@@ -4,8 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 
 const SOCKET_URL =
-  process.env.NEXT_PUBLIC_SOCKET_URL ||
-  (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:4000');
+  process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:4000';
 
 let socket: Socket | null = null;
 
@@ -59,6 +58,7 @@ export function emitRead(conversationId: string) {
 }
 
 interface UseChatSocketOptions {
+  enabled?: boolean;
   onMessage?: (data: { conversationId: string; message: any }) => void;
   onTyping?: (data: { conversationId: string; userId: string; name: string; isTyping: boolean }) => void;
   onRead?: (data: { conversationId: string; userId: string }) => void;
@@ -74,6 +74,7 @@ export function useChatSocket(opts: UseChatSocketOptions = {}) {
   }, [opts]);
 
   useEffect(() => {
+    if (opts.enabled === false) return;
     const s = connectSocket();
     if (!s) return;
 
@@ -99,7 +100,7 @@ export function useChatSocket(opts: UseChatSocketOptions = {}) {
       s.off('read', handleRead);
       s.off('conversation:updated', handleConversationUpdated);
     };
-  }, []);
+  }, [opts.enabled]);
 
   return { connected, socket };
 }

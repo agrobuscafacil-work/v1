@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Users, Search, Edit2, X, CheckCircle, XCircle, Save, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { toast } from '@/lib/toast';
 import { api } from '@/lib/api';
 import type { User } from '@/types';
 

@@ -6,7 +6,7 @@ import {
   Star, Truck, Shield, Package, Minus, Plus, ShoppingCart, Heart, Share2, MapPin, Leaf, Clock,
   CheckCircle, Phone, MessageCircle, Loader2,
 } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { toast } from '@/lib/toast';
 import { useCart } from '@/hooks/use-cart';
 import { api } from '@/lib/api';
 import { PRODUCT_FILE_URL } from '@/lib/products';
@@ -235,7 +235,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
         setFavoriteId(res.data.data?.id || null);
       }
       setIsFavorited(!isFavorited);
-      toast(isFavorited ? 'Removido dos favoritos' : 'Adicionado aos favoritos');
+      toast.success(isFavorited ? 'Removido dos favoritos' : 'Adicionado aos favoritos');
     } catch (err: any) {
       if (err?.response?.status === 401) {
         toast.error('Faça login para favoritar produtos');

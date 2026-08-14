@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Star, Search, Trash2, ThumbsUp, ThumbsDown, Loader2 } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { toast } from '@/lib/toast';
 import { api } from '@/lib/api';
 import { useAuth } from '@/hooks/use-auth';
 

@@ -60,4 +60,10 @@ export class NotificationsService {
     });
     return { unreadCount: count };
   }
+
+  async remove(id: string, userId: string) {
+    return this.prisma.notification.deleteMany({
+      where: { id, userId },
+    });
+  }
 }

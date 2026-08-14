@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Package, Loader2, Upload, Save, X, AlertTriangle } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { toast } from '@/lib/toast';
 import { fetchCategories, createProduct, uploadProductImage } from '@/lib/products';
 import type { Category } from '@/types';
 

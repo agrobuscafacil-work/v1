@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import toast from 'react-hot-toast';
+import { toast } from '@/lib/toast';
 import { useAuth } from '@/hooks/use-auth';
 import { Leaf, Loader2 } from 'lucide-react';
 import { useState, useCallback } from 'react';

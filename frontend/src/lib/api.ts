@@ -55,7 +55,15 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError, null);
-        if (typeof window !== 'undefined') {
+        // O bootstrap (/users/me) falha com 401 para visitantes anonimos;
+        // nesse caso nao ha sessao para redirecionar - o redirecionamento
+        // fica reservado para sessoes que expiraram durante o uso.
+        const isAnonymousBootstrap = originalRequest?.url?.includes('/users/me');
+        if (
+          !isAnonymousBootstrap &&
+          typeof window !== 'undefined' &&
+          window.location.pathname !== '/auth/login'
+        ) {
           // Axios interceptor runs outside React; a full redirect is required here.
           // eslint-disable-next-line @next/next/no-location-assign-relative-destination
           window.location.href = '/auth/login';

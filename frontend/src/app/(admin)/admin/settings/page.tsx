@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Settings, Save, Loader2, Bell, Shield, Globe, Palette, CreditCard } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { toast } from '@/lib/toast';
 import { api } from '@/lib/api';
 
 const DEFAULTS: Record<string, any> = {

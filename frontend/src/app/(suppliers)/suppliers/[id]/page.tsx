@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState, useEffect, use } from 'react';
-import toast from 'react-hot-toast';
+import { toast } from '@/lib/toast';
 import { useAuth } from '@/hooks/use-auth';
 import { openSupplierConversation, sendMessage as sendChatMessage } from '@/lib/chat-api';
 import { api } from '@/lib/api';

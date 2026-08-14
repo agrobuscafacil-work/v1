@@ -85,6 +85,22 @@ Com o backend rodando, acesse o Swagger em `http://localhost:4000/docs` para exp
 
 Referência complementar em [`docs/api.md`](docs/api.md) e [`docs/architecture.md`](docs/architecture.md).
 
+## 💳 Sistema de Pagamentos com Cartão
+
+Pagamentos com cartão via **abstração de provider** (Mercado Pago em produção, MOCK em desenvolvimento). O cartão completo (PAN/CVV) **nunca** passa pelo backend — a tokenização acontece no navegador (MercadoPago.js v2); o banco guarda apenas os 4 últimos dígitos e a referência no gateway.
+
+| Tema | Detalhe |
+|---|---|
+| **Fluxo** | Checkout → `POST /orders` → `POST /payments` (token ou `cardId`) → status `APPROVED/DECLINED/PENDING` → webhook assinado atualiza pedido |
+| **Cartões salvos** | `GET/POST /api/v1/payments/cards`, `DELETE/PATCH /:id` e `/:id/default` — soft-delete, default automático |
+| **Idempotência** | Header `Idempotency-Key` obrigatório em `POST /payments` (UNIQUE no banco) |
+| **Webhook** | `POST /api/v1/webhooks/mercadopago` — HMAC-SHA256 (±5 min), deduplicado por `providerEventId`, confirma status via provider antes de aplicar |
+| **MOCK (dev)** | Tokens `mock-approved:last4:brand` / `mock-rejected:...` / `mock:...`; webhook com `x-signature: mock-signature` |
+| **Config** | `MP_ENABLED`, `MP_ACCESS_TOKEN`, `MP_WEBHOOK_SECRET`, `MP_TIMEOUT_MS` (backend) · `NEXT_PUBLIC_MP_PUBLIC_KEY` (frontend) |
+| **Testes** | `cd backend && npx jest src/payments --silent` (39 testes unitários) |
+
+Documentação completa (arquitetura, componentes, modelo de dados e segurança): [`docs/payments.md`](docs/payments.md).
+
 ## ✅ Scripts Úteis (raiz do projeto)
 
 | Comando            | Descrição                                    |

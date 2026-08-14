@@ -111,13 +111,7 @@ export class AuthService {
     this.logger.log(`User logged in: ${user.email}`);
 
     return {
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        role: user.role,
-        verified: user.verified,
-      },
+      user: this.toPublicUser(user),
       ...tokens,
     };
   }
@@ -155,13 +149,7 @@ export class AuthService {
 
       const tokens = await this.generateTokens(user);
       return {
-        user: {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
-          verified: user.verified,
-        },
+        user: this.toPublicUser(user),
         ...tokens,
       };
     } catch (error) {
@@ -255,5 +243,29 @@ export class AuthService {
     });
 
     return { accessToken, refreshToken };
+  }
+
+  private toPublicUser(user: {
+    id: string;
+    email: string;
+    name: string | null;
+    document: string | null;
+    phone: string | null;
+    avatarUrl: string | null;
+    role: string;
+    verified: boolean;
+    active: boolean;
+  }) {
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      document: user.document,
+      phone: user.phone,
+      avatarUrl: user.avatarUrl,
+      role: user.role,
+      verified: user.verified,
+      active: user.active,
+    };
   }
 }

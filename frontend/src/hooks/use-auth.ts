@@ -22,6 +22,7 @@ interface AuthState {
   register: (data: RegisterData) => Promise<void>;
   logout: () => Promise<void>;
   loadUser: () => Promise<void>;
+  setUser: (user: User | null) => void;
 }
 
 export const useAuth = create<AuthState>((set) => ({
@@ -45,6 +46,13 @@ export const useAuth = create<AuthState>((set) => ({
     try {
       await api.post('/auth/logout');
     } catch {}
+    if (typeof window !== 'undefined' && window.location.pathname !== '/') {
+      // Full navigation so the layout guards cannot race back to /auth/login.
+      // The state is cleared by the page reload itself.
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+      window.location.href = '/';
+      return;
+    }
     set({ user: null, isAuthenticated: false });
   },
 
@@ -56,4 +64,6 @@ export const useAuth = create<AuthState>((set) => ({
       set({ user: null, isAuthenticated: false, isLoading: false });
     }
   },
+
+  setUser: (user) => set({ user }),
 }));

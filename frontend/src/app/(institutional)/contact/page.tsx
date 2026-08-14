@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Mail, Phone, MapPin, MessageCircle, Clock, Send, Loader2 } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { toast } from '@/lib/toast';
 
 const contactInfo = [
   {

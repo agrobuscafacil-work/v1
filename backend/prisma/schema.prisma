@@ -150,6 +150,8 @@ model User {
   supportTickets  SupportTicket[]
   supportNotes    SupportTicketNote[]
   conversations   Conversation[]      @relation("CustomerConversations")
+  paymentCustomers PaymentCustomer[]
+  paymentCards    PaymentCard[]
 
   @@index([email])
   @@index([document])
@@ -673,7 +675,8 @@ model Payment {
   method          PaymentMethod
   status          PaymentStatus @default(PENDING)
   gateway         String?
-  gatewayId       String?
+  gatewayId       String?       @unique
+  idempotencyKey  String?       @unique
   gatewayResponse Json?
   pixCode         String?
   pixQrCode       String?
@@ -687,9 +690,67 @@ model Payment {
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
 
+  events PaymentEvent[]
+
   @@index([orderId])
   @@index([status])
   @@index([gatewayId])
+}
+
+model PaymentCustomer {
+  id                  String   @id @default(uuid())
+  userId              String
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider            String   @default("MERCADOPAGO")
+  providerCustomerId  String
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  cards PaymentCard[]
+
+  @@unique([userId, provider])
+  @@unique([provider, providerCustomerId])
+  @@index([userId])
+  @@index([provider])
+}
+
+model PaymentCard {
+  id                 String          @id @default(uuid())
+  userId             String
+  user               User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  paymentCustomerId  String
+  paymentCustomer    PaymentCustomer @relation(fields: [paymentCustomerId], references: [id], onDelete: Cascade)
+  provider           String          @default("MERCADOPAGO")
+  providerCardId     String
+  brand              String
+  last4              String
+  expMonth           Int?
+  expYear            Int?
+  isDefault          Boolean         @default(false)
+  active             Boolean         @default(true)
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  @@unique([userId, providerCardId])
+  @@index([userId, isDefault])
+  @@index([paymentCustomerId])
+  @@index([provider])
+}
+
+model PaymentEvent {
+  id             String    @id @default(uuid())
+  paymentId      String?
+  payment        Payment?  @relation(fields: [paymentId], references: [id], onDelete: SetNull)
+  provider       String
+  providerEventId String
+  eventType      String
+  status         String?
+  processedAt    DateTime  @default(now())
+  createdAt      DateTime  @default(now())
+
+  @@unique([provider, providerEventId])
+  @@index([paymentId])
+  @@index([provider, createdAt])
 }
 
 model ChatSettings {

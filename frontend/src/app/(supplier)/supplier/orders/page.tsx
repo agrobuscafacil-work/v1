@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { ShoppingBag, Search, Download, Eye, X, Package, User, DollarSign, CreditCard, Calendar, Hash, Loader2 } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { toast } from '@/lib/toast';
 import { api } from '@/lib/api';
 
 interface OrderItem {

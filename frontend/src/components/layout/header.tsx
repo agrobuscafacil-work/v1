@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import {
@@ -24,6 +24,7 @@ import {
   LifeBuoy,
   Bell,
   CheckCheck,
+  ArrowLeft,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { useCart } from '@/hooks/use-cart';
@@ -34,6 +35,7 @@ import type { Notification } from '@/types';
 
 export function Header() {
   const router = useRouter();
+  const pathname = usePathname();
   const { user, isAuthenticated, logout } = useAuth();
   const { totalItems } = useCart();
   const { theme, setTheme } = useTheme();
@@ -73,6 +75,7 @@ export function Header() {
   const notifications = notifQuery.data || [];
 
   useChatSocket({
+    enabled: isAuthenticated,
     onMessage: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications-unread'] });
       queryClient.invalidateQueries({ queryKey: ['notifications-recent'] });
@@ -115,25 +118,47 @@ export function Header() {
     queryClient.invalidateQueries({ queryKey: ['notifications-recent'] });
   };
 
+  const removeNotification = async (notification: Notification) => {
+    await api.delete(`/notifications/${notification.id}`).catch(() => undefined);
+    queryClient.setQueryData<Notification[]>(['notifications-recent'], (old) =>
+      old ? old.filter((n) => n.id !== notification.id) : old,
+    );
+    if (!notification.read) {
+      queryClient.invalidateQueries({ queryKey: ['notifications-unread'] });
+    }
+  };
+
   return (
     <header className="sticky top-0 z-50 border-b border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-950/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
       <div className="container-page">
         <div className="flex h-16 items-center justify-between gap-4">
-          <Link href="/" className="flex items-center gap-2 shrink-0 group">
-            <div className="relative">
-              <Image
-                src="/logo.jpg"
-                alt="AgroBuscaFácil"
-                width={36}
-                height={36}
-                className="rounded-lg"
-              />
-              <div className="absolute -top-1 -right-1 h-3 w-3 bg-primary-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-            </div>
-            <span className="hidden sm:block text-xl font-bold text-gray-900 dark:text-white">
-              Agro<span className="text-primary-600">BuscaFácil</span>
-            </span>
-          </Link>
+          <div className="flex items-center gap-1 shrink-0">
+            {pathname !== '/' && (
+              <button
+                onClick={() => router.back()}
+                className="btn-ghost p-2"
+                aria-label="Voltar para a página anterior"
+                title="Voltar"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </button>
+            )}
+            <Link href="/" className="flex items-center gap-2 group">
+              <div className="relative">
+                <Image
+                  src="/logo.jpg"
+                  alt="AgroBuscaFácil"
+                  width={36}
+                  height={36}
+                  className="rounded-lg"
+                />
+                <div className="absolute -top-1 -right-1 h-3 w-3 bg-primary-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+              </div>
+              <span className="hidden sm:block text-xl font-bold text-gray-900 dark:text-white">
+                Agro<span className="text-primary-600">BuscaFácil</span>
+              </span>
+            </Link>
+          </div>
 
           <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-lg">
             <div className="relative w-full">
@@ -229,37 +254,46 @@ export function Header() {
                             </p>
                           ) : (
                             notifications.map((notification) => (
-                              <button
+                              <div
                                 key={notification.id}
-                                onClick={() => openNotification(notification)}
-                                className={`flex w-full items-start gap-3 px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-800 ${
-                                  notification.read
-                                    ? 'opacity-60'
-                                    : ''
+                                className={`flex w-full items-start gap-1 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 ${
+                                  notification.read ? 'opacity-60' : ''
                                 }`}
                               >
-                                <div
-                                  className={`mt-0.5 h-2 w-2 flex-shrink-0 rounded-full ${
-                                    notification.read ? 'bg-transparent' : 'bg-primary-500'
-                                  }`}
-                                />
-                                <div className="min-w-0">
-                                  <p className="text-sm font-medium text-gray-900 dark:text-white">
-                                    {notification.title}
-                                  </p>
-                                  <p className="mt-0.5 line-clamp-2 text-xs text-gray-500">
-                                    {notification.message}
-                                  </p>
-                                  <p className="mt-1 text-[10px] text-gray-400">
-                                    {new Date(notification.createdAt).toLocaleDateString('pt-BR', {
-                                      day: '2-digit',
-                                      month: 'short',
-                                      hour: '2-digit',
-                                      minute: '2-digit',
-                                    })}
-                                  </p>
-                                </div>
-                              </button>
+                                <button
+                                  onClick={() => openNotification(notification)}
+                                  className="flex min-w-0 flex-1 items-start gap-3 text-left"
+                                >
+                                  <div
+                                    className={`mt-0.5 h-2 w-2 flex-shrink-0 rounded-full ${
+                                      notification.read ? 'bg-transparent' : 'bg-primary-500'
+                                    }`}
+                                  />
+                                  <div className="min-w-0">
+                                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                                      {notification.title}
+                                    </p>
+                                    <p className="mt-0.5 line-clamp-2 text-xs text-gray-500">
+                                      {notification.message}
+                                    </p>
+                                    <p className="mt-1 text-[10px] text-gray-400">
+                                      {new Date(notification.createdAt).toLocaleDateString('pt-BR', {
+                                        day: '2-digit',
+                                        month: 'short',
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                      })}
+                                    </p>
+                                  </div>
+                                </button>
+                                <button
+                                  onClick={() => removeNotification(notification)}
+                                  aria-label="Remover notificação"
+                                  className="mt-0.5 flex-shrink-0 rounded-md p-1 text-gray-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950"
+                                >
+                                  <X className="h-3.5 w-3.5" />
+                                </button>
+                              </div>
                             ))
                           )}
                         </div>
