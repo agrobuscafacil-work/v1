@@ -12,7 +12,7 @@ import { useState } from 'react';
 
 const loginSchema = z.object({
   email: z.string().email('E-mail inválido'),
-  password: z.string().min(6, 'A senha deve ter no mínimo 6 caracteres'),
+  password: z.string().min(6, 'A senha deve ter no mínimo 8 caracteres'),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
@@ -39,7 +39,7 @@ export default function LoginPage() {
     } catch (error: any) {
       const data = error?.response?.data;
       const message =
-        data?.error?.message || data?.message || 'Erro ao fazer login. Verifique suas credenciais.';
+        data?.error?.message || data?.message || 'E-mail ou senha incorretos. Verifique os dados informados e tente novamente.';
       toast.error(message);
     } finally {
       setIsLoading(false);

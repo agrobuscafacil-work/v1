@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Package, Search, Edit2, X, Save, Loader2, Eye, Store, DollarSign, Package as PackageIcon, Tag, Hash, ChevronLeft, ChevronRight, Trash2, Calendar, ShoppingBag } from 'lucide-react';
 import { toast } from '@/lib/toast';
 import { api } from '@/lib/api';
+import ConfirmDialog from '@/components/ui/confirm-dialog';
 import { PRODUCT_FILE_URL } from '@/lib/products';
 
 interface ProductItem {
@@ -58,6 +59,7 @@ export default function AdminProductsPage() {
   const [detailItem, setDetailItem] = useState<ProductItem | null>(null);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [confirm, setConfirm] = useState<{ title: string; message: string; action: () => Promise<void> } | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
@@ -114,18 +116,23 @@ export default function AdminProductsPage() {
   }
 
   async function doDelete(p: ProductItem) {
-    if (!window.confirm(`Deseja excluir o produto "${p.name}"?`)) return;
-    setDeleting(true);
-    try {
-      await api.delete(`/products/${p.id}`);
-      toast.success('Produto excluído');
-      if (detailItem?.id === p.id) setDetailItem(null);
-      setRefreshKey((k) => k + 1);
-    } catch (error) {
-      toast.error(getErrorMessage(error));
-    } finally {
-      setDeleting(false);
-    }
+    setConfirm({
+      title: 'Excluir produto',
+      message: `Deseja excluir o produto "${p.name}"?`,
+      action: async () => {
+        setDeleting(true);
+        try {
+          await api.delete(`/products/${p.id}`);
+          toast.success('Produto excluído');
+          if (detailItem?.id === p.id) setDetailItem(null);
+          setRefreshKey((k) => k + 1);
+        } catch (error) {
+          toast.error(getErrorMessage(error));
+        } finally {
+          setDeleting(false);
+        }
+      },
+    });
   }
 
   return (
@@ -366,6 +373,20 @@ export default function AdminProductsPage() {
           </div>
         </div>
       )}
+      <ConfirmDialog
+        open={!!confirm}
+        title={confirm?.title || ''}
+        message={confirm?.message || ''}
+        confirmLabel="Excluir"
+        danger
+        loading={deleting}
+        onConfirm={async () => {
+          const action = confirm?.action;
+          setConfirm(null);
+          if (action) await action();
+        }}
+        onCancel={() => setConfirm(null)}
+      />
     </div>
   );
 }

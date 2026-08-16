@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { ShoppingBag, Search, Download, Eye, X, Package, User, Store, DollarSign, CreditCard, Calendar, Hash, Loader2, Truck, StickyNote, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
 import { toast } from '@/lib/toast';
 import { api } from '@/lib/api';
+import ConfirmDialog from '@/components/ui/confirm-dialog';
 
 interface OrderItem {
   id: string;
@@ -92,6 +93,7 @@ export default function AdminOrdersPage() {
   const [newStatus, setNewStatus] = useState('');
   const [savingStatus, setSavingStatus] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [confirm, setConfirm] = useState<{ title: string; message: string; action: () => Promise<void> } | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -160,20 +162,25 @@ export default function AdminOrdersPage() {
     }
   };
 
-  const handleDelete = async (order: Order) => {
-    if (!window.confirm(`Excluir o pedido ${order.orderNumber}?`)) return;
-    setDeleting(true);
-    try {
-      await api.delete(`/orders/${order.id}`);
-      toast.success('Pedido excluído com sucesso!');
-      setOrders((prev) => prev.filter((o) => o.id !== order.id));
-      if (detailOrder?.id === order.id) setDetailOrder(null);
-    } catch (e: any) {
-      const msg = e?.response?.data?.message;
-      toast.error(typeof msg === 'string' ? msg : 'Erro ao excluir o pedido.');
-    } finally {
-      setDeleting(false);
-    }
+  const handleDelete = (order: Order) => {
+    setConfirm({
+      title: 'Excluir pedido',
+      message: `Excluir o pedido ${order.orderNumber}?`,
+      action: async () => {
+        setDeleting(true);
+        try {
+          await api.delete(`/orders/${order.id}`);
+          toast.success('Pedido excluído com sucesso!');
+          setOrders((prev) => prev.filter((o) => o.id !== order.id));
+          if (detailOrder?.id === order.id) setDetailOrder(null);
+        } catch (e: any) {
+          const msg = e?.response?.data?.message;
+          toast.error(typeof msg === 'string' ? msg : 'Erro ao excluir o pedido.');
+        } finally {
+          setDeleting(false);
+        }
+      },
+    });
   };
 
   return (
@@ -408,6 +415,20 @@ export default function AdminOrdersPage() {
           </div>
         </div>
       )}
+      <ConfirmDialog
+        open={!!confirm}
+        title={confirm?.title || ''}
+        message={confirm?.message || ''}
+        confirmLabel="Excluir"
+        danger
+        loading={deleting}
+        onConfirm={async () => {
+          const action = confirm?.action;
+          setConfirm(null);
+          if (action) await action();
+        }}
+        onCancel={() => setConfirm(null)}
+      />
     </div>
   );
 }

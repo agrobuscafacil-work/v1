@@ -34,6 +34,13 @@ api.interceptors.response.use(
     const originalRequest = error.config;
 
     if (error.response?.status === 401 && !originalRequest._retry) {
+      // Login e refresh nao possuem sessao para renovar o token:
+      // o erro original (com sua mensagem) deve ser repassado ao chamador.
+      const url = originalRequest?.url ?? '';
+      if (url.includes('/auth/login') || url.includes('/auth/refresh')) {
+        return Promise.reject(error);
+      }
+
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
@@ -54,7 +61,7 @@ api.interceptors.response.use(
         processQueue(null);
         return api(originalRequest);
       } catch (refreshError) {
-        processQueue(refreshError, null);
+        processQueue(error, null);
         // O bootstrap (/users/me) falha com 401 para visitantes anonimos;
         // nesse caso nao ha sessao para redirecionar - o redirecionamento
         // fica reservado para sessoes que expiraram durante o uso.
@@ -68,7 +75,7 @@ api.interceptors.response.use(
           // eslint-disable-next-line @next/next/no-location-assign-relative-destination
           window.location.href = '/auth/login';
         }
-        return Promise.reject(refreshError);
+        return Promise.reject(error);
       } finally {
         isRefreshing = false;
       }

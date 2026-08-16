@@ -2,6 +2,7 @@
 
 import { create } from 'zustand';
 import { api } from '@/lib/api';
+import { setCartOwner } from '@/hooks/use-cart';
 import type { User } from '@/types';
 
 export interface RegisterData {
@@ -34,18 +35,21 @@ export const useAuth = create<AuthState>((set) => ({
     const response = await api.post('/auth/login', { email, password });
     const { user } = response.data.data;
     set({ user, isAuthenticated: true, isLoading: false });
+    setCartOwner(user.id);
   },
 
   register: async (data: any) => {
     const response = await api.post('/auth/register', data);
     const { user } = response.data.data;
     set({ user, isAuthenticated: true, isLoading: false });
+    setCartOwner(user.id);
   },
 
   logout: async () => {
     try {
       await api.post('/auth/logout');
     } catch {}
+    setCartOwner(null);
     if (typeof window !== 'undefined' && window.location.pathname !== '/') {
       // Full navigation so the layout guards cannot race back to /auth/login.
       // The state is cleared by the page reload itself.
@@ -60,10 +64,15 @@ export const useAuth = create<AuthState>((set) => ({
     try {
       const response = await api.get('/users/me');
       set({ user: response.data.data, isAuthenticated: true, isLoading: false });
+      setCartOwner(response.data.data.id);
     } catch {
       set({ user: null, isAuthenticated: false, isLoading: false });
+      setCartOwner(null);
     }
   },
 
-  setUser: (user) => set({ user }),
+  setUser: (user) => {
+    set({ user });
+    setCartOwner(user?.id ?? null);
+  },
 }));

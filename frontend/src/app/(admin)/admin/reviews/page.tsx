@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Star, Search, Trash2, ThumbsUp, ThumbsDown, Loader2 } from 'lucide-react';
 import { toast } from '@/lib/toast';
 import { api } from '@/lib/api';
+import ConfirmDialog from '@/components/ui/confirm-dialog';
 import { useAuth } from '@/hooks/use-auth';
 
 interface AdminReview {
@@ -32,6 +33,7 @@ export default function AdminReviewsPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+  const [confirm, setConfirm] = useState<{ title: string; message: string; confirmLabel?: string; danger?: boolean; action: () => Promise<void> } | null>(null);
 
   const fetchReviews = useCallback(async () => {
     setIsLoading(true);
@@ -79,37 +81,57 @@ export default function AdminReviewsPage() {
     return true;
   });
 
-  const handleApprove = async (id: string) => {
-    if (!window.confirm('Aprovar esta avaliação?')) return;
-    try {
-      await api.put(`/reviews/${id}/moderate`, { status: 'APPROVED', moderatorId: user?.id });
-      toast.success('Avaliação aprovada!');
-      fetchReviews();
-    } catch {
-      toast.error('Erro ao aprovar avaliação');
-    }
+  const handleApprove = (id: string) => {
+    setConfirm({
+      title: 'Aprovar avaliação',
+      message: 'Aprovar esta avaliação?',
+      confirmLabel: 'Aprovar',
+      action: async () => {
+        try {
+          await api.put(`/reviews/${id}/moderate`, { status: 'APPROVED', moderatorId: user?.id });
+          toast.success('Avaliação aprovada!');
+          fetchReviews();
+        } catch {
+          toast.error('Erro ao aprovar avaliação');
+        }
+      },
+    });
   };
 
-  const handleReject = async (id: string) => {
-    if (!window.confirm('Rejeitar esta avaliação?')) return;
-    try {
-      await api.put(`/reviews/${id}/moderate`, { status: 'REJECTED', moderatorId: user?.id });
-      toast.success('Avaliação rejeitada!');
-      fetchReviews();
-    } catch {
-      toast.error('Erro ao rejeitar avaliação');
-    }
+  const handleReject = (id: string) => {
+    setConfirm({
+      title: 'Rejeitar avaliação',
+      message: 'Rejeitar esta avaliação?',
+      confirmLabel: 'Rejeitar',
+      danger: true,
+      action: async () => {
+        try {
+          await api.put(`/reviews/${id}/moderate`, { status: 'REJECTED', moderatorId: user?.id });
+          toast.success('Avaliação rejeitada!');
+          fetchReviews();
+        } catch {
+          toast.error('Erro ao rejeitar avaliação');
+        }
+      },
+    });
   };
 
-  const handleRemove = async (id: string) => {
-    if (!window.confirm('Remover esta avaliação?')) return;
-    try {
-      await api.delete(`/reviews/${id}`);
-      toast.success('Avaliação removida!');
-      fetchReviews();
-    } catch {
-      toast.error('Erro ao remover avaliação');
-    }
+  const handleRemove = (id: string) => {
+    setConfirm({
+      title: 'Remover avaliação',
+      message: 'Remover esta avaliação? Esta ação não pode ser desfeita.',
+      confirmLabel: 'Remover',
+      danger: true,
+      action: async () => {
+        try {
+          await api.delete(`/reviews/${id}`);
+          toast.success('Avaliação removida!');
+          fetchReviews();
+        } catch {
+          toast.error('Erro ao remover avaliação');
+        }
+      },
+    });
   };
 
   const statusBadge = (status: AdminReview['status']) => {
@@ -205,6 +227,19 @@ export default function AdminReviewsPage() {
           </div>
         )}
       </div>
+      <ConfirmDialog
+        open={!!confirm}
+        title={confirm?.title || ''}
+        message={confirm?.message || ''}
+        confirmLabel={confirm?.confirmLabel}
+        danger={confirm?.danger}
+        onConfirm={async () => {
+          const action = confirm?.action;
+          setConfirm(null);
+          if (action) await action();
+        }}
+        onCancel={() => setConfirm(null)}
+      />
     </div>
   );
 }

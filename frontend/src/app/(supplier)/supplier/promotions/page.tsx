@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Percent, Plus, Trash2, Clock, Loader2, X, Save, Tag } from 'lucide-react';
 import { toast } from '@/lib/toast';
 import { api } from '@/lib/api';
+import ConfirmDialog from '@/components/ui/confirm-dialog';
 
 interface Promotion {
   id: string;
@@ -59,6 +60,7 @@ export default function SupplierPromotionsPage() {
   const [form, setForm] = useState<PromoForm>(emptyForm);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [confirm, setConfirm] = useState<{ title: string; message: string; action: () => Promise<void> } | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -115,18 +117,23 @@ export default function SupplierPromotionsPage() {
     }
   }
 
-  async function removePromotion(p: Promotion) {
-    if (!window.confirm(`Excluir a promoção "${p.title}"?`)) return;
-    setDeleting(p.id);
-    try {
-      await api.delete(`/promotions/${p.id}`);
-      toast.success('Promoção removida');
-      load();
-    } catch (e: any) {
-      toast.error(e?.response?.data?.message || 'Erro ao remover promoção.');
-    } finally {
-      setDeleting(null);
-    }
+  function removePromotion(p: Promotion) {
+    setConfirm({
+      title: 'Excluir promoção',
+      message: `Excluir a promoção "${p.title}"?`,
+      action: async () => {
+        setDeleting(p.id);
+        try {
+          await api.delete(`/promotions/${p.id}`);
+          toast.success('Promoção removida');
+          load();
+        } catch (e: any) {
+          toast.error(e?.response?.data?.message || 'Erro ao remover promoção.');
+        } finally {
+          setDeleting(null);
+        }
+      },
+    });
   }
 
   return (
@@ -238,6 +245,20 @@ export default function SupplierPromotionsPage() {
           </div>
         </div>
       )}
+      <ConfirmDialog
+        open={!!confirm}
+        title={confirm?.title || ''}
+        message={confirm?.message || ''}
+        confirmLabel="Excluir"
+        danger
+        loading={!!deleting}
+        onConfirm={async () => {
+          const action = confirm?.action;
+          setConfirm(null);
+          if (action) await action();
+        }}
+        onCancel={() => setConfirm(null)}
+      />
     </div>
   );
 }

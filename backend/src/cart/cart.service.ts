@@ -16,7 +16,20 @@ export class CartService {
         items: {
           include: {
             product: {
-              select: { id: true, name: true, price: true, images: true, stock: true, status: true },
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                price: true,
+                unit: true,
+                images: true,
+                stock: true,
+                status: true,
+                supplierId: true,
+                supplier: {
+                  select: { tradingName: true, companyName: true },
+                },
+              },
             },
           },
         },
@@ -26,7 +39,28 @@ export class CartService {
     if (!cart) {
       cart = await this.prisma.cart.create({
         data: { userId },
-        include: { items: { include: { product: true } } },
+        include: {
+          items: {
+            include: {
+              product: {
+                select: {
+                  id: true,
+                  name: true,
+                  slug: true,
+                  price: true,
+                  unit: true,
+                  images: true,
+                  stock: true,
+                  status: true,
+                  supplierId: true,
+                  supplier: {
+                    select: { tradingName: true, companyName: true },
+                  },
+                },
+              },
+            },
+          },
+        },
       });
     }
 

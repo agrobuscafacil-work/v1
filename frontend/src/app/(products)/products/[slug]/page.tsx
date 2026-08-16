@@ -4,12 +4,14 @@ import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import {
   Star, Truck, Shield, Package, Minus, Plus, ShoppingCart, Heart, Share2, MapPin, Leaf, Clock,
-  CheckCircle, Phone, MessageCircle, Loader2,
+  CheckCircle, Phone, MessageCircle, Loader2, ChevronDown, ChevronUp, Pencil, Trash2,
 } from 'lucide-react';
 import { toast } from '@/lib/toast';
 import { useCart } from '@/hooks/use-cart';
+import { useAuth } from '@/hooks/use-auth';
 import { api } from '@/lib/api';
 import { PRODUCT_FILE_URL } from '@/lib/products';
+import ConfirmDialog from '@/components/ui/confirm-dialog';
 
 interface ProductDetail {
   id: string;
@@ -50,6 +52,7 @@ interface ProductDetail {
 
 interface ProductReview {
   id: string;
+  userId?: string;
   user: { name: string };
   rating: number;
   title: string;
@@ -79,7 +82,17 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   const [related, setRelated] = useState<RelatedProduct[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [reviewRating, setReviewRating] = useState(0);
+  const [reviewHover, setReviewHover] = useState(0);
+  const [reviewComment, setReviewComment] = useState('');
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [editingReview, setEditingReview] = useState<ProductReview | null>(null);
+  const [deletingReviewId, setDeletingReviewId] = useState<string | null>(null);
+  const [confirmDeleteReview, setConfirmDeleteReview] = useState<ProductReview | null>(null);
+  const [expandedReviews, setExpandedReviews] = useState<Record<string, boolean>>({});
   const { addItem } = useCart();
+  const { isAuthenticated, user } = useAuth();
 
   useEffect(() => {
     let cancelled = false;
@@ -141,6 +154,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
         setReviews(
           reviewsPayload.map((rev: any) => ({
             id: rev.id,
+            userId: rev.user?.id,
             user: { name: rev.user?.name || 'Cliente' },
             rating: Number(rev.rating) || 0,
             title: rev.title || '',
@@ -243,6 +257,185 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
       }
       toast.error('Não foi possível atualizar os favoritos');
     }
+  };
+
+  const handleSubmitReview = async () => {
+    if (!isAuthenticated) {
+      toast.error('Faça login para avaliar este produto');
+      return;
+    }
+    if (reviewRating < 1) {
+      toast.error('Selecione a quantidade de estrelas');
+      return;
+    }
+    if (!reviewComment.trim()) {
+      toast.error('Escreva um pequeno comentário sobre o produto');
+      return;
+    }
+    if (!product.supplier.id) {
+      toast.error('Fornecedor não identificado');
+      return;
+    }
+    setSubmittingReview(true);
+    try {
+      if (editingReview) {
+        const res = await api.put(`/reviews/${editingReview.id}`, {
+          rating: reviewRating,
+          comment: reviewComment.trim(),
+        });
+        const updated = res.data.data;
+        toast.success('Avaliação atualizada!');
+        setReviews((prev) =>
+          prev.map((r) =>
+            r.id === editingReview.id
+              ? {
+                  ...r,
+                  rating: Number(updated.rating) || reviewRating,
+                  comment: updated.comment || reviewComment.trim(),
+                  title: updated.title || '',
+                }
+              : r
+          )
+        );
+        setProduct((prev) => {
+          if (!prev) return prev;
+          const delta = reviewRating - editingReview.rating;
+          const rating =
+            prev.totalReviews > 0
+              ? (prev.rating * prev.totalReviews + delta) / prev.totalReviews
+              : reviewRating;
+          return { ...prev, rating };
+        });
+        setEditingReview(null);
+      } else {
+        const mine = reviews.find((r) => user?.id && r.userId === user.id);
+        if (mine) {
+          toast.error('Você já avaliou este produto. Para alterar sua avaliação, clique em "Editar avaliação".');
+          return;
+        }
+        const res = await api.post('/reviews', {
+          supplierId: product.supplier.id,
+          productId: product.id,
+          rating: reviewRating,
+          comment: reviewComment.trim(),
+        });
+        const created = res.data.data;
+        toast.success('Avaliação publicada! Obrigado pelo seu feedback.');
+        const existing = reviews.find(
+          (r) => r.id === created.id || (user?.id && r.userId === user.id)
+        );
+        if (existing) {
+          setReviews((prev) =>
+            prev.map((r) =>
+              r.id === existing.id
+                ? {
+                    ...r,
+                    rating: Number(created.rating) || reviewRating,
+                    comment: created.comment || reviewComment.trim(),
+                    title: created.title || '',
+                  }
+                : r
+            )
+          );
+          setProduct((prev) => {
+            if (!prev) return prev;
+            const delta = reviewRating - existing.rating;
+            const rating =
+              prev.totalReviews > 0
+                ? (prev.rating * prev.totalReviews + delta) / prev.totalReviews
+                : reviewRating;
+            return { ...prev, rating };
+          });
+        } else {
+          const myReview: ProductReview = {
+            id: created.id,
+            userId: user?.id,
+            user: { name: created.user?.name || user?.name || 'Você' },
+            rating: Number(created.rating) || reviewRating,
+            title: created.title || '',
+            comment: created.comment || reviewComment.trim(),
+            createdAt: created.createdAt,
+          };
+          setReviews((prev) => [myReview, ...prev]);
+          setProduct((prev) => {
+            if (!prev) return prev;
+            const total = prev.totalReviews + 1;
+            const rating = (prev.rating * prev.totalReviews + reviewRating) / total;
+            return { ...prev, rating, totalReviews: total };
+          });
+        }
+      }
+      setReviewRating(0);
+      setReviewComment('');
+      setReviewHover(0);
+      setShowReviewForm(false);
+    } catch (err: any) {
+      if (err?.response?.status === 401) {
+        toast.error('Faça login para avaliar este produto');
+      } else {
+        const msg =
+          err?.response?.data?.message ||
+          'Erro ao enviar avaliação. Tente novamente.';
+        toast.error(Array.isArray(msg) ? msg[0] : msg);
+      }
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
+
+  const startEditReview = (review: ProductReview) => {
+    setEditingReview(review);
+    setReviewRating(review.rating);
+    setReviewComment(review.comment);
+    setShowReviewForm(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleDeleteReview = async (review: ProductReview) => {
+    setDeletingReviewId(review.id);
+    try {
+      await api.delete(`/reviews/${review.id}`);
+      toast.success('Avaliação apagada.');
+      setReviews((prev) => prev.filter((r) => r.id !== review.id));
+      setProduct((prev) => {
+        if (!prev || prev.totalReviews <= 1) return prev ? { ...prev, rating: 0, totalReviews: 0 } : prev;
+        const total = prev.totalReviews - 1;
+        const rating = (prev.rating * prev.totalReviews - review.rating) / total;
+        return { ...prev, rating, totalReviews: total };
+      });
+      if (editingReview?.id === review.id) {
+        setEditingReview(null);
+        setReviewRating(0);
+        setReviewComment('');
+      }
+    } catch (err: any) {
+      const msg =
+        err?.response?.data?.message || 'Erro ao apagar avaliação. Tente novamente.';
+      toast.error(Array.isArray(msg) ? msg[0] : msg);
+    } finally {
+      setDeletingReviewId(null);
+      setConfirmDeleteReview(null);
+    }
+  };
+
+  const toggleReviewForm = () => {
+    if (editingReview) {
+      setEditingReview(null);
+      setReviewRating(0);
+      setReviewComment('');
+      setShowReviewForm(false);
+      return;
+    }
+    const mine = reviews.find((r) => user?.id && r.userId === user.id);
+    if (mine) {
+      startEditReview(mine);
+    } else {
+      setShowReviewForm((v) => !v);
+    }
+  };
+
+  const toggleReview = (id: string) => {
+    setExpandedReviews((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
   return (
@@ -450,31 +643,185 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           </div>
 
           <div className="rounded-xl border border-gray-200 dark:border-gray-700 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Avaliações ({reviews.length})</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Avaliações ({reviews.length})</h2>
+              <button
+                type="button"
+                onClick={toggleReviewForm}
+                className="btn-primary gap-2 text-sm"
+              >
+                {showReviewForm || editingReview ? (
+                  <>
+                    <ChevronUp className="h-4 w-4" />
+                    Fechar
+                  </>
+                ) : reviews.some((r) => user?.id && r.userId === user.id) ? (
+                  <>
+                    <Pencil className="h-4 w-4" />
+                    Editar avaliação
+                  </>
+                ) : (
+                  <>
+                    <Star className="h-4 w-4" />
+                    Avaliar
+                  </>
+                )}
+              </button>
+            </div>
+
+            {showReviewForm && (
+              <div className="mb-8 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 p-5">
+                <div className="flex items-center justify-between mb-1">
+                  <h3 className="font-semibold text-gray-900 dark:text-white">
+                    {editingReview ? 'Editar sua avaliação' : 'Avaliar este produto'}
+                  </h3>
+                  {editingReview && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditingReview(null);
+                        setReviewRating(0);
+                        setReviewComment('');
+                      }}
+                      className="text-xs text-gray-500 hover:text-primary-600"
+                    >
+                      Cancelar edição
+                    </button>
+                  )}
+                </div>
+                <p className="text-sm text-gray-500 mb-4">Dê sua nota de 0.0 a 5.0 e conte sua experiência.</p>
+
+                <div className="flex items-center gap-1 mb-4">
+                  {Array.from({ length: 5 }).map((_, i) => {
+                    const star = i + 1;
+                    const filled = star <= (reviewHover || reviewRating);
+                    return (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => setReviewRating(star)}
+                        onMouseEnter={() => setReviewHover(star)}
+                        onMouseLeave={() => setReviewHover(0)}
+                        className="p-0.5 transition-transform hover:scale-110"
+                        aria-label={`${star} estrela${star > 1 ? 's' : ''}`}
+                      >
+                        <Star
+                          className={`h-7 w-7 ${
+                            filled
+                              ? 'fill-yellow-400 text-yellow-400'
+                              : 'text-gray-300 dark:text-gray-600'
+                          }`}
+                        />
+                      </button>
+                    );
+                  })}
+                  <span className="ml-2 text-sm font-medium text-gray-900 dark:text-white">
+                    {reviewRating > 0 ? reviewRating.toFixed(1) : '0.0'}
+                  </span>
+                </div>
+
+                <textarea
+                  value={reviewComment}
+                  onChange={(e) => setReviewComment(e.target.value)}
+                  placeholder="Escreva um pequeno comentário sobre o produto..."
+                  maxLength={1000}
+                  rows={3}
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                />
+
+                <button
+                  onClick={handleSubmitReview}
+                  disabled={submittingReview}
+                  className="btn-primary mt-3 gap-2"
+                >
+                  {submittingReview ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Star className="h-4 w-4" />
+                  )}
+                  {editingReview ? 'Salvar alterações' : 'Enviar avaliação'}
+                </button>
+              </div>
+            )}
+
             {reviews.length === 0 ? (
-              <p className="text-sm text-gray-500">Nenhuma avaliação ainda.</p>
+              <p className="text-sm text-gray-500">Nenhuma avaliação ainda. Seja o primeiro a avaliar!</p>
             ) : (
-              <div className="space-y-6">
-                {reviews.map((review) => (
-                  <div key={review.id} className="border-b border-gray-100 dark:border-gray-800 last:border-0 pb-6 last:pb-0">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="h-8 w-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-xs font-bold text-primary-700 dark:text-primary-300">
-                        {review.user.name.charAt(0)}
+              <div className="space-y-4">
+                {reviews.map((review) => {
+                  const expanded = !!expandedReviews[review.id];
+                  const isMine = isAuthenticated && user?.id && review.userId === user.id;
+                  return (
+                    <div key={review.id} className="border border-gray-100 dark:border-gray-800 rounded-xl p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="h-9 w-9 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-xs font-bold text-primary-700 dark:text-primary-300">
+                          {review.user.name.charAt(0)}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                            {review.user.name}
+                            {isMine && (
+                              <span className="ml-2 text-xs text-primary-600 bg-primary-50 dark:bg-primary-900/50 rounded-full px-2 py-0.5">Você</span>
+                            )}
+                          </p>
+                          <p className="text-xs text-gray-500">{new Date(review.createdAt).toLocaleDateString('pt-BR')}</p>
+                        </div>
+                        <div className="flex items-center gap-0.5 ml-auto">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <Star key={i} className={`h-4 w-4 ${i < review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300 dark:text-gray-600'}`} />
+                          ))}
+                          <span className="ml-1 text-xs font-medium text-gray-700 dark:text-gray-300">
+                            {review.rating.toFixed(1)}
+                          </span>
+                        </div>
+                        {isMine && (
+                          <div className="flex items-center gap-1">
+                            <button
+                              type="button"
+                              onClick={() => startEditReview(review)}
+                              className="p-1.5 rounded-lg text-gray-400 hover:text-primary-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                              aria-label="Editar avaliação"
+                              title="Editar"
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setConfirmDeleteReview(review)}
+                              disabled={deletingReviewId === review.id}
+                              className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/50 transition-colors"
+                              aria-label="Apagar avaliação"
+                              title="Apagar"
+                            >
+                              {deletingReviewId === review.id ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <Trash2 className="h-4 w-4" />
+                              )}
+                            </button>
+                          </div>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => toggleReview(review.id)}
+                          className="p-1.5 rounded-lg text-gray-400 hover:text-primary-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                          aria-label={expanded ? 'Esconder comentário' : 'Mostrar comentário'}
+                        >
+                          {expanded ? (
+                            <ChevronUp className="h-4 w-4" />
+                          ) : (
+                            <ChevronDown className="h-4 w-4" />
+                          )}
+                        </button>
                       </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">{review.user.name}</p>
-                        <p className="text-xs text-gray-500">{new Date(review.createdAt).toLocaleDateString('pt-BR')}</p>
-                      </div>
-                      <div className="flex items-center gap-0.5 ml-auto">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <Star key={i} className={`h-3.5 w-3.5 ${i < review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />
-                        ))}
-                      </div>
+                      {expanded && review.comment && (
+                        <p className="mt-3 text-sm text-gray-600 dark:text-gray-400 border-t border-gray-100 dark:border-gray-800 pt-3">
+                          {review.comment}
+                        </p>
+                      )}
                     </div>
-                    {review.title && <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">{review.title}</p>}
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{review.comment}</p>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
@@ -564,6 +911,16 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           </div>
         </div>
       )}
+      <ConfirmDialog
+        open={!!confirmDeleteReview}
+        title="Apagar avaliação"
+        message="Tem certeza que deseja apagar sua avaliação? Esta ação não pode ser desfeita."
+        confirmLabel="Apagar"
+        danger
+        loading={deletingReviewId === confirmDeleteReview?.id}
+        onConfirm={() => confirmDeleteReview && handleDeleteReview(confirmDeleteReview)}
+        onCancel={() => setConfirmDeleteReview(null)}
+      />
     </div>
   );
 }

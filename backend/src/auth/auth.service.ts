@@ -93,7 +93,7 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('E-mail ou senha incorretos. Verifique os dados informados e tente novamente.');
     }
 
     if (!user.active) {
@@ -103,7 +103,7 @@ export class AuthService {
     const isPasswordValid = await bcrypt.compare(dto.password, user.password);
 
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('E-mail ou senha incorretos. Verifique os dados informados e tente novamente.');
     }
 
     const tokens = await this.generateTokens(user);

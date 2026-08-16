@@ -77,7 +77,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Authenticate user' })
   @ApiResponse({ status: 200, description: 'Login successful' })
-  @ApiResponse({ status: 401, description: 'Invalid credentials' })
+  @ApiResponse({ status: 401, description: 'E-mail ou senha incorretos. Verifique os dados informados e tente novamente.' })
   async login(@Body() dto: LoginDto, @Req() req: Request) {
     const result = await this.authService.login(dto);
     this.setAuthCookies(req.res, result.accessToken, result.refreshToken);

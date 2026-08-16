@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Store, Search, CheckCircle, XCircle, X, Loader2, MessageCircle, Send, ChevronLeft, ChevronRight, MapPin, Pencil } from 'lucide-react';
 import { toast } from '@/lib/toast';
 import { api } from '@/lib/api';
+import ConfirmDialog from '@/components/ui/confirm-dialog';
 
 interface SupplierItem {
   id: string;
@@ -63,6 +64,7 @@ export default function AdminSuppliersPage() {
   const [savingId, setSavingId] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const [chatSupplier, setChatSupplier] = useState<SupplierItem | null>(null);
+  const [confirm, setConfirm] = useState<{ title: string; message: string; action: () => Promise<void> } | null>(null);
   const [chatMessage, setChatMessage] = useState('');
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [editSupplier, setEditSupplier] = useState<SupplierItem | null>(null);
@@ -187,17 +189,22 @@ export default function AdminSuppliersPage() {
   }
 
   async function doBlock(s: SupplierItem) {
-    if (!window.confirm(`Deseja bloquear o fornecedor ${s.name}?`)) return;
-    setSavingId(s.id);
-    try {
-      await api.delete(`/suppliers/${s.id}`);
-      toast.success('Fornecedor bloqueado');
-      setRefreshKey((k) => k + 1);
-    } catch (error) {
-      toast.error(getErrorMessage(error));
-    } finally {
-      setSavingId(null);
-    }
+    setConfirm({
+      title: 'Bloquear fornecedor',
+      message: `Deseja bloquear o fornecedor ${s.name}?`,
+      action: async () => {
+        setSavingId(s.id);
+        try {
+          await api.delete(`/suppliers/${s.id}`);
+          toast.success('Fornecedor bloqueado');
+          setRefreshKey((k) => k + 1);
+        } catch (error) {
+          toast.error(getErrorMessage(error));
+        } finally {
+          setSavingId(null);
+        }
+      },
+    });
   }
 
   function openEdit(s: SupplierItem) {
@@ -460,6 +467,20 @@ export default function AdminSuppliersPage() {
         </div>
       )}
 
+      <ConfirmDialog
+        open={!!confirm}
+        title={confirm?.title || ''}
+        message={confirm?.message || ''}
+        confirmLabel="Confirmar"
+        danger
+        loading={!!savingId}
+        onConfirm={async () => {
+          const action = confirm?.action;
+          setConfirm(null);
+          if (action) await action();
+        }}
+        onCancel={() => setConfirm(null)}
+      />
     </div>
   );
 }

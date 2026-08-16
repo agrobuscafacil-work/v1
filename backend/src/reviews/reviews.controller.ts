@@ -85,8 +85,8 @@ export class ReviewsController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete review' })
+  @ApiOperation({ summary: 'Delete review (owner, supplier or admin)' })
   async remove(@Param('id') id: string, @CurrentUser() user: any) {
-    return this.reviewsService.remove(id, user.role === 'ADMIN' || user.role === 'SUPER_ADMIN' ? undefined : user.id);
+    return this.reviewsService.remove(id, { id: user.id, role: user.role });
   }
 }
