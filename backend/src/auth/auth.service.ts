@@ -7,15 +7,24 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
+import { createHash } from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { v4 as uuidv4 } from 'uuid';
 
+interface TokenMeta {
+  ip?: string;
+  userAgent?: string;
+}
+
+function hashToken(token: string): string {
+  return createHash('sha256').update(token).digest('hex');
+}
+
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
-  private readonly refreshTokenStore = new Map<string, { token: string; exp: Date }>();
 
   constructor(
     private prisma: PrismaService,
@@ -23,7 +32,7 @@ export class AuthService {
     private configService: ConfigService,
   ) {}
 
-  async register(dto: RegisterDto) {
+  async register(dto: RegisterDto, meta?: TokenMeta) {
     const existingUser = await this.prisma.user.findUnique({
       where: { email: dto.email },
     });
@@ -80,14 +89,14 @@ export class AuthService {
       return createdUser;
     });
 
-    const tokens = await this.generateTokens(user);
+    const tokens = await this.generateTokens(user, meta);
 
     this.logger.log(`New user registered: ${user.email} (${user.role})`);
 
     return { user, ...tokens };
   }
 
-  async login(dto: LoginDto) {
+  async login(dto: LoginDto, meta?: TokenMeta) {
     const user = await this.prisma.user.findUnique({
       where: { email: dto.email },
     });
@@ -106,7 +115,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const tokens = await this.generateTokens(user);
+    const tokens = await this.generateTokens(user, meta);
 
     this.logger.log(`User logged in: ${user.email}`);
 
@@ -122,54 +131,68 @@ export class AuthService {
     };
   }
 
-  async refreshToken(refreshToken: string) {
+  async refreshToken(refreshToken: string, meta?: TokenMeta) {
+    let payload: { jti?: string; sub?: string };
     try {
-      const payload = this.jwtService.verify(refreshToken, {
+      payload = this.jwtService.verify(refreshToken, {
         secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
       });
-
-      const storedToken = this.refreshTokenStore.get(payload.jti);
-
-      if (!storedToken || storedToken.token !== refreshToken) {
-        throw new UnauthorizedException('Invalid refresh token');
-      }
-
-      if (new Date() > storedToken.exp) {
-        this.refreshTokenStore.delete(payload.jti);
-        throw new UnauthorizedException('Refresh token expired');
-      }
-
-      const user = await this.prisma.user.findUnique({
-        where: { id: payload.sub },
-      });
-
-      if (!user) {
-        throw new UnauthorizedException('User not found');
-      }
-
-      if (!user.active) {
-        throw new UnauthorizedException('Account is inactive');
-      }
-
-      this.refreshTokenStore.delete(payload.jti);
-
-      const tokens = await this.generateTokens(user);
-      return {
-        user: {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
-          verified: user.verified,
-        },
-        ...tokens,
-      };
-    } catch (error) {
-      if (error instanceof UnauthorizedException) {
-        throw error;
-      }
+    } catch {
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
+
+    if (!payload.jti) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    const storedToken = await this.prisma.refreshToken.findUnique({
+      where: { jti: payload.jti },
+    });
+
+    if (
+      !storedToken ||
+      storedToken.revokedAt ||
+      storedToken.tokenHash !== hashToken(refreshToken)
+    ) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    if (new Date() > storedToken.expiresAt) {
+      await this.prisma.refreshToken.update({
+        where: { id: storedToken.id },
+        data: { revokedAt: new Date() },
+      });
+      throw new UnauthorizedException('Refresh token expired');
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: payload.sub || storedToken.userId },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    if (!user.active) {
+      throw new UnauthorizedException('Account is inactive');
+    }
+
+    await this.prisma.refreshToken.update({
+      where: { id: storedToken.id },
+      data: { revokedAt: new Date(), usedAt: new Date() },
+    });
+
+    const tokens = await this.generateTokens(user, meta);
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        verified: user.verified,
+      },
+      ...tokens,
+    };
   }
 
   async me(userId: string) {
@@ -194,30 +217,45 @@ export class AuthService {
   }
 
   async logout(userId: string, refreshToken?: string) {
-    for (const [key, value] of this.refreshTokenStore.entries()) {
+    const query: any = { revokedAt: null };
+    if (refreshToken) {
       try {
-        const payload = this.jwtService.decode(value.token) as any;
-        if (payload && payload.sub === userId) {
-          this.refreshTokenStore.delete(key);
-        }
-      } catch {}
+        const payload = this.jwtService.verify(refreshToken, {
+          secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+        });
+        query.jti = payload.jti;
+      } catch {
+        query.userId = userId;
+      }
+    } else {
+      query.userId = userId;
     }
+    await this.prisma.refreshToken.updateMany({
+      where: query,
+      data: { revokedAt: new Date() },
+    });
     this.logger.log(`User logged out: ${userId}`);
     return { message: 'Logged out successfully' };
   }
 
   async logoutByToken(refreshToken: string) {
-    for (const [key, value] of this.refreshTokenStore.entries()) {
-      if (value.token === refreshToken) {
-        this.refreshTokenStore.delete(key);
-        this.logger.log('Refresh token revoked on logout');
-        break;
-      }
-    }
+    try {
+      const payload = this.jwtService.verify(refreshToken, {
+        secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+      });
+      await this.prisma.refreshToken.updateMany({
+        where: { jti: payload.jti },
+        data: { revokedAt: new Date() },
+      });
+      this.logger.log('Refresh token revoked on logout');
+    } catch {}
     return { message: 'Logged out successfully' };
   }
 
-  private async generateTokens(user: { id: string; email: string; role: string }) {
+  private async generateTokens(
+    user: { id: string; email: string; role: string },
+    meta?: TokenMeta,
+  ) {
     const payload = {
       sub: user.id,
       email: user.email,
@@ -249,9 +287,15 @@ export class AuthService {
       }
     }
 
-    this.refreshTokenStore.set(jti, {
-      token: refreshToken,
-      exp: expDate,
+    await this.prisma.refreshToken.create({
+      data: {
+        userId: user.id,
+        jti,
+        tokenHash: hashToken(refreshToken),
+        expiresAt: expDate,
+        userAgent: meta?.userAgent || null,
+        ip: meta?.ip || null,
+      },
     });
 
     return { accessToken, refreshToken };

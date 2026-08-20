@@ -24,11 +24,14 @@ services:
       - '4000:4000'
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=postgresql://agrobusca:agrobusca123@postgres:5432/agrobuscafacil?schema=public
+      - DATABASE_URL=postgresql://agrobusca:${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD no .env}@postgres:5432/agrobuscafacil?schema=public
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
       - JWT_SECRET=${JWT_SECRET}
       - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
+      # Ambiente local/teste: permite segredos placeholder sem quebrar o compose.
+      - ALLOW_INSECURE_ENV=true
     depends_on:
       postgres:
         condition: service_healthy
@@ -46,7 +49,7 @@ services:
     environment:
       - POSTGRES_DB=agrobuscafacil
       - POSTGRES_USER=agrobusca
-      - POSTGRES_PASSWORD=agrobusca123
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD no .env}
     volumes:
       - postgres-data:/var/lib/postgresql/data
       - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql

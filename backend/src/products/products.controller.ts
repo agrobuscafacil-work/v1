@@ -7,6 +7,7 @@ import {
 } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
+import { randomUUID } from 'crypto';
 import { existsSync } from 'fs';
 import path from 'path';
 import { ProductsService } from './products.service';
@@ -17,6 +18,8 @@ import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { Public } from '../common/decorators/public.decorator';
+import { FileStorageService } from '../common/storage/file-storage.service';
+import { detectFileType, isAllowedDetectedType } from '../common/utils/file-type-check';
 import {
   createProductStorage,
   productImageFilter,
@@ -28,7 +31,10 @@ import {
 @ApiTags('Products')
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(
+    private readonly productsService: ProductsService,
+    private readonly storage: FileStorageService,
+  ) {}
 
   @Post()
   @UseGuards(JwtAuthGuard)
@@ -92,7 +98,18 @@ export class ProductsController {
     if (!file) {
       throw new BadRequestException('Nenhuma imagem enviada');
     }
-    return { url: `/products/images/${file.filename}` };
+    const detected = detectFileType(file.buffer);
+    if (
+      !detected ||
+      !isAllowedDetectedType(detected, { images: true })
+    ) {
+      throw new BadRequestException(
+        'Arquivo inválido: o conteúdo não é uma imagem permitida',
+      );
+    }
+    const filename = `${randomUUID()}${detected.ext}`;
+    await this.storage.save('products', filename, file.buffer, detected.mime);
+    return { url: `/products/images/${filename}` };
   }
 
   @Get('images/:filename')
@@ -111,6 +128,13 @@ export class ProductsController {
     const ext = path.extname(filename).toLowerCase();
     if (!PRODUCT_ALLOWED_EXTENSIONS.has(ext)) {
       throw new BadRequestException('Tipo de arquivo inválido');
+    }
+
+    if (this.storage.isCloud) {
+      return res.redirect(
+        HttpStatus.FOUND,
+        this.storage.publicUrl('products', filename),
+      );
     }
 
     const filePath = path.join(PRODUCT_UPLOAD_PATH, filename);

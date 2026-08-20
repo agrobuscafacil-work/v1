@@ -1,6 +1,4 @@
 import { BadRequestException } from "@nestjs/common";
-import { randomUUID } from "crypto";
-import { mkdirSync } from "fs";
 import path from "path";
 import multer from "multer";
 
@@ -35,17 +33,7 @@ export const PRODUCT_ALLOWED_EXTENSIONS = new Set([
 export const PRODUCT_IMAGE_MAX_SIZE = 5 * 1024 * 1024;
 
 export function createProductStorage() {
-  mkdirSync(PRODUCT_UPLOAD_PATH, { recursive: true });
-  return multer.diskStorage({
-    destination: (_req, _file, cb) => {
-      mkdirSync(PRODUCT_UPLOAD_PATH, { recursive: true });
-      cb(null, PRODUCT_UPLOAD_PATH);
-    },
-    filename: (_req, file, cb) => {
-      const ext = PRODUCT_IMAGE_EXTENSIONS[file.mimetype] || "";
-      cb(null, `${randomUUID()}${ext}`);
-    },
-  });
+  return multer.memoryStorage();
 }
 
 export function productImageFilter(

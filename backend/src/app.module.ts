@@ -29,6 +29,7 @@ import { SupportModule } from './support/support.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { StripeModule } from './stripe/stripe.module';
 import { RedisModule } from './common/redis/redis.module';
+import { StorageModule } from './common/storage/storage.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { RedisModule } from './common/redis/redis.module';
     }),
     PrismaModule,
     RedisModule,
+    StorageModule,
     AuthModule,
     UsersModule,
     SuppliersModule,

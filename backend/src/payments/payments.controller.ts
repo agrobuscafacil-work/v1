@@ -3,6 +3,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { PaymentsService } from './payments.service';
+import { ProcessPaymentDto } from './dto/process-payment.dto';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 
@@ -16,8 +17,8 @@ export class PaymentsController {
   @Post('process/:orderId')
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Process payment for order' })
-  async processPayment(@CurrentUser() user: any, @Param('orderId') orderId: string, @Body('method') method: string) {
-    return this.paymentsService.processPayment(orderId, method, user);
+  async processPayment(@CurrentUser() user: any, @Param('orderId') orderId: string, @Body() dto: ProcessPaymentDto) {
+    return this.paymentsService.processPayment(orderId, dto.method, user);
   }
 
   @Get('order/:orderId')

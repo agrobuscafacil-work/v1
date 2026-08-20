@@ -55,10 +55,12 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError, null);
-        if (typeof window !== 'undefined') {
-          // Axios interceptor runs outside React; a full redirect is required here.
-          // eslint-disable-next-line @next/next/no-location-assign-relative-destination
-          window.location.href = '/auth/login';
+        // Limpa o estado de autenticação sem redirecionar para a tela de login.
+        try {
+          const { useAuth } = await import('@/hooks/use-auth');
+          useAuth.setState({ user: null, isAuthenticated: false, isLoading: false });
+        } catch {
+          // Ignora falha ao limpar o store.
         }
         return Promise.reject(refreshError);
       } finally {

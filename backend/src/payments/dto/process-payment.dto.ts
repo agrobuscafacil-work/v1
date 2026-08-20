@@ -1,17 +1,27 @@
-import { IsString, IsOptional } from 'class-validator';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsString, IsIn } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class ProcessPaymentDto {
-  @ApiProperty({ enum: ['PENDING', 'CONFIRMED', 'FAILED', 'REFUNDED', 'CANCELLED'] })
+  @ApiProperty({
+    enum: [
+      'CREDIT_CARD',
+      'DEBIT_CARD',
+      'PIX',
+      'BOLETO',
+      'BANK_TRANSFER',
+      'DEPOSIT',
+      'CASH',
+    ],
+  })
   @IsString()
-  status: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsString()
-  transactionId?: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  gatewayResponse?: any;
+  @IsIn([
+    'CREDIT_CARD',
+    'DEBIT_CARD',
+    'PIX',
+    'BOLETO',
+    'BANK_TRANSFER',
+    'DEPOSIT',
+    'CASH',
+  ])
+  method: string;
 }

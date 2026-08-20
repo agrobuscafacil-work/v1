@@ -3,6 +3,7 @@ import { BadRequestException, NotFoundException } from "@nestjs/common";
 import { SupportService } from "./support.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { NotificationsService } from "../notifications/notifications.service";
+import { FileStorageService } from "../common/storage/file-storage.service";
 import { SupportTicketStatus } from "../generated/prisma/client";
 
 describe("SupportService", () => {
@@ -29,6 +30,10 @@ describe("SupportService", () => {
       size: 1024,
       filename: "uuid.png",
       path: "uploads/support/uuid.png",
+      buffer: Buffer.from([
+        0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a,
+        0x00, 0x00, 0x00, 0x0d, 0x49, 0x48, 0x44, 0x52,
+      ]),
       ...overrides,
     }) as Express.Multer.File;
 
@@ -50,11 +55,20 @@ describe("SupportService", () => {
 
     notifications = { create: jest.fn() };
 
+    const storage = {
+      save: jest.fn().mockResolvedValue(null),
+      savePrivate: jest.fn().mockResolvedValue(null),
+      delete: jest.fn().mockResolvedValue(undefined),
+      isCloud: false,
+      publicUrl: () => "",
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         SupportService,
         { provide: PrismaService, useValue: prisma },
         { provide: NotificationsService, useValue: notifications },
+        { provide: FileStorageService, useValue: storage },
       ],
     }).compile();
 
@@ -117,7 +131,7 @@ describe("SupportService", () => {
                 fileName: "foto.png",
                 mimeType: "image/png",
                 size: 1024,
-                url: "/support/files/uuid.png",
+                url: expect.stringMatching(/^\/support\/files\/.+\.png$/),
               },
             ],
           },
