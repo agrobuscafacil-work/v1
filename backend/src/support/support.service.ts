@@ -5,6 +5,7 @@ import {
   BadRequestException,
 } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
+import { FileStorageService } from "../common/storage/file-storage.service";
 import { NotificationsService } from "../notifications/notifications.service";
 import { CreateSupportTicketDto } from "./dto/create-support-ticket.dto";
 import { UpdateSupportStatusDto } from "./dto/update-support-status.dto";
@@ -17,11 +18,17 @@ import {
   sanitizeFilename,
 } from "./support.constants";
 import {
+  detectFileType,
+  isAllowedDetectedType,
+  DetectedFileType,
+} from "../common/utils/file-type-check";
+
+import { randomUUID } from "crypto";
+import {
   SupportAttachmentType,
   SupportTicketStatus,
   NotificationType,
 } from "../generated/prisma/client";
-import { unlink } from "fs/promises";
 
 export interface SupportUploadedFiles {
   images?: Express.Multer.File[];
@@ -70,6 +77,7 @@ export class SupportService {
   constructor(
     private prisma: PrismaService,
     private notificationsService: NotificationsService,
+    private storage: FileStorageService,
   ) {}
 
   async getCategories() {
@@ -94,7 +102,6 @@ export class SupportService {
       where: { id: dto.categoryId, active: true, deletedAt: null },
     });
     if (!category) {
-      await this.removeUploadedFiles(files);
       throw new BadRequestException("Categoria de suporte inválida");
     }
 
@@ -106,7 +113,6 @@ export class SupportService {
       },
     });
     if (!type) {
-      await this.removeUploadedFiles(files);
       throw new BadRequestException(
         "Tipo de problema inválido para a categoria selecionada",
       );
@@ -120,12 +126,7 @@ export class SupportService {
       url: string;
     }[] = [];
 
-    try {
-      attachments = this.buildAttachments(files);
-    } catch (error) {
-      await this.removeUploadedFiles(files);
-      throw error;
-    }
+    attachments = await this.buildAttachments(files);
 
     try {
       const ticket = await this.prisma.supportTicket.create({
@@ -150,7 +151,7 @@ export class SupportService {
       this.logger.log(`Support ticket created: ${ticket.id}`);
       return ticket;
     } catch (error) {
-      await this.removeUploadedFiles(files);
+      await this.removeUploadedAttachments(attachments);
       throw error;
     }
   }
@@ -404,7 +405,23 @@ export class SupportService {
     return max ? Math.min(clamped, max) : clamped;
   }
 
-  private buildAttachments(files?: SupportUploadedFiles) {
+  /** Encontra um anexo e garante que o usuário tem acesso (dono ou admin). */
+  async findAccessibleAttachment(user: { id: string; role: string }, filename: string) {
+    const attachment = await this.prisma.supportAttachment.findFirst({
+      where: { url: `/support/files/${filename}` },
+      include: { ticket: { select: { userId: true } } },
+    });
+    if (!attachment) {
+      throw new NotFoundException("Arquivo não encontrado");
+    }
+    const isAdmin = user.role === "ADMIN" || user.role === "SUPER_ADMIN";
+    if (!isAdmin && attachment.ticket.userId !== user.id) {
+      throw new NotFoundException("Arquivo não encontrado");
+    }
+    return attachment;
+  }
+
+  private async buildAttachments(files?: SupportUploadedFiles) {
     const attachments: {
       type: SupportAttachmentType;
       fileName: string;
@@ -412,6 +429,8 @@ export class SupportService {
       size: number;
       url: string;
     }[] = [];
+
+    const savedNames: string[] = [];
 
     const fields: {
       name: keyof SupportUploadedFiles;
@@ -422,47 +441,69 @@ export class SupportService {
       { name: "videos", type: SupportAttachmentType.VIDEO },
     ];
 
-    for (const field of fields) {
-      const uploaded = files?.[field.name] || [];
-      if (uploaded.length > SUPPORT_UPLOAD_LIMITS[field.name].maxFiles) {
-        throw new BadRequestException(
-          `Máximo de ${SUPPORT_UPLOAD_LIMITS[field.name].maxFiles} arquivos no campo "${field.name}"`,
-        );
-      }
-      for (const file of uploaded) {
-        if (file.size > SUPPORT_UPLOAD_LIMITS[field.name].maxSize) {
+    try {
+      for (const field of fields) {
+        const uploaded = files?.[field.name] || [];
+        if (uploaded.length > SUPPORT_UPLOAD_LIMITS[field.name].maxFiles) {
           throw new BadRequestException(
-            `Arquivo "${file.originalname}" excede o tamanho máximo permitido (${Math.floor(SUPPORT_UPLOAD_LIMITS[field.name].maxSize / (1024 * 1024))}MB)`,
+            `Máximo de ${SUPPORT_UPLOAD_LIMITS[field.name].maxFiles} arquivos no campo "${field.name}"`,
           );
         }
-        attachments.push({
-          type: field.type,
-          fileName: sanitizeFilename(file.originalname),
-          mimeType: file.mimetype,
-          size: file.size,
-          url: `/support/files/${file.filename}`,
-        });
+        for (const file of uploaded) {
+          if (file.size > SUPPORT_UPLOAD_LIMITS[field.name].maxSize) {
+            throw new BadRequestException(
+              `Arquivo "${file.originalname}" excede o tamanho máximo permitido (${Math.floor(SUPPORT_UPLOAD_LIMITS[field.name].maxSize / (1024 * 1024))}MB)`,
+            );
+          }
+          const detected: DetectedFileType | null = detectFileType(file.buffer);
+          if (
+            !detected ||
+            !isAllowedDetectedType(detected, {
+              images: field.name === "images",
+              documents: field.name === "documents",
+              videos: field.name === "videos",
+            })
+          ) {
+            throw new BadRequestException(
+              `Conteúdo do arquivo "${file.originalname}" não corresponde ao tipo declarado ou não é permitido no campo "${field.name}"`,
+            );
+          }
+          const filename = `${randomUUID()}${detected.ext}`;
+          await this.storage.savePrivate(
+            "support",
+            filename,
+            file.buffer,
+            detected.mime,
+          );
+          savedNames.push(filename);
+          attachments.push({
+            type: field.type,
+            fileName: sanitizeFilename(file.originalname),
+            mimeType: detected.mime,
+            size: file.size,
+            url: `/support/files/${filename}`,
+          });
+        }
       }
-    }
 
-    return attachments;
+      return attachments;
+    } catch (error) {
+      await Promise.all(
+        savedNames.map((name) => this.storage.delete("support", name)),
+      );
+      throw error;
+    }
   }
 
-  private async removeUploadedFiles(files?: SupportUploadedFiles) {
-    if (!files) return;
-    const all = [
-      ...(files.images || []),
-      ...(files.documents || []),
-      ...(files.videos || []),
-    ];
+  private async removeUploadedAttachments(
+    attachments: { url: string }[],
+  ) {
     await Promise.all(
-      all.map((file) =>
-        unlink(file.path).catch((error) =>
-          this.logger.warn(
-            `Falha ao remover upload ${file.filename}: ${error.message}`,
-          ),
-        ),
-      ),
+      attachments.map((attachment) => {
+        const name = attachment.url.split("/").pop();
+        if (!name) return;
+        return this.storage.delete("support", name);
+      }),
     );
   }
 

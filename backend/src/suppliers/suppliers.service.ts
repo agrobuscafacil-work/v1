@@ -129,9 +129,7 @@ export class SuppliersService {
       where: { id },
       select: {
         ...publicSupplierSelect,
-        phone: true,
         whatsapp: true,
-        email: true,
         user: { select: { id: true, name: true } },
       },
     });

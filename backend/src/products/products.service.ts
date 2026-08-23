@@ -8,6 +8,7 @@ import {
 import { existsSync, unlinkSync } from 'fs';
 import path from 'path';
 import { PrismaService } from '../prisma/prisma.service';
+import { FileStorageService } from '../common/storage/file-storage.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductStatus } from '../generated/prisma/client';
@@ -21,7 +22,10 @@ const EXTERNAL_IMAGE_PATTERN = /^https?:\/\/.+/i;
 export class ProductsService {
   private readonly logger = new Logger(ProductsService.name);
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private storage: FileStorageService,
+  ) {}
 
   private sanitizeImages(images?: string[]): string[] {
     if (!Array.isArray(images)) return [];
@@ -56,7 +60,11 @@ export class ProductsService {
 
       const filePath = path.join(PRODUCT_UPLOAD_PATH, filename);
       try {
-        if (existsSync(filePath)) unlinkSync(filePath);
+        if (this.storage.isCloud) {
+          await this.storage.delete('products', filename);
+        } else if (existsSync(filePath)) {
+          unlinkSync(filePath);
+        }
       } catch (err) {
         this.logger.warn(`Falha ao remover arquivo de imagem: ${img} - ${err}`);
       }
@@ -171,18 +179,17 @@ export class ProductsService {
       where: { slug, deletedAt: null, status: ProductStatus.ACTIVE },
       include: {
         category: true,
-        supplier: {
-          select: {
-            id: true,
-            companyName: true,
-            tradingName: true,
-            logoUrl: true,
-            rating: true,
-            totalReviews: true,
-            totalProducts: true,
-            phone: true,
-            whatsapp: true,
-            addresses: {
+supplier: {
+            select: {
+              id: true,
+              companyName: true,
+              tradingName: true,
+              logoUrl: true,
+              rating: true,
+              totalReviews: true,
+              totalProducts: true,
+              whatsapp: true,
+              addresses: {
               select: { city: true, state: true },
               where: { isMain: true },
               take: 1,

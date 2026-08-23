@@ -61,6 +61,7 @@ api.interceptors.response.use(
         processQueue(null);
         return api(originalRequest);
       } catch (refreshError) {
+<<<<<<< HEAD
         processQueue(error, null);
         // O bootstrap (/users/me) falha com 401 para visitantes anonimos;
         // nesse caso nao ha sessao para redirecionar - o redirecionamento
@@ -74,6 +75,15 @@ api.interceptors.response.use(
           // Axios interceptor runs outside React; a full redirect is required here.
           // eslint-disable-next-line @next/next/no-location-assign-relative-destination
           window.location.href = '/auth/login';
+=======
+        processQueue(refreshError, null);
+        // Limpa o estado de autenticação sem redirecionar para a tela de login.
+        try {
+          const { useAuth } = await import('@/hooks/use-auth');
+          useAuth.setState({ user: null, isAuthenticated: false, isLoading: false });
+        } catch {
+          // Ignora falha ao limpar o store.
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
         }
         return Promise.reject(error);
       } finally {

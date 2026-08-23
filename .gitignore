@@ -15,6 +15,13 @@ build/
 .env.development.local
 .env.test.local
 .env.production.local
+.env.gcp
+
+# Google Cloud (segredos/credenciais)
+docker/gcp/credentials.json
+docker/gcp/*.json
+docker/nginx/ssl/*.pem
+docker/nginx/certbot/www/*
 
 # IDE
 .vscode/

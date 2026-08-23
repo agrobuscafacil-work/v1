@@ -1,6 +1,4 @@
 import { BadRequestException } from "@nestjs/common";
-import { randomUUID } from "crypto";
-import { mkdirSync } from "fs";
 import path from "path";
 import multer from "multer";
 
@@ -79,17 +77,7 @@ export const ALLOWED_FILE_EXTENSIONS = new Set<string>([
 ]);
 
 export function createSupportStorage() {
-  mkdirSync(SUPPORT_UPLOAD_PATH, { recursive: true });
-  return multer.diskStorage({
-    destination: (req, file, cb) => {
-      mkdirSync(SUPPORT_UPLOAD_PATH, { recursive: true });
-      cb(null, SUPPORT_UPLOAD_PATH);
-    },
-    filename: (req, file, cb) => {
-      const ext = FILE_EXTENSIONS[file.mimetype] || "";
-      cb(null, `${randomUUID()}${ext}`);
-    },
-  });
+  return multer.memoryStorage();
 }
 
 export function supportFileFilter(

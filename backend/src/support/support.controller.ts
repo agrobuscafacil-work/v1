@@ -11,7 +11,6 @@ import {
   UseInterceptors,
   UploadedFiles,
   BadRequestException,
-  NotFoundException,
   HttpCode,
   HttpStatus,
 } from "@nestjs/common";
@@ -25,9 +24,9 @@ import {
   ApiQuery,
 } from "@nestjs/swagger";
 import { Response } from "express";
-import { existsSync } from "fs";
 import path from "path";
 import { SupportService, SupportUploadedFiles } from "./support.service";
+import { FileStorageService } from "../common/storage/file-storage.service";
 import { CreateSupportTicketDto } from "./dto/create-support-ticket.dto";
 import { AdminSupportQueryDto } from "./dto/admin-support-query.dto";
 import { UpdateSupportStatusDto } from "./dto/update-support-status.dto";
@@ -37,11 +36,9 @@ import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
 import { RolesGuard } from "../common/guards/roles.guard";
 import { Roles } from "../common/decorators/roles.decorator";
 import { CurrentUser } from "../common/decorators/current-user.decorator";
-import { Public } from "../common/decorators/public.decorator";
 import {
   createSupportStorage,
   supportFileFilter,
-  SUPPORT_UPLOAD_PATH,
   ALLOWED_FILE_EXTENSIONS,
 } from "./support.constants";
 
@@ -50,7 +47,10 @@ import {
 @UseGuards(JwtAuthGuard)
 @Controller("support")
 export class SupportController {
-  constructor(private readonly supportService: SupportService) {}
+  constructor(
+    private readonly supportService: SupportService,
+    private readonly storage: FileStorageService,
+  ) {}
 
   @Get("categories")
   @ApiOperation({ summary: "List support categories with their problem types" })
@@ -178,9 +178,14 @@ export class SupportController {
   }
 
   @Get("files/:filename")
-  @Public()
-  @ApiOperation({ summary: "Serve an uploaded support attachment file" })
-  async serveFile(@Param("filename") filename: string, @Res() res: Response) {
+  @ApiOperation({
+    summary: "Serve an uploaded support attachment (owner or admin only)",
+  })
+  async serveFile(
+    @CurrentUser() user: any,
+    @Param("filename") filename: string,
+    @Res() res: Response,
+  ) {
     if (
       !filename ||
       filename.includes("..") ||
@@ -195,11 +200,17 @@ export class SupportController {
       throw new BadRequestException("Tipo de arquivo inválido");
     }
 
-    const filePath = path.join(SUPPORT_UPLOAD_PATH, filename);
-    if (!existsSync(filePath)) {
-      throw new NotFoundException("Arquivo não encontrado");
-    }
+    const attachment = await this.supportService.findAccessibleAttachment(
+      user,
+      filename,
+    );
 
-    res.sendFile(filePath);
+    return this.storage.stream(
+      "support",
+      filename,
+      res,
+      attachment.mimeType,
+      attachment.fileName,
+    );
   }
 }

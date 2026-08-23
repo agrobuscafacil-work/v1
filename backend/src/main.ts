@@ -14,6 +14,51 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 
+const PLACEHOLDER_PATTERNS = [
+  "change-me",
+  "troque-",
+  "your-super-secret",
+  "em-producao",
+  "em produção",
+];
+
+function assertProductionEnv(configService: ConfigService) {
+  const isProd = configService.get<string>("NODE_ENV") === "production";
+  if (!isProd) return;
+
+  if (configService.get<string>("ALLOW_INSECURE_ENV") === "true") return;
+
+  const secrets = {
+    JWT_SECRET: configService.get<string>("JWT_SECRET") || "",
+    JWT_REFRESH_SECRET: configService.get<string>("JWT_REFRESH_SECRET") || "",
+  };
+
+  const weak = Object.entries(secrets).filter(([, value]) => {
+    const lower = value.toLowerCase();
+    return (
+      value.length < 32 ||
+      PLACEHOLDER_PATTERNS.some((pattern) => lower.includes(pattern))
+    );
+  });
+
+  if (weak.length > 0) {
+    throw new Error(
+      `Configuração insegura em produção: ${weak
+        .map(([key]) => key)
+        .join(", ")} não pode usar segredos placeholder. ` +
+        `Gere segredos fortes (ex.: openssl rand -base64 48) e defina "troque-" no lugar.`,
+    );
+  }
+
+  const databaseUrl = configService.get<string>("DATABASE_URL") || "";
+  if (databaseUrl.includes("agrobusca123") || databaseUrl.includes(":123123123@")) {
+    throw new Error(
+      "Configuração insegura em produção: DATABASE_URL usa senha padrão/já conhecida. " +
+        "Defina uma senha forte no banco e no .env.",
+    );
+  }
+}
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: new Logger('AgroBuscaFacil'),
@@ -23,6 +68,7 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
   const logger = new Logger('Bootstrap');
+  assertProductionEnv(configService);
   const port = configService.get<number>('PORT') || 4000;
   const apiPrefix = configService.get<string>('API_PREFIX') || 'api';
   const apiVersion = configService.get<string>('API_VERSION') || 'v1';

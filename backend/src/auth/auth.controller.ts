@@ -57,6 +57,13 @@ export class AuthController {
     res.clearCookie(REFRESH_COOKIE, { path: '/' });
   }
 
+  private requestMeta(req: Request) {
+    return {
+      ip: req.ip,
+      userAgent: req.get('user-agent'),
+    };
+  }
+
   @Post('register')
   @Public()
   @HttpCode(HttpStatus.CREATED)
@@ -64,7 +71,7 @@ export class AuthController {
   @ApiResponse({ status: 201, description: 'User registered successfully' })
   @ApiResponse({ status: 409, description: 'Email or document already registered' })
   async register(@Body() dto: RegisterDto, @Req() req: Request) {
-    const result = await this.authService.register(dto);
+    const result = await this.authService.register(dto, this.requestMeta(req));
     this.setAuthCookies(req.res, result.accessToken, result.refreshToken);
     return {
       user: result.user,
@@ -79,7 +86,7 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'Login successful' })
   @ApiResponse({ status: 401, description: 'E-mail ou senha incorretos. Verifique os dados informados e tente novamente.' })
   async login(@Body() dto: LoginDto, @Req() req: Request) {
-    const result = await this.authService.login(dto);
+    const result = await this.authService.login(dto, this.requestMeta(req));
     this.setAuthCookies(req.res, result.accessToken, result.refreshToken);
     return {
       user: result.user,
@@ -98,7 +105,10 @@ export class AuthController {
     if (!refreshToken) {
       throw new UnauthorizedException('Refresh token not provided');
     }
-    const result = await this.authService.refreshToken(refreshToken);
+    const result = await this.authService.refreshToken(
+      refreshToken,
+      this.requestMeta(req),
+    );
     this.setAuthCookies(req.res, result.accessToken, result.refreshToken);
     return {
       user: result.user,
