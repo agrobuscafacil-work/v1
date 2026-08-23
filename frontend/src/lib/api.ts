@@ -62,6 +62,7 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch (refreshError) {
 <<<<<<< HEAD
+<<<<<<< HEAD
         processQueue(error, null);
         // O bootstrap (/users/me) falha com 401 para visitantes anonimos;
         // nesse caso nao ha sessao para redirecionar - o redirecionamento
@@ -76,6 +77,8 @@ api.interceptors.response.use(
           // eslint-disable-next-line @next/next/no-location-assign-relative-destination
           window.location.href = '/auth/login';
 =======
+=======
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
         processQueue(refreshError, null);
         // Limpa o estado de autenticação sem redirecionar para a tela de login.
         try {
@@ -83,6 +86,9 @@ api.interceptors.response.use(
           useAuth.setState({ user: null, isAuthenticated: false, isLoading: false });
         } catch {
           // Ignora falha ao limpar o store.
+<<<<<<< HEAD
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
+=======
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
         }
         return Promise.reject(error);

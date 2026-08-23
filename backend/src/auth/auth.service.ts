@@ -132,6 +132,7 @@ export class AuthService {
         secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
       });
 <<<<<<< HEAD
+<<<<<<< HEAD
 
       const storedToken = this.refreshTokenStore.get(payload.jti);
 
@@ -167,6 +168,9 @@ export class AuthService {
       if (error instanceof UnauthorizedException) {
         throw error;
       }
+=======
+    } catch {
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
     } catch {
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -333,6 +337,7 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 <<<<<<< HEAD
+<<<<<<< HEAD
 
   private toPublicUser(user: {
     id: string;
@@ -358,6 +363,9 @@ export class AuthService {
     };
   }
 }
+=======
+}
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
 }
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806

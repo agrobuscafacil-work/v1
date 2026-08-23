@@ -454,7 +454,11 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
   }
   meta: {
 <<<<<<< HEAD
+<<<<<<< HEAD
     modelProps: "user" | "customerProfile" | "supplierProfile" | "address" | "category" | "product" | "service" | "promotion" | "coupon" | "workingHours" | "cart" | "cartItem" | "order" | "orderItem" | "orderCoupon" | "orderStatusHistory" | "review" | "reviewResponse" | "favorite" | "conversation" | "message" | "payment" | "paymentCustomer" | "paymentCard" | "paymentEvent" | "chatSettings" | "systemSetting" | "notification" | "banner" | "auditLog" | "systemConfig" | "report" | "supportCategory" | "supportType" | "supportTicket" | "supportAttachment" | "supportTicketNote" | "supportTicketStatusHistory" | "searchLog" | "sessionLog"
+=======
+    modelProps: "user" | "refreshToken" | "customerProfile" | "supplierProfile" | "address" | "category" | "product" | "service" | "promotion" | "coupon" | "workingHours" | "cart" | "cartItem" | "order" | "orderItem" | "orderCoupon" | "orderStatusHistory" | "review" | "reviewResponse" | "favorite" | "conversation" | "message" | "payment" | "chatSettings" | "systemSetting" | "notification" | "banner" | "auditLog" | "systemConfig" | "report" | "supportCategory" | "supportType" | "supportTicket" | "supportAttachment" | "supportTicketNote" | "supportTicketStatusHistory" | "searchLog" | "sessionLog"
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
     modelProps: "user" | "refreshToken" | "customerProfile" | "supplierProfile" | "address" | "category" | "product" | "service" | "promotion" | "coupon" | "workingHours" | "cart" | "cartItem" | "order" | "orderItem" | "orderCoupon" | "orderStatusHistory" | "review" | "reviewResponse" | "favorite" | "conversation" | "message" | "payment" | "chatSettings" | "systemSetting" | "notification" | "banner" | "auditLog" | "systemConfig" | "report" | "supportCategory" | "supportType" | "supportTicket" | "supportAttachment" | "supportTicketNote" | "supportTicketStatusHistory" | "searchLog" | "sessionLog"
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806

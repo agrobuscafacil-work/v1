@@ -151,8 +151,12 @@ model User {
   supportNotes    SupportTicketNote[]
   conversations   Conversation[]      @relation("CustomerConversations")
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers PaymentCustomer[]
   paymentCards    PaymentCard[]
+=======
+  refreshTokens  RefreshToken[]
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens  RefreshToken[]
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806

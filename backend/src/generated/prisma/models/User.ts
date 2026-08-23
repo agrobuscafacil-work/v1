@@ -308,8 +308,12 @@ export type UserWhereInput = {
   supportNotes?: Prisma.SupportTicketNoteListRelationFilter
   conversations?: Prisma.ConversationListRelationFilter
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerListRelationFilter
   paymentCards?: Prisma.PaymentCardListRelationFilter
+=======
+  refreshTokens?: Prisma.RefreshTokenListRelationFilter
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenListRelationFilter
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -349,8 +353,12 @@ export type UserOrderByWithRelationInput = {
   supportNotes?: Prisma.SupportTicketNoteOrderByRelationAggregateInput
   conversations?: Prisma.ConversationOrderByRelationAggregateInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerOrderByRelationAggregateInput
   paymentCards?: Prisma.PaymentCardOrderByRelationAggregateInput
+=======
+  refreshTokens?: Prisma.RefreshTokenOrderByRelationAggregateInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenOrderByRelationAggregateInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -393,8 +401,12 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   supportNotes?: Prisma.SupportTicketNoteListRelationFilter
   conversations?: Prisma.ConversationListRelationFilter
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerListRelationFilter
   paymentCards?: Prisma.PaymentCardListRelationFilter
+=======
+  refreshTokens?: Prisma.RefreshTokenListRelationFilter
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenListRelationFilter
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -484,8 +496,12 @@ export type UserCreateInput = {
   supportNotes?: Prisma.SupportTicketNoteCreateNestedManyWithoutAdminInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutCustomerInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerCreateNestedManyWithoutUserInput
   paymentCards?: Prisma.PaymentCardCreateNestedManyWithoutUserInput
+=======
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -525,8 +541,12 @@ export type UserUncheckedCreateInput = {
   supportNotes?: Prisma.SupportTicketNoteUncheckedCreateNestedManyWithoutAdminInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCustomerInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUncheckedCreateNestedManyWithoutUserInput
   paymentCards?: Prisma.PaymentCardUncheckedCreateNestedManyWithoutUserInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -566,8 +586,12 @@ export type UserUpdateInput = {
   supportNotes?: Prisma.SupportTicketNoteUpdateManyWithoutAdminNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutCustomerNestedInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUpdateManyWithoutUserNestedInput
   paymentCards?: Prisma.PaymentCardUpdateManyWithoutUserNestedInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -607,8 +631,12 @@ export type UserUncheckedUpdateInput = {
   supportNotes?: Prisma.SupportTicketNoteUncheckedUpdateManyWithoutAdminNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutCustomerNestedInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUncheckedUpdateManyWithoutUserNestedInput
   paymentCards?: Prisma.PaymentCardUncheckedUpdateManyWithoutUserNestedInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -1195,8 +1223,12 @@ export type UserCreateWithoutCustomerProfileInput = {
   supportNotes?: Prisma.SupportTicketNoteCreateNestedManyWithoutAdminInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutCustomerInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerCreateNestedManyWithoutUserInput
   paymentCards?: Prisma.PaymentCardCreateNestedManyWithoutUserInput
+=======
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -1235,8 +1267,12 @@ export type UserUncheckedCreateWithoutCustomerProfileInput = {
   supportNotes?: Prisma.SupportTicketNoteUncheckedCreateNestedManyWithoutAdminInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCustomerInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUncheckedCreateNestedManyWithoutUserInput
   paymentCards?: Prisma.PaymentCardUncheckedCreateNestedManyWithoutUserInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -1291,8 +1327,12 @@ export type UserUpdateWithoutCustomerProfileInput = {
   supportNotes?: Prisma.SupportTicketNoteUpdateManyWithoutAdminNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutCustomerNestedInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUpdateManyWithoutUserNestedInput
   paymentCards?: Prisma.PaymentCardUpdateManyWithoutUserNestedInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -1331,8 +1371,12 @@ export type UserUncheckedUpdateWithoutCustomerProfileInput = {
   supportNotes?: Prisma.SupportTicketNoteUncheckedUpdateManyWithoutAdminNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutCustomerNestedInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUncheckedUpdateManyWithoutUserNestedInput
   paymentCards?: Prisma.PaymentCardUncheckedUpdateManyWithoutUserNestedInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -1371,8 +1415,12 @@ export type UserCreateWithoutSupplierProfileInput = {
   supportNotes?: Prisma.SupportTicketNoteCreateNestedManyWithoutAdminInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutCustomerInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerCreateNestedManyWithoutUserInput
   paymentCards?: Prisma.PaymentCardCreateNestedManyWithoutUserInput
+=======
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -1411,8 +1459,12 @@ export type UserUncheckedCreateWithoutSupplierProfileInput = {
   supportNotes?: Prisma.SupportTicketNoteUncheckedCreateNestedManyWithoutAdminInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCustomerInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUncheckedCreateNestedManyWithoutUserInput
   paymentCards?: Prisma.PaymentCardUncheckedCreateNestedManyWithoutUserInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -1467,8 +1519,12 @@ export type UserUpdateWithoutSupplierProfileInput = {
   supportNotes?: Prisma.SupportTicketNoteUpdateManyWithoutAdminNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutCustomerNestedInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUpdateManyWithoutUserNestedInput
   paymentCards?: Prisma.PaymentCardUpdateManyWithoutUserNestedInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -1507,8 +1563,12 @@ export type UserUncheckedUpdateWithoutSupplierProfileInput = {
   supportNotes?: Prisma.SupportTicketNoteUncheckedUpdateManyWithoutAdminNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutCustomerNestedInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUncheckedUpdateManyWithoutUserNestedInput
   paymentCards?: Prisma.PaymentCardUncheckedUpdateManyWithoutUserNestedInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -1547,8 +1607,12 @@ export type UserCreateWithoutAddressesInput = {
   supportNotes?: Prisma.SupportTicketNoteCreateNestedManyWithoutAdminInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutCustomerInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerCreateNestedManyWithoutUserInput
   paymentCards?: Prisma.PaymentCardCreateNestedManyWithoutUserInput
+=======
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -1587,8 +1651,12 @@ export type UserUncheckedCreateWithoutAddressesInput = {
   supportNotes?: Prisma.SupportTicketNoteUncheckedCreateNestedManyWithoutAdminInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCustomerInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUncheckedCreateNestedManyWithoutUserInput
   paymentCards?: Prisma.PaymentCardUncheckedCreateNestedManyWithoutUserInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -1643,8 +1711,12 @@ export type UserUpdateWithoutAddressesInput = {
   supportNotes?: Prisma.SupportTicketNoteUpdateManyWithoutAdminNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutCustomerNestedInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUpdateManyWithoutUserNestedInput
   paymentCards?: Prisma.PaymentCardUpdateManyWithoutUserNestedInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -1683,8 +1755,12 @@ export type UserUncheckedUpdateWithoutAddressesInput = {
   supportNotes?: Prisma.SupportTicketNoteUncheckedUpdateManyWithoutAdminNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutCustomerNestedInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUncheckedUpdateManyWithoutUserNestedInput
   paymentCards?: Prisma.PaymentCardUncheckedUpdateManyWithoutUserNestedInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -1723,8 +1799,12 @@ export type UserCreateWithoutCartInput = {
   supportNotes?: Prisma.SupportTicketNoteCreateNestedManyWithoutAdminInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutCustomerInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerCreateNestedManyWithoutUserInput
   paymentCards?: Prisma.PaymentCardCreateNestedManyWithoutUserInput
+=======
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -1763,8 +1843,12 @@ export type UserUncheckedCreateWithoutCartInput = {
   supportNotes?: Prisma.SupportTicketNoteUncheckedCreateNestedManyWithoutAdminInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCustomerInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUncheckedCreateNestedManyWithoutUserInput
   paymentCards?: Prisma.PaymentCardUncheckedCreateNestedManyWithoutUserInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -1819,8 +1903,12 @@ export type UserUpdateWithoutCartInput = {
   supportNotes?: Prisma.SupportTicketNoteUpdateManyWithoutAdminNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutCustomerNestedInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUpdateManyWithoutUserNestedInput
   paymentCards?: Prisma.PaymentCardUpdateManyWithoutUserNestedInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -1859,8 +1947,12 @@ export type UserUncheckedUpdateWithoutCartInput = {
   supportNotes?: Prisma.SupportTicketNoteUncheckedUpdateManyWithoutAdminNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutCustomerNestedInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUncheckedUpdateManyWithoutUserNestedInput
   paymentCards?: Prisma.PaymentCardUncheckedUpdateManyWithoutUserNestedInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -1899,8 +1991,12 @@ export type UserCreateWithoutOrdersInput = {
   supportNotes?: Prisma.SupportTicketNoteCreateNestedManyWithoutAdminInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutCustomerInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerCreateNestedManyWithoutUserInput
   paymentCards?: Prisma.PaymentCardCreateNestedManyWithoutUserInput
+=======
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -1939,8 +2035,12 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   supportNotes?: Prisma.SupportTicketNoteUncheckedCreateNestedManyWithoutAdminInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCustomerInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUncheckedCreateNestedManyWithoutUserInput
   paymentCards?: Prisma.PaymentCardUncheckedCreateNestedManyWithoutUserInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -1995,8 +2095,12 @@ export type UserUpdateWithoutOrdersInput = {
   supportNotes?: Prisma.SupportTicketNoteUpdateManyWithoutAdminNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutCustomerNestedInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUpdateManyWithoutUserNestedInput
   paymentCards?: Prisma.PaymentCardUpdateManyWithoutUserNestedInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -2035,8 +2139,12 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   supportNotes?: Prisma.SupportTicketNoteUncheckedUpdateManyWithoutAdminNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutCustomerNestedInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUncheckedUpdateManyWithoutUserNestedInput
   paymentCards?: Prisma.PaymentCardUncheckedUpdateManyWithoutUserNestedInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -2075,8 +2183,12 @@ export type UserCreateWithoutReviewsInput = {
   supportNotes?: Prisma.SupportTicketNoteCreateNestedManyWithoutAdminInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutCustomerInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerCreateNestedManyWithoutUserInput
   paymentCards?: Prisma.PaymentCardCreateNestedManyWithoutUserInput
+=======
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -2115,8 +2227,12 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   supportNotes?: Prisma.SupportTicketNoteUncheckedCreateNestedManyWithoutAdminInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCustomerInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUncheckedCreateNestedManyWithoutUserInput
   paymentCards?: Prisma.PaymentCardUncheckedCreateNestedManyWithoutUserInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -2171,8 +2287,12 @@ export type UserUpdateWithoutReviewsInput = {
   supportNotes?: Prisma.SupportTicketNoteUpdateManyWithoutAdminNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutCustomerNestedInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUpdateManyWithoutUserNestedInput
   paymentCards?: Prisma.PaymentCardUpdateManyWithoutUserNestedInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -2211,8 +2331,12 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   supportNotes?: Prisma.SupportTicketNoteUncheckedUpdateManyWithoutAdminNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutCustomerNestedInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUncheckedUpdateManyWithoutUserNestedInput
   paymentCards?: Prisma.PaymentCardUncheckedUpdateManyWithoutUserNestedInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -2251,8 +2375,12 @@ export type UserCreateWithoutReviewResponsesInput = {
   supportNotes?: Prisma.SupportTicketNoteCreateNestedManyWithoutAdminInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutCustomerInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerCreateNestedManyWithoutUserInput
   paymentCards?: Prisma.PaymentCardCreateNestedManyWithoutUserInput
+=======
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -2291,8 +2419,12 @@ export type UserUncheckedCreateWithoutReviewResponsesInput = {
   supportNotes?: Prisma.SupportTicketNoteUncheckedCreateNestedManyWithoutAdminInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCustomerInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUncheckedCreateNestedManyWithoutUserInput
   paymentCards?: Prisma.PaymentCardUncheckedCreateNestedManyWithoutUserInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -2347,8 +2479,12 @@ export type UserUpdateWithoutReviewResponsesInput = {
   supportNotes?: Prisma.SupportTicketNoteUpdateManyWithoutAdminNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutCustomerNestedInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUpdateManyWithoutUserNestedInput
   paymentCards?: Prisma.PaymentCardUpdateManyWithoutUserNestedInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -2387,8 +2523,12 @@ export type UserUncheckedUpdateWithoutReviewResponsesInput = {
   supportNotes?: Prisma.SupportTicketNoteUncheckedUpdateManyWithoutAdminNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutCustomerNestedInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUncheckedUpdateManyWithoutUserNestedInput
   paymentCards?: Prisma.PaymentCardUncheckedUpdateManyWithoutUserNestedInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -2427,8 +2567,12 @@ export type UserCreateWithoutFavoritesInput = {
   supportNotes?: Prisma.SupportTicketNoteCreateNestedManyWithoutAdminInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutCustomerInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerCreateNestedManyWithoutUserInput
   paymentCards?: Prisma.PaymentCardCreateNestedManyWithoutUserInput
+=======
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -2467,8 +2611,12 @@ export type UserUncheckedCreateWithoutFavoritesInput = {
   supportNotes?: Prisma.SupportTicketNoteUncheckedCreateNestedManyWithoutAdminInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCustomerInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUncheckedCreateNestedManyWithoutUserInput
   paymentCards?: Prisma.PaymentCardUncheckedCreateNestedManyWithoutUserInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -2523,8 +2671,12 @@ export type UserUpdateWithoutFavoritesInput = {
   supportNotes?: Prisma.SupportTicketNoteUpdateManyWithoutAdminNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutCustomerNestedInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUpdateManyWithoutUserNestedInput
   paymentCards?: Prisma.PaymentCardUpdateManyWithoutUserNestedInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -2563,8 +2715,12 @@ export type UserUncheckedUpdateWithoutFavoritesInput = {
   supportNotes?: Prisma.SupportTicketNoteUncheckedUpdateManyWithoutAdminNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutCustomerNestedInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUncheckedUpdateManyWithoutUserNestedInput
   paymentCards?: Prisma.PaymentCardUncheckedUpdateManyWithoutUserNestedInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -2603,8 +2759,12 @@ export type UserCreateWithoutConversationsInput = {
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   supportNotes?: Prisma.SupportTicketNoteCreateNestedManyWithoutAdminInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerCreateNestedManyWithoutUserInput
   paymentCards?: Prisma.PaymentCardCreateNestedManyWithoutUserInput
+=======
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -2643,8 +2803,12 @@ export type UserUncheckedCreateWithoutConversationsInput = {
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   supportNotes?: Prisma.SupportTicketNoteUncheckedCreateNestedManyWithoutAdminInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUncheckedCreateNestedManyWithoutUserInput
   paymentCards?: Prisma.PaymentCardUncheckedCreateNestedManyWithoutUserInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -2699,8 +2863,12 @@ export type UserUpdateWithoutConversationsInput = {
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   supportNotes?: Prisma.SupportTicketNoteUpdateManyWithoutAdminNestedInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUpdateManyWithoutUserNestedInput
   paymentCards?: Prisma.PaymentCardUpdateManyWithoutUserNestedInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -2739,8 +2907,12 @@ export type UserUncheckedUpdateWithoutConversationsInput = {
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   supportNotes?: Prisma.SupportTicketNoteUncheckedUpdateManyWithoutAdminNestedInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUncheckedUpdateManyWithoutUserNestedInput
   paymentCards?: Prisma.PaymentCardUncheckedUpdateManyWithoutUserNestedInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -2779,8 +2951,12 @@ export type UserCreateWithoutMessagesSentInput = {
   supportNotes?: Prisma.SupportTicketNoteCreateNestedManyWithoutAdminInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutCustomerInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerCreateNestedManyWithoutUserInput
   paymentCards?: Prisma.PaymentCardCreateNestedManyWithoutUserInput
+=======
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -2819,8 +2995,12 @@ export type UserUncheckedCreateWithoutMessagesSentInput = {
   supportNotes?: Prisma.SupportTicketNoteUncheckedCreateNestedManyWithoutAdminInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCustomerInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUncheckedCreateNestedManyWithoutUserInput
   paymentCards?: Prisma.PaymentCardUncheckedCreateNestedManyWithoutUserInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -2875,8 +3055,12 @@ export type UserUpdateWithoutMessagesSentInput = {
   supportNotes?: Prisma.SupportTicketNoteUpdateManyWithoutAdminNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutCustomerNestedInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUpdateManyWithoutUserNestedInput
   paymentCards?: Prisma.PaymentCardUpdateManyWithoutUserNestedInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -2914,6 +3098,7 @@ export type UserUncheckedUpdateWithoutMessagesSentInput = {
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   supportNotes?: Prisma.SupportTicketNoteUncheckedUpdateManyWithoutAdminNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutCustomerNestedInput
+<<<<<<< HEAD
 <<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUncheckedUpdateManyWithoutUserNestedInput
   paymentCards?: Prisma.PaymentCardUncheckedUpdateManyWithoutUserNestedInput
@@ -3240,6 +3425,9 @@ export type UserUncheckedUpdateWithoutPaymentCardsInput = {
 =======
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
+=======
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 }
 
 export type UserCreateWithoutNotificationsInput = {
@@ -3275,8 +3463,12 @@ export type UserCreateWithoutNotificationsInput = {
   supportNotes?: Prisma.SupportTicketNoteCreateNestedManyWithoutAdminInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutCustomerInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerCreateNestedManyWithoutUserInput
   paymentCards?: Prisma.PaymentCardCreateNestedManyWithoutUserInput
+=======
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -3315,8 +3507,12 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   supportNotes?: Prisma.SupportTicketNoteUncheckedCreateNestedManyWithoutAdminInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCustomerInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUncheckedCreateNestedManyWithoutUserInput
   paymentCards?: Prisma.PaymentCardUncheckedCreateNestedManyWithoutUserInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -3371,8 +3567,12 @@ export type UserUpdateWithoutNotificationsInput = {
   supportNotes?: Prisma.SupportTicketNoteUpdateManyWithoutAdminNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutCustomerNestedInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUpdateManyWithoutUserNestedInput
   paymentCards?: Prisma.PaymentCardUpdateManyWithoutUserNestedInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -3411,8 +3611,12 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   supportNotes?: Prisma.SupportTicketNoteUncheckedUpdateManyWithoutAdminNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutCustomerNestedInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUncheckedUpdateManyWithoutUserNestedInput
   paymentCards?: Prisma.PaymentCardUncheckedUpdateManyWithoutUserNestedInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -3451,8 +3655,12 @@ export type UserCreateWithoutSupportTicketsInput = {
   supportNotes?: Prisma.SupportTicketNoteCreateNestedManyWithoutAdminInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutCustomerInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerCreateNestedManyWithoutUserInput
   paymentCards?: Prisma.PaymentCardCreateNestedManyWithoutUserInput
+=======
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -3491,8 +3699,12 @@ export type UserUncheckedCreateWithoutSupportTicketsInput = {
   supportNotes?: Prisma.SupportTicketNoteUncheckedCreateNestedManyWithoutAdminInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCustomerInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUncheckedCreateNestedManyWithoutUserInput
   paymentCards?: Prisma.PaymentCardUncheckedCreateNestedManyWithoutUserInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -3547,8 +3759,12 @@ export type UserUpdateWithoutSupportTicketsInput = {
   supportNotes?: Prisma.SupportTicketNoteUpdateManyWithoutAdminNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutCustomerNestedInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUpdateManyWithoutUserNestedInput
   paymentCards?: Prisma.PaymentCardUpdateManyWithoutUserNestedInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -3587,8 +3803,12 @@ export type UserUncheckedUpdateWithoutSupportTicketsInput = {
   supportNotes?: Prisma.SupportTicketNoteUncheckedUpdateManyWithoutAdminNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutCustomerNestedInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUncheckedUpdateManyWithoutUserNestedInput
   paymentCards?: Prisma.PaymentCardUncheckedUpdateManyWithoutUserNestedInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -3627,8 +3847,12 @@ export type UserCreateWithoutSupportNotesInput = {
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutCustomerInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerCreateNestedManyWithoutUserInput
   paymentCards?: Prisma.PaymentCardCreateNestedManyWithoutUserInput
+=======
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -3667,8 +3891,12 @@ export type UserUncheckedCreateWithoutSupportNotesInput = {
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCustomerInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUncheckedCreateNestedManyWithoutUserInput
   paymentCards?: Prisma.PaymentCardUncheckedCreateNestedManyWithoutUserInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -3723,8 +3951,12 @@ export type UserUpdateWithoutSupportNotesInput = {
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutCustomerNestedInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUpdateManyWithoutUserNestedInput
   paymentCards?: Prisma.PaymentCardUpdateManyWithoutUserNestedInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -3763,8 +3995,12 @@ export type UserUncheckedUpdateWithoutSupportNotesInput = {
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutCustomerNestedInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: Prisma.PaymentCustomerUncheckedUpdateManyWithoutUserNestedInput
   paymentCards?: Prisma.PaymentCardUncheckedUpdateManyWithoutUserNestedInput
+=======
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -3787,8 +4023,12 @@ export type UserCountOutputType = {
   supportNotes: number
   conversations: number
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers: number
   paymentCards: number
+=======
+  refreshTokens: number
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens: number
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -3806,8 +4046,12 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   supportNotes?: boolean | UserCountOutputTypeCountSupportNotesArgs
   conversations?: boolean | UserCountOutputTypeCountConversationsArgs
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: boolean | UserCountOutputTypeCountPaymentCustomersArgs
   paymentCards?: boolean | UserCountOutputTypeCountPaymentCardsArgs
+=======
+  refreshTokens?: boolean | UserCountOutputTypeCountRefreshTokensArgs
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: boolean | UserCountOutputTypeCountRefreshTokensArgs
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -3897,6 +4141,7 @@ export type UserCountOutputTypeCountConversationsArgs<ExtArgs extends runtime.Ty
  * UserCountOutputType without action
  */
 <<<<<<< HEAD
+<<<<<<< HEAD
 export type UserCountOutputTypeCountPaymentCustomersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.PaymentCustomerWhereInput
 }
@@ -3906,6 +4151,10 @@ export type UserCountOutputTypeCountPaymentCustomersArgs<ExtArgs extends runtime
  */
 export type UserCountOutputTypeCountPaymentCardsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.PaymentCardWhereInput
+=======
+export type UserCountOutputTypeCountRefreshTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.RefreshTokenWhereInput
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
 export type UserCountOutputTypeCountRefreshTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.RefreshTokenWhereInput
@@ -3947,8 +4196,12 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   supportNotes?: boolean | Prisma.User$supportNotesArgs<ExtArgs>
   conversations?: boolean | Prisma.User$conversationsArgs<ExtArgs>
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: boolean | Prisma.User$paymentCustomersArgs<ExtArgs>
   paymentCards?: boolean | Prisma.User$paymentCardsArgs<ExtArgs>
+=======
+  refreshTokens?: boolean | Prisma.User$refreshTokensArgs<ExtArgs>
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: boolean | Prisma.User$refreshTokensArgs<ExtArgs>
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -4037,8 +4290,12 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   supportNotes?: boolean | Prisma.User$supportNotesArgs<ExtArgs>
   conversations?: boolean | Prisma.User$conversationsArgs<ExtArgs>
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers?: boolean | Prisma.User$paymentCustomersArgs<ExtArgs>
   paymentCards?: boolean | Prisma.User$paymentCardsArgs<ExtArgs>
+=======
+  refreshTokens?: boolean | Prisma.User$refreshTokensArgs<ExtArgs>
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens?: boolean | Prisma.User$refreshTokensArgs<ExtArgs>
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -4064,8 +4321,12 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     supportNotes: Prisma.$SupportTicketNotePayload<ExtArgs>[]
     conversations: Prisma.$ConversationPayload<ExtArgs>[]
 <<<<<<< HEAD
+<<<<<<< HEAD
     paymentCustomers: Prisma.$PaymentCustomerPayload<ExtArgs>[]
     paymentCards: Prisma.$PaymentCardPayload<ExtArgs>[]
+=======
+    refreshTokens: Prisma.$RefreshTokenPayload<ExtArgs>[]
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
     refreshTokens: Prisma.$RefreshTokenPayload<ExtArgs>[]
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -4498,8 +4759,12 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   supportNotes<T extends Prisma.User$supportNotesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$supportNotesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SupportTicketNotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   conversations<T extends Prisma.User$conversationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$conversationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
 <<<<<<< HEAD
+<<<<<<< HEAD
   paymentCustomers<T extends Prisma.User$paymentCustomersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$paymentCustomersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentCustomerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   paymentCards<T extends Prisma.User$paymentCardsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$paymentCardsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentCardPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+=======
+  refreshTokens<T extends Prisma.User$refreshTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$refreshTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RefreshTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 =======
   refreshTokens<T extends Prisma.User$refreshTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$refreshTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RefreshTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
@@ -5242,6 +5507,7 @@ export type User$conversationsArgs<ExtArgs extends runtime.Types.Extensions.Inte
 
 /**
 <<<<<<< HEAD
+<<<<<<< HEAD
  * User.paymentCustomers
  */
 export type User$paymentCustomersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -5288,6 +5554,8 @@ export type User$paymentCardsArgs<ExtArgs extends runtime.Types.Extensions.Inter
   skip?: number
   distinct?: Prisma.PaymentCardScalarFieldEnum | Prisma.PaymentCardScalarFieldEnum[]
 =======
+=======
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
  * User.refreshTokens
  */
 export type User$refreshTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -5309,6 +5577,9 @@ export type User$refreshTokensArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.RefreshTokenScalarFieldEnum | Prisma.RefreshTokenScalarFieldEnum[]
+<<<<<<< HEAD
+>>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
+=======
 >>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 }
 
