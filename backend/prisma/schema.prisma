@@ -150,39 +150,13 @@ model User {
   supportTickets  SupportTicket[]
   supportNotes    SupportTicketNote[]
   conversations   Conversation[]      @relation("CustomerConversations")
-<<<<<<< HEAD
-<<<<<<< HEAD
   paymentCustomers PaymentCustomer[]
   paymentCards    PaymentCard[]
-=======
-  refreshTokens  RefreshToken[]
->>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
-=======
-  refreshTokens  RefreshToken[]
->>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 
   @@index([email])
   @@index([document])
   @@index([role])
   @@index([active])
-}
-
-model RefreshToken {
-  id         String    @id @default(uuid())
-  userId     String
-  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  jti        String    @unique
-  tokenHash  String
-  expiresAt  DateTime
-  usedAt     DateTime?
-  revokedAt  DateTime?
-  replacedBy String?
-  userAgent  String?
-  ip         String?
-  createdAt  DateTime  @default(now())
-
-  @@index([userId])
-  @@index([expiresAt])
 }
 
 model CustomerProfile {

@@ -18,6 +18,11 @@ interface TokenMeta {
   userAgent?: string;
 }
 
+interface StoredRefreshToken {
+  token: string;
+  exp: Date;
+}
+
 function hashToken(token: string): string {
   return createHash('sha256').update(token).digest('hex');
 }
@@ -25,6 +30,7 @@ function hashToken(token: string): string {
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
+  private refreshTokenStore = new Map<string, StoredRefreshToken>();
 
   constructor(
     private prisma: PrismaService,
@@ -131,78 +137,27 @@ export class AuthService {
       payload = this.jwtService.verify(refreshToken, {
         secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
       });
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-      const storedToken = this.refreshTokenStore.get(payload.jti);
-
-      if (!storedToken || storedToken.token !== refreshToken) {
-        throw new UnauthorizedException('Invalid refresh token');
-      }
-
-      if (new Date() > storedToken.exp) {
-        this.refreshTokenStore.delete(payload.jti);
-        throw new UnauthorizedException('Refresh token expired');
-      }
-
-      const user = await this.prisma.user.findUnique({
-        where: { id: payload.sub },
-      });
-
-      if (!user) {
-        throw new UnauthorizedException('User not found');
-      }
-
-      if (!user.active) {
-        throw new UnauthorizedException('Account is inactive');
-      }
-
-      this.refreshTokenStore.delete(payload.jti);
-
-      const tokens = await this.generateTokens(user);
-      return {
-        user: this.toPublicUser(user),
-        ...tokens,
-      };
-    } catch (error) {
-      if (error instanceof UnauthorizedException) {
-        throw error;
-      }
-=======
     } catch {
->>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
-=======
-    } catch {
->>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
-      throw new UnauthorizedException('Invalid or expired refresh token');
+      throw new UnauthorizedException('Invalid refresh token');
     }
 
     if (!payload.jti) {
       throw new UnauthorizedException('Invalid refresh token');
     }
 
-    const storedToken = await this.prisma.refreshToken.findUnique({
-      where: { jti: payload.jti },
-    });
+    const storedToken = this.refreshTokenStore.get(payload.jti);
 
-    if (
-      !storedToken ||
-      storedToken.revokedAt ||
-      storedToken.tokenHash !== hashToken(refreshToken)
-    ) {
+    if (!storedToken || storedToken.token !== refreshToken) {
       throw new UnauthorizedException('Invalid refresh token');
     }
 
-    if (new Date() > storedToken.expiresAt) {
-      await this.prisma.refreshToken.update({
-        where: { id: storedToken.id },
-        data: { revokedAt: new Date() },
-      });
+    if (new Date() > storedToken.exp) {
+      this.refreshTokenStore.delete(payload.jti);
       throw new UnauthorizedException('Refresh token expired');
     }
 
     const user = await this.prisma.user.findUnique({
-      where: { id: payload.sub || storedToken.userId },
+      where: { id: payload.sub },
     });
 
     if (!user) {
@@ -213,20 +168,11 @@ export class AuthService {
       throw new UnauthorizedException('Account is inactive');
     }
 
-    await this.prisma.refreshToken.update({
-      where: { id: storedToken.id },
-      data: { revokedAt: new Date(), usedAt: new Date() },
-    });
+    this.refreshTokenStore.delete(payload.jti);
 
     const tokens = await this.generateTokens(user, meta);
     return {
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        role: user.role,
-        verified: user.verified,
-      },
+      user: this.toPublicUser(user),
       ...tokens,
     };
   }
@@ -253,23 +199,30 @@ export class AuthService {
   }
 
   async logout(userId: string, refreshToken?: string) {
-    const query: any = { revokedAt: null };
     if (refreshToken) {
       try {
         const payload = this.jwtService.verify(refreshToken, {
           secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
         });
-        query.jti = payload.jti;
+        if (payload.jti) {
+          this.refreshTokenStore.delete(payload.jti);
+        }
       } catch {
-        query.userId = userId;
+        for (const [jti, stored] of this.refreshTokenStore.entries()) {
+          if (stored.token === refreshToken) {
+            this.refreshTokenStore.delete(jti);
+            break;
+          }
+        }
       }
     } else {
-      query.userId = userId;
+      for (const [jti, stored] of this.refreshTokenStore.entries()) {
+        if (stored.token === refreshToken) {
+          this.refreshTokenStore.delete(jti);
+          break;
+        }
+      }
     }
-    await this.prisma.refreshToken.updateMany({
-      where: query,
-      data: { revokedAt: new Date() },
-    });
     this.logger.log(`User logged out: ${userId}`);
     return { message: 'Logged out successfully' };
   }
@@ -279,12 +232,18 @@ export class AuthService {
       const payload = this.jwtService.verify(refreshToken, {
         secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
       });
-      await this.prisma.refreshToken.updateMany({
-        where: { jti: payload.jti },
-        data: { revokedAt: new Date() },
-      });
-      this.logger.log('Refresh token revoked on logout');
-    } catch {}
+      if (payload.jti) {
+        this.refreshTokenStore.delete(payload.jti);
+      }
+    } catch {
+      for (const [jti, stored] of this.refreshTokenStore.entries()) {
+        if (stored.token === refreshToken) {
+          this.refreshTokenStore.delete(jti);
+          break;
+        }
+      }
+    }
+    this.logger.log('Refresh token revoked on logout');
     return { message: 'Logged out successfully' };
   }
 
@@ -323,21 +282,13 @@ export class AuthService {
       }
     }
 
-    await this.prisma.refreshToken.create({
-      data: {
-        userId: user.id,
-        jti,
-        tokenHash: hashToken(refreshToken),
-        expiresAt: expDate,
-        userAgent: meta?.userAgent || null,
-        ip: meta?.ip || null,
-      },
+    this.refreshTokenStore.set(jti, {
+      token: refreshToken,
+      exp: expDate,
     });
 
     return { accessToken, refreshToken };
   }
-<<<<<<< HEAD
-<<<<<<< HEAD
 
   private toPublicUser(user: {
     id: string;
@@ -363,9 +314,3 @@ export class AuthService {
     };
   }
 }
-=======
-}
->>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
-=======
-}
->>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806

@@ -14,17 +14,9 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { PaymentsService } from './payments.service';
-<<<<<<< HEAD
-<<<<<<< HEAD
 import { PaymentCardsService } from './payment-cards.service';
 import { CreateCardDto } from './dto/create-card.dto';
 import { CreatePaymentDto } from './dto/create-payment.dto';
-=======
-import { ProcessPaymentDto } from './dto/process-payment.dto';
->>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
-=======
-import { ProcessPaymentDto } from './dto/process-payment.dto';
->>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 
@@ -92,21 +84,9 @@ export class PaymentsController {
 
   @Post('process/:orderId')
   @HttpCode(HttpStatus.CREATED)
-<<<<<<< HEAD
-<<<<<<< HEAD
   @ApiOperation({ summary: 'Process payment for order (legacy)' })
   async processPayment(@CurrentUser() user: any, @Param('orderId') orderId: string, @Body('method') method: string) {
     return this.paymentsService.processPayment(orderId, method, user);
-=======
-  @ApiOperation({ summary: 'Process payment for order' })
-  async processPayment(@CurrentUser() user: any, @Param('orderId') orderId: string, @Body() dto: ProcessPaymentDto) {
-    return this.paymentsService.processPayment(orderId, dto.method, user);
->>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
-=======
-  @ApiOperation({ summary: 'Process payment for order' })
-  async processPayment(@CurrentUser() user: any, @Param('orderId') orderId: string, @Body() dto: ProcessPaymentDto) {
-    return this.paymentsService.processPayment(orderId, dto.method, user);
->>>>>>> 1bd5b84952c5cba1f9d0394813bdfc2f92774806
   }
 
   @Get('order/:orderId')
