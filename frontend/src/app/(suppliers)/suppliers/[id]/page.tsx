@@ -2,15 +2,18 @@
 
 import Link from 'next/link';
 import { useState, useEffect, use } from 'react';
+import { useRouter } from 'next/navigation';
 import { toast } from '@/lib/toast';
 import { useAuth } from '@/hooks/use-auth';
 import { openSupplierConversation, sendMessage as sendChatMessage } from '@/lib/chat-api';
 import { api } from '@/lib/api';
 import { PRODUCT_FILE_URL } from '@/lib/products';
+import { useCart } from '@/hooks/use-cart';
 import {
   Star, MapPin, Phone, MessageCircle, Clock, Package, Truck,
-  CheckCircle, Leaf, Mail, Globe, BadgeCheck, X, Send, Wifi, WifiOff, Loader2, CalendarDays, Store,
+  CheckCircle, Leaf, Mail, Globe, BadgeCheck, X, Send, Wifi, WifiOff, Loader2, CalendarDays, Store, Pencil, Trash2, ShoppingCart,
 } from 'lucide-react';
+import ConfirmDialog from '@/components/ui/confirm-dialog';
 
 interface SupplierInfo {
   id: string;
@@ -47,6 +50,7 @@ interface SupplierProduct {
   image: string;
   rating: number;
   reviews: number;
+  unit: string;
 }
 
 interface SupplierService {
@@ -58,10 +62,13 @@ interface SupplierService {
 
 interface SupplierReview {
   id: string;
-  user: { name: string };
+  userId?: string;
+  user: { id?: string; name: string };
   rating: number;
+  title?: string;
   comment: string;
   createdAt: string;
+  verifiedPurchase?: boolean;
 }
 
 const DEFAULT_BUSINESS_HOURS = [
@@ -72,13 +79,32 @@ const DEFAULT_BUSINESS_HOURS = [
 
 export default function SupplierDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  const router = useRouter();
+  const { addItem } = useCart();
   const { user, isAuthenticated } = useAuth();
   const [supplier, setSupplier] = useState<SupplierInfo | null>(null);
   const [products, setProducts] = useState<SupplierProduct[]>([]);
   const [services, setServices] = useState<SupplierService[]>([]);
   const [reviews, setReviews] = useState<SupplierReview[]>([]);
+  const [sellerReviews, setSellerReviews] = useState<SupplierReview[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [editingReview, setEditingReview] = useState<SupplierReview | null>(null);
+  const [editRating, setEditRating] = useState(0);
+  const [editRatingHover, setEditRatingHover] = useState(0);
+  const [editComment, setEditComment] = useState('');
+  const [editTitle, setEditTitle] = useState('');
+  const [submittingEdit, setSubmittingEdit] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<SupplierReview | null>(null);
+  const [expandedReviews, setExpandedReviews] = useState<Record<string, boolean>>({});
+  const [editingSellerReview, setEditingSellerReview] = useState<any | null>(null);
+  const [editSellerRating, setEditSellerRating] = useState(0);
+  const [editSellerRatingHover, setEditSellerRatingHover] = useState(0);
+  const [editSellerComment, setEditSellerComment] = useState('');
+  const [editSellerTitle, setEditSellerTitle] = useState('');
+  const [submittingSellerEdit, setSubmittingSellerEdit] = useState(false);
+  const [expandedSellerReviews, setExpandedSellerReviews] = useState<Record<string, boolean>>({});
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
   const [chatMessage, setChatMessage] = useState('');
@@ -111,15 +137,107 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
     }
   }
 
+  const startEditReview = (review: SupplierReview) => {
+    setEditingReview(review);
+    setEditRating(review.rating);
+    setEditComment(review.comment);
+    setEditTitle(review.title || '');
+  };
+
+  const handleUpdateReview = async () => {
+    if (!editingReview) return;
+    if (editRating < 1) { toast.error('Selecione a quantidade de estrelas'); return; }
+    if (!editComment.trim()) { toast.error('Escreva um comentário'); return; }
+    setSubmittingEdit(true);
+    try {
+      const res = await api.put(`/reviews/${editingReview.id}`, { rating: editRating, comment: editComment.trim(), title: editTitle });
+      const updated = res.data.data;
+      toast.success('Avaliação atualizada!');
+      setReviews((prev) => prev.map((r) => r.id === editingReview.id ? { ...r, rating: Number(updated.rating) || editRating, comment: updated.comment || editComment.trim(), title: updated.title || '' } : r));
+      setEditingReview(null); setEditRating(0); setEditComment(''); setEditTitle('');
+    } catch (err: any) {
+      const msg = err?.response?.data?.message || 'Erro ao atualizar';
+      toast.error(Array.isArray(msg) ? msg[0] : typeof msg === 'object' ? JSON.stringify(msg) : msg);
+    } finally { setSubmittingEdit(false); }
+  };
+
+  const handleDeleteReview = async (review: SupplierReview) => {
+    setDeletingId(review.id);
+    try {
+      await api.delete(`/reviews/${review.id}`);
+      toast.success('Avaliação removida');
+      setReviews((prev) => prev.filter((r) => r.id !== review.id));
+      if (editingReview?.id === review.id) { setEditingReview(null); setEditRating(0); setEditComment(''); setEditTitle(''); }
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || 'Erro ao remover');
+    } finally { setDeletingId(null); setConfirmDelete(null); }
+  };
+
+  const startEditSellerReview = (review: any) => {
+    setEditingSellerReview(review);
+    setEditSellerRating(review.rating);
+    setEditSellerComment(review.comment || '');
+    setEditSellerTitle(review.title || '');
+  };
+
+  const handleUpdateSellerReview = async () => {
+    if (!editingSellerReview) return;
+    if (editSellerRating < 1) { toast.error('Selecione a quantidade de estrelas'); return; }
+    if (!editSellerComment.trim()) { toast.error('Escreva um comentário'); return; }
+    setSubmittingSellerEdit(true);
+    try {
+      const res = await api.put(`/reviews/seller/${editingSellerReview.id}`, { rating: editSellerRating, comment: editSellerComment.trim(), title: editSellerTitle });
+      const updated = res.data.data;
+      toast.success('Avaliação do fornecedor atualizada!');
+      setSellerReviews((prev) => prev.map((r) => r.id === editingSellerReview.id ? { ...r, rating: Number(updated.rating) || editSellerRating, comment: updated.comment || editSellerComment.trim(), title: updated.title || '' } : r));
+      setEditingSellerReview(null); setEditSellerRating(0); setEditSellerComment(''); setEditSellerTitle('');
+    } catch (err: any) {
+      const msg = err?.response?.data?.message || 'Erro ao atualizar';
+      toast.error(Array.isArray(msg) ? msg[0] : typeof msg === 'object' ? JSON.stringify(msg) : msg);
+    } finally { setSubmittingSellerEdit(false); }
+  };
+
+  const handleDeleteSellerReview = async (review: any) => {
+    setDeletingId(review.id);
+    try {
+      await api.delete(`/reviews/seller/${review.id}`);
+      toast.success('Avaliação do fornecedor removida');
+      setSellerReviews((prev) => prev.filter((r: any) => r.id !== review.id));
+      if (editingSellerReview?.id === review.id) { setEditingSellerReview(null); setEditSellerRating(0); setEditSellerComment(''); setEditSellerTitle(''); }
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || 'Erro ao remover');
+    } finally { setDeletingId(null); setConfirmDelete(null); }
+  };
+
+  const toggleReview = (id: string) => setExpandedReviews((prev) => ({ ...prev, [id]: !prev[id] }));
+  const toggleSellerReview = (id: string) => setExpandedSellerReviews((prev) => ({ ...prev, [id]: !prev[id] }));
+
+  const sortedReviews = [...reviews].sort((a: any, b: any) => {
+    const aIsMine = user?.id && a.userId === user.id;
+    const bIsMine = user?.id && b.userId === user.id;
+    if (aIsMine && !bIsMine) return -1;
+    if (!aIsMine && bIsMine) return 1;
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+  });
+
+  const sortedSellerReviews = [...sellerReviews].sort((a: any, b: any) => {
+    const aIsMine = user?.id && a.userId === user.id;
+    const bIsMine = user?.id && b.userId === user.id;
+    if (aIsMine && !bIsMine) return -1;
+    if (!aIsMine && bIsMine) return 1;
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+  });
+
   useEffect(() => {
     const load = async () => {
       setIsLoading(true);
       try {
-        const [s, p, sv, r] = await Promise.all([
+        const [s, p, sv, r, sr] = await Promise.all([
           api.get(`/suppliers/${id}`),
           api.get('/products', { params: { supplierId: id, limit: 6 } }),
           api.get('/services', { params: { supplierId: id, limit: 10 } }),
           api.get('/reviews', { params: { supplierId: id, limit: 10 } }),
+          api.get('/reviews/seller', { params: { supplierId: id, limit: 10 } }).catch(() => ({ data: { data: { data: [] } } })),
         ]);
 
         const sup = s.data.data;
@@ -162,6 +280,7 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
             image: Array.isArray(prod.images) && prod.images.length > 0 ? PRODUCT_FILE_URL(prod.images[0]) : '',
             rating: Number(prod.rating) || 0,
             reviews: Number(prod.totalReviews) || 0,
+            unit: prod.unit || 'un',
           })),
         );
 
@@ -179,10 +298,28 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
         setReviews(
           reviewsPayload.map((rev: any) => ({
             id: rev.id,
-            user: { name: rev.user?.name || 'Cliente' },
+            userId: rev.user?.id,
+            user: { id: rev.user?.id, name: rev.user?.name || 'Cliente' },
             rating: Number(rev.rating) || 0,
+            title: rev.title || '',
             comment: rev.comment || '',
             createdAt: rev.createdAt,
+            verifiedPurchase: !!rev.verifiedPurchase,
+          })),
+        );
+
+        const sellerRaw: any = (sr as any)?.data?.data;
+        const sellerReviewsPayload = Array.isArray(sellerRaw) ? sellerRaw : Array.isArray(sellerRaw?.data) ? sellerRaw.data : [];
+        setSellerReviews(
+          (sellerReviewsPayload as any[]).map((rev: any) => ({
+            id: rev.id,
+            userId: rev.user?.id,
+            user: { id: rev.user?.id, name: rev.user?.name || 'Cliente' },
+            rating: Number(rev.rating) || 0,
+            title: rev.title || '',
+            comment: rev.comment || '',
+            createdAt: rev.createdAt,
+            verifiedPurchase: !!rev.verifiedPurchase,
           })),
         );
       } catch {
@@ -296,31 +433,51 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {products.map((product) => (
-                  <Link
+                  <div
                     key={product.id}
-                    href={`/products/${product.slug}`}
                     className="flex gap-4 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-4 card-hover"
                   >
-                    {product.image ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={product.image} alt={product.name} className="h-20 w-20 shrink-0 rounded-xl object-cover bg-gray-100 dark:bg-gray-800" />
-                    ) : (
-                      <div className="h-20 w-20 shrink-0 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                        <Leaf className="h-8 w-8 text-gray-400" />
+                    <Link href={`/products/${product.slug}`} className="flex gap-4 flex-1 min-w-0">
+                      {product.image ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={product.image} alt={product.name} className="h-20 w-20 shrink-0 rounded-xl object-cover bg-gray-100 dark:bg-gray-800" />
+                      ) : (
+                        <div className="h-20 w-20 shrink-0 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                          <Leaf className="h-8 w-8 text-gray-400" />
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-medium text-gray-900 dark:text-white line-clamp-2">{product.name}</h3>
+                        <div className="flex items-center gap-1 mt-1">
+                          <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
+                          <span className="text-xs font-medium">{product.rating.toFixed(1)}</span>
+                          <span className="text-xs text-gray-500">({product.reviews})</span>
+                        </div>
+                        <p className="text-lg font-bold text-primary-600 mt-1">
+                          R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                        </p>
                       </div>
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-medium text-gray-900 dark:text-white line-clamp-2">{product.name}</h3>
-                      <div className="flex items-center gap-1 mt-1">
-                        <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
-                        <span className="text-xs font-medium">{product.rating.toFixed(1)}</span>
-                        <span className="text-xs text-gray-500">({product.reviews})</span>
-                      </div>
-                      <p className="text-lg font-bold text-primary-600 mt-1">
-                        R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                      </p>
-                    </div>
-                  </Link>
+                    </Link>
+                    <button
+                      onClick={() => {
+                        if (!supplier) return;
+                        addItem({
+                          id: product.id,
+                          name: product.name,
+                          slug: product.slug,
+                          price: product.price,
+                          unit: product.unit,
+                          image: product.image,
+                          supplierName: supplier.companyName,
+                          supplierId: supplier.id,
+                        }, 1);
+                        router.push('/checkout');
+                      }}
+                      className="btn-primary self-center gap-2 text-xs px-3 py-2 shrink-0"
+                    >
+                      <ShoppingCart className="h-4 w-4" /> Comprar
+                    </button>
+                  </div>
                 ))}
               </div>
             )}
@@ -346,30 +503,61 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
           )}
 
           <div className="rounded-xl border border-gray-200 dark:border-gray-700 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Avaliações ({reviews.length})</h2>
-            {reviews.length === 0 ? (
-              <p className="text-sm text-gray-500">Nenhuma avaliação ainda.</p>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Avaliações do Fornecedor ({sellerReviews.length})</h2>
+            {editingSellerReview && (
+              <div className="mb-6 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 rounded-xl space-y-3">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold text-amber-800">Editando avaliação do fornecedor</p>
+                  <button onClick={() => { setEditingSellerReview(null); setEditSellerRating(0); setEditSellerComment(''); setEditSellerTitle(''); }} className="text-xs text-gray-500 hover:text-primary-600">Cancelar</button>
+                </div>
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: 5 }).map((_, i) => {
+                    const star = i + 1;
+                    const filled = star <= (editSellerRatingHover || editSellerRating);
+                    return <button key={star} type="button" onClick={() => setEditSellerRating(star)} onMouseEnter={() => setEditSellerRatingHover(star)} onMouseLeave={() => setEditSellerRatingHover(0)} className="p-0.5"><Star className={`h-6 w-6 ${filled ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} /></button>;
+                  })}
+                  <span className="ml-2 text-sm font-medium">{editSellerRating.toFixed(1)}</span>
+                </div>
+                <input value={editSellerTitle} onChange={(e) => setEditSellerTitle(e.target.value)} placeholder="Título (opcional)" className="w-full rounded-lg border px-3 py-2 text-sm" />
+                <textarea value={editSellerComment} onChange={(e) => setEditSellerComment(e.target.value)} rows={3} placeholder="Seu comentário..." className="w-full rounded-lg border px-3 py-2 text-sm" />
+                <div className="flex gap-2">
+                  <button onClick={handleUpdateSellerReview} disabled={submittingSellerEdit} className="btn-primary gap-2">{submittingSellerEdit ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />} Salvar</button>
+                  <button onClick={() => setConfirmDelete(editingSellerReview as any)} className="btn-outline gap-2 text-red-600 border-red-200"><Trash2 className="h-4 w-4" /> Remover</button>
+                </div>
+              </div>
+            )}
+            {sellerReviews.length === 0 ? (
+              <p className="text-sm text-gray-500">Nenhuma avaliação do fornecedor ainda.</p>
             ) : (
               <div className="space-y-4">
-                {reviews.map((review) => (
-                  <div key={review.id} className="border-b border-gray-100 dark:border-gray-800 last:border-0 pb-4 last:pb-0">
-                    <div className="flex items-center gap-3 mb-1">
-                      <div className="h-8 w-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-xs font-bold text-primary-700">
-                        {review.user.name.charAt(0)}
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">{review.user.name}</p>
+                {sortedSellerReviews.map((review: any) => {
+                  const expanded = !!expandedSellerReviews[review.id];
+                  const isMine = user?.id && review.userId === user.id;
+                  return (
+                  <div key={review.id} className="border border-gray-100 dark:border-gray-800 rounded-xl p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="h-8 w-8 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center text-xs font-bold text-green-700">{review.user.name.charAt(0)}</div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white truncate flex items-center gap-2">{review.user.name} {isMine && <span className="text-xs text-primary-600 bg-primary-50 rounded-full px-2 py-0.5">Você</span>} {review.verifiedPurchase && <span className="inline-flex items-center gap-1 text-xs text-green-700 bg-green-50 rounded-full px-2 py-0.5"><CheckCircle className="h-3 w-3" /> Verificada</span>}</p>
                         <p className="text-xs text-gray-500">{new Date(review.createdAt).toLocaleDateString('pt-BR')}</p>
                       </div>
                       <div className="flex items-center gap-0.5 ml-auto">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <Star key={i} className={`h-3 w-3 ${i < review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />
-                        ))}
+                        {Array.from({ length: 5 }).map((_, i) => (<Star key={i} className={`h-4 w-4 ${i < review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />))}
+                        <span className="ml-1 text-xs font-medium">{review.rating.toFixed(1)}</span>
                       </div>
+                      {isMine && (
+                        <div className="flex items-center gap-1">
+                          <button type="button" onClick={() => startEditSellerReview(review)} className="p-1.5 rounded-lg text-gray-400 hover:text-primary-600 hover:bg-gray-100" title="Editar"><Pencil className="h-4 w-4" /></button>
+                          <button type="button" onClick={() => setConfirmDelete(review as any)} disabled={deletingId === review.id} className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50" title="Remover">{deletingId === review.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}</button>
+                        </div>
+                      )}
+                      <button type="button" onClick={() => toggleSellerReview(review.id)} className="p-1.5 rounded-lg text-gray-400 hover:text-primary-600 hover:bg-gray-100"><span className="text-xs">{expanded ? '▲' : '▼'}</span></button>
                     </div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{review.comment}</p>
+                    {(expanded || review.title) && review.title && <p className="mt-2 text-sm font-semibold">{review.title}</p>}
+                    {expanded && review.comment && <p className="mt-1 text-sm text-gray-600 dark:text-gray-400 border-t pt-2">{review.comment}</p>}
                   </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
@@ -531,6 +719,13 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
           </div>
         </div>
       )}
+      <ConfirmDialog open={!!confirmDelete} title="Remover avaliação" message={`Deseja remover a avaliação de ${confirmDelete?.user?.name ?? 'este cliente'}?`} confirmLabel="Remover" danger loading={deletingId === confirmDelete?.id} onConfirm={() => {
+        if (!confirmDelete) return;
+        const isSeller = sellerReviews.some((r: any) => r.id === confirmDelete.id);
+        if (isSeller) handleDeleteSellerReview(confirmDelete as any);
+        else handleDeleteReview(confirmDelete);
+      }} onCancel={() => setConfirmDelete(null)} />
     </div>
   );
 }
+

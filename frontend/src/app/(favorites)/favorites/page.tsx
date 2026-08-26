@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Heart, Star, Leaf, Trash2, ShoppingCart, ArrowLeft, Loader2 } from 'lucide-react';
 import { toast } from '@/lib/toast';
 import { useCart } from '@/hooks/use-cart';
@@ -22,6 +23,7 @@ interface FavoriteProduct {
 }
 
 export default function FavoritesPage() {
+  const router = useRouter();
   const [favorites, setFavorites] = useState<FavoriteProduct[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { addItem } = useCart();
@@ -78,6 +80,20 @@ export default function FavoritesPage() {
       supplierName: product.supplier,
       supplierId: product.supplierId,
     });
+  };
+
+  const handleBuy = (product: FavoriteProduct) => {
+    addItem({
+      id: product.id,
+      name: product.name,
+      slug: product.slug,
+      price: product.price,
+      unit: 'un',
+      image: product.image,
+      supplierName: product.supplier,
+      supplierId: product.supplierId,
+    });
+    router.push('/checkout');
   };
 
   return (
@@ -152,14 +168,24 @@ export default function FavoritesPage() {
                 <p className="text-lg font-bold text-primary-600">
                   R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                 </p>
-                <button
-                  onClick={() => addToCart(product)}
-                  disabled={!product.inStock}
-                  className="btn-primary w-full text-sm gap-2 mt-2"
-                >
-                  <ShoppingCart className="h-4 w-4" />
-                  Adicionar ao Carrinho
-                </button>
+                <div className="space-y-2 mt-2">
+                  <button
+                    onClick={() => handleBuy(product)}
+                    disabled={!product.inStock}
+                    className="btn-primary w-full text-sm gap-2"
+                  >
+                    <ShoppingCart className="h-4 w-4" />
+                    Comprar
+                  </button>
+                  <button
+                    onClick={() => addToCart(product)}
+                    disabled={!product.inStock}
+                    className="btn-outline w-full text-sm gap-2"
+                  >
+                    <ShoppingCart className="h-4 w-4" />
+                    Adicionar ao Carrinho
+                  </button>
+                </div>
               </div>
             </div>
           ))}

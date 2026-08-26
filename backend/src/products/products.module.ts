@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ProductsController } from './products.controller';
 import { ProductsService } from './products.service';
+import { StorageModule } from '../common/storage/storage.module';
 
 @Module({
+  imports: [StorageModule],
   controllers: [ProductsController],
   providers: [ProductsService],
   exports: [ProductsService],

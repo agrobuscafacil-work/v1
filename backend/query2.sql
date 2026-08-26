@@ -1,0 +1,1 @@
+SELECT id, "orderNumber", status, "customerId", "supplierId" FROM "Order" WHERE "customerId" = '95258da1-09b2-4b93-8a94-ec7d635937e2';

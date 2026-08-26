@@ -1,14 +1,18 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Search as SearchIcon, Star, Leaf, SlidersHorizontal, X, Loader2 } from 'lucide-react';
+import { Search as SearchIcon, Star, Leaf, SlidersHorizontal, X, Loader2, ShoppingCart } from 'lucide-react';
 import { api } from '@/lib/api';
 import { trackSearch } from '@/lib/analytics';
+import { useCart } from '@/hooks/use-cart';
+import { PRODUCT_FILE_URL } from '@/lib/products';
 
 function SearchContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const { addItem } = useCart();
   const query = searchParams.get('q') || '';
   const [searchTerm, setSearchTerm] = useState(query);
   const [isLoading, setIsLoading] = useState(!!query);
@@ -30,6 +34,9 @@ function SearchContent() {
             slug: p.slug,
             price: Number(p.price) || 0,
             supplier: p.supplier?.companyName || '',
+            supplierId: p.supplier?.id || p.supplierId || '',
+            unit: p.unit || 'un',
+            image: p.images?.[0] || null,
             rating: Number(p.rating) || 0,
             reviews: Number(p.totalReviews) || 0,
           })),
@@ -105,29 +112,55 @@ function SearchContent() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {results.map((product) => (
-            <Link
+            <div
               key={product.id}
-              href={`/products/${product.slug}`}
-              className="group rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 overflow-hidden card-hover"
+              className="group rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 overflow-hidden card-hover flex flex-col"
             >
-              <div className="aspect-[4/3] bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                <Leaf className="h-12 w-12 text-gray-400" />
-              </div>
-              <div className="p-4 space-y-2">
-                <p className="text-xs text-gray-500">{product.supplier}</p>
-                <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 line-clamp-2">
-                  {product.name}
-                </h3>
-                <div className="flex items-center gap-1">
-                  <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
-                  <span className="text-sm font-medium">{product.rating}</span>
-                  <span className="text-xs text-gray-500">({product.reviews})</span>
+              <Link href={`/products/${product.slug}`} className="flex-1">
+                <div className="aspect-[4/3] bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden">
+                  {product.image ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={PRODUCT_FILE_URL(product.image)} alt={product.name} className="h-full w-full object-cover" />
+                  ) : (
+                    <Leaf className="h-12 w-12 text-gray-400" />
+                  )}
                 </div>
-                <p className="text-xl font-bold text-primary-600">
-                  R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                </p>
+                <div className="p-4 space-y-2">
+                  <p className="text-xs text-gray-500">{product.supplier}</p>
+                  <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 line-clamp-2">
+                    {product.name}
+                  </h3>
+                  <div className="flex items-center gap-1">
+                    <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
+                    <span className="text-sm font-medium">{product.rating}</span>
+                    <span className="text-xs text-gray-500">({product.reviews})</span>
+                  </div>
+                  <p className="text-xl font-bold text-primary-600">
+                    R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                  </p>
+                </div>
+              </Link>
+              <div className="p-3 pt-0">
+                <button
+                  onClick={() => {
+                    addItem({
+                      id: product.id,
+                      name: product.name,
+                      slug: product.slug,
+                      price: product.price,
+                      unit: product.unit,
+                      image: product.image ? PRODUCT_FILE_URL(product.image) : '',
+                      supplierName: product.supplier,
+                      supplierId: product.supplierId,
+                    }, 1);
+                    router.push('/checkout');
+                  }}
+                  className="btn-primary w-full gap-2 text-sm"
+                >
+                  <ShoppingCart className="h-4 w-4" /> Comprar
+                </button>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       )}

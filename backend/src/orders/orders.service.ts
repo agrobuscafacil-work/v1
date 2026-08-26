@@ -4,6 +4,7 @@ import { Prisma } from '../generated/prisma/client';
 import { OrderStatus, PaymentMethod } from '../generated/prisma/client';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
+import { ConfirmDeliveryDto } from './dto/confirm-delivery.dto';
 import { NotificationsService } from '../notifications/notifications.service';
 import { parsePage, parseLimit } from '../common/utils/pagination';
 
@@ -176,7 +177,7 @@ export class OrdersService {
       this.prisma.order.findMany({
         where, skip, take: limit,
         include: {
-          items: { include: { product: { select: { id: true, name: true, images: true } } } },
+          items: { include: { product: { select: { id: true, name: true, images: true, slug: true } } } },
           customer: { select: { id: true, name: true, email: true } },
           supplier: { select: { id: true, companyName: true, tradingName: true, logoUrl: true } },
         },
@@ -207,7 +208,7 @@ export class OrdersService {
     const order = await this.prisma.order.findUnique({
       where: { id },
       include: {
-        items: { include: { product: { select: { id: true, name: true, images: true } } } },
+        items: { include: { product: { select: { id: true, name: true, images: true, slug: true, supplierId: true } } } },
         customer: { select: { id: true, name: true, email: true, phone: true } },
         supplier: { select: { userId: true } },
         payment: true,
@@ -242,9 +243,23 @@ export class OrdersService {
         status: dto.status as OrderStatus,
         ...(dto.trackingCode !== undefined ? { trackingCode: dto.trackingCode } : {}),
       },
-      include: { items: true },
+      include: { items: true, customer: { select: { id: true } } },
     });
     this.logger.log(`Order ${id} status updated to ${dto.status}`);
+
+    if (dto.status === 'DELIVERED') {
+      const full = await this.prisma.order.findUnique({ where: { id }, select: { customerId: true, orderNumber: true } });
+      if (full) {
+        await this.notificationsService.create({
+          userId: full.customerId,
+          type: 'ORDER_UPDATED' as any,
+          title: 'Pedido entregue!',
+          message: `Seu pedido #${full.orderNumber} foi marcado como entregue. Confirme o recebimento para avaliar o produto e o fornecedor.`,
+          data: { orderId: id, orderNumber: full.orderNumber, action: 'go_to_orders', url: '/orders' },
+        }).catch(() => undefined);
+      }
+    }
+
     return updated;
   }
 
@@ -265,6 +280,54 @@ export class OrdersService {
     });
     this.logger.log(`Order ${id} cancelled`);
     return updated;
+  }
+
+  async confirmDelivery(id: string, user: { id: string; role: string }) {
+    const order = await this.prisma.order.findUnique({
+      where: { id },
+      include: { items: { include: { product: { select: { supplierId: true } } } } },
+    });
+    if (!order) throw new NotFoundException('Order not found');
+    if (order.customerId !== user.id) {
+      throw new ForbiddenException('Only the customer can confirm delivery');
+    }
+    if (order.status !== 'DELIVERED') {
+      throw new BadRequestException('Order must be in DELIVERED status to confirm delivery');
+    }
+    if (order.confirmedDeliveryAt) {
+      throw new BadRequestException('Delivery already confirmed');
+    }
+
+    const now = new Date();
+
+    await this.prisma.$transaction([
+      this.prisma.order.update({
+        where: { id },
+        data: { confirmedDeliveryAt: now },
+      }),
+      this.prisma.orderItem.updateMany({
+        where: { orderId: id },
+        data: { confirmedDeliveryAt: now },
+      }),
+    ]);
+
+    this.logger.log(`Delivery confirmed for order ${id} by customer ${user.id}`);
+
+    const supplier = await this.prisma.supplierProfile.findUnique({
+      where: { id: order.supplierId },
+      select: { userId: true },
+    });
+    if (supplier) {
+      await this.notificationsService.create({
+        userId: supplier.userId,
+        type: 'DELIVERY_CONFIRMED',
+        title: 'Cliente confirmou recebimento',
+        message: `O cliente confirmou o recebimento do pedido #${order.orderNumber}.`,
+        data: { orderId: order.id, orderNumber: order.orderNumber },
+      }).catch(() => undefined);
+    }
+
+    return this.findById(id);
   }
 
   async remove(id: string) {

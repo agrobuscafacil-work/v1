@@ -3,10 +3,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Search, SlidersHorizontal, X, Star, Leaf, ChevronDown, Grid3X3, List, Loader2 } from 'lucide-react';
+import { Search, SlidersHorizontal, X, Star, Leaf, ChevronDown, Grid3X3, List, Loader2, ShoppingCart } from 'lucide-react';
 import type { Metadata } from 'next';
+import { useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
 import { PRODUCT_FILE_URL } from '@/lib/products';
+import { useCart } from '@/hooks/use-cart';
 
 const sortOptions = [
   { value: 'relevance', label: 'Relevância' },
@@ -24,6 +26,7 @@ interface DisplayProduct {
   comparePrice: number | null;
   image: string | null;
   supplier: string;
+  supplierId: string;
   categoryId: string;
   rating: number;
   reviews: number;
@@ -33,6 +36,8 @@ interface DisplayProduct {
 }
 
 export default function ProductsPage() {
+  const router = useRouter();
+  const { addItem } = useCart();
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [sortBy, setSortBy] = useState('relevance');
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
@@ -70,6 +75,7 @@ export default function ProductsPage() {
             comparePrice: p.comparePrice != null ? Number(p.comparePrice) : null,
             image: p.images?.[0] || null,
             supplier: p.supplier?.companyName || 'Fornecedor',
+            supplierId: p.supplier?.id || p.supplierId || '',
             categoryId: p.categoryId,
             rating: Number(p.rating) || 0,
             reviews: Number(p.totalReviews) || 0,
@@ -295,53 +301,76 @@ export default function ProductsPage() {
               : 'space-y-4'
             }>
               {filteredProducts.map((product) => (
-                <Link
+                <div
                   key={product.id}
-                  href={`/products/${product.slug}`}
-                  className={`group bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 overflow-hidden card-hover ${
-                    viewMode === 'grid' ? 'rounded-xl' : 'flex rounded-xl'
+                  className={`group bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 overflow-hidden card-hover flex flex-col ${
+                    viewMode === 'grid' ? 'rounded-xl' : 'flex-row rounded-xl'
                   }`}
                 >
-                  <div className={`bg-gray-100 dark:bg-gray-800 relative flex items-center justify-center ${
-                    viewMode === 'grid' ? 'aspect-[4/3]' : 'w-48 shrink-0 aspect-square'
-                  }`}>
-                    {product.image ? (
-                      <Image
-                        src={PRODUCT_FILE_URL(product.image)}
-                        alt={product.name}
-                        fill
-                        sizes={viewMode === 'grid' ? '(max-width: 640px) 50vw, 25vw' : '192px'}
-                        className="object-cover"
-                      />
-                    ) : (
-                      <Leaf className="h-12 w-12 text-gray-400" />
-                    )}
-                    {product.freeShipping && (
-                      <span className="absolute top-2 left-2 badge-green text-xs">Frete Grátis</span>
-                    )}
-                  </div>
-                  <div className="p-4 flex-1 space-y-2">
-                    <p className="text-xs text-gray-500 dark:text-gray-400">{product.supplier}</p>
-                    <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 transition-colors line-clamp-2">
-                      {product.name}
-                    </h3>
-                    <div className="flex items-center gap-1">
-                      <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
-                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{product.rating}</span>
-                      <span className="text-xs text-gray-500">({product.reviews})</span>
-                    </div>
-                    <div className="flex items-baseline gap-2">
-                      <p className="text-xl font-bold text-primary-600">
-                        R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                      </p>
-                      {product.comparePrice && (
-                        <p className="text-sm text-gray-400 line-through">
-                          R$ {product.comparePrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                        </p>
+                  <Link href={`/products/${product.slug}`} className={`flex-1 ${viewMode === 'grid' ? '' : 'flex flex-1'}`}>
+                    <div className={`bg-gray-100 dark:bg-gray-800 relative flex items-center justify-center ${
+                      viewMode === 'grid' ? 'aspect-[4/3] w-full' : 'w-48 shrink-0 aspect-square'
+                    }`}>
+                      {product.image ? (
+                        <Image
+                          src={PRODUCT_FILE_URL(product.image)}
+                          alt={product.name}
+                          fill
+                          sizes={viewMode === 'grid' ? '(max-width: 640px) 50vw, 25vw' : '192px'}
+                          className="object-cover"
+                        />
+                      ) : (
+                        <Leaf className="h-12 w-12 text-gray-400" />
+                      )}
+                      {product.freeShipping && (
+                        <span className="absolute top-2 left-2 badge-green text-xs">Frete Grátis</span>
                       )}
                     </div>
+                    <div className="p-4 flex-1 space-y-2">
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{product.supplier}</p>
+                      <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 transition-colors line-clamp-2">
+                        {product.name}
+                      </h3>
+                      <div className="flex items-center gap-1">
+                        <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{product.rating}</span>
+                        <span className="text-xs text-gray-500">({product.reviews})</span>
+                      </div>
+                      <div className="flex items-baseline gap-2">
+                        <p className="text-xl font-bold text-primary-600">
+                          R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                        </p>
+                        {product.comparePrice && (
+                          <p className="text-sm text-gray-400 line-through">
+                            R$ {product.comparePrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </Link>
+                  <div className="p-3 pt-0">
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        addItem({
+                          id: product.id,
+                          name: product.name,
+                          slug: product.slug,
+                          price: product.price,
+                          unit: product.unit,
+                          image: product.image ? PRODUCT_FILE_URL(product.image) : '',
+                          supplierName: product.supplier,
+                          supplierId: product.supplierId,
+                        }, 1);
+                        router.push('/checkout');
+                      }}
+                      className="btn-primary w-full gap-2 text-sm"
+                    >
+                      <ShoppingCart className="h-4 w-4" /> Comprar
+                    </button>
                   </div>
-                </Link>
+                </div>
               ))}
             </div>
           )}

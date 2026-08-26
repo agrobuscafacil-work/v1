@@ -29,6 +29,8 @@ export type AggregateSupplierProfile = {
 export type SupplierProfileAvgAggregateOutputType = {
   rating: runtime.Decimal | null
   totalReviews: number | null
+  sellerRating: runtime.Decimal | null
+  sellerTotalReviews: number | null
   totalProducts: number | null
   totalOrders: number | null
   totalSales: runtime.Decimal | null
@@ -40,6 +42,8 @@ export type SupplierProfileAvgAggregateOutputType = {
 export type SupplierProfileSumAggregateOutputType = {
   rating: runtime.Decimal | null
   totalReviews: number | null
+  sellerRating: runtime.Decimal | null
+  sellerTotalReviews: number | null
   totalProducts: number | null
   totalOrders: number | null
   totalSales: runtime.Decimal | null
@@ -69,6 +73,8 @@ export type SupplierProfileMinAggregateOutputType = {
   reviewedBy: string | null
   rating: runtime.Decimal | null
   totalReviews: number | null
+  sellerRating: runtime.Decimal | null
+  sellerTotalReviews: number | null
   totalProducts: number | null
   totalOrders: number | null
   totalSales: runtime.Decimal | null
@@ -102,6 +108,8 @@ export type SupplierProfileMaxAggregateOutputType = {
   reviewedBy: string | null
   rating: runtime.Decimal | null
   totalReviews: number | null
+  sellerRating: runtime.Decimal | null
+  sellerTotalReviews: number | null
   totalProducts: number | null
   totalOrders: number | null
   totalSales: runtime.Decimal | null
@@ -135,6 +143,8 @@ export type SupplierProfileCountAggregateOutputType = {
   reviewedBy: number
   rating: number
   totalReviews: number
+  sellerRating: number
+  sellerTotalReviews: number
   totalProducts: number
   totalOrders: number
   totalSales: number
@@ -157,6 +167,8 @@ export type SupplierProfileCountAggregateOutputType = {
 export type SupplierProfileAvgAggregateInputType = {
   rating?: true
   totalReviews?: true
+  sellerRating?: true
+  sellerTotalReviews?: true
   totalProducts?: true
   totalOrders?: true
   totalSales?: true
@@ -168,6 +180,8 @@ export type SupplierProfileAvgAggregateInputType = {
 export type SupplierProfileSumAggregateInputType = {
   rating?: true
   totalReviews?: true
+  sellerRating?: true
+  sellerTotalReviews?: true
   totalProducts?: true
   totalOrders?: true
   totalSales?: true
@@ -197,6 +211,8 @@ export type SupplierProfileMinAggregateInputType = {
   reviewedBy?: true
   rating?: true
   totalReviews?: true
+  sellerRating?: true
+  sellerTotalReviews?: true
   totalProducts?: true
   totalOrders?: true
   totalSales?: true
@@ -230,6 +246,8 @@ export type SupplierProfileMaxAggregateInputType = {
   reviewedBy?: true
   rating?: true
   totalReviews?: true
+  sellerRating?: true
+  sellerTotalReviews?: true
   totalProducts?: true
   totalOrders?: true
   totalSales?: true
@@ -263,6 +281,8 @@ export type SupplierProfileCountAggregateInputType = {
   reviewedBy?: true
   rating?: true
   totalReviews?: true
+  sellerRating?: true
+  sellerTotalReviews?: true
   totalProducts?: true
   totalOrders?: true
   totalSales?: true
@@ -388,6 +408,8 @@ export type SupplierProfileGroupByOutputType = {
   reviewedBy: string | null
   rating: runtime.Decimal
   totalReviews: number
+  sellerRating: runtime.Decimal
+  sellerTotalReviews: number
   totalProducts: number
   totalOrders: number
   totalSales: runtime.Decimal
@@ -449,6 +471,8 @@ export type SupplierProfileWhereInput = {
   reviewedBy?: Prisma.StringNullableFilter<"SupplierProfile"> | string | null
   rating?: Prisma.DecimalFilter<"SupplierProfile"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFilter<"SupplierProfile"> | number
+  sellerRating?: Prisma.DecimalFilter<"SupplierProfile"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFilter<"SupplierProfile"> | number
   totalProducts?: Prisma.IntFilter<"SupplierProfile"> | number
   totalOrders?: Prisma.IntFilter<"SupplierProfile"> | number
   totalSales?: Prisma.DecimalFilter<"SupplierProfile"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -470,7 +494,9 @@ export type SupplierProfileWhereInput = {
   orders?: Prisma.OrderListRelationFilter
   promotions?: Prisma.PromotionListRelationFilter
   reviews?: Prisma.ReviewListRelationFilter
+  sellerReviews?: Prisma.SellerReviewListRelationFilter
   reviewResponses?: Prisma.ReviewResponseListRelationFilter
+  sellerResponses?: Prisma.SellerReviewResponseListRelationFilter
   favorites?: Prisma.FavoriteListRelationFilter
   conversations?: Prisma.ConversationListRelationFilter
   workingHours?: Prisma.WorkingHoursListRelationFilter
@@ -502,6 +528,8 @@ export type SupplierProfileOrderByWithRelationInput = {
   reviewedBy?: Prisma.SortOrderInput | Prisma.SortOrder
   rating?: Prisma.SortOrder
   totalReviews?: Prisma.SortOrder
+  sellerRating?: Prisma.SortOrder
+  sellerTotalReviews?: Prisma.SortOrder
   totalProducts?: Prisma.SortOrder
   totalOrders?: Prisma.SortOrder
   totalSales?: Prisma.SortOrder
@@ -523,7 +551,9 @@ export type SupplierProfileOrderByWithRelationInput = {
   orders?: Prisma.OrderOrderByRelationAggregateInput
   promotions?: Prisma.PromotionOrderByRelationAggregateInput
   reviews?: Prisma.ReviewOrderByRelationAggregateInput
+  sellerReviews?: Prisma.SellerReviewOrderByRelationAggregateInput
   reviewResponses?: Prisma.ReviewResponseOrderByRelationAggregateInput
+  sellerResponses?: Prisma.SellerReviewResponseOrderByRelationAggregateInput
   favorites?: Prisma.FavoriteOrderByRelationAggregateInput
   conversations?: Prisma.ConversationOrderByRelationAggregateInput
   workingHours?: Prisma.WorkingHoursOrderByRelationAggregateInput
@@ -558,6 +588,8 @@ export type SupplierProfileWhereUniqueInput = Prisma.AtLeast<{
   reviewedBy?: Prisma.StringNullableFilter<"SupplierProfile"> | string | null
   rating?: Prisma.DecimalFilter<"SupplierProfile"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFilter<"SupplierProfile"> | number
+  sellerRating?: Prisma.DecimalFilter<"SupplierProfile"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFilter<"SupplierProfile"> | number
   totalProducts?: Prisma.IntFilter<"SupplierProfile"> | number
   totalOrders?: Prisma.IntFilter<"SupplierProfile"> | number
   totalSales?: Prisma.DecimalFilter<"SupplierProfile"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -579,7 +611,9 @@ export type SupplierProfileWhereUniqueInput = Prisma.AtLeast<{
   orders?: Prisma.OrderListRelationFilter
   promotions?: Prisma.PromotionListRelationFilter
   reviews?: Prisma.ReviewListRelationFilter
+  sellerReviews?: Prisma.SellerReviewListRelationFilter
   reviewResponses?: Prisma.ReviewResponseListRelationFilter
+  sellerResponses?: Prisma.SellerReviewResponseListRelationFilter
   favorites?: Prisma.FavoriteListRelationFilter
   conversations?: Prisma.ConversationListRelationFilter
   workingHours?: Prisma.WorkingHoursListRelationFilter
@@ -611,6 +645,8 @@ export type SupplierProfileOrderByWithAggregationInput = {
   reviewedBy?: Prisma.SortOrderInput | Prisma.SortOrder
   rating?: Prisma.SortOrder
   totalReviews?: Prisma.SortOrder
+  sellerRating?: Prisma.SortOrder
+  sellerTotalReviews?: Prisma.SortOrder
   totalProducts?: Prisma.SortOrder
   totalOrders?: Prisma.SortOrder
   totalSales?: Prisma.SortOrder
@@ -657,6 +693,8 @@ export type SupplierProfileScalarWhereWithAggregatesInput = {
   reviewedBy?: Prisma.StringNullableWithAggregatesFilter<"SupplierProfile"> | string | null
   rating?: Prisma.DecimalWithAggregatesFilter<"SupplierProfile"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntWithAggregatesFilter<"SupplierProfile"> | number
+  sellerRating?: Prisma.DecimalWithAggregatesFilter<"SupplierProfile"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntWithAggregatesFilter<"SupplierProfile"> | number
   totalProducts?: Prisma.IntWithAggregatesFilter<"SupplierProfile"> | number
   totalOrders?: Prisma.IntWithAggregatesFilter<"SupplierProfile"> | number
   totalSales?: Prisma.DecimalWithAggregatesFilter<"SupplierProfile"> | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -694,6 +732,8 @@ export type SupplierProfileCreateInput = {
   reviewedBy?: string | null
   rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
   totalProducts?: number
   totalOrders?: number
   totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -715,7 +755,9 @@ export type SupplierProfileCreateInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutSupplierInput
   promotions?: Prisma.PromotionCreateNestedManyWithoutSupplierInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutSupplierInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutSupplierInput
   favorites?: Prisma.FavoriteCreateNestedManyWithoutSupplierInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutSupplierInput
   workingHours?: Prisma.WorkingHoursCreateNestedManyWithoutSupplierInput
@@ -747,6 +789,8 @@ export type SupplierProfileUncheckedCreateInput = {
   reviewedBy?: string | null
   rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
   totalProducts?: number
   totalOrders?: number
   totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -767,7 +811,9 @@ export type SupplierProfileUncheckedCreateInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutSupplierInput
   promotions?: Prisma.PromotionUncheckedCreateNestedManyWithoutSupplierInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutSupplierInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
   favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutSupplierInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutSupplierInput
   workingHours?: Prisma.WorkingHoursUncheckedCreateNestedManyWithoutSupplierInput
@@ -798,6 +844,8 @@ export type SupplierProfileUpdateInput = {
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -819,7 +867,9 @@ export type SupplierProfileUpdateInput = {
   orders?: Prisma.OrderUpdateManyWithoutSupplierNestedInput
   promotions?: Prisma.PromotionUpdateManyWithoutSupplierNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUpdateManyWithoutSupplierNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutSupplierNestedInput
   favorites?: Prisma.FavoriteUpdateManyWithoutSupplierNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutSupplierNestedInput
   workingHours?: Prisma.WorkingHoursUpdateManyWithoutSupplierNestedInput
@@ -851,6 +901,8 @@ export type SupplierProfileUncheckedUpdateInput = {
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -871,7 +923,9 @@ export type SupplierProfileUncheckedUpdateInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutSupplierNestedInput
   promotions?: Prisma.PromotionUncheckedUpdateManyWithoutSupplierNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutSupplierNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
   favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutSupplierNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutSupplierNestedInput
   workingHours?: Prisma.WorkingHoursUncheckedUpdateManyWithoutSupplierNestedInput
@@ -903,6 +957,8 @@ export type SupplierProfileCreateManyInput = {
   reviewedBy?: string | null
   rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
   totalProducts?: number
   totalOrders?: number
   totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -940,6 +996,8 @@ export type SupplierProfileUpdateManyMutationInput = {
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -978,6 +1036,8 @@ export type SupplierProfileUncheckedUpdateManyInput = {
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1029,6 +1089,8 @@ export type SupplierProfileCountOrderByAggregateInput = {
   reviewedBy?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   totalReviews?: Prisma.SortOrder
+  sellerRating?: Prisma.SortOrder
+  sellerTotalReviews?: Prisma.SortOrder
   totalProducts?: Prisma.SortOrder
   totalOrders?: Prisma.SortOrder
   totalSales?: Prisma.SortOrder
@@ -1049,6 +1111,8 @@ export type SupplierProfileCountOrderByAggregateInput = {
 export type SupplierProfileAvgOrderByAggregateInput = {
   rating?: Prisma.SortOrder
   totalReviews?: Prisma.SortOrder
+  sellerRating?: Prisma.SortOrder
+  sellerTotalReviews?: Prisma.SortOrder
   totalProducts?: Prisma.SortOrder
   totalOrders?: Prisma.SortOrder
   totalSales?: Prisma.SortOrder
@@ -1078,6 +1142,8 @@ export type SupplierProfileMaxOrderByAggregateInput = {
   reviewedBy?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   totalReviews?: Prisma.SortOrder
+  sellerRating?: Prisma.SortOrder
+  sellerTotalReviews?: Prisma.SortOrder
   totalProducts?: Prisma.SortOrder
   totalOrders?: Prisma.SortOrder
   totalSales?: Prisma.SortOrder
@@ -1111,6 +1177,8 @@ export type SupplierProfileMinOrderByAggregateInput = {
   reviewedBy?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   totalReviews?: Prisma.SortOrder
+  sellerRating?: Prisma.SortOrder
+  sellerTotalReviews?: Prisma.SortOrder
   totalProducts?: Prisma.SortOrder
   totalOrders?: Prisma.SortOrder
   totalSales?: Prisma.SortOrder
@@ -1126,6 +1194,8 @@ export type SupplierProfileMinOrderByAggregateInput = {
 export type SupplierProfileSumOrderByAggregateInput = {
   rating?: Prisma.SortOrder
   totalReviews?: Prisma.SortOrder
+  sellerRating?: Prisma.SortOrder
+  sellerTotalReviews?: Prisma.SortOrder
   totalProducts?: Prisma.SortOrder
   totalOrders?: Prisma.SortOrder
   totalSales?: Prisma.SortOrder
@@ -1333,6 +1403,34 @@ export type SupplierProfileUpdateOneRequiredWithoutReviewsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.SupplierProfileUpdateToOneWithWhereWithoutReviewsInput, Prisma.SupplierProfileUpdateWithoutReviewsInput>, Prisma.SupplierProfileUncheckedUpdateWithoutReviewsInput>
 }
 
+export type SupplierProfileCreateNestedOneWithoutSellerResponsesInput = {
+  create?: Prisma.XOR<Prisma.SupplierProfileCreateWithoutSellerResponsesInput, Prisma.SupplierProfileUncheckedCreateWithoutSellerResponsesInput>
+  connectOrCreate?: Prisma.SupplierProfileCreateOrConnectWithoutSellerResponsesInput
+  connect?: Prisma.SupplierProfileWhereUniqueInput
+}
+
+export type SupplierProfileUpdateOneRequiredWithoutSellerResponsesNestedInput = {
+  create?: Prisma.XOR<Prisma.SupplierProfileCreateWithoutSellerResponsesInput, Prisma.SupplierProfileUncheckedCreateWithoutSellerResponsesInput>
+  connectOrCreate?: Prisma.SupplierProfileCreateOrConnectWithoutSellerResponsesInput
+  upsert?: Prisma.SupplierProfileUpsertWithoutSellerResponsesInput
+  connect?: Prisma.SupplierProfileWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.SupplierProfileUpdateToOneWithWhereWithoutSellerResponsesInput, Prisma.SupplierProfileUpdateWithoutSellerResponsesInput>, Prisma.SupplierProfileUncheckedUpdateWithoutSellerResponsesInput>
+}
+
+export type SupplierProfileCreateNestedOneWithoutSellerReviewsInput = {
+  create?: Prisma.XOR<Prisma.SupplierProfileCreateWithoutSellerReviewsInput, Prisma.SupplierProfileUncheckedCreateWithoutSellerReviewsInput>
+  connectOrCreate?: Prisma.SupplierProfileCreateOrConnectWithoutSellerReviewsInput
+  connect?: Prisma.SupplierProfileWhereUniqueInput
+}
+
+export type SupplierProfileUpdateOneRequiredWithoutSellerReviewsNestedInput = {
+  create?: Prisma.XOR<Prisma.SupplierProfileCreateWithoutSellerReviewsInput, Prisma.SupplierProfileUncheckedCreateWithoutSellerReviewsInput>
+  connectOrCreate?: Prisma.SupplierProfileCreateOrConnectWithoutSellerReviewsInput
+  upsert?: Prisma.SupplierProfileUpsertWithoutSellerReviewsInput
+  connect?: Prisma.SupplierProfileWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.SupplierProfileUpdateToOneWithWhereWithoutSellerReviewsInput, Prisma.SupplierProfileUpdateWithoutSellerReviewsInput>, Prisma.SupplierProfileUncheckedUpdateWithoutSellerReviewsInput>
+}
+
 export type SupplierProfileCreateNestedOneWithoutReviewResponsesInput = {
   create?: Prisma.XOR<Prisma.SupplierProfileCreateWithoutReviewResponsesInput, Prisma.SupplierProfileUncheckedCreateWithoutReviewResponsesInput>
   connectOrCreate?: Prisma.SupplierProfileCreateOrConnectWithoutReviewResponsesInput
@@ -1427,6 +1525,8 @@ export type SupplierProfileCreateWithoutUserInput = {
   reviewedBy?: string | null
   rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
   totalProducts?: number
   totalOrders?: number
   totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1447,7 +1547,9 @@ export type SupplierProfileCreateWithoutUserInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutSupplierInput
   promotions?: Prisma.PromotionCreateNestedManyWithoutSupplierInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutSupplierInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutSupplierInput
   favorites?: Prisma.FavoriteCreateNestedManyWithoutSupplierInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutSupplierInput
   workingHours?: Prisma.WorkingHoursCreateNestedManyWithoutSupplierInput
@@ -1478,6 +1580,8 @@ export type SupplierProfileUncheckedCreateWithoutUserInput = {
   reviewedBy?: string | null
   rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
   totalProducts?: number
   totalOrders?: number
   totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1498,7 +1602,9 @@ export type SupplierProfileUncheckedCreateWithoutUserInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutSupplierInput
   promotions?: Prisma.PromotionUncheckedCreateNestedManyWithoutSupplierInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutSupplierInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
   favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutSupplierInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutSupplierInput
   workingHours?: Prisma.WorkingHoursUncheckedCreateNestedManyWithoutSupplierInput
@@ -1545,6 +1651,8 @@ export type SupplierProfileUpdateWithoutUserInput = {
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1565,7 +1673,9 @@ export type SupplierProfileUpdateWithoutUserInput = {
   orders?: Prisma.OrderUpdateManyWithoutSupplierNestedInput
   promotions?: Prisma.PromotionUpdateManyWithoutSupplierNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUpdateManyWithoutSupplierNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutSupplierNestedInput
   favorites?: Prisma.FavoriteUpdateManyWithoutSupplierNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutSupplierNestedInput
   workingHours?: Prisma.WorkingHoursUpdateManyWithoutSupplierNestedInput
@@ -1596,6 +1706,8 @@ export type SupplierProfileUncheckedUpdateWithoutUserInput = {
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1616,7 +1728,9 @@ export type SupplierProfileUncheckedUpdateWithoutUserInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutSupplierNestedInput
   promotions?: Prisma.PromotionUncheckedUpdateManyWithoutSupplierNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutSupplierNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
   favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutSupplierNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutSupplierNestedInput
   workingHours?: Prisma.WorkingHoursUncheckedUpdateManyWithoutSupplierNestedInput
@@ -1647,6 +1761,8 @@ export type SupplierProfileCreateWithoutAddressesInput = {
   reviewedBy?: string | null
   rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
   totalProducts?: number
   totalOrders?: number
   totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1668,7 +1784,9 @@ export type SupplierProfileCreateWithoutAddressesInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutSupplierInput
   promotions?: Prisma.PromotionCreateNestedManyWithoutSupplierInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutSupplierInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutSupplierInput
   favorites?: Prisma.FavoriteCreateNestedManyWithoutSupplierInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutSupplierInput
   workingHours?: Prisma.WorkingHoursCreateNestedManyWithoutSupplierInput
@@ -1699,6 +1817,8 @@ export type SupplierProfileUncheckedCreateWithoutAddressesInput = {
   reviewedBy?: string | null
   rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
   totalProducts?: number
   totalOrders?: number
   totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1719,7 +1839,9 @@ export type SupplierProfileUncheckedCreateWithoutAddressesInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutSupplierInput
   promotions?: Prisma.PromotionUncheckedCreateNestedManyWithoutSupplierInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutSupplierInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
   favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutSupplierInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutSupplierInput
   workingHours?: Prisma.WorkingHoursUncheckedCreateNestedManyWithoutSupplierInput
@@ -1765,6 +1887,8 @@ export type SupplierProfileUpdateWithoutAddressesInput = {
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1786,7 +1910,9 @@ export type SupplierProfileUpdateWithoutAddressesInput = {
   orders?: Prisma.OrderUpdateManyWithoutSupplierNestedInput
   promotions?: Prisma.PromotionUpdateManyWithoutSupplierNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUpdateManyWithoutSupplierNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutSupplierNestedInput
   favorites?: Prisma.FavoriteUpdateManyWithoutSupplierNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutSupplierNestedInput
   workingHours?: Prisma.WorkingHoursUpdateManyWithoutSupplierNestedInput
@@ -1817,6 +1943,8 @@ export type SupplierProfileUncheckedUpdateWithoutAddressesInput = {
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1837,7 +1965,9 @@ export type SupplierProfileUncheckedUpdateWithoutAddressesInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutSupplierNestedInput
   promotions?: Prisma.PromotionUncheckedUpdateManyWithoutSupplierNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutSupplierNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
   favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutSupplierNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutSupplierNestedInput
   workingHours?: Prisma.WorkingHoursUncheckedUpdateManyWithoutSupplierNestedInput
@@ -1867,6 +1997,8 @@ export type SupplierProfileCreateWithoutCategoriesInput = {
   reviewedBy?: string | null
   rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
   totalProducts?: number
   totalOrders?: number
   totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1888,7 +2020,9 @@ export type SupplierProfileCreateWithoutCategoriesInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutSupplierInput
   promotions?: Prisma.PromotionCreateNestedManyWithoutSupplierInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutSupplierInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutSupplierInput
   favorites?: Prisma.FavoriteCreateNestedManyWithoutSupplierInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutSupplierInput
   workingHours?: Prisma.WorkingHoursCreateNestedManyWithoutSupplierInput
@@ -1919,6 +2053,8 @@ export type SupplierProfileUncheckedCreateWithoutCategoriesInput = {
   reviewedBy?: string | null
   rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
   totalProducts?: number
   totalOrders?: number
   totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1939,7 +2075,9 @@ export type SupplierProfileUncheckedCreateWithoutCategoriesInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutSupplierInput
   promotions?: Prisma.PromotionUncheckedCreateNestedManyWithoutSupplierInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutSupplierInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
   favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutSupplierInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutSupplierInput
   workingHours?: Prisma.WorkingHoursUncheckedCreateNestedManyWithoutSupplierInput
@@ -1985,6 +2123,8 @@ export type SupplierProfileUpdateWithoutCategoriesInput = {
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2006,7 +2146,9 @@ export type SupplierProfileUpdateWithoutCategoriesInput = {
   orders?: Prisma.OrderUpdateManyWithoutSupplierNestedInput
   promotions?: Prisma.PromotionUpdateManyWithoutSupplierNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUpdateManyWithoutSupplierNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutSupplierNestedInput
   favorites?: Prisma.FavoriteUpdateManyWithoutSupplierNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutSupplierNestedInput
   workingHours?: Prisma.WorkingHoursUpdateManyWithoutSupplierNestedInput
@@ -2037,6 +2179,8 @@ export type SupplierProfileUncheckedUpdateWithoutCategoriesInput = {
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2057,7 +2201,9 @@ export type SupplierProfileUncheckedUpdateWithoutCategoriesInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutSupplierNestedInput
   promotions?: Prisma.PromotionUncheckedUpdateManyWithoutSupplierNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutSupplierNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
   favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutSupplierNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutSupplierNestedInput
   workingHours?: Prisma.WorkingHoursUncheckedUpdateManyWithoutSupplierNestedInput
@@ -2087,6 +2233,8 @@ export type SupplierProfileCreateWithoutProductsInput = {
   reviewedBy?: string | null
   rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
   totalProducts?: number
   totalOrders?: number
   totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2107,7 +2255,9 @@ export type SupplierProfileCreateWithoutProductsInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutSupplierInput
   promotions?: Prisma.PromotionCreateNestedManyWithoutSupplierInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutSupplierInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutSupplierInput
   favorites?: Prisma.FavoriteCreateNestedManyWithoutSupplierInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutSupplierInput
   workingHours?: Prisma.WorkingHoursCreateNestedManyWithoutSupplierInput
@@ -2139,6 +2289,8 @@ export type SupplierProfileUncheckedCreateWithoutProductsInput = {
   reviewedBy?: string | null
   rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
   totalProducts?: number
   totalOrders?: number
   totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2158,7 +2310,9 @@ export type SupplierProfileUncheckedCreateWithoutProductsInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutSupplierInput
   promotions?: Prisma.PromotionUncheckedCreateNestedManyWithoutSupplierInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutSupplierInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
   favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutSupplierInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutSupplierInput
   workingHours?: Prisma.WorkingHoursUncheckedCreateNestedManyWithoutSupplierInput
@@ -2205,6 +2359,8 @@ export type SupplierProfileUpdateWithoutProductsInput = {
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2225,7 +2381,9 @@ export type SupplierProfileUpdateWithoutProductsInput = {
   orders?: Prisma.OrderUpdateManyWithoutSupplierNestedInput
   promotions?: Prisma.PromotionUpdateManyWithoutSupplierNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUpdateManyWithoutSupplierNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutSupplierNestedInput
   favorites?: Prisma.FavoriteUpdateManyWithoutSupplierNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutSupplierNestedInput
   workingHours?: Prisma.WorkingHoursUpdateManyWithoutSupplierNestedInput
@@ -2257,6 +2415,8 @@ export type SupplierProfileUncheckedUpdateWithoutProductsInput = {
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2276,7 +2436,9 @@ export type SupplierProfileUncheckedUpdateWithoutProductsInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutSupplierNestedInput
   promotions?: Prisma.PromotionUncheckedUpdateManyWithoutSupplierNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutSupplierNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
   favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutSupplierNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutSupplierNestedInput
   workingHours?: Prisma.WorkingHoursUncheckedUpdateManyWithoutSupplierNestedInput
@@ -2307,6 +2469,8 @@ export type SupplierProfileCreateWithoutServicesInput = {
   reviewedBy?: string | null
   rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
   totalProducts?: number
   totalOrders?: number
   totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2327,7 +2491,9 @@ export type SupplierProfileCreateWithoutServicesInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutSupplierInput
   promotions?: Prisma.PromotionCreateNestedManyWithoutSupplierInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutSupplierInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutSupplierInput
   favorites?: Prisma.FavoriteCreateNestedManyWithoutSupplierInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutSupplierInput
   workingHours?: Prisma.WorkingHoursCreateNestedManyWithoutSupplierInput
@@ -2359,6 +2525,8 @@ export type SupplierProfileUncheckedCreateWithoutServicesInput = {
   reviewedBy?: string | null
   rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
   totalProducts?: number
   totalOrders?: number
   totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2378,7 +2546,9 @@ export type SupplierProfileUncheckedCreateWithoutServicesInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutSupplierInput
   promotions?: Prisma.PromotionUncheckedCreateNestedManyWithoutSupplierInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutSupplierInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
   favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutSupplierInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutSupplierInput
   workingHours?: Prisma.WorkingHoursUncheckedCreateNestedManyWithoutSupplierInput
@@ -2425,6 +2595,8 @@ export type SupplierProfileUpdateWithoutServicesInput = {
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2445,7 +2617,9 @@ export type SupplierProfileUpdateWithoutServicesInput = {
   orders?: Prisma.OrderUpdateManyWithoutSupplierNestedInput
   promotions?: Prisma.PromotionUpdateManyWithoutSupplierNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUpdateManyWithoutSupplierNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutSupplierNestedInput
   favorites?: Prisma.FavoriteUpdateManyWithoutSupplierNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutSupplierNestedInput
   workingHours?: Prisma.WorkingHoursUpdateManyWithoutSupplierNestedInput
@@ -2477,6 +2651,8 @@ export type SupplierProfileUncheckedUpdateWithoutServicesInput = {
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2496,7 +2672,9 @@ export type SupplierProfileUncheckedUpdateWithoutServicesInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutSupplierNestedInput
   promotions?: Prisma.PromotionUncheckedUpdateManyWithoutSupplierNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutSupplierNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
   favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutSupplierNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutSupplierNestedInput
   workingHours?: Prisma.WorkingHoursUncheckedUpdateManyWithoutSupplierNestedInput
@@ -2527,6 +2705,8 @@ export type SupplierProfileCreateWithoutPromotionsInput = {
   reviewedBy?: string | null
   rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
   totalProducts?: number
   totalOrders?: number
   totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2547,7 +2727,9 @@ export type SupplierProfileCreateWithoutPromotionsInput = {
   services?: Prisma.ServiceCreateNestedManyWithoutSupplierInput
   orders?: Prisma.OrderCreateNestedManyWithoutSupplierInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutSupplierInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutSupplierInput
   favorites?: Prisma.FavoriteCreateNestedManyWithoutSupplierInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutSupplierInput
   workingHours?: Prisma.WorkingHoursCreateNestedManyWithoutSupplierInput
@@ -2579,6 +2761,8 @@ export type SupplierProfileUncheckedCreateWithoutPromotionsInput = {
   reviewedBy?: string | null
   rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
   totalProducts?: number
   totalOrders?: number
   totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2598,7 +2782,9 @@ export type SupplierProfileUncheckedCreateWithoutPromotionsInput = {
   services?: Prisma.ServiceUncheckedCreateNestedManyWithoutSupplierInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutSupplierInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutSupplierInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
   favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutSupplierInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutSupplierInput
   workingHours?: Prisma.WorkingHoursUncheckedCreateNestedManyWithoutSupplierInput
@@ -2645,6 +2831,8 @@ export type SupplierProfileUpdateWithoutPromotionsInput = {
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2665,7 +2853,9 @@ export type SupplierProfileUpdateWithoutPromotionsInput = {
   services?: Prisma.ServiceUpdateManyWithoutSupplierNestedInput
   orders?: Prisma.OrderUpdateManyWithoutSupplierNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUpdateManyWithoutSupplierNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutSupplierNestedInput
   favorites?: Prisma.FavoriteUpdateManyWithoutSupplierNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutSupplierNestedInput
   workingHours?: Prisma.WorkingHoursUpdateManyWithoutSupplierNestedInput
@@ -2697,6 +2887,8 @@ export type SupplierProfileUncheckedUpdateWithoutPromotionsInput = {
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2716,7 +2908,9 @@ export type SupplierProfileUncheckedUpdateWithoutPromotionsInput = {
   services?: Prisma.ServiceUncheckedUpdateManyWithoutSupplierNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutSupplierNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutSupplierNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
   favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutSupplierNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutSupplierNestedInput
   workingHours?: Prisma.WorkingHoursUncheckedUpdateManyWithoutSupplierNestedInput
@@ -2747,6 +2941,8 @@ export type SupplierProfileCreateWithoutCouponsInput = {
   reviewedBy?: string | null
   rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
   totalProducts?: number
   totalOrders?: number
   totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2768,7 +2964,9 @@ export type SupplierProfileCreateWithoutCouponsInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutSupplierInput
   promotions?: Prisma.PromotionCreateNestedManyWithoutSupplierInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutSupplierInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutSupplierInput
   favorites?: Prisma.FavoriteCreateNestedManyWithoutSupplierInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutSupplierInput
   workingHours?: Prisma.WorkingHoursCreateNestedManyWithoutSupplierInput
@@ -2799,6 +2997,8 @@ export type SupplierProfileUncheckedCreateWithoutCouponsInput = {
   reviewedBy?: string | null
   rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
   totalProducts?: number
   totalOrders?: number
   totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2819,7 +3019,9 @@ export type SupplierProfileUncheckedCreateWithoutCouponsInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutSupplierInput
   promotions?: Prisma.PromotionUncheckedCreateNestedManyWithoutSupplierInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutSupplierInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
   favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutSupplierInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutSupplierInput
   workingHours?: Prisma.WorkingHoursUncheckedCreateNestedManyWithoutSupplierInput
@@ -2865,6 +3067,8 @@ export type SupplierProfileUpdateWithoutCouponsInput = {
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2886,7 +3090,9 @@ export type SupplierProfileUpdateWithoutCouponsInput = {
   orders?: Prisma.OrderUpdateManyWithoutSupplierNestedInput
   promotions?: Prisma.PromotionUpdateManyWithoutSupplierNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUpdateManyWithoutSupplierNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutSupplierNestedInput
   favorites?: Prisma.FavoriteUpdateManyWithoutSupplierNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutSupplierNestedInput
   workingHours?: Prisma.WorkingHoursUpdateManyWithoutSupplierNestedInput
@@ -2917,6 +3123,8 @@ export type SupplierProfileUncheckedUpdateWithoutCouponsInput = {
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2937,7 +3145,9 @@ export type SupplierProfileUncheckedUpdateWithoutCouponsInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutSupplierNestedInput
   promotions?: Prisma.PromotionUncheckedUpdateManyWithoutSupplierNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutSupplierNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
   favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutSupplierNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutSupplierNestedInput
   workingHours?: Prisma.WorkingHoursUncheckedUpdateManyWithoutSupplierNestedInput
@@ -2967,6 +3177,8 @@ export type SupplierProfileCreateWithoutWorkingHoursInput = {
   reviewedBy?: string | null
   rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
   totalProducts?: number
   totalOrders?: number
   totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2988,7 +3200,9 @@ export type SupplierProfileCreateWithoutWorkingHoursInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutSupplierInput
   promotions?: Prisma.PromotionCreateNestedManyWithoutSupplierInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutSupplierInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutSupplierInput
   favorites?: Prisma.FavoriteCreateNestedManyWithoutSupplierInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutSupplierInput
   coupons?: Prisma.CouponCreateNestedManyWithoutSupplierInput
@@ -3019,6 +3233,8 @@ export type SupplierProfileUncheckedCreateWithoutWorkingHoursInput = {
   reviewedBy?: string | null
   rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
   totalProducts?: number
   totalOrders?: number
   totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3039,7 +3255,9 @@ export type SupplierProfileUncheckedCreateWithoutWorkingHoursInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutSupplierInput
   promotions?: Prisma.PromotionUncheckedCreateNestedManyWithoutSupplierInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutSupplierInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
   favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutSupplierInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutSupplierInput
   coupons?: Prisma.CouponUncheckedCreateNestedManyWithoutSupplierInput
@@ -3085,6 +3303,8 @@ export type SupplierProfileUpdateWithoutWorkingHoursInput = {
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3106,7 +3326,9 @@ export type SupplierProfileUpdateWithoutWorkingHoursInput = {
   orders?: Prisma.OrderUpdateManyWithoutSupplierNestedInput
   promotions?: Prisma.PromotionUpdateManyWithoutSupplierNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUpdateManyWithoutSupplierNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutSupplierNestedInput
   favorites?: Prisma.FavoriteUpdateManyWithoutSupplierNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutSupplierNestedInput
   coupons?: Prisma.CouponUpdateManyWithoutSupplierNestedInput
@@ -3137,6 +3359,8 @@ export type SupplierProfileUncheckedUpdateWithoutWorkingHoursInput = {
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3157,7 +3381,9 @@ export type SupplierProfileUncheckedUpdateWithoutWorkingHoursInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutSupplierNestedInput
   promotions?: Prisma.PromotionUncheckedUpdateManyWithoutSupplierNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutSupplierNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
   favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutSupplierNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutSupplierNestedInput
   coupons?: Prisma.CouponUncheckedUpdateManyWithoutSupplierNestedInput
@@ -3187,6 +3413,8 @@ export type SupplierProfileCreateWithoutOrdersInput = {
   reviewedBy?: string | null
   rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
   totalProducts?: number
   totalOrders?: number
   totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3207,7 +3435,9 @@ export type SupplierProfileCreateWithoutOrdersInput = {
   services?: Prisma.ServiceCreateNestedManyWithoutSupplierInput
   promotions?: Prisma.PromotionCreateNestedManyWithoutSupplierInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutSupplierInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutSupplierInput
   favorites?: Prisma.FavoriteCreateNestedManyWithoutSupplierInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutSupplierInput
   workingHours?: Prisma.WorkingHoursCreateNestedManyWithoutSupplierInput
@@ -3239,6 +3469,8 @@ export type SupplierProfileUncheckedCreateWithoutOrdersInput = {
   reviewedBy?: string | null
   rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
   totalProducts?: number
   totalOrders?: number
   totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3258,7 +3490,9 @@ export type SupplierProfileUncheckedCreateWithoutOrdersInput = {
   services?: Prisma.ServiceUncheckedCreateNestedManyWithoutSupplierInput
   promotions?: Prisma.PromotionUncheckedCreateNestedManyWithoutSupplierInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutSupplierInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
   favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutSupplierInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutSupplierInput
   workingHours?: Prisma.WorkingHoursUncheckedCreateNestedManyWithoutSupplierInput
@@ -3305,6 +3539,8 @@ export type SupplierProfileUpdateWithoutOrdersInput = {
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3325,7 +3561,9 @@ export type SupplierProfileUpdateWithoutOrdersInput = {
   services?: Prisma.ServiceUpdateManyWithoutSupplierNestedInput
   promotions?: Prisma.PromotionUpdateManyWithoutSupplierNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUpdateManyWithoutSupplierNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutSupplierNestedInput
   favorites?: Prisma.FavoriteUpdateManyWithoutSupplierNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutSupplierNestedInput
   workingHours?: Prisma.WorkingHoursUpdateManyWithoutSupplierNestedInput
@@ -3357,6 +3595,8 @@ export type SupplierProfileUncheckedUpdateWithoutOrdersInput = {
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3376,7 +3616,9 @@ export type SupplierProfileUncheckedUpdateWithoutOrdersInput = {
   services?: Prisma.ServiceUncheckedUpdateManyWithoutSupplierNestedInput
   promotions?: Prisma.PromotionUncheckedUpdateManyWithoutSupplierNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutSupplierNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
   favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutSupplierNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutSupplierNestedInput
   workingHours?: Prisma.WorkingHoursUncheckedUpdateManyWithoutSupplierNestedInput
@@ -3407,6 +3649,8 @@ export type SupplierProfileCreateWithoutReviewsInput = {
   reviewedBy?: string | null
   rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
   totalProducts?: number
   totalOrders?: number
   totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3427,7 +3671,9 @@ export type SupplierProfileCreateWithoutReviewsInput = {
   services?: Prisma.ServiceCreateNestedManyWithoutSupplierInput
   orders?: Prisma.OrderCreateNestedManyWithoutSupplierInput
   promotions?: Prisma.PromotionCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutSupplierInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutSupplierInput
   favorites?: Prisma.FavoriteCreateNestedManyWithoutSupplierInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutSupplierInput
   workingHours?: Prisma.WorkingHoursCreateNestedManyWithoutSupplierInput
@@ -3459,6 +3705,8 @@ export type SupplierProfileUncheckedCreateWithoutReviewsInput = {
   reviewedBy?: string | null
   rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
   totalProducts?: number
   totalOrders?: number
   totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3478,7 +3726,9 @@ export type SupplierProfileUncheckedCreateWithoutReviewsInput = {
   services?: Prisma.ServiceUncheckedCreateNestedManyWithoutSupplierInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutSupplierInput
   promotions?: Prisma.PromotionUncheckedCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutSupplierInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
   favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutSupplierInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutSupplierInput
   workingHours?: Prisma.WorkingHoursUncheckedCreateNestedManyWithoutSupplierInput
@@ -3525,6 +3775,8 @@ export type SupplierProfileUpdateWithoutReviewsInput = {
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3545,7 +3797,9 @@ export type SupplierProfileUpdateWithoutReviewsInput = {
   services?: Prisma.ServiceUpdateManyWithoutSupplierNestedInput
   orders?: Prisma.OrderUpdateManyWithoutSupplierNestedInput
   promotions?: Prisma.PromotionUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUpdateManyWithoutSupplierNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutSupplierNestedInput
   favorites?: Prisma.FavoriteUpdateManyWithoutSupplierNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutSupplierNestedInput
   workingHours?: Prisma.WorkingHoursUpdateManyWithoutSupplierNestedInput
@@ -3577,6 +3831,8 @@ export type SupplierProfileUncheckedUpdateWithoutReviewsInput = {
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3596,7 +3852,481 @@ export type SupplierProfileUncheckedUpdateWithoutReviewsInput = {
   services?: Prisma.ServiceUncheckedUpdateManyWithoutSupplierNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutSupplierNestedInput
   promotions?: Prisma.PromotionUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutSupplierNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
+  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutSupplierNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutSupplierNestedInput
+  workingHours?: Prisma.WorkingHoursUncheckedUpdateManyWithoutSupplierNestedInput
+  coupons?: Prisma.CouponUncheckedUpdateManyWithoutSupplierNestedInput
+  categories?: Prisma.CategoryUncheckedUpdateManyWithoutSupplierNestedInput
+  banners?: Prisma.BannerUncheckedUpdateManyWithoutSupplierNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
+  chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
+}
+
+export type SupplierProfileCreateWithoutSellerResponsesInput = {
+  id?: string
+  companyName: string
+  tradingName?: string | null
+  document: string
+  stateRegistration?: string | null
+  municipalRegistration?: string | null
+  description?: string | null
+  logoUrl?: string | null
+  bannerUrl?: string | null
+  website?: string | null
+  phone: string
+  whatsapp?: string | null
+  email: string
+  status?: $Enums.SupplierStatus
+  statusReason?: string | null
+  approvedAt?: Date | string | null
+  reviewedBy?: string | null
+  rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
+  totalProducts?: number
+  totalOrders?: number
+  totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  foundedYear?: number | null
+  employeesCount?: number | null
+  businessHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deliveryInfo?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  certifications?: Prisma.SupplierProfileCreatecertificationsInput | string[]
+  badges?: Prisma.SupplierProfileCreatebadgesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  featured?: boolean
+  viewCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  user: Prisma.UserCreateNestedOneWithoutSupplierProfileInput
+  products?: Prisma.ProductCreateNestedManyWithoutSupplierInput
+  services?: Prisma.ServiceCreateNestedManyWithoutSupplierInput
+  orders?: Prisma.OrderCreateNestedManyWithoutSupplierInput
+  promotions?: Prisma.PromotionCreateNestedManyWithoutSupplierInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutSupplierInput
+  reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutSupplierInput
+  favorites?: Prisma.FavoriteCreateNestedManyWithoutSupplierInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutSupplierInput
+  workingHours?: Prisma.WorkingHoursCreateNestedManyWithoutSupplierInput
+  coupons?: Prisma.CouponCreateNestedManyWithoutSupplierInput
+  categories?: Prisma.CategoryCreateNestedManyWithoutSupplierInput
+  banners?: Prisma.BannerCreateNestedManyWithoutSupplierInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
+  chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
+}
+
+export type SupplierProfileUncheckedCreateWithoutSellerResponsesInput = {
+  id?: string
+  userId: string
+  companyName: string
+  tradingName?: string | null
+  document: string
+  stateRegistration?: string | null
+  municipalRegistration?: string | null
+  description?: string | null
+  logoUrl?: string | null
+  bannerUrl?: string | null
+  website?: string | null
+  phone: string
+  whatsapp?: string | null
+  email: string
+  status?: $Enums.SupplierStatus
+  statusReason?: string | null
+  approvedAt?: Date | string | null
+  reviewedBy?: string | null
+  rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
+  totalProducts?: number
+  totalOrders?: number
+  totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  foundedYear?: number | null
+  employeesCount?: number | null
+  businessHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deliveryInfo?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  certifications?: Prisma.SupplierProfileCreatecertificationsInput | string[]
+  badges?: Prisma.SupplierProfileCreatebadgesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  featured?: boolean
+  viewCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutSupplierInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutSupplierInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutSupplierInput
+  promotions?: Prisma.PromotionUncheckedCreateNestedManyWithoutSupplierInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutSupplierInput
+  reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
+  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutSupplierInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutSupplierInput
+  workingHours?: Prisma.WorkingHoursUncheckedCreateNestedManyWithoutSupplierInput
+  coupons?: Prisma.CouponUncheckedCreateNestedManyWithoutSupplierInput
+  categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutSupplierInput
+  banners?: Prisma.BannerUncheckedCreateNestedManyWithoutSupplierInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
+  chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
+}
+
+export type SupplierProfileCreateOrConnectWithoutSellerResponsesInput = {
+  where: Prisma.SupplierProfileWhereUniqueInput
+  create: Prisma.XOR<Prisma.SupplierProfileCreateWithoutSellerResponsesInput, Prisma.SupplierProfileUncheckedCreateWithoutSellerResponsesInput>
+}
+
+export type SupplierProfileUpsertWithoutSellerResponsesInput = {
+  update: Prisma.XOR<Prisma.SupplierProfileUpdateWithoutSellerResponsesInput, Prisma.SupplierProfileUncheckedUpdateWithoutSellerResponsesInput>
+  create: Prisma.XOR<Prisma.SupplierProfileCreateWithoutSellerResponsesInput, Prisma.SupplierProfileUncheckedCreateWithoutSellerResponsesInput>
+  where?: Prisma.SupplierProfileWhereInput
+}
+
+export type SupplierProfileUpdateToOneWithWhereWithoutSellerResponsesInput = {
+  where?: Prisma.SupplierProfileWhereInput
+  data: Prisma.XOR<Prisma.SupplierProfileUpdateWithoutSellerResponsesInput, Prisma.SupplierProfileUncheckedUpdateWithoutSellerResponsesInput>
+}
+
+export type SupplierProfileUpdateWithoutSellerResponsesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  companyName?: Prisma.StringFieldUpdateOperationsInput | string
+  tradingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  document?: Prisma.StringFieldUpdateOperationsInput | string
+  stateRegistration?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  municipalRegistration?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
+  totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  foundedYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  employeesCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  businessHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deliveryInfo?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  certifications?: Prisma.SupplierProfileUpdatecertificationsInput | string[]
+  badges?: Prisma.SupplierProfileUpdatebadgesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  viewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  user?: Prisma.UserUpdateOneRequiredWithoutSupplierProfileNestedInput
+  products?: Prisma.ProductUpdateManyWithoutSupplierNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutSupplierNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutSupplierNestedInput
+  promotions?: Prisma.PromotionUpdateManyWithoutSupplierNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUpdateManyWithoutSupplierNestedInput
+  reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutSupplierNestedInput
+  favorites?: Prisma.FavoriteUpdateManyWithoutSupplierNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutSupplierNestedInput
+  workingHours?: Prisma.WorkingHoursUpdateManyWithoutSupplierNestedInput
+  coupons?: Prisma.CouponUpdateManyWithoutSupplierNestedInput
+  categories?: Prisma.CategoryUpdateManyWithoutSupplierNestedInput
+  banners?: Prisma.BannerUpdateManyWithoutSupplierNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
+  chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
+}
+
+export type SupplierProfileUncheckedUpdateWithoutSellerResponsesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  companyName?: Prisma.StringFieldUpdateOperationsInput | string
+  tradingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  document?: Prisma.StringFieldUpdateOperationsInput | string
+  stateRegistration?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  municipalRegistration?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
+  totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  foundedYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  employeesCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  businessHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deliveryInfo?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  certifications?: Prisma.SupplierProfileUpdatecertificationsInput | string[]
+  badges?: Prisma.SupplierProfileUpdatebadgesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  viewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  products?: Prisma.ProductUncheckedUpdateManyWithoutSupplierNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutSupplierNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutSupplierNestedInput
+  promotions?: Prisma.PromotionUncheckedUpdateManyWithoutSupplierNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutSupplierNestedInput
+  reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
+  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutSupplierNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutSupplierNestedInput
+  workingHours?: Prisma.WorkingHoursUncheckedUpdateManyWithoutSupplierNestedInput
+  coupons?: Prisma.CouponUncheckedUpdateManyWithoutSupplierNestedInput
+  categories?: Prisma.CategoryUncheckedUpdateManyWithoutSupplierNestedInput
+  banners?: Prisma.BannerUncheckedUpdateManyWithoutSupplierNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
+  chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
+}
+
+export type SupplierProfileCreateWithoutSellerReviewsInput = {
+  id?: string
+  companyName: string
+  tradingName?: string | null
+  document: string
+  stateRegistration?: string | null
+  municipalRegistration?: string | null
+  description?: string | null
+  logoUrl?: string | null
+  bannerUrl?: string | null
+  website?: string | null
+  phone: string
+  whatsapp?: string | null
+  email: string
+  status?: $Enums.SupplierStatus
+  statusReason?: string | null
+  approvedAt?: Date | string | null
+  reviewedBy?: string | null
+  rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
+  totalProducts?: number
+  totalOrders?: number
+  totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  foundedYear?: number | null
+  employeesCount?: number | null
+  businessHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deliveryInfo?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  certifications?: Prisma.SupplierProfileCreatecertificationsInput | string[]
+  badges?: Prisma.SupplierProfileCreatebadgesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  featured?: boolean
+  viewCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  user: Prisma.UserCreateNestedOneWithoutSupplierProfileInput
+  products?: Prisma.ProductCreateNestedManyWithoutSupplierInput
+  services?: Prisma.ServiceCreateNestedManyWithoutSupplierInput
+  orders?: Prisma.OrderCreateNestedManyWithoutSupplierInput
+  promotions?: Prisma.PromotionCreateNestedManyWithoutSupplierInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutSupplierInput
+  reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutSupplierInput
+  favorites?: Prisma.FavoriteCreateNestedManyWithoutSupplierInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutSupplierInput
+  workingHours?: Prisma.WorkingHoursCreateNestedManyWithoutSupplierInput
+  coupons?: Prisma.CouponCreateNestedManyWithoutSupplierInput
+  categories?: Prisma.CategoryCreateNestedManyWithoutSupplierInput
+  banners?: Prisma.BannerCreateNestedManyWithoutSupplierInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
+  chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
+}
+
+export type SupplierProfileUncheckedCreateWithoutSellerReviewsInput = {
+  id?: string
+  userId: string
+  companyName: string
+  tradingName?: string | null
+  document: string
+  stateRegistration?: string | null
+  municipalRegistration?: string | null
+  description?: string | null
+  logoUrl?: string | null
+  bannerUrl?: string | null
+  website?: string | null
+  phone: string
+  whatsapp?: string | null
+  email: string
+  status?: $Enums.SupplierStatus
+  statusReason?: string | null
+  approvedAt?: Date | string | null
+  reviewedBy?: string | null
+  rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
+  totalProducts?: number
+  totalOrders?: number
+  totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  foundedYear?: number | null
+  employeesCount?: number | null
+  businessHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deliveryInfo?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  certifications?: Prisma.SupplierProfileCreatecertificationsInput | string[]
+  badges?: Prisma.SupplierProfileCreatebadgesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  featured?: boolean
+  viewCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutSupplierInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutSupplierInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutSupplierInput
+  promotions?: Prisma.PromotionUncheckedCreateNestedManyWithoutSupplierInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutSupplierInput
+  reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
+  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutSupplierInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutSupplierInput
+  workingHours?: Prisma.WorkingHoursUncheckedCreateNestedManyWithoutSupplierInput
+  coupons?: Prisma.CouponUncheckedCreateNestedManyWithoutSupplierInput
+  categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutSupplierInput
+  banners?: Prisma.BannerUncheckedCreateNestedManyWithoutSupplierInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
+  chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
+}
+
+export type SupplierProfileCreateOrConnectWithoutSellerReviewsInput = {
+  where: Prisma.SupplierProfileWhereUniqueInput
+  create: Prisma.XOR<Prisma.SupplierProfileCreateWithoutSellerReviewsInput, Prisma.SupplierProfileUncheckedCreateWithoutSellerReviewsInput>
+}
+
+export type SupplierProfileUpsertWithoutSellerReviewsInput = {
+  update: Prisma.XOR<Prisma.SupplierProfileUpdateWithoutSellerReviewsInput, Prisma.SupplierProfileUncheckedUpdateWithoutSellerReviewsInput>
+  create: Prisma.XOR<Prisma.SupplierProfileCreateWithoutSellerReviewsInput, Prisma.SupplierProfileUncheckedCreateWithoutSellerReviewsInput>
+  where?: Prisma.SupplierProfileWhereInput
+}
+
+export type SupplierProfileUpdateToOneWithWhereWithoutSellerReviewsInput = {
+  where?: Prisma.SupplierProfileWhereInput
+  data: Prisma.XOR<Prisma.SupplierProfileUpdateWithoutSellerReviewsInput, Prisma.SupplierProfileUncheckedUpdateWithoutSellerReviewsInput>
+}
+
+export type SupplierProfileUpdateWithoutSellerReviewsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  companyName?: Prisma.StringFieldUpdateOperationsInput | string
+  tradingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  document?: Prisma.StringFieldUpdateOperationsInput | string
+  stateRegistration?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  municipalRegistration?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
+  totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  foundedYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  employeesCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  businessHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deliveryInfo?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  certifications?: Prisma.SupplierProfileUpdatecertificationsInput | string[]
+  badges?: Prisma.SupplierProfileUpdatebadgesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  viewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  user?: Prisma.UserUpdateOneRequiredWithoutSupplierProfileNestedInput
+  products?: Prisma.ProductUpdateManyWithoutSupplierNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutSupplierNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutSupplierNestedInput
+  promotions?: Prisma.PromotionUpdateManyWithoutSupplierNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutSupplierNestedInput
+  reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutSupplierNestedInput
+  favorites?: Prisma.FavoriteUpdateManyWithoutSupplierNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutSupplierNestedInput
+  workingHours?: Prisma.WorkingHoursUpdateManyWithoutSupplierNestedInput
+  coupons?: Prisma.CouponUpdateManyWithoutSupplierNestedInput
+  categories?: Prisma.CategoryUpdateManyWithoutSupplierNestedInput
+  banners?: Prisma.BannerUpdateManyWithoutSupplierNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
+  chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
+}
+
+export type SupplierProfileUncheckedUpdateWithoutSellerReviewsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  companyName?: Prisma.StringFieldUpdateOperationsInput | string
+  tradingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  document?: Prisma.StringFieldUpdateOperationsInput | string
+  stateRegistration?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  municipalRegistration?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
+  totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  foundedYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  employeesCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  businessHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deliveryInfo?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  certifications?: Prisma.SupplierProfileUpdatecertificationsInput | string[]
+  badges?: Prisma.SupplierProfileUpdatebadgesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  viewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  products?: Prisma.ProductUncheckedUpdateManyWithoutSupplierNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutSupplierNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutSupplierNestedInput
+  promotions?: Prisma.PromotionUncheckedUpdateManyWithoutSupplierNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutSupplierNestedInput
+  reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
   favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutSupplierNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutSupplierNestedInput
   workingHours?: Prisma.WorkingHoursUncheckedUpdateManyWithoutSupplierNestedInput
@@ -3627,6 +4357,8 @@ export type SupplierProfileCreateWithoutReviewResponsesInput = {
   reviewedBy?: string | null
   rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
   totalProducts?: number
   totalOrders?: number
   totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3648,6 +4380,8 @@ export type SupplierProfileCreateWithoutReviewResponsesInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutSupplierInput
   promotions?: Prisma.PromotionCreateNestedManyWithoutSupplierInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutSupplierInput
   favorites?: Prisma.FavoriteCreateNestedManyWithoutSupplierInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutSupplierInput
   workingHours?: Prisma.WorkingHoursCreateNestedManyWithoutSupplierInput
@@ -3679,6 +4413,8 @@ export type SupplierProfileUncheckedCreateWithoutReviewResponsesInput = {
   reviewedBy?: string | null
   rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
   totalProducts?: number
   totalOrders?: number
   totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3699,6 +4435,8 @@ export type SupplierProfileUncheckedCreateWithoutReviewResponsesInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutSupplierInput
   promotions?: Prisma.PromotionUncheckedCreateNestedManyWithoutSupplierInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
   favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutSupplierInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutSupplierInput
   workingHours?: Prisma.WorkingHoursUncheckedCreateNestedManyWithoutSupplierInput
@@ -3745,6 +4483,8 @@ export type SupplierProfileUpdateWithoutReviewResponsesInput = {
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3766,6 +4506,8 @@ export type SupplierProfileUpdateWithoutReviewResponsesInput = {
   orders?: Prisma.OrderUpdateManyWithoutSupplierNestedInput
   promotions?: Prisma.PromotionUpdateManyWithoutSupplierNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutSupplierNestedInput
   favorites?: Prisma.FavoriteUpdateManyWithoutSupplierNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutSupplierNestedInput
   workingHours?: Prisma.WorkingHoursUpdateManyWithoutSupplierNestedInput
@@ -3797,6 +4539,8 @@ export type SupplierProfileUncheckedUpdateWithoutReviewResponsesInput = {
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3817,6 +4561,8 @@ export type SupplierProfileUncheckedUpdateWithoutReviewResponsesInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutSupplierNestedInput
   promotions?: Prisma.PromotionUncheckedUpdateManyWithoutSupplierNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
   favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutSupplierNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutSupplierNestedInput
   workingHours?: Prisma.WorkingHoursUncheckedUpdateManyWithoutSupplierNestedInput
@@ -3847,6 +4593,8 @@ export type SupplierProfileCreateWithoutFavoritesInput = {
   reviewedBy?: string | null
   rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
   totalProducts?: number
   totalOrders?: number
   totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3868,7 +4616,9 @@ export type SupplierProfileCreateWithoutFavoritesInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutSupplierInput
   promotions?: Prisma.PromotionCreateNestedManyWithoutSupplierInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutSupplierInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutSupplierInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutSupplierInput
   workingHours?: Prisma.WorkingHoursCreateNestedManyWithoutSupplierInput
   coupons?: Prisma.CouponCreateNestedManyWithoutSupplierInput
@@ -3899,6 +4649,8 @@ export type SupplierProfileUncheckedCreateWithoutFavoritesInput = {
   reviewedBy?: string | null
   rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
   totalProducts?: number
   totalOrders?: number
   totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3919,7 +4671,9 @@ export type SupplierProfileUncheckedCreateWithoutFavoritesInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutSupplierInput
   promotions?: Prisma.PromotionUncheckedCreateNestedManyWithoutSupplierInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutSupplierInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutSupplierInput
   workingHours?: Prisma.WorkingHoursUncheckedCreateNestedManyWithoutSupplierInput
   coupons?: Prisma.CouponUncheckedCreateNestedManyWithoutSupplierInput
@@ -3965,6 +4719,8 @@ export type SupplierProfileUpdateWithoutFavoritesInput = {
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -3986,7 +4742,9 @@ export type SupplierProfileUpdateWithoutFavoritesInput = {
   orders?: Prisma.OrderUpdateManyWithoutSupplierNestedInput
   promotions?: Prisma.PromotionUpdateManyWithoutSupplierNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUpdateManyWithoutSupplierNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutSupplierNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutSupplierNestedInput
   workingHours?: Prisma.WorkingHoursUpdateManyWithoutSupplierNestedInput
   coupons?: Prisma.CouponUpdateManyWithoutSupplierNestedInput
@@ -4017,6 +4775,8 @@ export type SupplierProfileUncheckedUpdateWithoutFavoritesInput = {
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4037,7 +4797,9 @@ export type SupplierProfileUncheckedUpdateWithoutFavoritesInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutSupplierNestedInput
   promotions?: Prisma.PromotionUncheckedUpdateManyWithoutSupplierNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutSupplierNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutSupplierNestedInput
   workingHours?: Prisma.WorkingHoursUncheckedUpdateManyWithoutSupplierNestedInput
   coupons?: Prisma.CouponUncheckedUpdateManyWithoutSupplierNestedInput
@@ -4067,6 +4829,8 @@ export type SupplierProfileCreateWithoutConversationsInput = {
   reviewedBy?: string | null
   rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
   totalProducts?: number
   totalOrders?: number
   totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4088,7 +4852,9 @@ export type SupplierProfileCreateWithoutConversationsInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutSupplierInput
   promotions?: Prisma.PromotionCreateNestedManyWithoutSupplierInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutSupplierInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutSupplierInput
   favorites?: Prisma.FavoriteCreateNestedManyWithoutSupplierInput
   workingHours?: Prisma.WorkingHoursCreateNestedManyWithoutSupplierInput
   coupons?: Prisma.CouponCreateNestedManyWithoutSupplierInput
@@ -4119,6 +4885,8 @@ export type SupplierProfileUncheckedCreateWithoutConversationsInput = {
   reviewedBy?: string | null
   rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
   totalProducts?: number
   totalOrders?: number
   totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4139,7 +4907,9 @@ export type SupplierProfileUncheckedCreateWithoutConversationsInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutSupplierInput
   promotions?: Prisma.PromotionUncheckedCreateNestedManyWithoutSupplierInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutSupplierInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
   favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutSupplierInput
   workingHours?: Prisma.WorkingHoursUncheckedCreateNestedManyWithoutSupplierInput
   coupons?: Prisma.CouponUncheckedCreateNestedManyWithoutSupplierInput
@@ -4185,6 +4955,8 @@ export type SupplierProfileUpdateWithoutConversationsInput = {
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4206,7 +4978,9 @@ export type SupplierProfileUpdateWithoutConversationsInput = {
   orders?: Prisma.OrderUpdateManyWithoutSupplierNestedInput
   promotions?: Prisma.PromotionUpdateManyWithoutSupplierNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUpdateManyWithoutSupplierNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutSupplierNestedInput
   favorites?: Prisma.FavoriteUpdateManyWithoutSupplierNestedInput
   workingHours?: Prisma.WorkingHoursUpdateManyWithoutSupplierNestedInput
   coupons?: Prisma.CouponUpdateManyWithoutSupplierNestedInput
@@ -4237,6 +5011,8 @@ export type SupplierProfileUncheckedUpdateWithoutConversationsInput = {
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4257,7 +5033,9 @@ export type SupplierProfileUncheckedUpdateWithoutConversationsInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutSupplierNestedInput
   promotions?: Prisma.PromotionUncheckedUpdateManyWithoutSupplierNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutSupplierNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
   favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutSupplierNestedInput
   workingHours?: Prisma.WorkingHoursUncheckedUpdateManyWithoutSupplierNestedInput
   coupons?: Prisma.CouponUncheckedUpdateManyWithoutSupplierNestedInput
@@ -4287,6 +5065,8 @@ export type SupplierProfileCreateWithoutChatSettingsInput = {
   reviewedBy?: string | null
   rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
   totalProducts?: number
   totalOrders?: number
   totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4308,7 +5088,9 @@ export type SupplierProfileCreateWithoutChatSettingsInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutSupplierInput
   promotions?: Prisma.PromotionCreateNestedManyWithoutSupplierInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutSupplierInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutSupplierInput
   favorites?: Prisma.FavoriteCreateNestedManyWithoutSupplierInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutSupplierInput
   workingHours?: Prisma.WorkingHoursCreateNestedManyWithoutSupplierInput
@@ -4339,6 +5121,8 @@ export type SupplierProfileUncheckedCreateWithoutChatSettingsInput = {
   reviewedBy?: string | null
   rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
   totalProducts?: number
   totalOrders?: number
   totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4359,7 +5143,9 @@ export type SupplierProfileUncheckedCreateWithoutChatSettingsInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutSupplierInput
   promotions?: Prisma.PromotionUncheckedCreateNestedManyWithoutSupplierInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutSupplierInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
   favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutSupplierInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutSupplierInput
   workingHours?: Prisma.WorkingHoursUncheckedCreateNestedManyWithoutSupplierInput
@@ -4405,6 +5191,8 @@ export type SupplierProfileUpdateWithoutChatSettingsInput = {
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4426,7 +5214,9 @@ export type SupplierProfileUpdateWithoutChatSettingsInput = {
   orders?: Prisma.OrderUpdateManyWithoutSupplierNestedInput
   promotions?: Prisma.PromotionUpdateManyWithoutSupplierNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUpdateManyWithoutSupplierNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutSupplierNestedInput
   favorites?: Prisma.FavoriteUpdateManyWithoutSupplierNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutSupplierNestedInput
   workingHours?: Prisma.WorkingHoursUpdateManyWithoutSupplierNestedInput
@@ -4457,6 +5247,8 @@ export type SupplierProfileUncheckedUpdateWithoutChatSettingsInput = {
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4477,7 +5269,9 @@ export type SupplierProfileUncheckedUpdateWithoutChatSettingsInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutSupplierNestedInput
   promotions?: Prisma.PromotionUncheckedUpdateManyWithoutSupplierNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutSupplierNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
   favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutSupplierNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutSupplierNestedInput
   workingHours?: Prisma.WorkingHoursUncheckedUpdateManyWithoutSupplierNestedInput
@@ -4507,6 +5301,8 @@ export type SupplierProfileCreateWithoutBannersInput = {
   reviewedBy?: string | null
   rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
   totalProducts?: number
   totalOrders?: number
   totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4528,7 +5324,9 @@ export type SupplierProfileCreateWithoutBannersInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutSupplierInput
   promotions?: Prisma.PromotionCreateNestedManyWithoutSupplierInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutSupplierInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutSupplierInput
   favorites?: Prisma.FavoriteCreateNestedManyWithoutSupplierInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutSupplierInput
   workingHours?: Prisma.WorkingHoursCreateNestedManyWithoutSupplierInput
@@ -4559,6 +5357,8 @@ export type SupplierProfileUncheckedCreateWithoutBannersInput = {
   reviewedBy?: string | null
   rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
   totalProducts?: number
   totalOrders?: number
   totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4579,7 +5379,9 @@ export type SupplierProfileUncheckedCreateWithoutBannersInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutSupplierInput
   promotions?: Prisma.PromotionUncheckedCreateNestedManyWithoutSupplierInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutSupplierInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
   favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutSupplierInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutSupplierInput
   workingHours?: Prisma.WorkingHoursUncheckedCreateNestedManyWithoutSupplierInput
@@ -4625,6 +5427,8 @@ export type SupplierProfileUpdateWithoutBannersInput = {
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4646,7 +5450,9 @@ export type SupplierProfileUpdateWithoutBannersInput = {
   orders?: Prisma.OrderUpdateManyWithoutSupplierNestedInput
   promotions?: Prisma.PromotionUpdateManyWithoutSupplierNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUpdateManyWithoutSupplierNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutSupplierNestedInput
   favorites?: Prisma.FavoriteUpdateManyWithoutSupplierNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutSupplierNestedInput
   workingHours?: Prisma.WorkingHoursUpdateManyWithoutSupplierNestedInput
@@ -4677,6 +5483,8 @@ export type SupplierProfileUncheckedUpdateWithoutBannersInput = {
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
   totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
   totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -4697,7 +5505,9 @@ export type SupplierProfileUncheckedUpdateWithoutBannersInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutSupplierNestedInput
   promotions?: Prisma.PromotionUncheckedUpdateManyWithoutSupplierNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutSupplierNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
   favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutSupplierNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutSupplierNestedInput
   workingHours?: Prisma.WorkingHoursUncheckedUpdateManyWithoutSupplierNestedInput
@@ -4718,7 +5528,9 @@ export type SupplierProfileCountOutputType = {
   orders: number
   promotions: number
   reviews: number
+  sellerReviews: number
   reviewResponses: number
+  sellerResponses: number
   favorites: number
   conversations: number
   workingHours: number
@@ -4734,7 +5546,9 @@ export type SupplierProfileCountOutputTypeSelect<ExtArgs extends runtime.Types.E
   orders?: boolean | SupplierProfileCountOutputTypeCountOrdersArgs
   promotions?: boolean | SupplierProfileCountOutputTypeCountPromotionsArgs
   reviews?: boolean | SupplierProfileCountOutputTypeCountReviewsArgs
+  sellerReviews?: boolean | SupplierProfileCountOutputTypeCountSellerReviewsArgs
   reviewResponses?: boolean | SupplierProfileCountOutputTypeCountReviewResponsesArgs
+  sellerResponses?: boolean | SupplierProfileCountOutputTypeCountSellerResponsesArgs
   favorites?: boolean | SupplierProfileCountOutputTypeCountFavoritesArgs
   conversations?: boolean | SupplierProfileCountOutputTypeCountConversationsArgs
   workingHours?: boolean | SupplierProfileCountOutputTypeCountWorkingHoursArgs
@@ -4792,8 +5606,22 @@ export type SupplierProfileCountOutputTypeCountReviewsArgs<ExtArgs extends runti
 /**
  * SupplierProfileCountOutputType without action
  */
+export type SupplierProfileCountOutputTypeCountSellerReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SellerReviewWhereInput
+}
+
+/**
+ * SupplierProfileCountOutputType without action
+ */
 export type SupplierProfileCountOutputTypeCountReviewResponsesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.ReviewResponseWhereInput
+}
+
+/**
+ * SupplierProfileCountOutputType without action
+ */
+export type SupplierProfileCountOutputTypeCountSellerResponsesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SellerReviewResponseWhereInput
 }
 
 /**
@@ -4867,6 +5695,8 @@ export type SupplierProfileSelect<ExtArgs extends runtime.Types.Extensions.Inter
   reviewedBy?: boolean
   rating?: boolean
   totalReviews?: boolean
+  sellerRating?: boolean
+  sellerTotalReviews?: boolean
   totalProducts?: boolean
   totalOrders?: boolean
   totalSales?: boolean
@@ -4888,7 +5718,9 @@ export type SupplierProfileSelect<ExtArgs extends runtime.Types.Extensions.Inter
   orders?: boolean | Prisma.SupplierProfile$ordersArgs<ExtArgs>
   promotions?: boolean | Prisma.SupplierProfile$promotionsArgs<ExtArgs>
   reviews?: boolean | Prisma.SupplierProfile$reviewsArgs<ExtArgs>
+  sellerReviews?: boolean | Prisma.SupplierProfile$sellerReviewsArgs<ExtArgs>
   reviewResponses?: boolean | Prisma.SupplierProfile$reviewResponsesArgs<ExtArgs>
+  sellerResponses?: boolean | Prisma.SupplierProfile$sellerResponsesArgs<ExtArgs>
   favorites?: boolean | Prisma.SupplierProfile$favoritesArgs<ExtArgs>
   conversations?: boolean | Prisma.SupplierProfile$conversationsArgs<ExtArgs>
   workingHours?: boolean | Prisma.SupplierProfile$workingHoursArgs<ExtArgs>
@@ -4921,6 +5753,8 @@ export type SupplierProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   reviewedBy?: boolean
   rating?: boolean
   totalReviews?: boolean
+  sellerRating?: boolean
+  sellerTotalReviews?: boolean
   totalProducts?: boolean
   totalOrders?: boolean
   totalSales?: boolean
@@ -4960,6 +5794,8 @@ export type SupplierProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   reviewedBy?: boolean
   rating?: boolean
   totalReviews?: boolean
+  sellerRating?: boolean
+  sellerTotalReviews?: boolean
   totalProducts?: boolean
   totalOrders?: boolean
   totalSales?: boolean
@@ -4999,6 +5835,8 @@ export type SupplierProfileSelectScalar = {
   reviewedBy?: boolean
   rating?: boolean
   totalReviews?: boolean
+  sellerRating?: boolean
+  sellerTotalReviews?: boolean
   totalProducts?: boolean
   totalOrders?: boolean
   totalSales?: boolean
@@ -5016,7 +5854,7 @@ export type SupplierProfileSelectScalar = {
   deletedAt?: boolean
 }
 
-export type SupplierProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "companyName" | "tradingName" | "document" | "stateRegistration" | "municipalRegistration" | "description" | "logoUrl" | "bannerUrl" | "website" | "phone" | "whatsapp" | "email" | "status" | "statusReason" | "approvedAt" | "reviewedBy" | "rating" | "totalReviews" | "totalProducts" | "totalOrders" | "totalSales" | "foundedYear" | "employeesCount" | "businessHours" | "deliveryInfo" | "certifications" | "badges" | "socialNetworks" | "featured" | "viewCount" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["supplierProfile"]>
+export type SupplierProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "companyName" | "tradingName" | "document" | "stateRegistration" | "municipalRegistration" | "description" | "logoUrl" | "bannerUrl" | "website" | "phone" | "whatsapp" | "email" | "status" | "statusReason" | "approvedAt" | "reviewedBy" | "rating" | "totalReviews" | "sellerRating" | "sellerTotalReviews" | "totalProducts" | "totalOrders" | "totalSales" | "foundedYear" | "employeesCount" | "businessHours" | "deliveryInfo" | "certifications" | "badges" | "socialNetworks" | "featured" | "viewCount" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["supplierProfile"]>
 export type SupplierProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   products?: boolean | Prisma.SupplierProfile$productsArgs<ExtArgs>
@@ -5024,7 +5862,9 @@ export type SupplierProfileInclude<ExtArgs extends runtime.Types.Extensions.Inte
   orders?: boolean | Prisma.SupplierProfile$ordersArgs<ExtArgs>
   promotions?: boolean | Prisma.SupplierProfile$promotionsArgs<ExtArgs>
   reviews?: boolean | Prisma.SupplierProfile$reviewsArgs<ExtArgs>
+  sellerReviews?: boolean | Prisma.SupplierProfile$sellerReviewsArgs<ExtArgs>
   reviewResponses?: boolean | Prisma.SupplierProfile$reviewResponsesArgs<ExtArgs>
+  sellerResponses?: boolean | Prisma.SupplierProfile$sellerResponsesArgs<ExtArgs>
   favorites?: boolean | Prisma.SupplierProfile$favoritesArgs<ExtArgs>
   conversations?: boolean | Prisma.SupplierProfile$conversationsArgs<ExtArgs>
   workingHours?: boolean | Prisma.SupplierProfile$workingHoursArgs<ExtArgs>
@@ -5051,7 +5891,9 @@ export type $SupplierProfilePayload<ExtArgs extends runtime.Types.Extensions.Int
     orders: Prisma.$OrderPayload<ExtArgs>[]
     promotions: Prisma.$PromotionPayload<ExtArgs>[]
     reviews: Prisma.$ReviewPayload<ExtArgs>[]
+    sellerReviews: Prisma.$SellerReviewPayload<ExtArgs>[]
     reviewResponses: Prisma.$ReviewResponsePayload<ExtArgs>[]
+    sellerResponses: Prisma.$SellerReviewResponsePayload<ExtArgs>[]
     favorites: Prisma.$FavoritePayload<ExtArgs>[]
     conversations: Prisma.$ConversationPayload<ExtArgs>[]
     workingHours: Prisma.$WorkingHoursPayload<ExtArgs>[]
@@ -5082,6 +5924,8 @@ export type $SupplierProfilePayload<ExtArgs extends runtime.Types.Extensions.Int
     reviewedBy: string | null
     rating: runtime.Decimal
     totalReviews: number
+    sellerRating: runtime.Decimal
+    sellerTotalReviews: number
     totalProducts: number
     totalOrders: number
     totalSales: runtime.Decimal
@@ -5497,7 +6341,9 @@ export interface Prisma__SupplierProfileClient<T, Null = never, ExtArgs extends 
   orders<T extends Prisma.SupplierProfile$ordersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SupplierProfile$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   promotions<T extends Prisma.SupplierProfile$promotionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SupplierProfile$promotionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PromotionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reviews<T extends Prisma.SupplierProfile$reviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SupplierProfile$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  sellerReviews<T extends Prisma.SupplierProfile$sellerReviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SupplierProfile$sellerReviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SellerReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reviewResponses<T extends Prisma.SupplierProfile$reviewResponsesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SupplierProfile$reviewResponsesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewResponsePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  sellerResponses<T extends Prisma.SupplierProfile$sellerResponsesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SupplierProfile$sellerResponsesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SellerReviewResponsePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   favorites<T extends Prisma.SupplierProfile$favoritesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SupplierProfile$favoritesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FavoritePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   conversations<T extends Prisma.SupplierProfile$conversationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SupplierProfile$conversationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   workingHours<T extends Prisma.SupplierProfile$workingHoursArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SupplierProfile$workingHoursArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkingHoursPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -5555,6 +6401,8 @@ export interface SupplierProfileFieldRefs {
   readonly reviewedBy: Prisma.FieldRef<"SupplierProfile", 'String'>
   readonly rating: Prisma.FieldRef<"SupplierProfile", 'Decimal'>
   readonly totalReviews: Prisma.FieldRef<"SupplierProfile", 'Int'>
+  readonly sellerRating: Prisma.FieldRef<"SupplierProfile", 'Decimal'>
+  readonly sellerTotalReviews: Prisma.FieldRef<"SupplierProfile", 'Int'>
   readonly totalProducts: Prisma.FieldRef<"SupplierProfile", 'Int'>
   readonly totalOrders: Prisma.FieldRef<"SupplierProfile", 'Int'>
   readonly totalSales: Prisma.FieldRef<"SupplierProfile", 'Decimal'>
@@ -6091,6 +6939,30 @@ export type SupplierProfile$reviewsArgs<ExtArgs extends runtime.Types.Extensions
 }
 
 /**
+ * SupplierProfile.sellerReviews
+ */
+export type SupplierProfile$sellerReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SellerReview
+   */
+  select?: Prisma.SellerReviewSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SellerReview
+   */
+  omit?: Prisma.SellerReviewOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SellerReviewInclude<ExtArgs> | null
+  where?: Prisma.SellerReviewWhereInput
+  orderBy?: Prisma.SellerReviewOrderByWithRelationInput | Prisma.SellerReviewOrderByWithRelationInput[]
+  cursor?: Prisma.SellerReviewWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SellerReviewScalarFieldEnum | Prisma.SellerReviewScalarFieldEnum[]
+}
+
+/**
  * SupplierProfile.reviewResponses
  */
 export type SupplierProfile$reviewResponsesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -6112,6 +6984,30 @@ export type SupplierProfile$reviewResponsesArgs<ExtArgs extends runtime.Types.Ex
   take?: number
   skip?: number
   distinct?: Prisma.ReviewResponseScalarFieldEnum | Prisma.ReviewResponseScalarFieldEnum[]
+}
+
+/**
+ * SupplierProfile.sellerResponses
+ */
+export type SupplierProfile$sellerResponsesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SellerReviewResponse
+   */
+  select?: Prisma.SellerReviewResponseSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SellerReviewResponse
+   */
+  omit?: Prisma.SellerReviewResponseOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SellerReviewResponseInclude<ExtArgs> | null
+  where?: Prisma.SellerReviewResponseWhereInput
+  orderBy?: Prisma.SellerReviewResponseOrderByWithRelationInput | Prisma.SellerReviewResponseOrderByWithRelationInput[]
+  cursor?: Prisma.SellerReviewResponseWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SellerReviewResponseScalarFieldEnum | Prisma.SellerReviewResponseScalarFieldEnum[]
 }
 
 /**

@@ -1,0 +1,1 @@
+SELECT id, email FROM "User" WHERE email = 'cliente@agrobuscafacil.com.br';

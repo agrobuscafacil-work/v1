@@ -38,11 +38,11 @@ export default function AdminReviewsPage() {
   const fetchReviews = useCallback(async () => {
     setIsLoading(true);
     try {
-      const res = await api.get('/reviews/admin', {
+      const res = await api.get('/reviews', {
         params: { page, limit: 10, status: filter === 'all' ? undefined : filter },
       });
-      setReviews(res.data.data?.data ?? []);
-      setTotalPages(res.data.data?.meta?.totalPages ?? 1);
+      setReviews(res.data.data?.data ?? res.data.data ?? []);
+      setTotalPages(res.data.data?.meta?.totalPages ?? res.data.meta?.totalPages ?? 1);
     } catch {
       toast.error('Erro ao carregar avaliações');
     } finally {
@@ -53,13 +53,13 @@ export default function AdminReviewsPage() {
   useEffect(() => {
     let cancelled = false;
     api
-      .get('/reviews/admin', {
+      .get('/reviews', {
         params: { page, limit: 10, status: filter === 'all' ? undefined : filter },
       })
       .then((res) => {
         if (cancelled) return;
-        setReviews(res.data.data?.data ?? []);
-        setTotalPages(res.data.data?.meta?.totalPages ?? 1);
+        setReviews(res.data.data?.data ?? res.data.data ?? []);
+        setTotalPages(res.data.data?.meta?.totalPages ?? res.data.meta?.totalPages ?? 1);
       })
       .catch(() => {
         if (!cancelled) toast.error('Erro ao carregar avaliações');

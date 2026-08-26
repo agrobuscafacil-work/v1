@@ -68,7 +68,11 @@ export const ModelName = {
   OrderCoupon: 'OrderCoupon',
   OrderStatusHistory: 'OrderStatusHistory',
   Review: 'Review',
+  SellerReviewResponse: 'SellerReviewResponse',
+  SellerReview: 'SellerReview',
   ReviewResponse: 'ReviewResponse',
+  ReviewReport: 'ReviewReport',
+  SellerReviewReport: 'SellerReviewReport',
   Favorite: 'Favorite',
   Conversation: 'Conversation',
   Message: 'Message',
@@ -171,6 +175,8 @@ export const SupplierProfileScalarFieldEnum = {
   reviewedBy: 'reviewedBy',
   rating: 'rating',
   totalReviews: 'totalReviews',
+  sellerRating: 'sellerRating',
+  sellerTotalReviews: 'sellerTotalReviews',
   totalProducts: 'totalProducts',
   totalOrders: 'totalOrders',
   totalSales: 'totalSales',
@@ -406,6 +412,7 @@ export const OrderScalarFieldEnum = {
   trackingCode: 'trackingCode',
   estimatedDelivery: 'estimatedDelivery',
   deliveredAt: 'deliveredAt',
+  confirmedDeliveryAt: 'confirmedDeliveryAt',
   notes: 'notes',
   invoiceUrl: 'invoiceUrl',
   invoiceNumber: 'invoiceNumber',
@@ -427,6 +434,7 @@ export const OrderItemScalarFieldEnum = {
   quantity: 'quantity',
   unitPrice: 'unitPrice',
   totalPrice: 'totalPrice',
+  confirmedDeliveryAt: 'confirmedDeliveryAt',
   createdAt: 'createdAt'
 } as const
 
@@ -468,6 +476,7 @@ export const ReviewScalarFieldEnum = {
   comment: 'comment',
   images: 'images',
   status: 'status',
+  verifiedPurchase: 'verifiedPurchase',
   moderatorId: 'moderatorId',
   moderatedAt: 'moderatedAt',
   helpfulCount: 'helpfulCount',
@@ -476,6 +485,40 @@ export const ReviewScalarFieldEnum = {
 } as const
 
 export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof ReviewScalarFieldEnum]
+
+
+export const SellerReviewResponseScalarFieldEnum = {
+  id: 'id',
+  sellerReviewId: 'sellerReviewId',
+  userId: 'userId',
+  supplierId: 'supplierId',
+  comment: 'comment',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SellerReviewResponseScalarFieldEnum = (typeof SellerReviewResponseScalarFieldEnum)[keyof typeof SellerReviewResponseScalarFieldEnum]
+
+
+export const SellerReviewScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  supplierId: 'supplierId',
+  orderId: 'orderId',
+  rating: 'rating',
+  title: 'title',
+  comment: 'comment',
+  images: 'images',
+  status: 'status',
+  verifiedPurchase: 'verifiedPurchase',
+  moderatorId: 'moderatorId',
+  moderatedAt: 'moderatedAt',
+  helpfulCount: 'helpfulCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SellerReviewScalarFieldEnum = (typeof SellerReviewScalarFieldEnum)[keyof typeof SellerReviewScalarFieldEnum]
 
 
 export const ReviewResponseScalarFieldEnum = {
@@ -489,6 +532,36 @@ export const ReviewResponseScalarFieldEnum = {
 } as const
 
 export type ReviewResponseScalarFieldEnum = (typeof ReviewResponseScalarFieldEnum)[keyof typeof ReviewResponseScalarFieldEnum]
+
+
+export const ReviewReportScalarFieldEnum = {
+  id: 'id',
+  reviewId: 'reviewId',
+  reportedBy: 'reportedBy',
+  reason: 'reason',
+  description: 'description',
+  status: 'status',
+  resolvedBy: 'resolvedBy',
+  resolvedAt: 'resolvedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type ReviewReportScalarFieldEnum = (typeof ReviewReportScalarFieldEnum)[keyof typeof ReviewReportScalarFieldEnum]
+
+
+export const SellerReviewReportScalarFieldEnum = {
+  id: 'id',
+  sellerReviewId: 'sellerReviewId',
+  reportedBy: 'reportedBy',
+  reason: 'reason',
+  description: 'description',
+  status: 'status',
+  resolvedBy: 'resolvedBy',
+  resolvedAt: 'resolvedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type SellerReviewReportScalarFieldEnum = (typeof SellerReviewReportScalarFieldEnum)[keyof typeof SellerReviewReportScalarFieldEnum]
 
 
 export const FavoriteScalarFieldEnum = {

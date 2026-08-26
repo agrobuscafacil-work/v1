@@ -1,0 +1,1 @@
+SELECT "supplierId" FROM "Order" WHERE id = 'e0b6425b-11df-4f0c-968a-54438e76b650';

@@ -3,9 +3,11 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { Search, Shield, Truck, Leaf, ArrowRight, Star, Clock, TrendingUp, Store, Sprout, Wheat, Sun, Wind } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Search, Shield, Truck, Leaf, ArrowRight, Star, Clock, TrendingUp, Store, Sprout, Wheat, Sun, Wind, ShoppingCart } from 'lucide-react';
 import { api } from '@/lib/api';
 import { PRODUCT_FILE_URL } from '@/lib/products';
+import { useCart } from '@/hooks/use-cart';
 
 const categoryIcons: Record<string, any> = {
   insumos: Sprout,
@@ -38,6 +40,8 @@ interface FeaturedProduct {
   price: number;
   image: string | null;
   supplier: string;
+  supplierId: string;
+  unit: string;
   rating: number;
   reviews: number;
 }
@@ -52,6 +56,8 @@ interface TopSupplier {
 }
 
 export default function HomePage() {
+  const router = useRouter();
+  const { addItem } = useCart();
   const [categories, setCategories] = useState<CategoryItem[]>([]);
   const [featuredProducts, setFeaturedProducts] = useState<FeaturedProduct[]>([]);
   const [topSuppliers, setTopSuppliers] = useState<TopSupplier[]>([]);
@@ -91,6 +97,8 @@ export default function HomePage() {
               price: Number(p.price) || 0,
               image: p.images?.[0] || null,
               supplier: p.supplier?.companyName || '',
+              supplierId: p.supplier?.id || p.supplierId || '',
+              unit: p.unit || 'un',
               rating: Number(p.rating) || 0,
               reviews: Number(p.totalReviews) || 0,
             })),
@@ -245,44 +253,65 @@ export default function HomePage() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {featuredProducts.map((product) => (
-                <Link
+                <div
                   key={product.id}
-                  href={`/products/${product.slug}`}
-                  className="group rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 overflow-hidden card-hover hover:border-primary-200 dark:hover:border-primary-800"
+                  className="group rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 overflow-hidden card-hover hover:border-primary-200 dark:hover:border-primary-800 flex flex-col"
                 >
-                  <div className="aspect-[4/3] bg-gradient-to-br from-primary-100 to-green-50 dark:from-primary-950 dark:to-green-950 relative overflow-hidden">
-                    {product.image ? (
-                      <Image
-                        src={PRODUCT_FILE_URL(product.image)}
-                        alt={product.name}
-                        fill
-                        sizes="(max-width: 640px) 50vw, 25vw"
-                        className="object-cover"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 flex items-center justify-center text-primary-300 dark:text-primary-700">
-                        <Leaf className="h-16 w-16 group-hover:scale-110 transition-transform duration-500" />
+                  <Link href={`/products/${product.slug}`} className="flex-1">
+                    <div className="aspect-[4/3] bg-gradient-to-br from-primary-100 to-green-50 dark:from-primary-950 dark:to-green-950 relative overflow-hidden">
+                      {product.image ? (
+                        <Image
+                          src={PRODUCT_FILE_URL(product.image)}
+                          alt={product.name}
+                          fill
+                          sizes="(max-width: 640px) 50vw, 25vw"
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center text-primary-300 dark:text-primary-700">
+                          <Leaf className="h-16 w-16 group-hover:scale-110 transition-transform duration-500" />
+                        </div>
+                      )}
+                      <div className="absolute top-3 right-3 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-lg px-2 py-1 text-xs font-semibold text-primary-600">
+                        Destaque
                       </div>
-                    )}
-                    <div className="absolute top-3 right-3 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-lg px-2 py-1 text-xs font-semibold text-primary-600">
-                      Destaque
                     </div>
-                  </div>
-                  <div className="p-4 space-y-2">
-                    {product.supplier && <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{product.supplier}</p>}
-                    <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 transition-colors line-clamp-2">
-                      {product.name}
-                    </h3>
-                    <div className="flex items-center gap-1">
-                      <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
-                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{product.rating.toFixed(1)}</span>
-                      <span className="text-xs text-gray-500">({product.reviews})</span>
+                    <div className="p-4 space-y-2">
+                      {product.supplier && <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{product.supplier}</p>}
+                      <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 transition-colors line-clamp-2">
+                        {product.name}
+                      </h3>
+                      <div className="flex items-center gap-1">
+                        <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{product.rating.toFixed(1)}</span>
+                        <span className="text-xs text-gray-500">({product.reviews})</span>
+                      </div>
+                      <p className="text-xl font-bold bg-gradient-to-r from-primary-600 to-green-600 bg-clip-text text-transparent">
+                        R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                      </p>
                     </div>
-                    <p className="text-xl font-bold bg-gradient-to-r from-primary-600 to-green-600 bg-clip-text text-transparent">
-                      R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                    </p>
+                  </Link>
+                  <div className="p-3 pt-0">
+                    <button
+                      onClick={() => {
+                        addItem({
+                          id: product.id,
+                          name: product.name,
+                          slug: product.slug,
+                          price: product.price,
+                          unit: product.unit,
+                          image: product.image ? PRODUCT_FILE_URL(product.image) : '',
+                          supplierName: product.supplier,
+                          supplierId: product.supplierId,
+                        }, 1);
+                        router.push('/checkout');
+                      }}
+                      className="btn-primary w-full gap-2 text-sm"
+                    >
+                      <ShoppingCart className="h-4 w-4" /> Comprar
+                    </button>
                   </div>
-                </Link>
+                </div>
               ))}
             </div>
             <div className="mt-8 text-center sm:hidden">

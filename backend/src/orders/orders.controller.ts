@@ -5,6 +5,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger'
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
+import { ConfirmDeliveryDto } from './dto/confirm-delivery.dto';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
@@ -67,6 +68,13 @@ export class OrdersController {
   @ApiOperation({ summary: 'Update order status' })
   async updateStatus(@CurrentUser() user: any, @Param('id') id: string, @Body() dto: UpdateOrderStatusDto) {
     return this.ordersService.updateStatus(id, dto, user);
+  }
+
+  @Post(':id/confirm-delivery')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Confirm delivery receipt by customer' })
+  async confirmDelivery(@CurrentUser() user: any, @Param('id') id: string, @Body() dto: ConfirmDeliveryDto) {
+    return this.ordersService.confirmDelivery(id, user);
   }
 
   @Post(':id/cancel')

@@ -1,0 +1,1 @@
+SELECT email FROM "User" WHERE id = 'a7b62382-7810-442b-a7c2-864c58f947ea';

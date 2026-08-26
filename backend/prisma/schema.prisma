@@ -142,7 +142,13 @@ model User {
   addresses       Address[]
   orders          Order[]             @relation("CustomerOrders")
   reviews         Review[]
+  sellerReviews   SellerReview[]
   reviewResponses ReviewResponse[]
+  sellerResponses SellerReviewResponse[]
+  reviewReportsReported   ReviewReport[]   @relation("ReviewReportsReported")
+  reviewReportsResolved   ReviewReport[]   @relation("ReviewReportsResolved")
+  sellerReviewReportsReported SellerReviewReport[] @relation("SellerReviewReportsReported")
+  sellerReviewReportsResolved SellerReviewReport[] @relation("SellerReviewReportsResolved")
   cart            Cart?
   favorites       Favorite[]
   messagesSent    Message[]           @relation("SenderMessages")
@@ -197,6 +203,8 @@ model SupplierProfile {
   reviewedBy            String?
   rating                Decimal        @default(0) @db.Decimal(3, 2)
   totalReviews          Int            @default(0)
+  sellerRating          Decimal        @default(0) @db.Decimal(3, 2)
+  sellerTotalReviews    Int            @default(0)
   totalProducts         Int            @default(0)
   totalOrders           Int            @default(0)
   totalSales            Decimal        @default(0) @db.Decimal(12, 2)
@@ -218,7 +226,9 @@ model SupplierProfile {
   orders          Order[]          @relation("SupplierOrders")
   promotions      Promotion[]
   reviews         Review[]
+  sellerReviews   SellerReview[]
   reviewResponses ReviewResponse[]
+  sellerResponses SellerReviewResponse[]
   favorites       Favorite[]
   conversations   Conversation[]      @relation("SupplierConversations")
   workingHours    WorkingHours[]
@@ -498,6 +508,7 @@ model Order {
   trackingCode       String?
   estimatedDelivery  DateTime?
   deliveredAt        DateTime?
+  confirmedDeliveryAt DateTime?
   notes              String?
   invoiceUrl         String?
   invoiceNumber      String?
@@ -513,6 +524,7 @@ model Order {
   coupons       OrderCoupon[]
   statusHistory OrderStatusHistory[]
   messages      Message[]
+  sellerReviews SellerReview[]
 
   @@index([orderNumber])
   @@index([customerId])
@@ -523,15 +535,16 @@ model Order {
 }
 
 model OrderItem {
-  id         String   @id @default(uuid())
-  orderId    String
-  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  productId  String
-  product    Product  @relation(fields: [productId], references: [id])
-  quantity   Int
-  unitPrice  Decimal  @db.Decimal(12, 2)
-  totalPrice Decimal  @db.Decimal(12, 2)
-  createdAt  DateTime @default(now())
+  id                 String   @id @default(uuid())
+  orderId            String
+  order              Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId          String
+  product            Product  @relation(fields: [productId], references: [id])
+  quantity           Int
+  unitPrice          Decimal  @db.Decimal(12, 2)
+  totalPrice         Decimal  @db.Decimal(12, 2)
+  confirmedDeliveryAt DateTime?
+  createdAt          DateTime @default(now())
 
   @@index([orderId])
   @@index([productId])
@@ -578,11 +591,13 @@ model Review {
   title           String?
   comment         String?
   images          String[]
-  status          ReviewStatus     @default(PENDING)
+  status          ReviewStatus     @default(APPROVED)
+  verifiedPurchase Boolean         @default(false)
   moderatorId     String?
   moderatedAt     DateTime?
   helpfulCount    Int              @default(0)
   reviewResponses ReviewResponse[]
+  reports         ReviewReport[]
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
 
@@ -593,6 +608,52 @@ model Review {
   @@index([serviceId])
   @@index([status])
   @@index([rating])
+}
+
+model SellerReviewResponse {
+  id              String          @id @default(uuid())
+  sellerReviewId  String
+  sellerReview    SellerReview    @relation(fields: [sellerReviewId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User            @relation(fields: [userId], references: [id])
+  supplierId      String
+  supplier        SupplierProfile @relation(fields: [supplierId], references: [id])
+  comment         String
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([sellerReviewId])
+  @@index([supplierId])
+}
+
+model SellerReview {
+  id              String           @id @default(uuid())
+  userId          String
+  user            User             @relation(fields: [userId], references: [id])
+  supplierId      String
+  supplier        SupplierProfile  @relation(fields: [supplierId], references: [id])
+  orderId         String
+  order           Order            @relation(fields: [orderId], references: [id])
+  rating          Int
+  title           String?
+  comment         String?
+  images          String[]
+  status          ReviewStatus     @default(APPROVED)
+  verifiedPurchase Boolean         @default(false)
+  moderatorId     String?
+  moderatedAt     DateTime?
+  helpfulCount    Int              @default(0)
+  sellerResponses SellerReviewResponse[]
+  reports         SellerReviewReport[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  @@unique([userId, supplierId])
+  @@index([supplierId])
+  @@index([orderId])
+  @@index([status])
+  @@index([rating])
+  @@index([verifiedPurchase])
 }
 
 model ReviewResponse {
@@ -609,6 +670,60 @@ model ReviewResponse {
 
   @@index([reviewId])
   @@index([supplierId])
+}
+
+model ReviewReport {
+  id           String             @id @default(uuid())
+  reviewId     String
+  review       Review             @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  reportedBy   String
+  reporter     User               @relation("ReviewReportsReported", fields: [reportedBy], references: [id])
+  reason       ReviewReportReason
+  description  String?
+  status       ReviewReportStatus @default(PENDING)
+  resolvedBy   String?
+  resolver     User?              @relation("ReviewReportsResolved", fields: [resolvedBy], references: [id])
+  resolvedAt   DateTime?
+  createdAt    DateTime           @default(now())
+
+  @@index([reviewId])
+  @@index([reportedBy])
+  @@index([status])
+}
+
+model SellerReviewReport {
+  id              String             @id @default(uuid())
+  sellerReviewId  String
+  sellerReview    SellerReview       @relation(fields: [sellerReviewId], references: [id], onDelete: Cascade)
+  reportedBy      String
+  reporter        User               @relation("SellerReviewReportsReported", fields: [reportedBy], references: [id])
+  reason          ReviewReportReason
+  description     String?
+  status          ReviewReportStatus @default(PENDING)
+  resolvedBy      String?
+  resolver        User?              @relation("SellerReviewReportsResolved", fields: [resolvedBy], references: [id])
+  resolvedAt      DateTime?
+  createdAt       DateTime           @default(now())
+
+  @@index([sellerReviewId])
+  @@index([reportedBy])
+  @@index([status])
+}
+
+enum ReviewReportReason {
+  SPAM
+  OFFENSIVE_CONTENT
+  FAKE_REVIEW
+  IRRELEVANT
+  PERSONAL_INFORMATION
+  ADVERTISEMENT
+  OTHER
+}
+
+enum ReviewReportStatus {
+  PENDING
+  RESOLVED
+  DISMISSED
 }
 
 model Favorite {
@@ -765,6 +880,8 @@ model ChatSettings {
   welcomeMessage   String?
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
+
+  @@index([supplierId])
 }
 
 model SystemSetting {

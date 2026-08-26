@@ -1,0 +1,1 @@
+SELECT id FROM "Order" WHERE "supplierId" = '962de021-8d82-4624-a482-85cc8f7a4fe5' AND status = 'PENDING' LIMIT 1;

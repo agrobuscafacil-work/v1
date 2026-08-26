@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Star, MessageSquare, Loader2, Package, Wrench, ArrowRight, Trash2 } from 'lucide-react';
+import { Star, MessageSquare, Loader2, Package, Wrench, ArrowRight, Trash2, Pencil, CheckCircle } from 'lucide-react';
 import { toast } from '@/lib/toast';
 import { api } from '@/lib/api';
 import { PRODUCT_FILE_URL } from '@/lib/products';

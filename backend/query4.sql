@@ -1,0 +1,1 @@
+SELECT id, "companyName", "userId" FROM "SupplierProfile" LIMIT 5;

@@ -151,3 +151,25 @@ export const SupportAttachmentType = {
 } as const
 
 export type SupportAttachmentType = (typeof SupportAttachmentType)[keyof typeof SupportAttachmentType]
+
+
+export const ReviewReportReason = {
+  SPAM: 'SPAM',
+  OFFENSIVE_CONTENT: 'OFFENSIVE_CONTENT',
+  FAKE_REVIEW: 'FAKE_REVIEW',
+  IRRELEVANT: 'IRRELEVANT',
+  PERSONAL_INFORMATION: 'PERSONAL_INFORMATION',
+  ADVERTISEMENT: 'ADVERTISEMENT',
+  OTHER: 'OTHER'
+} as const
+
+export type ReviewReportReason = (typeof ReviewReportReason)[keyof typeof ReviewReportReason]
+
+
+export const ReviewReportStatus = {
+  PENDING: 'PENDING',
+  RESOLVED: 'RESOLVED',
+  DISMISSED: 'DISMISSED'
+} as const
+
+export type ReviewReportStatus = (typeof ReviewReportStatus)[keyof typeof ReviewReportStatus]

@@ -125,10 +125,30 @@ export type OrderStatusHistory = Prisma.OrderStatusHistoryModel
  */
 export type Review = Prisma.ReviewModel
 /**
+ * Model SellerReviewResponse
+ * 
+ */
+export type SellerReviewResponse = Prisma.SellerReviewResponseModel
+/**
+ * Model SellerReview
+ * 
+ */
+export type SellerReview = Prisma.SellerReviewModel
+/**
  * Model ReviewResponse
  * 
  */
 export type ReviewResponse = Prisma.ReviewResponseModel
+/**
+ * Model ReviewReport
+ * 
+ */
+export type ReviewReport = Prisma.ReviewReportModel
+/**
+ * Model SellerReviewReport
+ * 
+ */
+export type SellerReviewReport = Prisma.SellerReviewReportModel
 /**
  * Model Favorite
  * 
