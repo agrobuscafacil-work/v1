@@ -75,6 +75,9 @@ export class CartService {
     if (product.deletedAt || product.status !== 'ACTIVE') {
       throw new BadRequestException('Product is not available');
     }
+    if (product.saleMode === 'CONTACT_ONLY') {
+      throw new BadRequestException('Este produto está disponível somente para contato com o fornecedor');
+    }
 
     const existingItem = cart.items.find(i => i.productId === dto.productId);
     const requestedQty = existingItem ? existingItem.quantity + dto.quantity : dto.quantity;

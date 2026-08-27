@@ -90,6 +90,7 @@ export interface Product {
   tags: string[];
   specifications?: any;
   status: 'ACTIVE' | 'INACTIVE' | 'OUT_OF_STOCK' | 'DISCONTINUED';
+  saleMode: 'DIRECT' | 'CONTACT_ONLY';
   featured: boolean;
   freeShipping: boolean;
   rating: number;
@@ -184,6 +185,7 @@ export interface Review {
   images: string[];
   status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'FLAGGED';
   helpfulCount: number;
+  liked?: boolean;
   createdAt: string;
 }
 

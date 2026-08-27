@@ -11,7 +11,8 @@ import { PrismaService } from '../prisma/prisma.service';
 import { FileStorageService } from '../common/storage/file-storage.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { ProductStatus } from '../generated/prisma/client';
+import { ProductStatus, SaleMode } from '../generated/prisma/client';
+import { randomUUID } from 'crypto';
 import { PRODUCT_UPLOAD_PATH, PRODUCT_ALLOWED_EXTENSIONS } from './products-upload.constants';
 import { parsePage, parseLimit } from '../common/utils/pagination';
 
@@ -75,7 +76,8 @@ export class ProductsService {
     const supplier = await this.prisma.supplierProfile.findUnique({ where: { userId } });
     if (!supplier) throw new NotFoundException('Supplier profile not found');
 
-    const product = await this.prisma.product.create({
+    const product = await this.prisma.$transaction(async (tx) => {
+      const created = await tx.product.create({
       data: {
         supplierId: supplier.id,
         name: dto.name,
@@ -92,8 +94,12 @@ export class ProductsService {
         specifications: dto.specifications || {},
         unit: dto.unit || 'un',
         status: ProductStatus.ACTIVE,
+        saleMode: dto.saleMode || SaleMode.DIRECT,
       },
       include: { category: true, supplier: true },
+      });
+      await tx.productCode.create({ data: { productId: created.id, code: `PROD-${randomUUID().replace(/-/g, '').slice(0, 10).toUpperCase()}` } });
+      return tx.product.findUniqueOrThrow({ where: { id: created.id }, include: { category: true, supplier: true, productCode: true } });
     });
 
     this.logger.log(`Product created: ${product.id}`);
@@ -135,7 +141,8 @@ export class ProductsService {
         where, skip, take: limit,
         include: {
           category: { select: { id: true, name: true, slug: true } },
-          supplier: { select: { id: true, companyName: true, logoUrl: true, rating: true } },
+          supplier: { select: { id: true, companyName: true, logoUrl: true, rating: true, whatsapp: true } },
+          productCode: { select: { code: true } },
         },
         orderBy: { createdAt: 'desc' },
       }),
@@ -158,6 +165,7 @@ export class ProductsService {
       include: {
         category: { select: { id: true, name: true, slug: true } },
         supplier: { select: { id: true, companyName: true } },
+        productCode: { select: { code: true } },
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -168,7 +176,7 @@ export class ProductsService {
   async findById(id: string) {
     const product = await this.prisma.product.findUnique({
       where: { id },
-      include: { category: true, supplier: true },
+      include: { category: true, supplier: true, productCode: true },
     });
     if (!product) throw new NotFoundException('Product not found');
     return product;
@@ -187,6 +195,8 @@ supplier: {
               logoUrl: true,
               rating: true,
               totalReviews: true,
+              sellerRating: true,
+              sellerTotalReviews: true,
               totalProducts: true,
               whatsapp: true,
               addresses: {
@@ -196,6 +206,7 @@ supplier: {
             },
           },
         },
+        productCode: { select: { code: true } },
       },
     });
     if (!product) throw new NotFoundException('Product not found');

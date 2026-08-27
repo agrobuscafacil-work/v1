@@ -18,6 +18,74 @@ export class ReviewsService {
     return sp?.id ?? null;
   }
 
+  async getLikeStatus(reviewId: string, userId: string) {
+    const review = await this.prisma.review.findUnique({ where: { id: reviewId }, select: { id: true } });
+    if (!review) throw new NotFoundException('Review not found');
+    const like = await this.prisma.reviewLike.findUnique({ where: { reviewId_userId: { reviewId, userId } }, select: { id: true } });
+    return { liked: !!like };
+  }
+
+  async like(reviewId: string, userId: string) {
+    return this.prisma.$transaction(async (tx) => {
+      const review = await tx.review.findUnique({ where: { id: reviewId }, select: { id: true } });
+      if (!review) throw new NotFoundException('Review not found');
+      const existing = await tx.reviewLike.findUnique({ where: { reviewId_userId: { reviewId, userId } } });
+      if (!existing) {
+        await tx.reviewLike.create({ data: { reviewId, userId } });
+        await tx.review.update({ where: { id: reviewId }, data: { helpfulCount: { increment: 1 } } });
+      }
+      const current = await tx.review.findUniqueOrThrow({ where: { id: reviewId }, select: { helpfulCount: true } });
+      return { liked: true, helpfulCount: current.helpfulCount };
+    });
+  }
+
+  async unlike(reviewId: string, userId: string) {
+    return this.prisma.$transaction(async (tx) => {
+      const review = await tx.review.findUnique({ where: { id: reviewId }, select: { helpfulCount: true } });
+      if (!review) throw new NotFoundException('Review not found');
+      const deleted = await tx.reviewLike.deleteMany({ where: { reviewId, userId } });
+      if (deleted.count > 0 && review.helpfulCount > 0) {
+        await tx.review.update({ where: { id: reviewId }, data: { helpfulCount: { decrement: 1 } } });
+      }
+      const current = await tx.review.findUniqueOrThrow({ where: { id: reviewId }, select: { helpfulCount: true } });
+      return { liked: false, helpfulCount: current.helpfulCount };
+    });
+  }
+
+  async getSellerLikeStatus(sellerReviewId: string, userId: string) {
+    const review = await this.prisma.sellerReview.findUnique({ where: { id: sellerReviewId }, select: { id: true } });
+    if (!review) throw new NotFoundException('SellerReview not found');
+    const like = await this.prisma.sellerReviewLike.findUnique({ where: { sellerReviewId_userId: { sellerReviewId, userId } }, select: { id: true } });
+    return { liked: !!like };
+  }
+
+  async likeSeller(sellerReviewId: string, userId: string) {
+    return this.prisma.$transaction(async (tx) => {
+      const review = await tx.sellerReview.findUnique({ where: { id: sellerReviewId }, select: { id: true } });
+      if (!review) throw new NotFoundException('SellerReview not found');
+      const existing = await tx.sellerReviewLike.findUnique({ where: { sellerReviewId_userId: { sellerReviewId, userId } } });
+      if (!existing) {
+        await tx.sellerReviewLike.create({ data: { sellerReviewId, userId } });
+        await tx.sellerReview.update({ where: { id: sellerReviewId }, data: { helpfulCount: { increment: 1 } } });
+      }
+      const current = await tx.sellerReview.findUniqueOrThrow({ where: { id: sellerReviewId }, select: { helpfulCount: true } });
+      return { liked: true, helpfulCount: current.helpfulCount };
+    });
+  }
+
+  async unlikeSeller(sellerReviewId: string, userId: string) {
+    return this.prisma.$transaction(async (tx) => {
+      const review = await tx.sellerReview.findUnique({ where: { id: sellerReviewId }, select: { helpfulCount: true } });
+      if (!review) throw new NotFoundException('SellerReview not found');
+      const deleted = await tx.sellerReviewLike.deleteMany({ where: { sellerReviewId, userId } });
+      if (deleted.count > 0 && review.helpfulCount > 0) {
+        await tx.sellerReview.update({ where: { id: sellerReviewId }, data: { helpfulCount: { decrement: 1 } } });
+      }
+      const current = await tx.sellerReview.findUniqueOrThrow({ where: { id: sellerReviewId }, select: { helpfulCount: true } });
+      return { liked: false, helpfulCount: current.helpfulCount };
+    });
+  }
+
   async create(userId: string, dto: CreateReviewDto) {
     // Fluxo novo via orderItemId (avaliação pela página de pedidos após confirmação)
     let productId: string | null = (dto as any).productId ?? null;
@@ -188,13 +256,17 @@ export class ReviewsService {
   async update(id: string, userId: string, dto: UpdateReviewDto) {
     const review = await this.prisma.review.findFirst({ where: { id, userId } });
     if (!review) throw new NotFoundException('Review not found');
-    return this.prisma.review.update({ where: { id }, data: { ...dto } });
+    const updated = await this.prisma.review.update({ where: { id }, data: { ...dto } });
+    await this.refreshRatings(updated.productId, updated.supplierId);
+    return updated;
   }
 
   async updateSellerReview(id: string, userId: string, dto: UpdateReviewDto) {
     const review = await this.prisma.sellerReview.findFirst({ where: { id, userId } });
     if (!review) throw new NotFoundException('SellerReview not found');
-    return this.prisma.sellerReview.update({ where: { id }, data: { ...dto }, include: { user: { select: { id: true, name: true, avatarUrl: true } } } });
+    const updated = await this.prisma.sellerReview.update({ where: { id }, data: { ...dto }, include: { user: { select: { id: true, name: true, avatarUrl: true } } } });
+    await this.refreshSellerRating(updated.supplierId);
+    return updated;
   }
 
   async moderate(id: string, dto: ModerateReviewDto) {

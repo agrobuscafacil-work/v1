@@ -17,6 +17,9 @@ export class CheckoutService {
     if (!cart || cart.items.length === 0) {
       throw new BadRequestException('Cart is empty');
     }
+    if (cart.items.some((item) => item.product.saleMode === 'CONTACT_ONLY')) {
+      throw new BadRequestException('O carrinho contém produto disponível somente para contato');
+    }
 
     const address = await this.prisma.address.findUnique({ where: { id: dto.addressId } });
     if (!address) throw new NotFoundException('Address not found');

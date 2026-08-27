@@ -46,7 +46,7 @@ const emptyNewCard = {
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, subtotal, clearCart } = useCart();
+  const { items, selectedProductIds, removeItems } = useCart();
   const [step, setStep] = useState<'address' | 'payment' | 'confirm'>('address');
   const [isLoading, setIsLoading] = useState(false);
   const [addresses, setAddresses] = useState<Address[]>([]);
@@ -60,9 +60,13 @@ export default function CheckoutPage() {
   const [installments, setInstallments] = useState(1);
   const [idempotencyKey, setIdempotencyKey] = useState('');
 
-  const shipping = subtotal() > 500 ? 0 : 29.9;
+  const selectedItems = selectedProductIds === null
+    ? items
+    : items.filter((item) => selectedProductIds.includes(item.product.id));
+  const selectedSubtotal = selectedItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+  const shipping = selectedSubtotal > 500 ? 0 : 29.9;
   const discount = 0;
-  const total = subtotal() + shipping - discount;
+  const total = selectedSubtotal + shipping - discount;
   const selectedAddress = addresses.find((a) => a.id === selectedAddressId);
 
   useEffect(() => {
@@ -116,22 +120,27 @@ export default function CheckoutPage() {
   };
 
   const handlePlaceOrder = async () => {
-    if (!items.length) {
-      toast.error('Seu carrinho está vazio.');
+    if (!selectedItems.length) {
+      toast.error('Selecione pelo menos um produto no carrinho.');
       return;
     }
     if (!selectedAddress) {
       toast.error('Selecione um endereço de entrega.');
       return;
     }
-    const supplierId = items[0].product.supplierId;
+    const supplierIds = new Set(selectedItems.map((item) => item.product.supplierId).filter(Boolean));
+    if (supplierIds.size !== 1) {
+      toast.error('Selecione produtos do mesmo fornecedor para realizar o pagamento.');
+      return;
+    }
+    const supplierId = selectedItems[0].product.supplierId;
     if (!supplierId) {
       toast.error('Não foi possível identificar o fornecedor dos produtos.');
       return;
     }
     setIsLoading(true);
     try {
-      const orderItems = items.map((i) => ({
+      const orderItems = selectedItems.map((i) => ({
         productId: i.product.id,
         quantity: i.quantity,
         unitPrice: i.product.price,
@@ -140,7 +149,7 @@ export default function CheckoutPage() {
       const orderRes = await api.post('/orders', {
         supplierId,
         items: orderItems,
-        subtotal: subtotal(),
+        subtotal: selectedSubtotal,
         shippingCost: shipping,
         total,
         paymentMethod,
@@ -176,7 +185,7 @@ export default function CheckoutPage() {
         }
         const payRes = await api.post('/payments', body, { headers: { 'Idempotency-Key': key } });
         const payment = payRes.data.data;
-        clearCart();
+        removeItems(selectedItems.map((item) => item.product.id));
         if (payment.status === 'APPROVED') {
           toast.success('Pagamento aprovado!');
           router.push('/orders');
@@ -193,7 +202,7 @@ export default function CheckoutPage() {
       const sessionRes = await api.post('/stripe/create-checkout-session', { orderId: order.id });
       const { url } = sessionRes.data.data;
       if (url) {
-        clearCart();
+        removeItems(selectedItems.map((item) => item.product.id));
         window.location.href = url;
         return;
       }
@@ -210,16 +219,16 @@ export default function CheckoutPage() {
     }
   };
 
-  if (items.length === 0) {
+  if (items.length === 0 || selectedItems.length === 0) {
     return (
       <div className="container-page py-16">
         <div className="max-w-md mx-auto text-center">
           <div className="inline-flex h-20 w-20 items-center justify-center rounded-2xl bg-gray-100 dark:bg-gray-800 mb-6">
             <ShoppingBag className="h-10 w-10 text-gray-400" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Seu carrinho está vazio</h1>
-          <p className="text-gray-500 mb-8">Adicione produtos antes de finalizar o pedido.</p>
-          <Link href="/products" className="btn-primary">Ver Produtos</Link>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Nenhum produto selecionado</h1>
+          <p className="text-gray-500 mb-8">Volte ao carrinho e selecione os produtos que deseja pagar.</p>
+          <Link href="/cart" className="btn-primary">Voltar ao carrinho</Link>
         </div>
       </div>
     );
@@ -500,7 +509,7 @@ export default function CheckoutPage() {
                       </p>
                     )}
                   </div>
-                  {items.map((item) => (
+                  {selectedItems.map((item) => (
                     <div key={item.product.id} className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-800 last:border-0">
                       <div className="flex items-center gap-3">
                         <div className="h-10 w-10 rounded-lg bg-primary-50 dark:bg-primary-950 flex items-center justify-center text-xs font-bold text-primary-600 relative overflow-hidden">
@@ -529,8 +538,8 @@ export default function CheckoutPage() {
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Resumo</h3>
             <div className="space-y-3 text-sm">
               <div className="flex justify-between text-gray-600 dark:text-gray-400">
-                <span>Subtotal ({items.length} itens)</span>
-                <span>R$ {subtotal().toFixed(2)}</span>
+                <span>Subtotal ({selectedItems.length} itens)</span>
+                <span>R$ {selectedSubtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-gray-600 dark:text-gray-400">
                 <span>Frete</span>

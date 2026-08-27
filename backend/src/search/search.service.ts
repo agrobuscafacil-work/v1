@@ -53,7 +53,7 @@ export class SearchService {
         where: productWhere, skip, take: limit, orderBy,
         include: {
           category: { select: { id: true, name: true, slug: true } },
-          supplier: { select: { id: true, companyName: true, logoUrl: true, rating: true } },
+          supplier: { select: { id: true, companyName: true, logoUrl: true, rating: true, whatsapp: true } },
         },
       }),
       this.prisma.product.count({ where: productWhere }),

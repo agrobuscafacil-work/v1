@@ -400,9 +400,11 @@ export const ModelName = {
   User: 'User',
   CustomerProfile: 'CustomerProfile',
   SupplierProfile: 'SupplierProfile',
+  SupplierFoundationHistory: 'SupplierFoundationHistory',
   Address: 'Address',
   Category: 'Category',
   Product: 'Product',
+  ProductCode: 'ProductCode',
   Service: 'Service',
   Promotion: 'Promotion',
   Coupon: 'Coupon',
@@ -414,8 +416,10 @@ export const ModelName = {
   OrderCoupon: 'OrderCoupon',
   OrderStatusHistory: 'OrderStatusHistory',
   Review: 'Review',
+  ReviewLike: 'ReviewLike',
   SellerReviewResponse: 'SellerReviewResponse',
   SellerReview: 'SellerReview',
+  SellerReviewLike: 'SellerReviewLike',
   ReviewResponse: 'ReviewResponse',
   ReviewReport: 'ReviewReport',
   SellerReviewReport: 'SellerReviewReport',
@@ -456,7 +460,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "customerProfile" | "supplierProfile" | "address" | "category" | "product" | "service" | "promotion" | "coupon" | "workingHours" | "cart" | "cartItem" | "order" | "orderItem" | "orderCoupon" | "orderStatusHistory" | "review" | "sellerReviewResponse" | "sellerReview" | "reviewResponse" | "reviewReport" | "sellerReviewReport" | "favorite" | "conversation" | "message" | "payment" | "paymentCustomer" | "paymentCard" | "paymentEvent" | "chatSettings" | "systemSetting" | "notification" | "banner" | "auditLog" | "systemConfig" | "report" | "supportCategory" | "supportType" | "supportTicket" | "supportAttachment" | "supportTicketNote" | "supportTicketStatusHistory" | "searchLog" | "sessionLog"
+    modelProps: "user" | "customerProfile" | "supplierProfile" | "supplierFoundationHistory" | "address" | "category" | "product" | "productCode" | "service" | "promotion" | "coupon" | "workingHours" | "cart" | "cartItem" | "order" | "orderItem" | "orderCoupon" | "orderStatusHistory" | "review" | "reviewLike" | "sellerReviewResponse" | "sellerReview" | "sellerReviewLike" | "reviewResponse" | "reviewReport" | "sellerReviewReport" | "favorite" | "conversation" | "message" | "payment" | "paymentCustomer" | "paymentCard" | "paymentEvent" | "chatSettings" | "systemSetting" | "notification" | "banner" | "auditLog" | "systemConfig" | "report" | "supportCategory" | "supportType" | "supportTicket" | "supportAttachment" | "supportTicketNote" | "supportTicketStatusHistory" | "searchLog" | "sessionLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -682,6 +686,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    SupplierFoundationHistory: {
+      payload: Prisma.$SupplierFoundationHistoryPayload<ExtArgs>
+      fields: Prisma.SupplierFoundationHistoryFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SupplierFoundationHistoryFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierFoundationHistoryPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SupplierFoundationHistoryFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierFoundationHistoryPayload>
+        }
+        findFirst: {
+          args: Prisma.SupplierFoundationHistoryFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierFoundationHistoryPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SupplierFoundationHistoryFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierFoundationHistoryPayload>
+        }
+        findMany: {
+          args: Prisma.SupplierFoundationHistoryFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierFoundationHistoryPayload>[]
+        }
+        create: {
+          args: Prisma.SupplierFoundationHistoryCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierFoundationHistoryPayload>
+        }
+        createMany: {
+          args: Prisma.SupplierFoundationHistoryCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SupplierFoundationHistoryCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierFoundationHistoryPayload>[]
+        }
+        delete: {
+          args: Prisma.SupplierFoundationHistoryDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierFoundationHistoryPayload>
+        }
+        update: {
+          args: Prisma.SupplierFoundationHistoryUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierFoundationHistoryPayload>
+        }
+        deleteMany: {
+          args: Prisma.SupplierFoundationHistoryDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SupplierFoundationHistoryUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SupplierFoundationHistoryUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierFoundationHistoryPayload>[]
+        }
+        upsert: {
+          args: Prisma.SupplierFoundationHistoryUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierFoundationHistoryPayload>
+        }
+        aggregate: {
+          args: Prisma.SupplierFoundationHistoryAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSupplierFoundationHistory>
+        }
+        groupBy: {
+          args: Prisma.SupplierFoundationHistoryGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SupplierFoundationHistoryGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SupplierFoundationHistoryCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SupplierFoundationHistoryCountAggregateOutputType> | number
+        }
+      }
+    }
     Address: {
       payload: Prisma.$AddressPayload<ExtArgs>
       fields: Prisma.AddressFieldRefs
@@ -901,6 +979,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.ProductCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.ProductCountAggregateOutputType> | number
+        }
+      }
+    }
+    ProductCode: {
+      payload: Prisma.$ProductCodePayload<ExtArgs>
+      fields: Prisma.ProductCodeFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ProductCodeFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductCodePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ProductCodeFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductCodePayload>
+        }
+        findFirst: {
+          args: Prisma.ProductCodeFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductCodePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ProductCodeFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductCodePayload>
+        }
+        findMany: {
+          args: Prisma.ProductCodeFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductCodePayload>[]
+        }
+        create: {
+          args: Prisma.ProductCodeCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductCodePayload>
+        }
+        createMany: {
+          args: Prisma.ProductCodeCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ProductCodeCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductCodePayload>[]
+        }
+        delete: {
+          args: Prisma.ProductCodeDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductCodePayload>
+        }
+        update: {
+          args: Prisma.ProductCodeUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductCodePayload>
+        }
+        deleteMany: {
+          args: Prisma.ProductCodeDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ProductCodeUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ProductCodeUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductCodePayload>[]
+        }
+        upsert: {
+          args: Prisma.ProductCodeUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductCodePayload>
+        }
+        aggregate: {
+          args: Prisma.ProductCodeAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateProductCode>
+        }
+        groupBy: {
+          args: Prisma.ProductCodeGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProductCodeGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ProductCodeCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProductCodeCountAggregateOutputType> | number
         }
       }
     }
@@ -1718,6 +1870,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ReviewLike: {
+      payload: Prisma.$ReviewLikePayload<ExtArgs>
+      fields: Prisma.ReviewLikeFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ReviewLikeFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewLikePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ReviewLikeFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewLikePayload>
+        }
+        findFirst: {
+          args: Prisma.ReviewLikeFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewLikePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ReviewLikeFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewLikePayload>
+        }
+        findMany: {
+          args: Prisma.ReviewLikeFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewLikePayload>[]
+        }
+        create: {
+          args: Prisma.ReviewLikeCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewLikePayload>
+        }
+        createMany: {
+          args: Prisma.ReviewLikeCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ReviewLikeCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewLikePayload>[]
+        }
+        delete: {
+          args: Prisma.ReviewLikeDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewLikePayload>
+        }
+        update: {
+          args: Prisma.ReviewLikeUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewLikePayload>
+        }
+        deleteMany: {
+          args: Prisma.ReviewLikeDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ReviewLikeUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ReviewLikeUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewLikePayload>[]
+        }
+        upsert: {
+          args: Prisma.ReviewLikeUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewLikePayload>
+        }
+        aggregate: {
+          args: Prisma.ReviewLikeAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateReviewLike>
+        }
+        groupBy: {
+          args: Prisma.ReviewLikeGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ReviewLikeGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ReviewLikeCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ReviewLikeCountAggregateOutputType> | number
+        }
+      }
+    }
     SellerReviewResponse: {
       payload: Prisma.$SellerReviewResponsePayload<ExtArgs>
       fields: Prisma.SellerReviewResponseFieldRefs
@@ -1863,6 +2089,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.SellerReviewCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.SellerReviewCountAggregateOutputType> | number
+        }
+      }
+    }
+    SellerReviewLike: {
+      payload: Prisma.$SellerReviewLikePayload<ExtArgs>
+      fields: Prisma.SellerReviewLikeFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SellerReviewLikeFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SellerReviewLikePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SellerReviewLikeFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SellerReviewLikePayload>
+        }
+        findFirst: {
+          args: Prisma.SellerReviewLikeFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SellerReviewLikePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SellerReviewLikeFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SellerReviewLikePayload>
+        }
+        findMany: {
+          args: Prisma.SellerReviewLikeFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SellerReviewLikePayload>[]
+        }
+        create: {
+          args: Prisma.SellerReviewLikeCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SellerReviewLikePayload>
+        }
+        createMany: {
+          args: Prisma.SellerReviewLikeCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SellerReviewLikeCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SellerReviewLikePayload>[]
+        }
+        delete: {
+          args: Prisma.SellerReviewLikeDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SellerReviewLikePayload>
+        }
+        update: {
+          args: Prisma.SellerReviewLikeUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SellerReviewLikePayload>
+        }
+        deleteMany: {
+          args: Prisma.SellerReviewLikeDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SellerReviewLikeUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SellerReviewLikeUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SellerReviewLikePayload>[]
+        }
+        upsert: {
+          args: Prisma.SellerReviewLikeUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SellerReviewLikePayload>
+        }
+        aggregate: {
+          args: Prisma.SellerReviewLikeAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSellerReviewLike>
+        }
+        groupBy: {
+          args: Prisma.SellerReviewLikeGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SellerReviewLikeGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SellerReviewLikeCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SellerReviewLikeCountAggregateOutputType> | number
         }
       }
     }
@@ -3839,6 +4139,16 @@ export const SupplierProfileScalarFieldEnum = {
 export type SupplierProfileScalarFieldEnum = (typeof SupplierProfileScalarFieldEnum)[keyof typeof SupplierProfileScalarFieldEnum]
 
 
+export const SupplierFoundationHistoryScalarFieldEnum = {
+  id: 'id',
+  supplierId: 'supplierId',
+  foundationDate: 'foundationDate',
+  recordedAt: 'recordedAt'
+} as const
+
+export type SupplierFoundationHistoryScalarFieldEnum = (typeof SupplierFoundationHistoryScalarFieldEnum)[keyof typeof SupplierFoundationHistoryScalarFieldEnum]
+
+
 export const AddressScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -3910,6 +4220,7 @@ export const ProductScalarFieldEnum = {
   tags: 'tags',
   specifications: 'specifications',
   status: 'status',
+  saleMode: 'saleMode',
   statusReason: 'statusReason',
   featured: 'featured',
   freeShipping: 'freeShipping',
@@ -3925,6 +4236,16 @@ export const ProductScalarFieldEnum = {
 } as const
 
 export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
+
+
+export const ProductCodeScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  code: 'code',
+  createdAt: 'createdAt'
+} as const
+
+export type ProductCodeScalarFieldEnum = (typeof ProductCodeScalarFieldEnum)[keyof typeof ProductCodeScalarFieldEnum]
 
 
 export const ServiceScalarFieldEnum = {
@@ -4129,6 +4450,16 @@ export const ReviewScalarFieldEnum = {
 export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof ReviewScalarFieldEnum]
 
 
+export const ReviewLikeScalarFieldEnum = {
+  id: 'id',
+  reviewId: 'reviewId',
+  userId: 'userId',
+  createdAt: 'createdAt'
+} as const
+
+export type ReviewLikeScalarFieldEnum = (typeof ReviewLikeScalarFieldEnum)[keyof typeof ReviewLikeScalarFieldEnum]
+
+
 export const SellerReviewResponseScalarFieldEnum = {
   id: 'id',
   sellerReviewId: 'sellerReviewId',
@@ -4161,6 +4492,16 @@ export const SellerReviewScalarFieldEnum = {
 } as const
 
 export type SellerReviewScalarFieldEnum = (typeof SellerReviewScalarFieldEnum)[keyof typeof SellerReviewScalarFieldEnum]
+
+
+export const SellerReviewLikeScalarFieldEnum = {
+  id: 'id',
+  sellerReviewId: 'sellerReviewId',
+  userId: 'userId',
+  createdAt: 'createdAt'
+} as const
+
+export type SellerReviewLikeScalarFieldEnum = (typeof SellerReviewLikeScalarFieldEnum)[keyof typeof SellerReviewLikeScalarFieldEnum]
 
 
 export const ReviewResponseScalarFieldEnum = {
@@ -4718,6 +5059,20 @@ export type ListEnumProductStatusFieldRefInput<$PrismaModel> = FieldRefInputType
 
 
 /**
+ * Reference to a field of type 'SaleMode'
+ */
+export type EnumSaleModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SaleMode'>
+    
+
+
+/**
+ * Reference to a field of type 'SaleMode[]'
+ */
+export type ListEnumSaleModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SaleMode[]'>
+    
+
+
+/**
  * Reference to a field of type 'OrderStatus'
  */
 export type EnumOrderStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OrderStatus'>
@@ -5038,9 +5393,11 @@ export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   customerProfile?: Prisma.CustomerProfileOmit
   supplierProfile?: Prisma.SupplierProfileOmit
+  supplierFoundationHistory?: Prisma.SupplierFoundationHistoryOmit
   address?: Prisma.AddressOmit
   category?: Prisma.CategoryOmit
   product?: Prisma.ProductOmit
+  productCode?: Prisma.ProductCodeOmit
   service?: Prisma.ServiceOmit
   promotion?: Prisma.PromotionOmit
   coupon?: Prisma.CouponOmit
@@ -5052,8 +5409,10 @@ export type GlobalOmitConfig = {
   orderCoupon?: Prisma.OrderCouponOmit
   orderStatusHistory?: Prisma.OrderStatusHistoryOmit
   review?: Prisma.ReviewOmit
+  reviewLike?: Prisma.ReviewLikeOmit
   sellerReviewResponse?: Prisma.SellerReviewResponseOmit
   sellerReview?: Prisma.SellerReviewOmit
+  sellerReviewLike?: Prisma.SellerReviewLikeOmit
   reviewResponse?: Prisma.ReviewResponseOmit
   reviewReport?: Prisma.ReviewReportOmit
   sellerReviewReport?: Prisma.SellerReviewReportOmit

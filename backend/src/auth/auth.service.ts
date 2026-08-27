@@ -80,7 +80,7 @@ export class AuthService {
       });
 
       if (createdUser.role === 'SUPPLIER') {
-        await tx.supplierProfile.create({
+        const supplierProfile = await tx.supplierProfile.create({
           data: {
             userId: createdUser.id,
             companyName: dto.name,
@@ -88,6 +88,9 @@ export class AuthService {
             phone: dto.phone || '',
             email: dto.email,
           },
+        });
+        await tx.supplierFoundationHistory.create({
+          data: { supplierId: supplierProfile.id, foundationDate: createdUser.createdAt },
         });
         this.logger.log(`Supplier profile auto-created for: ${createdUser.email}`);
       }

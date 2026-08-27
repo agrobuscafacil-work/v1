@@ -348,6 +348,13 @@ export type EnumProductStatusFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumProductStatusFilter<$PrismaModel> | $Enums.ProductStatus
 }
 
+export type EnumSaleModeFilter<$PrismaModel = never> = {
+  equals?: $Enums.SaleMode | Prisma.EnumSaleModeFieldRefInput<$PrismaModel>
+  in?: $Enums.SaleMode[] | Prisma.ListEnumSaleModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SaleMode[] | Prisma.ListEnumSaleModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSaleModeFilter<$PrismaModel> | $Enums.SaleMode
+}
+
 export type EnumProductStatusWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.ProductStatus | Prisma.EnumProductStatusFieldRefInput<$PrismaModel>
   in?: $Enums.ProductStatus[] | Prisma.ListEnumProductStatusFieldRefInput<$PrismaModel>
@@ -356,6 +363,16 @@ export type EnumProductStatusWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumProductStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumProductStatusFilter<$PrismaModel>
+}
+
+export type EnumSaleModeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.SaleMode | Prisma.EnumSaleModeFieldRefInput<$PrismaModel>
+  in?: $Enums.SaleMode[] | Prisma.ListEnumSaleModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SaleMode[] | Prisma.ListEnumSaleModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSaleModeWithAggregatesFilter<$PrismaModel> | $Enums.SaleMode
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSaleModeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSaleModeFilter<$PrismaModel>
 }
 
 export type EnumOrderStatusFilter<$PrismaModel = never> = {
@@ -933,6 +950,13 @@ export type NestedEnumProductStatusFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumProductStatusFilter<$PrismaModel> | $Enums.ProductStatus
 }
 
+export type NestedEnumSaleModeFilter<$PrismaModel = never> = {
+  equals?: $Enums.SaleMode | Prisma.EnumSaleModeFieldRefInput<$PrismaModel>
+  in?: $Enums.SaleMode[] | Prisma.ListEnumSaleModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SaleMode[] | Prisma.ListEnumSaleModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSaleModeFilter<$PrismaModel> | $Enums.SaleMode
+}
+
 export type NestedEnumProductStatusWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.ProductStatus | Prisma.EnumProductStatusFieldRefInput<$PrismaModel>
   in?: $Enums.ProductStatus[] | Prisma.ListEnumProductStatusFieldRefInput<$PrismaModel>
@@ -941,6 +965,16 @@ export type NestedEnumProductStatusWithAggregatesFilter<$PrismaModel = never> = 
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumProductStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumProductStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumSaleModeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.SaleMode | Prisma.EnumSaleModeFieldRefInput<$PrismaModel>
+  in?: $Enums.SaleMode[] | Prisma.ListEnumSaleModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SaleMode[] | Prisma.ListEnumSaleModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSaleModeWithAggregatesFilter<$PrismaModel> | $Enums.SaleMode
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSaleModeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSaleModeFilter<$PrismaModel>
 }
 
 export type NestedEnumOrderStatusFilter<$PrismaModel = never> = {

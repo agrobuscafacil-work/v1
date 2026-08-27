@@ -1,5 +1,6 @@
-import { IsString, IsNumber, IsOptional, IsArray, Min, MaxLength } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsArray, IsEnum, Min, MaxLength } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { SaleMode } from '../../generated/prisma/client';
 
 export class CreateProductDto {
   @ApiProperty()
@@ -60,4 +61,9 @@ export class CreateProductDto {
   @ApiPropertyOptional()
   @IsOptional()
   specifications?: any;
+
+  @ApiPropertyOptional({ enum: SaleMode, default: SaleMode.DIRECT })
+  @IsOptional()
+  @IsEnum(SaleMode)
+  saleMode?: SaleMode;
 }

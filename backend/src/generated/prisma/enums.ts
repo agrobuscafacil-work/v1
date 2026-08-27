@@ -41,6 +41,14 @@ export const ProductStatus = {
 export type ProductStatus = (typeof ProductStatus)[keyof typeof ProductStatus]
 
 
+export const SaleMode = {
+  DIRECT: 'DIRECT',
+  CONTACT_ONLY: 'CONTACT_ONLY'
+} as const
+
+export type SaleMode = (typeof SaleMode)[keyof typeof SaleMode]
+
+
 export const OrderStatus = {
   PENDING: 'PENDING',
   CONFIRMED: 'CONFIRMED',

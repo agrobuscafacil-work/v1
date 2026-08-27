@@ -5,13 +5,14 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   Star, Truck, Shield, Package, Minus, Plus, ShoppingCart, Heart, Share2, MapPin, Leaf, Clock,
-  CheckCircle, Phone, MessageCircle, Loader2, ChevronDown, ChevronUp, Pencil, Trash2,
+  CheckCircle, Phone, MessageCircle, Loader2, ChevronDown, ChevronUp, Pencil, Trash2, ThumbsUp,
 } from 'lucide-react';
 import { toast } from '@/lib/toast';
 import { useCart } from '@/hooks/use-cart';
 import { useAuth } from '@/hooks/use-auth';
 import { api } from '@/lib/api';
 import { PRODUCT_FILE_URL } from '@/lib/products';
+import { openSupplierConversation, sendMessage } from '@/lib/chat-api';
 import ConfirmDialog from '@/components/ui/confirm-dialog';
 
 interface ProductDetail {
@@ -31,6 +32,8 @@ interface ProductDetail {
   images: string[];
   tags: string[];
   status: string;
+  saleMode: 'DIRECT' | 'CONTACT_ONLY';
+    productCode?: string;
   featured: boolean;
   freeShipping: boolean;
   rating: number;
@@ -41,8 +44,8 @@ interface ProductDetail {
     companyName: string;
     tradingName: string;
     logoUrl: string | null;
-    rating: number;
-    totalReviews: number;
+    sellerRating: number;
+    sellerTotalReviews: number;
     totalProducts: number;
     phone: string;
     whatsapp: string;
@@ -60,6 +63,8 @@ interface ProductReview {
   comment: string;
   createdAt: string;
   verifiedPurchase?: boolean;
+  helpfulCount: number;
+  liked?: boolean;
 }
 
 interface RelatedProduct {
@@ -73,6 +78,9 @@ interface RelatedProduct {
   supplierId: string;
   unit: string;
   image: string;
+  saleMode: 'DIRECT' | 'CONTACT_ONLY';
+  supplierWhatsapp?: string;
+  productCode?: string;
 }
 
 export default function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -95,6 +103,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   const [submittingReview, setSubmittingReview] = useState(false);
   const [deletingReviewId, setDeletingReviewId] = useState<string | null>(null);
   const [confirmDeleteReview, setConfirmDeleteReview] = useState<ProductReview | null>(null);
+  const [likingReviewId, setLikingReviewId] = useState<string | null>(null);
   const router = useRouter();
   const { addItem } = useCart();
   const { user } = useAuth();
@@ -127,6 +136,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           images: Array.isArray(p.images) ? p.images : [],
           tags: Array.isArray(p.tags) ? p.tags : [],
           status: p.status,
+          saleMode: p.saleMode || 'DIRECT',
+                    productCode: p.productCode?.code || '',
           featured: !!p.featured,
           freeShipping: !!p.freeShipping,
           rating: Number(p.rating) || 0,
@@ -137,8 +148,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
             companyName: sup.companyName || '',
             tradingName: sup.tradingName || '',
             logoUrl: sup.logoUrl || null,
-            rating: Number(sup.rating) || 0,
-            totalReviews: Number(sup.totalReviews) || 0,
+            sellerRating: Number(sup.sellerRating) || 0,
+            sellerTotalReviews: Number(sup.sellerTotalReviews) || 0,
             totalProducts: Number(sup.totalProducts) || 0,
             phone: sup.phone || '',
             whatsapp: sup.whatsapp || '',
@@ -156,8 +167,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
         if (cancelled) return;
 
         const reviewsPayload = rRes.data.data?.data ?? [];
-        setReviews(
-          reviewsPayload.map((rev: any) => ({
+        const reviewsWithLikeStatus = await Promise.all(reviewsPayload.map(async (rev: any) => {
+          let liked = false;
+          if (user?.id) {
+            liked = !!(await api.get(`/reviews/${rev.id}/like/status`).catch(() => null))?.data?.data?.liked;
+          }
+          return {
             id: rev.id,
             userId: rev.user?.id,
             user: { name: rev.user?.name || 'Cliente' },
@@ -166,8 +181,11 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
             comment: rev.comment || '',
             createdAt: rev.createdAt,
             verifiedPurchase: !!rev.verifiedPurchase,
-          })),
-        );
+            helpfulCount: Number(rev.helpfulCount) || 0,
+            liked,
+          };
+        }));
+        setReviews(reviewsWithLikeStatus);
 
         const relPayload = relRes.data.data?.data ?? [];
         setRelated(
@@ -184,6 +202,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
               supplierId: rp.supplier?.id || rp.supplierId || '',
               unit: rp.unit || 'un',
               image: Array.isArray(rp.images) && rp.images.length > 0 ? PRODUCT_FILE_URL(rp.images[0]) : '',
+              saleMode: rp.saleMode || 'DIRECT',
+              supplierWhatsapp: rp.supplier?.whatsapp || '',
+              productCode: rp.productCode?.code || '',
             })),
         );
 
@@ -258,6 +279,23 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
     router.push('/checkout');
   };
 
+  const handleProductContact = async () => {
+        if (!user?.id) {
+          toast.error('Faça login para iniciar o chat com o fornecedor.');
+          router.push('/auth/login');
+          return;
+        }
+        try {
+          const conversation = await openSupplierConversation(product.supplier.id, user.id, `Interesse no produto ${product.productCode || product.name}`);
+          const productUrl = `${window.location.origin}/products/${product.slug}`;
+          await sendMessage(conversation.id, `Olá! Tenho interesse no produto ${product.name}. Código: ${product.productCode || 'não informado'}. Preço anunciado: R$ ${product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}. Link: ${productUrl}`);
+          toast.success('Chat aberto e mensagem enviada.');
+          router.push('/chat');
+        } catch (err: any) {
+          toast.error(err?.response?.data?.message || 'Não foi possível abrir o chat.');
+        }
+  };
+
   const toggleFavorite = async () => {
     try {
       if (isFavorited) {
@@ -318,6 +356,28 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
       const msg = err?.response?.data?.message || 'Erro ao remover';
       toast.error(Array.isArray(msg) ? msg[0] : typeof msg === 'object' ? JSON.stringify(msg) : msg);
     } finally { setDeletingReviewId(null); setConfirmDeleteReview(null); }
+  };
+
+  const handleLikeReview = async (review: ProductReview) => {
+    if (!user?.id) {
+      toast.error('Faça login para curtir avaliações');
+      return;
+    }
+    setLikingReviewId(review.id);
+    try {
+      const res = review.liked
+        ? await api.delete(`/reviews/${review.id}/like`)
+        : await api.post(`/reviews/${review.id}/like`);
+      const result = res.data.data;
+      setReviews((prev) => prev.map((item) => item.id === review.id
+        ? { ...item, liked: !!result.liked, helpfulCount: Number(result.helpfulCount) || 0 }
+        : item));
+    } catch (err: any) {
+      if (err?.response?.status === 401) toast.error('Faça login para curtir avaliações');
+      else toast.error('Não foi possível atualizar a curtida');
+    } finally {
+      setLikingReviewId(null);
+    }
   };
 
   const toggleReview = (id: string) => {
@@ -408,6 +468,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
               </>
             )}
           </div>
+          {product.productCode && <p className="text-xs text-gray-500">Código do produto: <span className="font-semibold text-gray-700 dark:text-gray-300">{product.productCode}</span></p>}
 
           {product.shortDescription && (
             <p className="text-sm text-gray-600 dark:text-gray-400">{product.shortDescription}</p>
@@ -422,7 +483,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           )}
 
           <div className="space-y-3 border-t border-gray-200 dark:border-gray-700 pt-6">
-            <div className="flex items-center justify-between">
+            {product.saleMode === 'DIRECT' && <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -439,17 +500,18 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                 </button>
               </div>
               <span className="text-sm text-gray-500">Estoque: {product.stock} {product.unit}</span>
-            </div>
+            </div>}
 
             <div className="flex gap-3">
-              <button onClick={handleBuy} className="btn-primary flex-1 gap-2">
-                <ShoppingCart className="h-4 w-4" />
-                Comprar
-              </button>
-              <button onClick={handleAddToCart} className="btn-outline flex-1 gap-2">
-                <ShoppingCart className="h-4 w-4" />
-                Adicionar ao Carrinho
-              </button>
+              {product.saleMode === 'CONTACT_ONLY' ? (
+                <>
+                  {product.supplier.whatsapp && <a href={`https://wa.me/${product.supplier.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="btn-primary flex-1 gap-2"><MessageCircle className="h-4 w-4" /> WhatsApp</a>}
+                  <button type="button" onClick={handleProductContact} className="btn-outline flex-1 gap-2"><MessageCircle className="h-4 w-4" /> Chat Online</button>
+                </>
+              ) : <>
+                <button onClick={handleBuy} className="btn-primary flex-1 gap-2"><ShoppingCart className="h-4 w-4" /> Comprar</button>
+                <button onClick={handleAddToCart} className="btn-outline flex-1 gap-2"><ShoppingCart className="h-4 w-4" /> Adicionar ao Carrinho</button>
+              </>}
               <button
                 onClick={toggleFavorite}
                 className={`btn-outline px-3 ${isFavorited ? 'text-red-500 border-red-300' : ''}`}
@@ -498,8 +560,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                   </Link>
                   <div className="flex items-center gap-2 text-sm text-gray-500">
                     <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
-                    <span>{product.supplier.rating.toFixed(1)}</span>
-                    <span>({product.supplier.totalReviews} avaliações)</span>
+                    <span>{product.supplier.sellerRating.toFixed(1)}</span>
+                    <span>({product.supplier.sellerTotalReviews} avaliações)</span>
                   </div>
                 </div>
               </div>
@@ -507,26 +569,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                 <p className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
                   <MapPin className="h-4 w-4" /> {locationLabel}
                 </p>
-                <p className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                  <Package className="h-4 w-4" /> {product.supplier.totalProducts} produtos
-                </p>
-                <div className="flex gap-2 mt-3">
-                  {product.supplier.phone ? (
-                    <a href={`tel:${product.supplier.phone}`} className="btn-outline flex-1 gap-2 text-xs">
-                      <Phone className="h-4 w-4" /> Ligar
-                    </a>
-                  ) : null}
-                  {product.supplier.whatsapp ? (
-                    <a
-                      href={`https://wa.me/${product.supplier.whatsapp.replace(/\D/g, '')}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn-primary flex-1 gap-2 text-xs"
-                    >
-                      <MessageCircle className="h-4 w-4" /> WhatsApp
-                    </a>
-                  ) : null}
-                </div>
+                <Link href={`/suppliers/${product.supplier.id}`} className="btn-primary w-full gap-2 mt-3 text-sm">
+                  Acessar
+                </Link>
               </div>
             </div>
           )}
@@ -623,6 +668,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                           {review.comment}
                         </p>
                       )}
+                      <div className="mt-3 flex justify-end">
+                        <button type="button" onClick={() => handleLikeReview(review)} disabled={likingReviewId === review.id} className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs transition-colors ${review.liked ? 'text-primary-700 bg-primary-50 dark:bg-primary-900/40' : 'text-gray-500 hover:text-primary-600 hover:bg-gray-100 dark:hover:bg-gray-800'}`} aria-label={review.liked ? 'Remover curtida' : 'Curtir avaliação'}>
+                          {likingReviewId === review.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ThumbsUp className={`h-3.5 w-3.5 ${review.liked ? 'fill-current' : ''}`} />}
+                          {review.helpfulCount}
+                        </button>
+                      </div>
                     </div>
                   );
                 })}
@@ -712,7 +763,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                   </div>
                 </Link>
                 <div className="p-3 pt-0">
-                  <button
+                  {p.saleMode === 'CONTACT_ONLY' ? <div className="flex gap-2">
+                    {p.supplierWhatsapp && <a href={`https://wa.me/${p.supplierWhatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="btn-primary flex-1 gap-2 text-xs"><MessageCircle className="h-4 w-4" /> WhatsApp</a>}
+                    <Link href={`/suppliers/${p.supplierId}`} className="btn-outline flex-1 gap-2 text-xs"><MessageCircle className="h-4 w-4" /> Chat Online</Link>
+                  </div> : <button
                     onClick={() => {
                       addItem({
                         id: p.id,
@@ -729,7 +783,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                     className="btn-primary w-full gap-2 text-sm"
                   >
                     <ShoppingCart className="h-4 w-4" /> Comprar
-                  </button>
+                  </button>}
                 </div>
               </div>
             ))}

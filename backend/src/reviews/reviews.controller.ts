@@ -74,6 +74,58 @@ export class ReviewsController {
     return this.reviewsService.findSellerReviews({ page, limit, supplierId, status });
   }
 
+  @Get(':id/like/status')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Consultar curtida em avaliação de produto' })
+  async getLikeStatus(@Param('id') id: string, @CurrentUser() user: any) {
+    return this.reviewsService.getLikeStatus(id, user.id);
+  }
+
+  @Post(':id/like')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Curtir avaliação de produto' })
+  async like(@Param('id') id: string, @CurrentUser() user: any) {
+    return this.reviewsService.like(id, user.id);
+  }
+
+  @Delete(':id/like')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Remover curtida de avaliação de produto' })
+  async unlike(@Param('id') id: string, @CurrentUser() user: any) {
+    return this.reviewsService.unlike(id, user.id);
+  }
+
+  @Get('seller/:id/like/status')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Consultar curtida em avaliação de fornecedor' })
+  async getSellerLikeStatus(@Param('id') id: string, @CurrentUser() user: any) {
+    return this.reviewsService.getSellerLikeStatus(id, user.id);
+  }
+
+  @Post('seller/:id/like')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Curtir avaliação de fornecedor' })
+  async likeSeller(@Param('id') id: string, @CurrentUser() user: any) {
+    return this.reviewsService.likeSeller(id, user.id);
+  }
+
+  @Delete('seller/:id/like')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Remover curtida de avaliação de fornecedor' })
+  async unlikeSeller(@Param('id') id: string, @CurrentUser() user: any) {
+    return this.reviewsService.unlikeSeller(id, user.id);
+  }
+
   @Get('product/:productId/summary')
   @Public()
   @ApiOperation({ summary: 'Obter resumo de avaliações de um produto' })

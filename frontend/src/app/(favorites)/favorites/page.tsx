@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Heart, Star, Leaf, Trash2, ShoppingCart, ArrowLeft, Loader2 } from 'lucide-react';
+import { Heart, Star, Leaf, Trash2, ShoppingCart, ArrowLeft, Loader2, MessageCircle } from 'lucide-react';
 import { toast } from '@/lib/toast';
 import { useCart } from '@/hooks/use-cart';
 import { api } from '@/lib/api';
@@ -20,6 +20,9 @@ interface FavoriteProduct {
   rating: number;
   reviews: number;
   inStock: boolean;
+  saleMode: 'DIRECT' | 'CONTACT_ONLY';
+  supplierWhatsapp?: string;
+  productCode?: string;
 }
 
 export default function FavoritesPage() {
@@ -48,6 +51,9 @@ export default function FavoritesPage() {
               rating: Number(f.product.rating) || 0,
               reviews: Number(f.product.totalReviews) || 0,
               inStock: Number(f.product.stock) > 0 && f.product.status === 'ACTIVE',
+              saleMode: f.product.saleMode || 'DIRECT',
+              supplierWhatsapp: f.supplier?.whatsapp || '',
+                          productCode: f.product.productCode?.code || '',
             })),
         );
       } catch {
@@ -168,7 +174,12 @@ export default function FavoritesPage() {
                 <p className="text-lg font-bold text-primary-600">
                   R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                 </p>
+                                {product.productCode && <p className="text-xs text-gray-500">Código: {product.productCode}</p>}
                 <div className="space-y-2 mt-2">
+                  {product.saleMode === 'CONTACT_ONLY' ? <div className="flex gap-2">
+                    {product.supplierWhatsapp && <a href={`https://wa.me/${product.supplierWhatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="btn-primary flex-1 text-sm gap-2"><MessageCircle className="h-4 w-4" /> WhatsApp</a>}
+                    {product.supplierId && <Link href={`/suppliers/${product.supplierId}`} className="btn-outline flex-1 text-sm gap-2"><MessageCircle className="h-4 w-4" /> Chat Online</Link>}
+                  </div> : <>
                   <button
                     onClick={() => handleBuy(product)}
                     disabled={!product.inStock}
@@ -177,6 +188,7 @@ export default function FavoritesPage() {
                     <ShoppingCart className="h-4 w-4" />
                     Comprar
                   </button>
+                  </>}
                   <button
                     onClick={() => addToCart(product)}
                     disabled={!product.inStock}

@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Search as SearchIcon, Star, Leaf, SlidersHorizontal, X, Loader2, ShoppingCart } from 'lucide-react';
+import { Search as SearchIcon, Star, Leaf, SlidersHorizontal, X, Loader2, ShoppingCart, MessageCircle } from 'lucide-react';
 import { api } from '@/lib/api';
 import { trackSearch } from '@/lib/analytics';
 import { useCart } from '@/hooks/use-cart';
@@ -39,6 +39,9 @@ function SearchContent() {
             image: p.images?.[0] || null,
             rating: Number(p.rating) || 0,
             reviews: Number(p.totalReviews) || 0,
+            saleMode: p.saleMode || 'DIRECT',
+            supplierWhatsapp: p.supplier?.whatsapp || '',
+                      productCode: p.productCode?.code || '',
           })),
         );
       })
@@ -136,12 +139,16 @@ function SearchContent() {
                     <span className="text-xs text-gray-500">({product.reviews})</span>
                   </div>
                   <p className="text-xl font-bold text-primary-600">
+                                      {product.productCode && <p className="text-xs text-gray-500">Código: {product.productCode}</p>}
                     R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </p>
                 </div>
               </Link>
               <div className="p-3 pt-0">
-                <button
+                {product.saleMode === 'CONTACT_ONLY' ? <div className="flex gap-2">
+                  {product.supplierWhatsapp && <a href={`https://wa.me/${product.supplierWhatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="btn-primary flex-1 gap-2 text-xs"><MessageCircle className="h-4 w-4" /> WhatsApp</a>}
+                  <Link href={`/suppliers/${product.supplierId}`} className="btn-outline flex-1 gap-2 text-xs"><MessageCircle className="h-4 w-4" /> Chat Online</Link>
+                </div> : <button
                   onClick={() => {
                     addItem({
                       id: product.id,
@@ -158,7 +165,7 @@ function SearchContent() {
                   className="btn-primary w-full gap-2 text-sm"
                 >
                   <ShoppingCart className="h-4 w-4" /> Comprar
-                </button>
+                </button>}
               </div>
             </div>
           ))}

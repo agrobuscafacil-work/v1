@@ -33,6 +33,11 @@ export type CustomerProfile = Prisma.CustomerProfileModel
  */
 export type SupplierProfile = Prisma.SupplierProfileModel
 /**
+ * Model SupplierFoundationHistory
+ * 
+ */
+export type SupplierFoundationHistory = Prisma.SupplierFoundationHistoryModel
+/**
  * Model Address
  * 
  */
@@ -47,6 +52,11 @@ export type Category = Prisma.CategoryModel
  * 
  */
 export type Product = Prisma.ProductModel
+/**
+ * Model ProductCode
+ * 
+ */
+export type ProductCode = Prisma.ProductCodeModel
 /**
  * Model Service
  * 
@@ -103,6 +113,11 @@ export type OrderStatusHistory = Prisma.OrderStatusHistoryModel
  */
 export type Review = Prisma.ReviewModel
 /**
+ * Model ReviewLike
+ * 
+ */
+export type ReviewLike = Prisma.ReviewLikeModel
+/**
  * Model SellerReviewResponse
  * 
  */
@@ -112,6 +127,11 @@ export type SellerReviewResponse = Prisma.SellerReviewResponseModel
  * 
  */
 export type SellerReview = Prisma.SellerReviewModel
+/**
+ * Model SellerReviewLike
+ * 
+ */
+export type SellerReviewLike = Prisma.SellerReviewLikeModel
 /**
  * Model ReviewResponse
  * 

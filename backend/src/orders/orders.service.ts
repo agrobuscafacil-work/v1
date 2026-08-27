@@ -72,6 +72,7 @@ export class OrdersService {
         price: true,
         stock: true,
         status: true,
+        saleMode: true,
         deletedAt: true,
       },
     });
@@ -85,6 +86,9 @@ export class OrdersService {
       }
       if (product.deletedAt || product.status !== 'ACTIVE') {
         throw new BadRequestException(`Product "${product.name}" is not available`);
+      }
+      if (product.saleMode === 'CONTACT_ONLY') {
+        throw new BadRequestException(`Product "${product.name}" está disponível somente para contato com o fornecedor`);
       }
       if (product.stock < item.quantity) {
         throw new BadRequestException(`Insufficient stock for "${product.name}" (available: ${product.stock})`);

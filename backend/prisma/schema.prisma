@@ -31,6 +31,11 @@ enum ProductStatus {
   REJECTED
 }
 
+enum SaleMode {
+  DIRECT
+  CONTACT_ONLY
+}
+
 enum OrderStatus {
   PENDING
   CONFIRMED
@@ -143,6 +148,8 @@ model User {
   orders          Order[]             @relation("CustomerOrders")
   reviews         Review[]
   sellerReviews   SellerReview[]
+  reviewLikes     ReviewLike[]
+  sellerReviewLikes SellerReviewLike[]
   reviewResponses ReviewResponse[]
   sellerResponses SellerReviewResponse[]
   reviewReportsReported   ReviewReport[]   @relation("ReviewReportsReported")
@@ -237,11 +244,23 @@ model SupplierProfile {
   banners         Banner[]
   addresses       Address[]
   chatSettings    ChatSettings?
+  foundationHistory SupplierFoundationHistory[]
 
   @@index([userId])
   @@index([status])
   @@index([rating])
   @@index([featured])
+}
+
+model SupplierFoundationHistory {
+  id             String          @id @default(uuid())
+  supplierId     String
+  supplier       SupplierProfile @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  foundationDate DateTime        @db.Date
+  recordedAt     DateTime        @default(now())
+
+  @@unique([supplierId, foundationDate])
+  @@index([supplierId, recordedAt])
 }
 
 model Address {
@@ -330,6 +349,7 @@ model Product {
   tags             String[]
   specifications   Json?
   status           ProductStatus   @default(ACTIVE)
+  saleMode         SaleMode        @default(DIRECT)
   statusReason     String?
   featured         Boolean         @default(false)
   freeShipping     Boolean         @default(false)
@@ -349,6 +369,7 @@ model Product {
   favorites  Favorite[]
   promotions Promotion[]
   coupons    Coupon[]
+  productCode ProductCode?
 
   @@index([supplierId])
   @@index([categoryId])
@@ -357,6 +378,16 @@ model Product {
   @@index([price])
   @@index([featured])
   @@index([rating])
+}
+
+model ProductCode {
+  id        String   @id @default(uuid())
+  productId String   @unique
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  code      String   @unique
+  createdAt DateTime @default(now())
+
+  @@index([code])
 }
 
 model Service {
@@ -596,6 +627,7 @@ model Review {
   moderatorId     String?
   moderatedAt     DateTime?
   helpfulCount    Int              @default(0)
+  likes           ReviewLike[]
   reviewResponses ReviewResponse[]
   reports         ReviewReport[]
   createdAt       DateTime         @default(now())
@@ -608,6 +640,18 @@ model Review {
   @@index([serviceId])
   @@index([status])
   @@index([rating])
+}
+
+model ReviewLike {
+  id        String   @id @default(uuid())
+  reviewId  String
+  review    Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([reviewId, userId])
+  @@index([userId])
 }
 
 model SellerReviewResponse {
@@ -643,6 +687,7 @@ model SellerReview {
   moderatorId     String?
   moderatedAt     DateTime?
   helpfulCount    Int              @default(0)
+  likes           SellerReviewLike[]
   sellerResponses SellerReviewResponse[]
   reports         SellerReviewReport[]
   createdAt       DateTime         @default(now())
@@ -654,6 +699,18 @@ model SellerReview {
   @@index([status])
   @@index([rating])
   @@index([verifiedPurchase])
+}
+
+model SellerReviewLike {
+  id             String       @id @default(uuid())
+  sellerReviewId String
+  sellerReview   SellerReview @relation(fields: [sellerReviewId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+
+  @@unique([sellerReviewId, userId])
+  @@index([userId])
 }
 
 model ReviewResponse {

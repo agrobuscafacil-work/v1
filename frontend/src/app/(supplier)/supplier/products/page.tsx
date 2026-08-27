@@ -19,6 +19,7 @@ interface EditableProduct {
   stock: number;
   status: string;
   images: string[];
+  saleMode: 'DIRECT' | 'CONTACT_ONLY';
 }
 
 export default function SupplierProductsPage() {
@@ -50,6 +51,7 @@ export default function SupplierProductsPage() {
             stock: Number(p.stock),
             status: p.status,
             images: p.images ?? [],
+            saleMode: p.saleMode || 'DIRECT',
           })),
         );
       })
@@ -89,6 +91,7 @@ export default function SupplierProductsPage() {
         stock: editItem.stock,
         status: editItem.status === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE',
         images: editItem.images,
+        saleMode: editItem.saleMode,
       });
       setItems((prev) =>
         prev.map((x) =>
@@ -304,6 +307,13 @@ export default function SupplierProductsPage() {
                     <p className="text-sm font-medium text-gray-900 dark:text-white">{isActive(detailItem.status) ? 'Ativo' : 'Inativo'}</p>
                   </div>
                 </div>
+              </div>
+              <div>
+                <label className="label-field">Tipo de Venda</label>
+                <select value={editItem?.saleMode || 'DIRECT'} onChange={(e) => setEditItem((current) => current ? { ...current, saleMode: e.target.value as EditableProduct['saleMode'] } : current)} className="input-field">
+                  <option value="DIRECT">Direta pelo site</option>
+                  <option value="CONTACT_ONLY">Somente contato</option>
+                </select>
               </div>
             </div>
             <div className="flex justify-end p-5 border-t border-gray-100 dark:border-gray-800">

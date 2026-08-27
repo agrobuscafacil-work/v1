@@ -52,6 +52,7 @@ export default function NewProductPage() {
     description: '',
     price: '',
     stock: '',
+    saleMode: 'DIRECT' as 'DIRECT' | 'CONTACT_ONLY',
   });
 
   const [imageUrl, setImageUrl] = useState('');
@@ -139,6 +140,7 @@ export default function NewProductPage() {
         stock: isNaN(stock) || stock < 0 ? 0 : stock,
         unit: 'un',
         images: imageUrl ? [imageUrl] : [],
+        saleMode: form.saleMode,
       });
       toast.success('Produto cadastrado com sucesso!');
       router.push('/supplier/products');
@@ -193,6 +195,20 @@ export default function NewProductPage() {
                 placeholder="Descreva o produto em detalhes..."
               />
             </div>
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Tipo de Venda</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <label className={`flex items-center gap-3 rounded-lg border p-4 cursor-pointer ${form.saleMode === 'DIRECT' ? 'border-primary-500 bg-primary-50 dark:bg-primary-950' : 'border-gray-200 dark:border-gray-700'}`}>
+              <input type="radio" name="saleMode" value="DIRECT" checked={form.saleMode === 'DIRECT'} onChange={() => setForm({ ...form, saleMode: 'DIRECT' })} />
+              <span><span className="block font-medium">Direta pelo site</span><span className="text-xs text-gray-500">Cliente compra e paga pelo site.</span></span>
+            </label>
+            <label className={`flex items-center gap-3 rounded-lg border p-4 cursor-pointer ${form.saleMode === 'CONTACT_ONLY' ? 'border-primary-500 bg-primary-50 dark:bg-primary-950' : 'border-gray-200 dark:border-gray-700'}`}>
+              <input type="radio" name="saleMode" value="CONTACT_ONLY" checked={form.saleMode === 'CONTACT_ONLY'} onChange={() => setForm({ ...form, saleMode: 'CONTACT_ONLY' })} />
+              <span><span className="block font-medium">Somente contato</span><span className="text-xs text-gray-500">Cliente negocia diretamente com o fornecedor.</span></span>
+            </label>
           </div>
         </div>
 

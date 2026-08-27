@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, Shield, Truck, Leaf, ArrowRight, Star, Clock, TrendingUp, Store, Sprout, Wheat, Sun, Wind, ShoppingCart } from 'lucide-react';
+import { Search, Shield, Truck, Leaf, ArrowRight, Star, Clock, TrendingUp, Store, Sprout, Wheat, Sun, Wind, ShoppingCart, MessageCircle } from 'lucide-react';
 import { api } from '@/lib/api';
 import { PRODUCT_FILE_URL } from '@/lib/products';
 import { useCart } from '@/hooks/use-cart';
@@ -44,6 +44,9 @@ interface FeaturedProduct {
   unit: string;
   rating: number;
   reviews: number;
+  saleMode: 'DIRECT' | 'CONTACT_ONLY';
+  supplierWhatsapp?: string;
+  productCode?: string;
 }
 
 interface TopSupplier {
@@ -101,6 +104,9 @@ export default function HomePage() {
               unit: p.unit || 'un',
               rating: Number(p.rating) || 0,
               reviews: Number(p.totalReviews) || 0,
+              saleMode: p.saleMode || 'DIRECT',
+              supplierWhatsapp: p.supplier?.whatsapp || '',
+                          productCode: p.productCode?.code || '',
             })),
           );
         }
@@ -112,7 +118,7 @@ export default function HomePage() {
               .map((s: any) => ({
                 id: s.id,
                 name: s.companyName,
-                rating: Number(s.rating) || 0,
+                rating: Number(s.sellerRating) || 0,
                 city: s.addresses?.[0]?.city || '',
                 state: s.addresses?.[0]?.state || '',
                 products: Number(s.totalProducts) || 0,
@@ -287,12 +293,16 @@ export default function HomePage() {
                         <span className="text-xs text-gray-500">({product.reviews})</span>
                       </div>
                       <p className="text-xl font-bold bg-gradient-to-r from-primary-600 to-green-600 bg-clip-text text-transparent">
+                                              {product.productCode && <p className="text-xs text-gray-500">Código: {product.productCode}</p>}
                         R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </p>
                     </div>
                   </Link>
                   <div className="p-3 pt-0">
-                    <button
+                    {product.saleMode === 'CONTACT_ONLY' ? <div className="flex gap-2 p-3 pt-0">
+                      {product.supplierWhatsapp && <a href={`https://wa.me/${product.supplierWhatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="btn-primary flex-1 gap-2 text-xs"><MessageCircle className="h-4 w-4" /> WhatsApp</a>}
+                      <Link href={`/suppliers/${product.supplierId}`} className="btn-outline flex-1 gap-2 text-xs"><MessageCircle className="h-4 w-4" /> Chat Online</Link>
+                    </div> : <button
                       onClick={() => {
                         addItem({
                           id: product.id,
@@ -309,7 +319,7 @@ export default function HomePage() {
                       className="btn-primary w-full gap-2 text-sm"
                     >
                       <ShoppingCart className="h-4 w-4" /> Comprar
-                    </button>
+                    </button>}
                   </div>
                 </div>
               ))}

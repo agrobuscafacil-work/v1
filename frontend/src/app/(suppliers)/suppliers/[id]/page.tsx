@@ -11,7 +11,7 @@ import { PRODUCT_FILE_URL } from '@/lib/products';
 import { useCart } from '@/hooks/use-cart';
 import {
   Star, MapPin, Phone, MessageCircle, Clock, Package, Truck,
-  CheckCircle, Leaf, Mail, Globe, BadgeCheck, X, Send, Wifi, WifiOff, Loader2, CalendarDays, Store, Pencil, Trash2, ShoppingCart,
+  CheckCircle, Leaf, Mail, Globe, BadgeCheck, X, Send, Wifi, WifiOff, Loader2, CalendarDays, Store, Pencil, Trash2, ShoppingCart, ThumbsUp,
 } from 'lucide-react';
 import ConfirmDialog from '@/components/ui/confirm-dialog';
 
@@ -25,19 +25,32 @@ interface SupplierInfo {
   phone: string;
   whatsapp: string;
   email: string;
-  rating: number;
-  totalReviews: number;
+  sellerRating: number;
+  sellerTotalReviews: number;
   totalProducts: number;
   website: string;
   city: string;
   state: string;
   foundedYear: number | null;
+  foundationDate: string | null;
   certifications: string[];
   badges: string[];
   featured: boolean;
   businessHours: { day?: string; hours?: string }[] | null;
   deliveryInfo: any;
   online: boolean;
+  address?: {
+    zipCode: string;
+    street: string;
+    number: string;
+    complement?: string | null;
+    neighborhood: string;
+    city: string;
+    state: string;
+    country: string;
+    latitude?: number | null;
+    longitude?: number | null;
+  };
   autoReplyMessage?: string | null;
   welcomeMessage?: string | null;
 }
@@ -51,6 +64,8 @@ interface SupplierProduct {
   rating: number;
   reviews: number;
   unit: string;
+  saleMode: 'DIRECT' | 'CONTACT_ONLY';
+  productCode?: string;
 }
 
 interface SupplierService {
@@ -69,6 +84,8 @@ interface SupplierReview {
   comment: string;
   createdAt: string;
   verifiedPurchase?: boolean;
+  helpfulCount: number;
+  liked?: boolean;
 }
 
 const DEFAULT_BUSINESS_HOURS = [
@@ -84,6 +101,7 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
   const { user, isAuthenticated } = useAuth();
   const [supplier, setSupplier] = useState<SupplierInfo | null>(null);
   const [products, setProducts] = useState<SupplierProduct[]>([]);
+  const [productCount, setProductCount] = useState(0);
   const [services, setServices] = useState<SupplierService[]>([]);
   const [reviews, setReviews] = useState<SupplierReview[]>([]);
   const [sellerReviews, setSellerReviews] = useState<SupplierReview[]>([]);
@@ -97,6 +115,7 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
   const [submittingEdit, setSubmittingEdit] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<SupplierReview | null>(null);
+  const [likingReviewId, setLikingReviewId] = useState<string | null>(null);
   const [expandedReviews, setExpandedReviews] = useState<Record<string, boolean>>({});
   const [editingSellerReview, setEditingSellerReview] = useState<any | null>(null);
   const [editSellerRating, setEditSellerRating] = useState(0);
@@ -209,6 +228,31 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
     } finally { setDeletingId(null); setConfirmDelete(null); }
   };
 
+  const handleLikeReview = async (review: SupplierReview, isSellerReview = false) => {
+    if (!user?.id) {
+      toast.error('Faça login para curtir avaliações');
+      return;
+    }
+    setLikingReviewId(review.id);
+    const basePath = isSellerReview ? '/reviews/seller' : '/reviews';
+    try {
+      const res = review.liked
+        ? await api.delete(`${basePath}/${review.id}/like`)
+        : await api.post(`${basePath}/${review.id}/like`);
+      const result = res.data.data;
+      const update = (item: SupplierReview) => item.id === review.id
+        ? { ...item, liked: !!result.liked, helpfulCount: Number(result.helpfulCount) || 0 }
+        : item;
+      if (isSellerReview) setSellerReviews((prev) => prev.map(update));
+      else setReviews((prev) => prev.map(update));
+    } catch (err: any) {
+      if (err?.response?.status === 401) toast.error('Faça login para curtir avaliações');
+      else toast.error('Não foi possível atualizar a curtida');
+    } finally {
+      setLikingReviewId(null);
+    }
+  };
+
   const toggleReview = (id: string) => setExpandedReviews((prev) => ({ ...prev, [id]: !prev[id] }));
   const toggleSellerReview = (id: string) => setExpandedSellerReviews((prev) => ({ ...prev, [id]: !prev[id] }));
 
@@ -227,6 +271,8 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
     if (!aIsMine && bIsMine) return 1;
     return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
+
+  const formatFoundationDate = (date: string | null) => date ? date.slice(0, 4) : null;
 
   useEffect(() => {
     const load = async () => {
@@ -252,13 +298,15 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
           phone: sup.phone || '',
           whatsapp: sup.whatsapp || '',
           email: sup.email || '',
-          rating: Number(sup.rating) || 0,
-          totalReviews: Number(sup.totalReviews) || 0,
+          sellerRating: Number(sup.sellerRating) || 0,
+          sellerTotalReviews: Number(sup.sellerTotalReviews) || 0,
           totalProducts: Number(sup.totalProducts) || 0,
           website: sup.website || '',
           city: address?.city || '',
           state: address?.state || '',
+          address: address ? { ...address, latitude: address.latitude == null ? null : Number(address.latitude), longitude: address.longitude == null ? null : Number(address.longitude) } : undefined,
           foundedYear: sup.foundedYear || null,
+          foundationDate: sup.foundationDate || null,
           certifications: Array.isArray(sup.certifications) ? sup.certifications : [],
           badges: Array.isArray(sup.badges) ? sup.badges : [],
           featured: !!sup.featured,
@@ -271,6 +319,7 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
         setIsOnline(sup.chatSettings?.online ?? true);
 
         const productsPayload = p.data.data?.data ?? [];
+        setProductCount(Number(p.data.data?.meta?.total ?? sup.totalProducts ?? 0));
         setProducts(
           productsPayload.map((prod: any) => ({
             id: prod.id,
@@ -281,6 +330,8 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
             rating: Number(prod.rating) || 0,
             reviews: Number(prod.totalReviews) || 0,
             unit: prod.unit || 'un',
+            saleMode: prod.saleMode || 'DIRECT',
+                      productCode: prod.productCode?.code || '',
           })),
         );
 
@@ -295,8 +346,12 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
         );
 
         const reviewsPayload = r.data.data?.data ?? [];
-        setReviews(
-          reviewsPayload.map((rev: any) => ({
+        const reviewsWithLikeStatus = await Promise.all(reviewsPayload.map(async (rev: any) => {
+          let liked = false;
+          if (user?.id) {
+            liked = !!(await api.get(`/reviews/${rev.id}/like/status`).catch(() => null))?.data?.data?.liked;
+          }
+          return {
             id: rev.id,
             userId: rev.user?.id,
             user: { id: rev.user?.id, name: rev.user?.name || 'Cliente' },
@@ -305,13 +360,20 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
             comment: rev.comment || '',
             createdAt: rev.createdAt,
             verifiedPurchase: !!rev.verifiedPurchase,
-          })),
-        );
+            helpfulCount: Number(rev.helpfulCount) || 0,
+            liked,
+          };
+        }));
+        setReviews(reviewsWithLikeStatus);
 
         const sellerRaw: any = (sr as any)?.data?.data;
         const sellerReviewsPayload = Array.isArray(sellerRaw) ? sellerRaw : Array.isArray(sellerRaw?.data) ? sellerRaw.data : [];
-        setSellerReviews(
-          (sellerReviewsPayload as any[]).map((rev: any) => ({
+        const sellerReviewsWithLikeStatus = await Promise.all((sellerReviewsPayload as any[]).map(async (rev: any) => {
+          let liked = false;
+          if (user?.id) {
+            liked = !!(await api.get(`/reviews/seller/${rev.id}/like/status`).catch(() => null))?.data?.data?.liked;
+          }
+          return {
             id: rev.id,
             userId: rev.user?.id,
             user: { id: rev.user?.id, name: rev.user?.name || 'Cliente' },
@@ -320,8 +382,11 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
             comment: rev.comment || '',
             createdAt: rev.createdAt,
             verifiedPurchase: !!rev.verifiedPurchase,
-          })),
-        );
+            helpfulCount: Number(rev.helpfulCount) || 0,
+            liked,
+          };
+        }));
+        setSellerReviews(sellerReviewsWithLikeStatus);
       } catch {
         setNotFound(true);
       } finally {
@@ -374,14 +439,16 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
         <div className="absolute inset-0 bg-black/20" />
         <div className="relative px-8 py-12 lg:py-16">
           <div className="flex flex-col sm:flex-row items-center sm:items-end gap-6">
-            {supplier.logoUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={PRODUCT_FILE_URL(supplier.logoUrl)} alt={supplier.companyName} className="h-24 w-24 rounded-2xl object-cover bg-white/20 backdrop-blur" />
-            ) : (
-              <div className="h-24 w-24 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center">
-                <Leaf className="h-12 w-12 text-white" />
-              </div>
-            )}
+            <div className="flex flex-col items-center gap-2 shrink-0">
+              {supplier.logoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={PRODUCT_FILE_URL(supplier.logoUrl)} alt={supplier.companyName} className="h-24 w-24 rounded-2xl object-cover bg-white/20 backdrop-blur" />
+              ) : (
+                <div className="h-24 w-24 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center">
+                  <Leaf className="h-12 w-12 text-white" />
+                </div>
+              )}
+            </div>
             <div className="flex-1 text-center sm:text-left">
               <div className="flex items-center justify-center sm:justify-start gap-2 mb-1">
                 <h1 className="text-3xl font-bold text-white">{supplier.companyName}</h1>
@@ -390,11 +457,9 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
               <p className="text-primary-100 mb-2">{supplier.tradingName}</p>
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 text-sm text-primary-100">
                 <span className="flex items-center gap-1"><MapPin className="h-4 w-4" /> {locationLabel}</span>
-                <span className="flex items-center gap-1"><Star className="h-4 w-4 fill-yellow-400 text-yellow-400" /> {supplier.rating.toFixed(1)} ({supplier.totalReviews})</span>
-                <span className="flex items-center gap-1"><Package className="h-4 w-4" /> {supplier.totalProducts} produtos</span>
-                {supplier.foundedYear && (
-                  <span className="flex items-center gap-1"><CalendarDays className="h-4 w-4" /> Desde {supplier.foundedYear}</span>
-                )}
+                <span className="flex items-center gap-1"><Star className="h-4 w-4 fill-yellow-400 text-yellow-400" /> {supplier.sellerRating.toFixed(1)} ({supplier.sellerTotalReviews})</span>
+                <span className="flex items-center gap-1"><Package className="h-4 w-4" /> {productCount} produtos</span>
+                {formatFoundationDate(supplier.foundationDate) && <span className="flex items-center gap-1"><CalendarDays className="h-4 w-4" /> Desde {formatFoundationDate(supplier.foundationDate)}</span>}
               </div>
             </div>
           </div>
@@ -413,7 +478,7 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
         <div className="lg:col-span-2 space-y-8">
           <div className="rounded-xl border border-gray-200 dark:border-gray-700 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Sobre</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Sobre a Loja</h2>
             <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{supplier.description || 'Fornecedor parceiro da AgroBusca Fácil.'}</p>
             {supplier.deliveryInfo && (
               <div className="mt-4 flex items-start gap-2 text-sm text-gray-600 dark:text-gray-400">
@@ -425,8 +490,8 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
 
           <div>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Produtos ({products.length})</h2>
-              <Link href={`/products?supplier=${supplier.id}`} className="btn-ghost text-sm">Ver todos</Link>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Produtos ({productCount})</h2>
+              <Link href={`/products?supplierId=${encodeURIComponent(supplier.id)}`} className="btn-ghost text-sm">Ver todos</Link>
             </div>
             {products.length === 0 ? (
               <p className="text-sm text-gray-500">Nenhum produto cadastrado ainda.</p>
@@ -456,9 +521,13 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
                         <p className="text-lg font-bold text-primary-600 mt-1">
                           R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                         </p>
+                                              {product.productCode && <p className="text-xs text-gray-500">Código: {product.productCode}</p>}
                       </div>
                     </Link>
-                    <button
+                    {product.saleMode === 'CONTACT_ONLY' ? <div className="flex flex-col gap-2 self-center shrink-0">
+                      {supplier.whatsapp && <a href={`https://wa.me/${supplier.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="btn-primary gap-2 text-xs px-3 py-2"><MessageCircle className="h-4 w-4" /> WhatsApp</a>}
+                      <Link href={`/suppliers/${supplier.id}`} className="btn-outline gap-2 text-xs px-3 py-2"><MessageCircle className="h-4 w-4" /> Chat Online</Link>
+                    </div> : <button
                       onClick={() => {
                         if (!supplier) return;
                         addItem({
@@ -476,7 +545,7 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
                       className="btn-primary self-center gap-2 text-xs px-3 py-2 shrink-0"
                     >
                       <ShoppingCart className="h-4 w-4" /> Comprar
-                    </button>
+                    </button>}
                   </div>
                 ))}
               </div>
@@ -555,6 +624,12 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
                     </div>
                     {(expanded || review.title) && review.title && <p className="mt-2 text-sm font-semibold">{review.title}</p>}
                     {expanded && review.comment && <p className="mt-1 text-sm text-gray-600 dark:text-gray-400 border-t pt-2">{review.comment}</p>}
+                    <div className="mt-3 flex justify-end">
+                      <button type="button" onClick={() => handleLikeReview(review, true)} disabled={likingReviewId === review.id} className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs transition-colors ${review.liked ? 'text-primary-700 bg-primary-50 dark:bg-primary-900/40' : 'text-gray-500 hover:text-primary-600 hover:bg-gray-100 dark:hover:bg-gray-800'}`} aria-label={review.liked ? 'Remover curtida' : 'Curtir avaliação'}>
+                        {likingReviewId === review.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ThumbsUp className={`h-3.5 w-3.5 ${review.liked ? 'fill-current' : ''}`} />}
+                        {review.helpfulCount}
+                      </button>
+                    </div>
                   </div>
                   );
                 })}
@@ -565,7 +640,7 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
 
         <div className="space-y-6">
           <div className="rounded-xl border border-gray-200 dark:border-gray-700 p-6">
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Informações de Contato</h3>
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Contato</h3>
             <div className="space-y-3 text-sm">
               {supplier.phone ? (
                 <a href={`tel:${supplier.phone}`} className="flex items-center gap-3 text-gray-600 dark:text-gray-400 hover:text-primary-600">
@@ -582,9 +657,6 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
                   <Globe className="h-4 w-4" /> {supplier.website}
                 </a>
               ) : null}
-              <p className="flex items-center gap-3 text-gray-600 dark:text-gray-400">
-                <MapPin className="h-4 w-4" /> {locationLabel}
-              </p>
             </div>
             <div className="mt-4 space-y-2">
               {supplier.phone ? (
@@ -601,6 +673,27 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
                 <MessageCircle className="h-4 w-4" /> Chat Online
               </button>
             </div>
+          </div>
+
+          <div className="rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Endereço e localização</h3>
+            {supplier.address ? (
+              <div className="space-y-3 text-sm text-gray-600 dark:text-gray-400">
+                <p className="flex items-start gap-3">
+                  <MapPin className="h-4 w-4 mt-0.5 shrink-0 text-primary-600" />
+                  <span>{supplier.address.street}, {supplier.address.number}{supplier.address.complement ? `, ${supplier.address.complement}` : ''}<br />
+                    {supplier.address.neighborhood}, {supplier.address.city} - {supplier.address.state}<br />
+                    CEP {supplier.address.zipCode}</span>
+                </p>
+                {supplier.address.latitude != null && supplier.address.longitude != null && (
+                  <a href={`https://www.google.com/maps?q=${supplier.address.latitude},${supplier.address.longitude}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-md border border-primary-200 px-2.5 py-1.5 text-xs font-medium text-primary-700 hover:bg-primary-50 dark:border-primary-800 dark:text-primary-300 dark:hover:bg-primary-950" title="Abrir localização da loja no mapa">
+                    <MapPin className="h-3.5 w-3.5" /> Ver no mapa
+                  </a>
+                )}
+              </div>
+            ) : (
+              <p className="text-sm text-gray-500">Endereço da loja não informado.</p>
+            )}
           </div>
 
           <div className="rounded-xl border border-gray-200 dark:border-gray-700 p-6">
@@ -621,19 +714,19 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
             <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Estatísticas</h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="text-center">
-                <p className="text-2xl font-bold text-primary-600">{supplier.totalProducts}</p>
+                <p className="text-2xl font-bold text-primary-600">{productCount}</p>
                 <p className="text-xs text-gray-500">Produtos</p>
               </div>
               <div className="text-center">
-                <p className="text-2xl font-bold text-primary-600">{supplier.totalReviews}</p>
-                <p className="text-xs text-gray-500">Avaliações</p>
+                <p className="text-2xl font-bold text-primary-600">{supplier.sellerTotalReviews}</p>
+                <p className="text-xs text-gray-500">Avaliações do fornecedor</p>
               </div>
               <div className="text-center">
-                <p className="text-2xl font-bold text-primary-600">{supplier.rating.toFixed(1)}</p>
-                <p className="text-xs text-gray-500">Nota média</p>
+                <p className="text-2xl font-bold text-primary-600">{supplier.sellerRating.toFixed(1)}</p>
+                <p className="text-xs text-gray-500">Nota do fornecedor</p>
               </div>
               <div className="text-center">
-                <p className="text-2xl font-bold text-primary-600">{supplier.foundedYear ?? '—'}</p>
+                <p className="text-2xl font-bold text-primary-600">{formatFoundationDate(supplier.foundationDate) ?? '—'}</p>
                 <p className="text-xs text-gray-500">Fundação</p>
               </div>
             </div>

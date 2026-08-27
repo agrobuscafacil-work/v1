@@ -54,9 +54,11 @@ export const ModelName = {
   User: 'User',
   CustomerProfile: 'CustomerProfile',
   SupplierProfile: 'SupplierProfile',
+  SupplierFoundationHistory: 'SupplierFoundationHistory',
   Address: 'Address',
   Category: 'Category',
   Product: 'Product',
+  ProductCode: 'ProductCode',
   Service: 'Service',
   Promotion: 'Promotion',
   Coupon: 'Coupon',
@@ -68,8 +70,10 @@ export const ModelName = {
   OrderCoupon: 'OrderCoupon',
   OrderStatusHistory: 'OrderStatusHistory',
   Review: 'Review',
+  ReviewLike: 'ReviewLike',
   SellerReviewResponse: 'SellerReviewResponse',
   SellerReview: 'SellerReview',
+  SellerReviewLike: 'SellerReviewLike',
   ReviewResponse: 'ReviewResponse',
   ReviewReport: 'ReviewReport',
   SellerReviewReport: 'SellerReviewReport',
@@ -197,6 +201,16 @@ export const SupplierProfileScalarFieldEnum = {
 export type SupplierProfileScalarFieldEnum = (typeof SupplierProfileScalarFieldEnum)[keyof typeof SupplierProfileScalarFieldEnum]
 
 
+export const SupplierFoundationHistoryScalarFieldEnum = {
+  id: 'id',
+  supplierId: 'supplierId',
+  foundationDate: 'foundationDate',
+  recordedAt: 'recordedAt'
+} as const
+
+export type SupplierFoundationHistoryScalarFieldEnum = (typeof SupplierFoundationHistoryScalarFieldEnum)[keyof typeof SupplierFoundationHistoryScalarFieldEnum]
+
+
 export const AddressScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -268,6 +282,7 @@ export const ProductScalarFieldEnum = {
   tags: 'tags',
   specifications: 'specifications',
   status: 'status',
+  saleMode: 'saleMode',
   statusReason: 'statusReason',
   featured: 'featured',
   freeShipping: 'freeShipping',
@@ -283,6 +298,16 @@ export const ProductScalarFieldEnum = {
 } as const
 
 export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
+
+
+export const ProductCodeScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  code: 'code',
+  createdAt: 'createdAt'
+} as const
+
+export type ProductCodeScalarFieldEnum = (typeof ProductCodeScalarFieldEnum)[keyof typeof ProductCodeScalarFieldEnum]
 
 
 export const ServiceScalarFieldEnum = {
@@ -487,6 +512,16 @@ export const ReviewScalarFieldEnum = {
 export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof ReviewScalarFieldEnum]
 
 
+export const ReviewLikeScalarFieldEnum = {
+  id: 'id',
+  reviewId: 'reviewId',
+  userId: 'userId',
+  createdAt: 'createdAt'
+} as const
+
+export type ReviewLikeScalarFieldEnum = (typeof ReviewLikeScalarFieldEnum)[keyof typeof ReviewLikeScalarFieldEnum]
+
+
 export const SellerReviewResponseScalarFieldEnum = {
   id: 'id',
   sellerReviewId: 'sellerReviewId',
@@ -519,6 +554,16 @@ export const SellerReviewScalarFieldEnum = {
 } as const
 
 export type SellerReviewScalarFieldEnum = (typeof SellerReviewScalarFieldEnum)[keyof typeof SellerReviewScalarFieldEnum]
+
+
+export const SellerReviewLikeScalarFieldEnum = {
+  id: 'id',
+  sellerReviewId: 'sellerReviewId',
+  userId: 'userId',
+  createdAt: 'createdAt'
+} as const
+
+export type SellerReviewLikeScalarFieldEnum = (typeof SellerReviewLikeScalarFieldEnum)[keyof typeof SellerReviewLikeScalarFieldEnum]
 
 
 export const ReviewResponseScalarFieldEnum = {

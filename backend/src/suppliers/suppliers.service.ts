@@ -1,7 +1,9 @@
-import { Injectable, NotFoundException, ConflictException, ForbiddenException, Logger } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, ForbiddenException, BadRequestException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateSupplierDto } from './dto/create-supplier.dto';
 import { UpdateSupplierDto } from './dto/update-supplier.dto';
+import { SupplierStoreAddressDto } from './dto/supplier-store-address.dto';
+import { SupplierWorkingHourDto } from './dto/supplier-working-hours.dto';
 import { SupplierApprovalDto } from './dto/supplier-approval.dto';
 import { SupplierStatus } from '../generated/prisma/client';
 import { Prisma } from '../generated/prisma/client';
@@ -15,8 +17,12 @@ const publicSupplierSelect: Prisma.SupplierProfileSelect = {
   logoUrl: true,
   bannerUrl: true,
   website: true,
+  email: true,
+  phone: true,
   rating: true,
   totalReviews: true,
+  sellerRating: true,
+  sellerTotalReviews: true,
   totalProducts: true,
   certifications: true,
   badges: true,
@@ -27,11 +33,21 @@ const publicSupplierSelect: Prisma.SupplierProfileSelect = {
   socialNetworks: true,
   createdAt: true,
   status: true,
+  foundationHistory: {
+    select: { foundationDate: true },
+    orderBy: { recordedAt: 'asc' },
+    take: 1,
+  },
   addresses: {
-    select: { city: true, state: true },
+    select: { id: true, zipCode: true, street: true, number: true, complement: true, neighborhood: true, city: true, state: true, country: true, latitude: true, longitude: true, isMain: true },
     where: { isMain: true },
     take: 1,
   },
+  workingHours: {
+    select: { dayOfWeek: true, openTime: true, closeTime: true, isOpen: true },
+    orderBy: { dayOfWeek: 'asc' },
+  },
+  _count: { select: { products: { where: { status: 'ACTIVE', deletedAt: null } } } },
   chatSettings: {
     select: { online: true, autoReply: true, autoReplyMessage: true, welcomeMessage: true },
   },
@@ -59,8 +75,10 @@ export class SuppliersService {
       throw new ConflictException('User already has a supplier profile');
     }
 
-    const supplier = await this.prisma.supplierProfile.create({
-      data: { userId, ...dto },
+    const supplier = await this.prisma.$transaction(async (tx) => {
+      const created = await tx.supplierProfile.create({ data: { userId, ...dto } });
+      await tx.supplierFoundationHistory.create({ data: { supplierId: created.id, foundationDate: created.createdAt } });
+      return created;
     });
 
     this.logger.log(`Supplier profile created: ${supplier.id}`);
@@ -92,7 +110,7 @@ export class SuppliersService {
       this.prisma.supplierProfile.count({ where }),
     ]);
 
-    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
+    return { data: data.map(({ _count, foundationHistory, ...supplier }) => ({ ...supplier, foundationDate: foundationHistory[0]?.foundationDate ?? null, totalProducts: _count.products })), meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
   }
 
   async findAllAdmin(params: { page?: number; limit?: number; status?: SupplierStatus; search?: string }) {
@@ -121,7 +139,7 @@ export class SuppliersService {
       this.prisma.supplierProfile.count({ where }),
     ]);
 
-    return { data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
+    return { data: data.map(({ _count, foundationHistory, ...supplier }) => ({ ...supplier, foundationDate: foundationHistory[0]?.foundationDate ?? null, totalProducts: _count.products })), meta: { total, page, limit, totalPages: Math.ceil(total / limit) } };
   }
 
   async findById(id: string) {
@@ -134,15 +152,82 @@ export class SuppliersService {
       },
     });
     if (!supplier) throw new NotFoundException('Supplier not found');
-    return supplier;
+    const { _count, workingHours, foundationHistory, ...publicSupplier } = supplier;
+    const businessHours = workingHours.length > 0
+      ? workingHours.map((hour) => ({ day: ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'][hour.dayOfWeek], openTime: hour.openTime, closeTime: hour.closeTime, hours: hour.isOpen ? `${hour.openTime} - ${hour.closeTime}` : 'Fechado' }))
+      : publicSupplier.businessHours;
+    return { ...publicSupplier, businessHours, foundationDate: foundationHistory[0]?.foundationDate ?? null, totalProducts: _count.products };
   }
 
   async findByUserId(userId: string) {
     const supplier = await this.prisma.supplierProfile.findUnique({
       where: { userId },
+      include: { addresses: { where: { isMain: true }, take: 1 } },
     });
     if (!supplier) throw new NotFoundException('Supplier profile not found');
     return supplier;
+  }
+
+  async getStoreAddress(userId: string) {
+    const supplier = await this.prisma.supplierProfile.findUnique({ where: { userId }, select: { id: true } });
+    if (!supplier) throw new NotFoundException('Supplier profile not found');
+    return this.prisma.address.findFirst({ where: { supplierId: supplier.id, isMain: true } });
+  }
+
+  async updateLogo(userId: string, logoUrl: string) {
+    const supplier = await this.prisma.supplierProfile.findUnique({ where: { userId }, select: { id: true } });
+    if (!supplier) throw new NotFoundException('Supplier profile not found');
+    return this.prisma.supplierProfile.update({ where: { id: supplier.id }, data: { logoUrl }, select: { id: true, logoUrl: true } });
+  }
+
+  async updateStoreAddress(userId: string, dto: SupplierStoreAddressDto) {
+    const supplier = await this.prisma.supplierProfile.findUnique({ where: { userId }, select: { id: true } });
+    if (!supplier) throw new NotFoundException('Supplier profile not found');
+
+    return this.prisma.$transaction(async (tx) => {
+      const current = await tx.address.findFirst({ where: { supplierId: supplier.id, isMain: true }, select: { id: true } });
+      await tx.address.updateMany({ where: { supplierId: supplier.id }, data: { isMain: false } });
+      const data = {
+        supplierId: supplier.id,
+        zipCode: dto.zipCode.replace(/\D/g, ''),
+        street: dto.street.trim(),
+        number: dto.number.trim(),
+        complement: dto.complement?.trim() || null,
+        neighborhood: dto.neighborhood.trim(),
+        city: dto.city.trim(),
+        state: dto.state.trim().toUpperCase(),
+        country: dto.country?.trim() || 'Brasil',
+        latitude: dto.latitude ?? null,
+        longitude: dto.longitude ?? null,
+        isMain: true,
+      };
+      if (current) return tx.address.update({ where: { id: current.id }, data });
+      return tx.address.create({ data });
+    });
+  }
+
+  async getWorkingHours(userId: string) {
+    const supplier = await this.prisma.supplierProfile.findUnique({ where: { userId }, select: { id: true } });
+    if (!supplier) throw new NotFoundException('Supplier profile not found');
+    return this.prisma.workingHours.findMany({ where: { supplierId: supplier.id }, orderBy: { dayOfWeek: 'asc' } });
+  }
+
+  async updateWorkingHours(userId: string, hours: SupplierWorkingHourDto[]) {
+    const supplier = await this.prisma.supplierProfile.findUnique({ where: { userId }, select: { id: true } });
+    if (!supplier) throw new NotFoundException('Supplier profile not found');
+    const days = new Set(hours.map((hour) => hour.dayOfWeek));
+    if (days.size !== hours.length) throw new BadRequestException('Cada dia da semana deve aparecer apenas uma vez');
+    for (const hour of hours) {
+      if (hour.isOpen && (!hour.openTime || !hour.closeTime)) throw new BadRequestException('Informe os horários de abertura e fechamento para os dias abertos');
+      if (hour.isOpen && hour.openTime! >= hour.closeTime!) throw new BadRequestException('O horário de fechamento deve ser posterior ao horário de abertura');
+    }
+    return this.prisma.$transaction(async (tx) => {
+      await tx.workingHours.deleteMany({ where: { supplierId: supplier.id } });
+      if (hours.length) {
+        await tx.workingHours.createMany({ data: hours.map((hour) => ({ supplierId: supplier.id, dayOfWeek: hour.dayOfWeek, openTime: hour.openTime || '', closeTime: hour.closeTime || '', isOpen: hour.isOpen })) });
+      }
+      return tx.workingHours.findMany({ where: { supplierId: supplier.id }, orderBy: { dayOfWeek: 'asc' } });
+    });
   }
 
   async update(id: string, dto: UpdateSupplierDto, user: { id: string; role: string }) {

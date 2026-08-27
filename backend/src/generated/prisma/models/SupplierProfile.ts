@@ -505,6 +505,7 @@ export type SupplierProfileWhereInput = {
   banners?: Prisma.BannerListRelationFilter
   addresses?: Prisma.AddressListRelationFilter
   chatSettings?: Prisma.XOR<Prisma.ChatSettingsNullableScalarRelationFilter, Prisma.ChatSettingsWhereInput> | null
+  foundationHistory?: Prisma.SupplierFoundationHistoryListRelationFilter
 }
 
 export type SupplierProfileOrderByWithRelationInput = {
@@ -562,6 +563,7 @@ export type SupplierProfileOrderByWithRelationInput = {
   banners?: Prisma.BannerOrderByRelationAggregateInput
   addresses?: Prisma.AddressOrderByRelationAggregateInput
   chatSettings?: Prisma.ChatSettingsOrderByWithRelationInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryOrderByRelationAggregateInput
 }
 
 export type SupplierProfileWhereUniqueInput = Prisma.AtLeast<{
@@ -622,6 +624,7 @@ export type SupplierProfileWhereUniqueInput = Prisma.AtLeast<{
   banners?: Prisma.BannerListRelationFilter
   addresses?: Prisma.AddressListRelationFilter
   chatSettings?: Prisma.XOR<Prisma.ChatSettingsNullableScalarRelationFilter, Prisma.ChatSettingsWhereInput> | null
+  foundationHistory?: Prisma.SupplierFoundationHistoryListRelationFilter
 }, "id" | "userId" | "document">
 
 export type SupplierProfileOrderByWithAggregationInput = {
@@ -766,6 +769,7 @@ export type SupplierProfileCreateInput = {
   banners?: Prisma.BannerCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateInput = {
@@ -822,6 +826,7 @@ export type SupplierProfileUncheckedCreateInput = {
   banners?: Prisma.BannerUncheckedCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUpdateInput = {
@@ -878,6 +883,7 @@ export type SupplierProfileUpdateInput = {
   banners?: Prisma.BannerUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateInput = {
@@ -934,6 +940,7 @@ export type SupplierProfileUncheckedUpdateInput = {
   banners?: Prisma.BannerUncheckedUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileCreateManyInput = {
@@ -1271,6 +1278,20 @@ export type SupplierProfileUpdatebadgesInput = {
   push?: string | string[]
 }
 
+export type SupplierProfileCreateNestedOneWithoutFoundationHistoryInput = {
+  create?: Prisma.XOR<Prisma.SupplierProfileCreateWithoutFoundationHistoryInput, Prisma.SupplierProfileUncheckedCreateWithoutFoundationHistoryInput>
+  connectOrCreate?: Prisma.SupplierProfileCreateOrConnectWithoutFoundationHistoryInput
+  connect?: Prisma.SupplierProfileWhereUniqueInput
+}
+
+export type SupplierProfileUpdateOneRequiredWithoutFoundationHistoryNestedInput = {
+  create?: Prisma.XOR<Prisma.SupplierProfileCreateWithoutFoundationHistoryInput, Prisma.SupplierProfileUncheckedCreateWithoutFoundationHistoryInput>
+  connectOrCreate?: Prisma.SupplierProfileCreateOrConnectWithoutFoundationHistoryInput
+  upsert?: Prisma.SupplierProfileUpsertWithoutFoundationHistoryInput
+  connect?: Prisma.SupplierProfileWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.SupplierProfileUpdateToOneWithWhereWithoutFoundationHistoryInput, Prisma.SupplierProfileUpdateWithoutFoundationHistoryInput>, Prisma.SupplierProfileUncheckedUpdateWithoutFoundationHistoryInput>
+}
+
 export type SupplierProfileCreateNestedOneWithoutAddressesInput = {
   create?: Prisma.XOR<Prisma.SupplierProfileCreateWithoutAddressesInput, Prisma.SupplierProfileUncheckedCreateWithoutAddressesInput>
   connectOrCreate?: Prisma.SupplierProfileCreateOrConnectWithoutAddressesInput
@@ -1558,6 +1579,7 @@ export type SupplierProfileCreateWithoutUserInput = {
   banners?: Prisma.BannerCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutUserInput = {
@@ -1613,6 +1635,7 @@ export type SupplierProfileUncheckedCreateWithoutUserInput = {
   banners?: Prisma.BannerUncheckedCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileCreateOrConnectWithoutUserInput = {
@@ -1684,10 +1707,252 @@ export type SupplierProfileUpdateWithoutUserInput = {
   banners?: Prisma.BannerUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  companyName?: Prisma.StringFieldUpdateOperationsInput | string
+  tradingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  document?: Prisma.StringFieldUpdateOperationsInput | string
+  stateRegistration?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  municipalRegistration?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
+  totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  foundedYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  employeesCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  businessHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deliveryInfo?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  certifications?: Prisma.SupplierProfileUpdatecertificationsInput | string[]
+  badges?: Prisma.SupplierProfileUpdatebadgesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  viewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  products?: Prisma.ProductUncheckedUpdateManyWithoutSupplierNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutSupplierNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutSupplierNestedInput
+  promotions?: Prisma.PromotionUncheckedUpdateManyWithoutSupplierNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutSupplierNestedInput
+  reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
+  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutSupplierNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutSupplierNestedInput
+  workingHours?: Prisma.WorkingHoursUncheckedUpdateManyWithoutSupplierNestedInput
+  coupons?: Prisma.CouponUncheckedUpdateManyWithoutSupplierNestedInput
+  categories?: Prisma.CategoryUncheckedUpdateManyWithoutSupplierNestedInput
+  banners?: Prisma.BannerUncheckedUpdateManyWithoutSupplierNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
+  chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
+}
+
+export type SupplierProfileCreateWithoutFoundationHistoryInput = {
+  id?: string
+  companyName: string
+  tradingName?: string | null
+  document: string
+  stateRegistration?: string | null
+  municipalRegistration?: string | null
+  description?: string | null
+  logoUrl?: string | null
+  bannerUrl?: string | null
+  website?: string | null
+  phone: string
+  whatsapp?: string | null
+  email: string
+  status?: $Enums.SupplierStatus
+  statusReason?: string | null
+  approvedAt?: Date | string | null
+  reviewedBy?: string | null
+  rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
+  totalProducts?: number
+  totalOrders?: number
+  totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  foundedYear?: number | null
+  employeesCount?: number | null
+  businessHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deliveryInfo?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  certifications?: Prisma.SupplierProfileCreatecertificationsInput | string[]
+  badges?: Prisma.SupplierProfileCreatebadgesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  featured?: boolean
+  viewCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  user: Prisma.UserCreateNestedOneWithoutSupplierProfileInput
+  products?: Prisma.ProductCreateNestedManyWithoutSupplierInput
+  services?: Prisma.ServiceCreateNestedManyWithoutSupplierInput
+  orders?: Prisma.OrderCreateNestedManyWithoutSupplierInput
+  promotions?: Prisma.PromotionCreateNestedManyWithoutSupplierInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutSupplierInput
+  reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutSupplierInput
+  favorites?: Prisma.FavoriteCreateNestedManyWithoutSupplierInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutSupplierInput
+  workingHours?: Prisma.WorkingHoursCreateNestedManyWithoutSupplierInput
+  coupons?: Prisma.CouponCreateNestedManyWithoutSupplierInput
+  categories?: Prisma.CategoryCreateNestedManyWithoutSupplierInput
+  banners?: Prisma.BannerCreateNestedManyWithoutSupplierInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
+  chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
+}
+
+export type SupplierProfileUncheckedCreateWithoutFoundationHistoryInput = {
+  id?: string
+  userId: string
+  companyName: string
+  tradingName?: string | null
+  document: string
+  stateRegistration?: string | null
+  municipalRegistration?: string | null
+  description?: string | null
+  logoUrl?: string | null
+  bannerUrl?: string | null
+  website?: string | null
+  phone: string
+  whatsapp?: string | null
+  email: string
+  status?: $Enums.SupplierStatus
+  statusReason?: string | null
+  approvedAt?: Date | string | null
+  reviewedBy?: string | null
+  rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
+  totalProducts?: number
+  totalOrders?: number
+  totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  foundedYear?: number | null
+  employeesCount?: number | null
+  businessHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deliveryInfo?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  certifications?: Prisma.SupplierProfileCreatecertificationsInput | string[]
+  badges?: Prisma.SupplierProfileCreatebadgesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  featured?: boolean
+  viewCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutSupplierInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutSupplierInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutSupplierInput
+  promotions?: Prisma.PromotionUncheckedCreateNestedManyWithoutSupplierInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutSupplierInput
+  reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
+  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutSupplierInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutSupplierInput
+  workingHours?: Prisma.WorkingHoursUncheckedCreateNestedManyWithoutSupplierInput
+  coupons?: Prisma.CouponUncheckedCreateNestedManyWithoutSupplierInput
+  categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutSupplierInput
+  banners?: Prisma.BannerUncheckedCreateNestedManyWithoutSupplierInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
+  chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
+}
+
+export type SupplierProfileCreateOrConnectWithoutFoundationHistoryInput = {
+  where: Prisma.SupplierProfileWhereUniqueInput
+  create: Prisma.XOR<Prisma.SupplierProfileCreateWithoutFoundationHistoryInput, Prisma.SupplierProfileUncheckedCreateWithoutFoundationHistoryInput>
+}
+
+export type SupplierProfileUpsertWithoutFoundationHistoryInput = {
+  update: Prisma.XOR<Prisma.SupplierProfileUpdateWithoutFoundationHistoryInput, Prisma.SupplierProfileUncheckedUpdateWithoutFoundationHistoryInput>
+  create: Prisma.XOR<Prisma.SupplierProfileCreateWithoutFoundationHistoryInput, Prisma.SupplierProfileUncheckedCreateWithoutFoundationHistoryInput>
+  where?: Prisma.SupplierProfileWhereInput
+}
+
+export type SupplierProfileUpdateToOneWithWhereWithoutFoundationHistoryInput = {
+  where?: Prisma.SupplierProfileWhereInput
+  data: Prisma.XOR<Prisma.SupplierProfileUpdateWithoutFoundationHistoryInput, Prisma.SupplierProfileUncheckedUpdateWithoutFoundationHistoryInput>
+}
+
+export type SupplierProfileUpdateWithoutFoundationHistoryInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  companyName?: Prisma.StringFieldUpdateOperationsInput | string
+  tradingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  document?: Prisma.StringFieldUpdateOperationsInput | string
+  stateRegistration?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  municipalRegistration?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
+  totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  foundedYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  employeesCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  businessHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deliveryInfo?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  certifications?: Prisma.SupplierProfileUpdatecertificationsInput | string[]
+  badges?: Prisma.SupplierProfileUpdatebadgesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  viewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  user?: Prisma.UserUpdateOneRequiredWithoutSupplierProfileNestedInput
+  products?: Prisma.ProductUpdateManyWithoutSupplierNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutSupplierNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutSupplierNestedInput
+  promotions?: Prisma.PromotionUpdateManyWithoutSupplierNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUpdateManyWithoutSupplierNestedInput
+  reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutSupplierNestedInput
+  favorites?: Prisma.FavoriteUpdateManyWithoutSupplierNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutSupplierNestedInput
+  workingHours?: Prisma.WorkingHoursUpdateManyWithoutSupplierNestedInput
+  coupons?: Prisma.CouponUpdateManyWithoutSupplierNestedInput
+  categories?: Prisma.CategoryUpdateManyWithoutSupplierNestedInput
+  banners?: Prisma.BannerUpdateManyWithoutSupplierNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
+  chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
+}
+
+export type SupplierProfileUncheckedUpdateWithoutFoundationHistoryInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   companyName?: Prisma.StringFieldUpdateOperationsInput | string
   tradingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   document?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1794,6 +2059,7 @@ export type SupplierProfileCreateWithoutAddressesInput = {
   categories?: Prisma.CategoryCreateNestedManyWithoutSupplierInput
   banners?: Prisma.BannerCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutAddressesInput = {
@@ -1849,6 +2115,7 @@ export type SupplierProfileUncheckedCreateWithoutAddressesInput = {
   categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutSupplierInput
   banners?: Prisma.BannerUncheckedCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileCreateOrConnectWithoutAddressesInput = {
@@ -1920,6 +2187,7 @@ export type SupplierProfileUpdateWithoutAddressesInput = {
   categories?: Prisma.CategoryUpdateManyWithoutSupplierNestedInput
   banners?: Prisma.BannerUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateWithoutAddressesInput = {
@@ -1975,6 +2243,7 @@ export type SupplierProfileUncheckedUpdateWithoutAddressesInput = {
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutSupplierNestedInput
   banners?: Prisma.BannerUncheckedUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileCreateWithoutCategoriesInput = {
@@ -2030,6 +2299,7 @@ export type SupplierProfileCreateWithoutCategoriesInput = {
   banners?: Prisma.BannerCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutCategoriesInput = {
@@ -2085,6 +2355,7 @@ export type SupplierProfileUncheckedCreateWithoutCategoriesInput = {
   banners?: Prisma.BannerUncheckedCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileCreateOrConnectWithoutCategoriesInput = {
@@ -2156,6 +2427,7 @@ export type SupplierProfileUpdateWithoutCategoriesInput = {
   banners?: Prisma.BannerUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateWithoutCategoriesInput = {
@@ -2211,6 +2483,7 @@ export type SupplierProfileUncheckedUpdateWithoutCategoriesInput = {
   banners?: Prisma.BannerUncheckedUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileCreateWithoutProductsInput = {
@@ -2266,6 +2539,7 @@ export type SupplierProfileCreateWithoutProductsInput = {
   banners?: Prisma.BannerCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutProductsInput = {
@@ -2321,6 +2595,7 @@ export type SupplierProfileUncheckedCreateWithoutProductsInput = {
   banners?: Prisma.BannerUncheckedCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileCreateOrConnectWithoutProductsInput = {
@@ -2392,6 +2667,7 @@ export type SupplierProfileUpdateWithoutProductsInput = {
   banners?: Prisma.BannerUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateWithoutProductsInput = {
@@ -2447,6 +2723,7 @@ export type SupplierProfileUncheckedUpdateWithoutProductsInput = {
   banners?: Prisma.BannerUncheckedUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileCreateWithoutServicesInput = {
@@ -2502,6 +2779,7 @@ export type SupplierProfileCreateWithoutServicesInput = {
   banners?: Prisma.BannerCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutServicesInput = {
@@ -2557,6 +2835,7 @@ export type SupplierProfileUncheckedCreateWithoutServicesInput = {
   banners?: Prisma.BannerUncheckedCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileCreateOrConnectWithoutServicesInput = {
@@ -2628,6 +2907,7 @@ export type SupplierProfileUpdateWithoutServicesInput = {
   banners?: Prisma.BannerUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateWithoutServicesInput = {
@@ -2683,6 +2963,7 @@ export type SupplierProfileUncheckedUpdateWithoutServicesInput = {
   banners?: Prisma.BannerUncheckedUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileCreateWithoutPromotionsInput = {
@@ -2738,6 +3019,7 @@ export type SupplierProfileCreateWithoutPromotionsInput = {
   banners?: Prisma.BannerCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutPromotionsInput = {
@@ -2793,6 +3075,7 @@ export type SupplierProfileUncheckedCreateWithoutPromotionsInput = {
   banners?: Prisma.BannerUncheckedCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileCreateOrConnectWithoutPromotionsInput = {
@@ -2864,6 +3147,7 @@ export type SupplierProfileUpdateWithoutPromotionsInput = {
   banners?: Prisma.BannerUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateWithoutPromotionsInput = {
@@ -2919,6 +3203,7 @@ export type SupplierProfileUncheckedUpdateWithoutPromotionsInput = {
   banners?: Prisma.BannerUncheckedUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileCreateWithoutCouponsInput = {
@@ -2974,6 +3259,7 @@ export type SupplierProfileCreateWithoutCouponsInput = {
   banners?: Prisma.BannerCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutCouponsInput = {
@@ -3029,6 +3315,7 @@ export type SupplierProfileUncheckedCreateWithoutCouponsInput = {
   banners?: Prisma.BannerUncheckedCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileCreateOrConnectWithoutCouponsInput = {
@@ -3100,6 +3387,7 @@ export type SupplierProfileUpdateWithoutCouponsInput = {
   banners?: Prisma.BannerUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateWithoutCouponsInput = {
@@ -3155,6 +3443,7 @@ export type SupplierProfileUncheckedUpdateWithoutCouponsInput = {
   banners?: Prisma.BannerUncheckedUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileCreateWithoutWorkingHoursInput = {
@@ -3210,6 +3499,7 @@ export type SupplierProfileCreateWithoutWorkingHoursInput = {
   banners?: Prisma.BannerCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutWorkingHoursInput = {
@@ -3265,6 +3555,7 @@ export type SupplierProfileUncheckedCreateWithoutWorkingHoursInput = {
   banners?: Prisma.BannerUncheckedCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileCreateOrConnectWithoutWorkingHoursInput = {
@@ -3336,6 +3627,7 @@ export type SupplierProfileUpdateWithoutWorkingHoursInput = {
   banners?: Prisma.BannerUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateWithoutWorkingHoursInput = {
@@ -3391,6 +3683,7 @@ export type SupplierProfileUncheckedUpdateWithoutWorkingHoursInput = {
   banners?: Prisma.BannerUncheckedUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileCreateWithoutOrdersInput = {
@@ -3446,6 +3739,7 @@ export type SupplierProfileCreateWithoutOrdersInput = {
   banners?: Prisma.BannerCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutOrdersInput = {
@@ -3501,6 +3795,7 @@ export type SupplierProfileUncheckedCreateWithoutOrdersInput = {
   banners?: Prisma.BannerUncheckedCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileCreateOrConnectWithoutOrdersInput = {
@@ -3572,6 +3867,7 @@ export type SupplierProfileUpdateWithoutOrdersInput = {
   banners?: Prisma.BannerUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateWithoutOrdersInput = {
@@ -3627,6 +3923,7 @@ export type SupplierProfileUncheckedUpdateWithoutOrdersInput = {
   banners?: Prisma.BannerUncheckedUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileCreateWithoutReviewsInput = {
@@ -3682,6 +3979,7 @@ export type SupplierProfileCreateWithoutReviewsInput = {
   banners?: Prisma.BannerCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutReviewsInput = {
@@ -3737,6 +4035,7 @@ export type SupplierProfileUncheckedCreateWithoutReviewsInput = {
   banners?: Prisma.BannerUncheckedCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileCreateOrConnectWithoutReviewsInput = {
@@ -3808,6 +4107,7 @@ export type SupplierProfileUpdateWithoutReviewsInput = {
   banners?: Prisma.BannerUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateWithoutReviewsInput = {
@@ -3863,6 +4163,7 @@ export type SupplierProfileUncheckedUpdateWithoutReviewsInput = {
   banners?: Prisma.BannerUncheckedUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileCreateWithoutSellerResponsesInput = {
@@ -3918,6 +4219,7 @@ export type SupplierProfileCreateWithoutSellerResponsesInput = {
   banners?: Prisma.BannerCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutSellerResponsesInput = {
@@ -3973,6 +4275,7 @@ export type SupplierProfileUncheckedCreateWithoutSellerResponsesInput = {
   banners?: Prisma.BannerUncheckedCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileCreateOrConnectWithoutSellerResponsesInput = {
@@ -4044,6 +4347,7 @@ export type SupplierProfileUpdateWithoutSellerResponsesInput = {
   banners?: Prisma.BannerUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateWithoutSellerResponsesInput = {
@@ -4099,6 +4403,7 @@ export type SupplierProfileUncheckedUpdateWithoutSellerResponsesInput = {
   banners?: Prisma.BannerUncheckedUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileCreateWithoutSellerReviewsInput = {
@@ -4154,6 +4459,7 @@ export type SupplierProfileCreateWithoutSellerReviewsInput = {
   banners?: Prisma.BannerCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutSellerReviewsInput = {
@@ -4209,6 +4515,7 @@ export type SupplierProfileUncheckedCreateWithoutSellerReviewsInput = {
   banners?: Prisma.BannerUncheckedCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileCreateOrConnectWithoutSellerReviewsInput = {
@@ -4280,6 +4587,7 @@ export type SupplierProfileUpdateWithoutSellerReviewsInput = {
   banners?: Prisma.BannerUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateWithoutSellerReviewsInput = {
@@ -4335,6 +4643,7 @@ export type SupplierProfileUncheckedUpdateWithoutSellerReviewsInput = {
   banners?: Prisma.BannerUncheckedUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileCreateWithoutReviewResponsesInput = {
@@ -4390,6 +4699,7 @@ export type SupplierProfileCreateWithoutReviewResponsesInput = {
   banners?: Prisma.BannerCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutReviewResponsesInput = {
@@ -4445,6 +4755,7 @@ export type SupplierProfileUncheckedCreateWithoutReviewResponsesInput = {
   banners?: Prisma.BannerUncheckedCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileCreateOrConnectWithoutReviewResponsesInput = {
@@ -4516,6 +4827,7 @@ export type SupplierProfileUpdateWithoutReviewResponsesInput = {
   banners?: Prisma.BannerUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateWithoutReviewResponsesInput = {
@@ -4571,6 +4883,7 @@ export type SupplierProfileUncheckedUpdateWithoutReviewResponsesInput = {
   banners?: Prisma.BannerUncheckedUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileCreateWithoutFavoritesInput = {
@@ -4626,6 +4939,7 @@ export type SupplierProfileCreateWithoutFavoritesInput = {
   banners?: Prisma.BannerCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutFavoritesInput = {
@@ -4681,6 +4995,7 @@ export type SupplierProfileUncheckedCreateWithoutFavoritesInput = {
   banners?: Prisma.BannerUncheckedCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileCreateOrConnectWithoutFavoritesInput = {
@@ -4752,6 +5067,7 @@ export type SupplierProfileUpdateWithoutFavoritesInput = {
   banners?: Prisma.BannerUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateWithoutFavoritesInput = {
@@ -4807,6 +5123,7 @@ export type SupplierProfileUncheckedUpdateWithoutFavoritesInput = {
   banners?: Prisma.BannerUncheckedUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileCreateWithoutConversationsInput = {
@@ -4862,6 +5179,7 @@ export type SupplierProfileCreateWithoutConversationsInput = {
   banners?: Prisma.BannerCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutConversationsInput = {
@@ -4917,6 +5235,7 @@ export type SupplierProfileUncheckedCreateWithoutConversationsInput = {
   banners?: Prisma.BannerUncheckedCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileCreateOrConnectWithoutConversationsInput = {
@@ -4988,6 +5307,7 @@ export type SupplierProfileUpdateWithoutConversationsInput = {
   banners?: Prisma.BannerUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateWithoutConversationsInput = {
@@ -5043,6 +5363,7 @@ export type SupplierProfileUncheckedUpdateWithoutConversationsInput = {
   banners?: Prisma.BannerUncheckedUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileCreateWithoutChatSettingsInput = {
@@ -5098,6 +5419,7 @@ export type SupplierProfileCreateWithoutChatSettingsInput = {
   categories?: Prisma.CategoryCreateNestedManyWithoutSupplierInput
   banners?: Prisma.BannerCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutChatSettingsInput = {
@@ -5153,6 +5475,7 @@ export type SupplierProfileUncheckedCreateWithoutChatSettingsInput = {
   categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutSupplierInput
   banners?: Prisma.BannerUncheckedCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileCreateOrConnectWithoutChatSettingsInput = {
@@ -5224,6 +5547,7 @@ export type SupplierProfileUpdateWithoutChatSettingsInput = {
   categories?: Prisma.CategoryUpdateManyWithoutSupplierNestedInput
   banners?: Prisma.BannerUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateWithoutChatSettingsInput = {
@@ -5279,6 +5603,7 @@ export type SupplierProfileUncheckedUpdateWithoutChatSettingsInput = {
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutSupplierNestedInput
   banners?: Prisma.BannerUncheckedUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileCreateWithoutBannersInput = {
@@ -5334,6 +5659,7 @@ export type SupplierProfileCreateWithoutBannersInput = {
   categories?: Prisma.CategoryCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutBannersInput = {
@@ -5389,6 +5715,7 @@ export type SupplierProfileUncheckedCreateWithoutBannersInput = {
   categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileCreateOrConnectWithoutBannersInput = {
@@ -5460,6 +5787,7 @@ export type SupplierProfileUpdateWithoutBannersInput = {
   categories?: Prisma.CategoryUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateWithoutBannersInput = {
@@ -5515,6 +5843,7 @@ export type SupplierProfileUncheckedUpdateWithoutBannersInput = {
   categories?: Prisma.CategoryUncheckedUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 
@@ -5538,6 +5867,7 @@ export type SupplierProfileCountOutputType = {
   categories: number
   banners: number
   addresses: number
+  foundationHistory: number
 }
 
 export type SupplierProfileCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -5556,6 +5886,7 @@ export type SupplierProfileCountOutputTypeSelect<ExtArgs extends runtime.Types.E
   categories?: boolean | SupplierProfileCountOutputTypeCountCategoriesArgs
   banners?: boolean | SupplierProfileCountOutputTypeCountBannersArgs
   addresses?: boolean | SupplierProfileCountOutputTypeCountAddressesArgs
+  foundationHistory?: boolean | SupplierProfileCountOutputTypeCountFoundationHistoryArgs
 }
 
 /**
@@ -5673,6 +6004,13 @@ export type SupplierProfileCountOutputTypeCountAddressesArgs<ExtArgs extends run
   where?: Prisma.AddressWhereInput
 }
 
+/**
+ * SupplierProfileCountOutputType without action
+ */
+export type SupplierProfileCountOutputTypeCountFoundationHistoryArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SupplierFoundationHistoryWhereInput
+}
+
 
 export type SupplierProfileSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -5729,6 +6067,7 @@ export type SupplierProfileSelect<ExtArgs extends runtime.Types.Extensions.Inter
   banners?: boolean | Prisma.SupplierProfile$bannersArgs<ExtArgs>
   addresses?: boolean | Prisma.SupplierProfile$addressesArgs<ExtArgs>
   chatSettings?: boolean | Prisma.SupplierProfile$chatSettingsArgs<ExtArgs>
+  foundationHistory?: boolean | Prisma.SupplierProfile$foundationHistoryArgs<ExtArgs>
   _count?: boolean | Prisma.SupplierProfileCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["supplierProfile"]>
 
@@ -5873,6 +6212,7 @@ export type SupplierProfileInclude<ExtArgs extends runtime.Types.Extensions.Inte
   banners?: boolean | Prisma.SupplierProfile$bannersArgs<ExtArgs>
   addresses?: boolean | Prisma.SupplierProfile$addressesArgs<ExtArgs>
   chatSettings?: boolean | Prisma.SupplierProfile$chatSettingsArgs<ExtArgs>
+  foundationHistory?: boolean | Prisma.SupplierProfile$foundationHistoryArgs<ExtArgs>
   _count?: boolean | Prisma.SupplierProfileCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type SupplierProfileIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -5902,6 +6242,7 @@ export type $SupplierProfilePayload<ExtArgs extends runtime.Types.Extensions.Int
     banners: Prisma.$BannerPayload<ExtArgs>[]
     addresses: Prisma.$AddressPayload<ExtArgs>[]
     chatSettings: Prisma.$ChatSettingsPayload<ExtArgs> | null
+    foundationHistory: Prisma.$SupplierFoundationHistoryPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -6352,6 +6693,7 @@ export interface Prisma__SupplierProfileClient<T, Null = never, ExtArgs extends 
   banners<T extends Prisma.SupplierProfile$bannersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SupplierProfile$bannersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BannerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   addresses<T extends Prisma.SupplierProfile$addressesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SupplierProfile$addressesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AddressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   chatSettings<T extends Prisma.SupplierProfile$chatSettingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SupplierProfile$chatSettingsArgs<ExtArgs>>): Prisma.Prisma__ChatSettingsClient<runtime.Types.Result.GetResult<Prisma.$ChatSettingsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  foundationHistory<T extends Prisma.SupplierProfile$foundationHistoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SupplierProfile$foundationHistoryArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SupplierFoundationHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7195,6 +7537,30 @@ export type SupplierProfile$chatSettingsArgs<ExtArgs extends runtime.Types.Exten
    */
   include?: Prisma.ChatSettingsInclude<ExtArgs> | null
   where?: Prisma.ChatSettingsWhereInput
+}
+
+/**
+ * SupplierProfile.foundationHistory
+ */
+export type SupplierProfile$foundationHistoryArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SupplierFoundationHistory
+   */
+  select?: Prisma.SupplierFoundationHistorySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SupplierFoundationHistory
+   */
+  omit?: Prisma.SupplierFoundationHistoryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SupplierFoundationHistoryInclude<ExtArgs> | null
+  where?: Prisma.SupplierFoundationHistoryWhereInput
+  orderBy?: Prisma.SupplierFoundationHistoryOrderByWithRelationInput | Prisma.SupplierFoundationHistoryOrderByWithRelationInput[]
+  cursor?: Prisma.SupplierFoundationHistoryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SupplierFoundationHistoryScalarFieldEnum | Prisma.SupplierFoundationHistoryScalarFieldEnum[]
 }
 
 /**

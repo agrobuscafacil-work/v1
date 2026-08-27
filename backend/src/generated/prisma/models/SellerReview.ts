@@ -299,6 +299,7 @@ export type SellerReviewWhereInput = {
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   supplier?: Prisma.XOR<Prisma.SupplierProfileScalarRelationFilter, Prisma.SupplierProfileWhereInput>
   order?: Prisma.XOR<Prisma.OrderScalarRelationFilter, Prisma.OrderWhereInput>
+  likes?: Prisma.SellerReviewLikeListRelationFilter
   sellerResponses?: Prisma.SellerReviewResponseListRelationFilter
   reports?: Prisma.SellerReviewReportListRelationFilter
 }
@@ -322,6 +323,7 @@ export type SellerReviewOrderByWithRelationInput = {
   user?: Prisma.UserOrderByWithRelationInput
   supplier?: Prisma.SupplierProfileOrderByWithRelationInput
   order?: Prisma.OrderOrderByWithRelationInput
+  likes?: Prisma.SellerReviewLikeOrderByRelationAggregateInput
   sellerResponses?: Prisma.SellerReviewResponseOrderByRelationAggregateInput
   reports?: Prisma.SellerReviewReportOrderByRelationAggregateInput
 }
@@ -349,6 +351,7 @@ export type SellerReviewWhereUniqueInput = Prisma.AtLeast<{
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   supplier?: Prisma.XOR<Prisma.SupplierProfileScalarRelationFilter, Prisma.SupplierProfileWhereInput>
   order?: Prisma.XOR<Prisma.OrderScalarRelationFilter, Prisma.OrderWhereInput>
+  likes?: Prisma.SellerReviewLikeListRelationFilter
   sellerResponses?: Prisma.SellerReviewResponseListRelationFilter
   reports?: Prisma.SellerReviewReportListRelationFilter
 }, "id" | "userId_supplierId">
@@ -413,6 +416,7 @@ export type SellerReviewCreateInput = {
   user: Prisma.UserCreateNestedOneWithoutSellerReviewsInput
   supplier: Prisma.SupplierProfileCreateNestedOneWithoutSellerReviewsInput
   order: Prisma.OrderCreateNestedOneWithoutSellerReviewsInput
+  likes?: Prisma.SellerReviewLikeCreateNestedManyWithoutSellerReviewInput
   sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutSellerReviewInput
   reports?: Prisma.SellerReviewReportCreateNestedManyWithoutSellerReviewInput
 }
@@ -433,6 +437,7 @@ export type SellerReviewUncheckedCreateInput = {
   helpfulCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  likes?: Prisma.SellerReviewLikeUncheckedCreateNestedManyWithoutSellerReviewInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutSellerReviewInput
   reports?: Prisma.SellerReviewReportUncheckedCreateNestedManyWithoutSellerReviewInput
 }
@@ -453,6 +458,7 @@ export type SellerReviewUpdateInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutSellerReviewsNestedInput
   supplier?: Prisma.SupplierProfileUpdateOneRequiredWithoutSellerReviewsNestedInput
   order?: Prisma.OrderUpdateOneRequiredWithoutSellerReviewsNestedInput
+  likes?: Prisma.SellerReviewLikeUpdateManyWithoutSellerReviewNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutSellerReviewNestedInput
   reports?: Prisma.SellerReviewReportUpdateManyWithoutSellerReviewNestedInput
 }
@@ -473,6 +479,7 @@ export type SellerReviewUncheckedUpdateInput = {
   helpfulCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  likes?: Prisma.SellerReviewLikeUncheckedUpdateManyWithoutSellerReviewNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutSellerReviewNestedInput
   reports?: Prisma.SellerReviewReportUncheckedUpdateManyWithoutSellerReviewNestedInput
 }
@@ -759,6 +766,20 @@ export type SellerReviewUpdateimagesInput = {
   push?: string | string[]
 }
 
+export type SellerReviewCreateNestedOneWithoutLikesInput = {
+  create?: Prisma.XOR<Prisma.SellerReviewCreateWithoutLikesInput, Prisma.SellerReviewUncheckedCreateWithoutLikesInput>
+  connectOrCreate?: Prisma.SellerReviewCreateOrConnectWithoutLikesInput
+  connect?: Prisma.SellerReviewWhereUniqueInput
+}
+
+export type SellerReviewUpdateOneRequiredWithoutLikesNestedInput = {
+  create?: Prisma.XOR<Prisma.SellerReviewCreateWithoutLikesInput, Prisma.SellerReviewUncheckedCreateWithoutLikesInput>
+  connectOrCreate?: Prisma.SellerReviewCreateOrConnectWithoutLikesInput
+  upsert?: Prisma.SellerReviewUpsertWithoutLikesInput
+  connect?: Prisma.SellerReviewWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.SellerReviewUpdateToOneWithWhereWithoutLikesInput, Prisma.SellerReviewUpdateWithoutLikesInput>, Prisma.SellerReviewUncheckedUpdateWithoutLikesInput>
+}
+
 export type SellerReviewCreateNestedOneWithoutReportsInput = {
   create?: Prisma.XOR<Prisma.SellerReviewCreateWithoutReportsInput, Prisma.SellerReviewUncheckedCreateWithoutReportsInput>
   connectOrCreate?: Prisma.SellerReviewCreateOrConnectWithoutReportsInput
@@ -788,6 +809,7 @@ export type SellerReviewCreateWithoutUserInput = {
   updatedAt?: Date | string
   supplier: Prisma.SupplierProfileCreateNestedOneWithoutSellerReviewsInput
   order: Prisma.OrderCreateNestedOneWithoutSellerReviewsInput
+  likes?: Prisma.SellerReviewLikeCreateNestedManyWithoutSellerReviewInput
   sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutSellerReviewInput
   reports?: Prisma.SellerReviewReportCreateNestedManyWithoutSellerReviewInput
 }
@@ -807,6 +829,7 @@ export type SellerReviewUncheckedCreateWithoutUserInput = {
   helpfulCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  likes?: Prisma.SellerReviewLikeUncheckedCreateNestedManyWithoutSellerReviewInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutSellerReviewInput
   reports?: Prisma.SellerReviewReportUncheckedCreateNestedManyWithoutSellerReviewInput
 }
@@ -873,6 +896,7 @@ export type SellerReviewCreateWithoutSupplierInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutSellerReviewsInput
   order: Prisma.OrderCreateNestedOneWithoutSellerReviewsInput
+  likes?: Prisma.SellerReviewLikeCreateNestedManyWithoutSellerReviewInput
   sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutSellerReviewInput
   reports?: Prisma.SellerReviewReportCreateNestedManyWithoutSellerReviewInput
 }
@@ -892,6 +916,7 @@ export type SellerReviewUncheckedCreateWithoutSupplierInput = {
   helpfulCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  likes?: Prisma.SellerReviewLikeUncheckedCreateNestedManyWithoutSellerReviewInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutSellerReviewInput
   reports?: Prisma.SellerReviewReportUncheckedCreateNestedManyWithoutSellerReviewInput
 }
@@ -937,6 +962,7 @@ export type SellerReviewCreateWithoutOrderInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutSellerReviewsInput
   supplier: Prisma.SupplierProfileCreateNestedOneWithoutSellerReviewsInput
+  likes?: Prisma.SellerReviewLikeCreateNestedManyWithoutSellerReviewInput
   sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutSellerReviewInput
   reports?: Prisma.SellerReviewReportCreateNestedManyWithoutSellerReviewInput
 }
@@ -956,6 +982,7 @@ export type SellerReviewUncheckedCreateWithoutOrderInput = {
   helpfulCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  likes?: Prisma.SellerReviewLikeUncheckedCreateNestedManyWithoutSellerReviewInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutSellerReviewInput
   reports?: Prisma.SellerReviewReportUncheckedCreateNestedManyWithoutSellerReviewInput
 }
@@ -1002,6 +1029,7 @@ export type SellerReviewCreateWithoutSellerResponsesInput = {
   user: Prisma.UserCreateNestedOneWithoutSellerReviewsInput
   supplier: Prisma.SupplierProfileCreateNestedOneWithoutSellerReviewsInput
   order: Prisma.OrderCreateNestedOneWithoutSellerReviewsInput
+  likes?: Prisma.SellerReviewLikeCreateNestedManyWithoutSellerReviewInput
   reports?: Prisma.SellerReviewReportCreateNestedManyWithoutSellerReviewInput
 }
 
@@ -1021,6 +1049,7 @@ export type SellerReviewUncheckedCreateWithoutSellerResponsesInput = {
   helpfulCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  likes?: Prisma.SellerReviewLikeUncheckedCreateNestedManyWithoutSellerReviewInput
   reports?: Prisma.SellerReviewReportUncheckedCreateNestedManyWithoutSellerReviewInput
 }
 
@@ -1056,6 +1085,7 @@ export type SellerReviewUpdateWithoutSellerResponsesInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutSellerReviewsNestedInput
   supplier?: Prisma.SupplierProfileUpdateOneRequiredWithoutSellerReviewsNestedInput
   order?: Prisma.OrderUpdateOneRequiredWithoutSellerReviewsNestedInput
+  likes?: Prisma.SellerReviewLikeUpdateManyWithoutSellerReviewNestedInput
   reports?: Prisma.SellerReviewReportUpdateManyWithoutSellerReviewNestedInput
 }
 
@@ -1075,6 +1105,103 @@ export type SellerReviewUncheckedUpdateWithoutSellerResponsesInput = {
   helpfulCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  likes?: Prisma.SellerReviewLikeUncheckedUpdateManyWithoutSellerReviewNestedInput
+  reports?: Prisma.SellerReviewReportUncheckedUpdateManyWithoutSellerReviewNestedInput
+}
+
+export type SellerReviewCreateWithoutLikesInput = {
+  id?: string
+  rating: number
+  title?: string | null
+  comment?: string | null
+  images?: Prisma.SellerReviewCreateimagesInput | string[]
+  status?: $Enums.ReviewStatus
+  verifiedPurchase?: boolean
+  moderatorId?: string | null
+  moderatedAt?: Date | string | null
+  helpfulCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutSellerReviewsInput
+  supplier: Prisma.SupplierProfileCreateNestedOneWithoutSellerReviewsInput
+  order: Prisma.OrderCreateNestedOneWithoutSellerReviewsInput
+  sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutSellerReviewInput
+  reports?: Prisma.SellerReviewReportCreateNestedManyWithoutSellerReviewInput
+}
+
+export type SellerReviewUncheckedCreateWithoutLikesInput = {
+  id?: string
+  userId: string
+  supplierId: string
+  orderId: string
+  rating: number
+  title?: string | null
+  comment?: string | null
+  images?: Prisma.SellerReviewCreateimagesInput | string[]
+  status?: $Enums.ReviewStatus
+  verifiedPurchase?: boolean
+  moderatorId?: string | null
+  moderatedAt?: Date | string | null
+  helpfulCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutSellerReviewInput
+  reports?: Prisma.SellerReviewReportUncheckedCreateNestedManyWithoutSellerReviewInput
+}
+
+export type SellerReviewCreateOrConnectWithoutLikesInput = {
+  where: Prisma.SellerReviewWhereUniqueInput
+  create: Prisma.XOR<Prisma.SellerReviewCreateWithoutLikesInput, Prisma.SellerReviewUncheckedCreateWithoutLikesInput>
+}
+
+export type SellerReviewUpsertWithoutLikesInput = {
+  update: Prisma.XOR<Prisma.SellerReviewUpdateWithoutLikesInput, Prisma.SellerReviewUncheckedUpdateWithoutLikesInput>
+  create: Prisma.XOR<Prisma.SellerReviewCreateWithoutLikesInput, Prisma.SellerReviewUncheckedCreateWithoutLikesInput>
+  where?: Prisma.SellerReviewWhereInput
+}
+
+export type SellerReviewUpdateToOneWithWhereWithoutLikesInput = {
+  where?: Prisma.SellerReviewWhereInput
+  data: Prisma.XOR<Prisma.SellerReviewUpdateWithoutLikesInput, Prisma.SellerReviewUncheckedUpdateWithoutLikesInput>
+}
+
+export type SellerReviewUpdateWithoutLikesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  rating?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.SellerReviewUpdateimagesInput | string[]
+  status?: Prisma.EnumReviewStatusFieldUpdateOperationsInput | $Enums.ReviewStatus
+  verifiedPurchase?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  moderatorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  moderatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  helpfulCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutSellerReviewsNestedInput
+  supplier?: Prisma.SupplierProfileUpdateOneRequiredWithoutSellerReviewsNestedInput
+  order?: Prisma.OrderUpdateOneRequiredWithoutSellerReviewsNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutSellerReviewNestedInput
+  reports?: Prisma.SellerReviewReportUpdateManyWithoutSellerReviewNestedInput
+}
+
+export type SellerReviewUncheckedUpdateWithoutLikesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  supplierId?: Prisma.StringFieldUpdateOperationsInput | string
+  orderId?: Prisma.StringFieldUpdateOperationsInput | string
+  rating?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.SellerReviewUpdateimagesInput | string[]
+  status?: Prisma.EnumReviewStatusFieldUpdateOperationsInput | $Enums.ReviewStatus
+  verifiedPurchase?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  moderatorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  moderatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  helpfulCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutSellerReviewNestedInput
   reports?: Prisma.SellerReviewReportUncheckedUpdateManyWithoutSellerReviewNestedInput
 }
 
@@ -1094,6 +1221,7 @@ export type SellerReviewCreateWithoutReportsInput = {
   user: Prisma.UserCreateNestedOneWithoutSellerReviewsInput
   supplier: Prisma.SupplierProfileCreateNestedOneWithoutSellerReviewsInput
   order: Prisma.OrderCreateNestedOneWithoutSellerReviewsInput
+  likes?: Prisma.SellerReviewLikeCreateNestedManyWithoutSellerReviewInput
   sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutSellerReviewInput
 }
 
@@ -1113,6 +1241,7 @@ export type SellerReviewUncheckedCreateWithoutReportsInput = {
   helpfulCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  likes?: Prisma.SellerReviewLikeUncheckedCreateNestedManyWithoutSellerReviewInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutSellerReviewInput
 }
 
@@ -1148,6 +1277,7 @@ export type SellerReviewUpdateWithoutReportsInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutSellerReviewsNestedInput
   supplier?: Prisma.SupplierProfileUpdateOneRequiredWithoutSellerReviewsNestedInput
   order?: Prisma.OrderUpdateOneRequiredWithoutSellerReviewsNestedInput
+  likes?: Prisma.SellerReviewLikeUpdateManyWithoutSellerReviewNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutSellerReviewNestedInput
 }
 
@@ -1167,6 +1297,7 @@ export type SellerReviewUncheckedUpdateWithoutReportsInput = {
   helpfulCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  likes?: Prisma.SellerReviewLikeUncheckedUpdateManyWithoutSellerReviewNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutSellerReviewNestedInput
 }
 
@@ -1202,6 +1333,7 @@ export type SellerReviewUpdateWithoutUserInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   supplier?: Prisma.SupplierProfileUpdateOneRequiredWithoutSellerReviewsNestedInput
   order?: Prisma.OrderUpdateOneRequiredWithoutSellerReviewsNestedInput
+  likes?: Prisma.SellerReviewLikeUpdateManyWithoutSellerReviewNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutSellerReviewNestedInput
   reports?: Prisma.SellerReviewReportUpdateManyWithoutSellerReviewNestedInput
 }
@@ -1221,6 +1353,7 @@ export type SellerReviewUncheckedUpdateWithoutUserInput = {
   helpfulCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  likes?: Prisma.SellerReviewLikeUncheckedUpdateManyWithoutSellerReviewNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutSellerReviewNestedInput
   reports?: Prisma.SellerReviewReportUncheckedUpdateManyWithoutSellerReviewNestedInput
 }
@@ -1274,6 +1407,7 @@ export type SellerReviewUpdateWithoutSupplierInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutSellerReviewsNestedInput
   order?: Prisma.OrderUpdateOneRequiredWithoutSellerReviewsNestedInput
+  likes?: Prisma.SellerReviewLikeUpdateManyWithoutSellerReviewNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutSellerReviewNestedInput
   reports?: Prisma.SellerReviewReportUpdateManyWithoutSellerReviewNestedInput
 }
@@ -1293,6 +1427,7 @@ export type SellerReviewUncheckedUpdateWithoutSupplierInput = {
   helpfulCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  likes?: Prisma.SellerReviewLikeUncheckedUpdateManyWithoutSellerReviewNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutSellerReviewNestedInput
   reports?: Prisma.SellerReviewReportUncheckedUpdateManyWithoutSellerReviewNestedInput
 }
@@ -1346,6 +1481,7 @@ export type SellerReviewUpdateWithoutOrderInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutSellerReviewsNestedInput
   supplier?: Prisma.SupplierProfileUpdateOneRequiredWithoutSellerReviewsNestedInput
+  likes?: Prisma.SellerReviewLikeUpdateManyWithoutSellerReviewNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutSellerReviewNestedInput
   reports?: Prisma.SellerReviewReportUpdateManyWithoutSellerReviewNestedInput
 }
@@ -1365,6 +1501,7 @@ export type SellerReviewUncheckedUpdateWithoutOrderInput = {
   helpfulCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  likes?: Prisma.SellerReviewLikeUncheckedUpdateManyWithoutSellerReviewNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutSellerReviewNestedInput
   reports?: Prisma.SellerReviewReportUncheckedUpdateManyWithoutSellerReviewNestedInput
 }
@@ -1392,11 +1529,13 @@ export type SellerReviewUncheckedUpdateManyWithoutOrderInput = {
  */
 
 export type SellerReviewCountOutputType = {
+  likes: number
   sellerResponses: number
   reports: number
 }
 
 export type SellerReviewCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  likes?: boolean | SellerReviewCountOutputTypeCountLikesArgs
   sellerResponses?: boolean | SellerReviewCountOutputTypeCountSellerResponsesArgs
   reports?: boolean | SellerReviewCountOutputTypeCountReportsArgs
 }
@@ -1409,6 +1548,13 @@ export type SellerReviewCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types
    * Select specific fields to fetch from the SellerReviewCountOutputType
    */
   select?: Prisma.SellerReviewCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * SellerReviewCountOutputType without action
+ */
+export type SellerReviewCountOutputTypeCountLikesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SellerReviewLikeWhereInput
 }
 
 /**
@@ -1445,6 +1591,7 @@ export type SellerReviewSelect<ExtArgs extends runtime.Types.Extensions.Internal
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   supplier?: boolean | Prisma.SupplierProfileDefaultArgs<ExtArgs>
   order?: boolean | Prisma.OrderDefaultArgs<ExtArgs>
+  likes?: boolean | Prisma.SellerReview$likesArgs<ExtArgs>
   sellerResponses?: boolean | Prisma.SellerReview$sellerResponsesArgs<ExtArgs>
   reports?: boolean | Prisma.SellerReview$reportsArgs<ExtArgs>
   _count?: boolean | Prisma.SellerReviewCountOutputTypeDefaultArgs<ExtArgs>
@@ -1515,6 +1662,7 @@ export type SellerReviewInclude<ExtArgs extends runtime.Types.Extensions.Interna
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   supplier?: boolean | Prisma.SupplierProfileDefaultArgs<ExtArgs>
   order?: boolean | Prisma.OrderDefaultArgs<ExtArgs>
+  likes?: boolean | Prisma.SellerReview$likesArgs<ExtArgs>
   sellerResponses?: boolean | Prisma.SellerReview$sellerResponsesArgs<ExtArgs>
   reports?: boolean | Prisma.SellerReview$reportsArgs<ExtArgs>
   _count?: boolean | Prisma.SellerReviewCountOutputTypeDefaultArgs<ExtArgs>
@@ -1536,6 +1684,7 @@ export type $SellerReviewPayload<ExtArgs extends runtime.Types.Extensions.Intern
     user: Prisma.$UserPayload<ExtArgs>
     supplier: Prisma.$SupplierProfilePayload<ExtArgs>
     order: Prisma.$OrderPayload<ExtArgs>
+    likes: Prisma.$SellerReviewLikePayload<ExtArgs>[]
     sellerResponses: Prisma.$SellerReviewResponsePayload<ExtArgs>[]
     reports: Prisma.$SellerReviewReportPayload<ExtArgs>[]
   }
@@ -1952,6 +2101,7 @@ export interface Prisma__SellerReviewClient<T, Null = never, ExtArgs extends run
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   supplier<T extends Prisma.SupplierProfileDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SupplierProfileDefaultArgs<ExtArgs>>): Prisma.Prisma__SupplierProfileClient<runtime.Types.Result.GetResult<Prisma.$SupplierProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   order<T extends Prisma.OrderDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrderDefaultArgs<ExtArgs>>): Prisma.Prisma__OrderClient<runtime.Types.Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  likes<T extends Prisma.SellerReview$likesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SellerReview$likesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SellerReviewLikePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   sellerResponses<T extends Prisma.SellerReview$sellerResponsesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SellerReview$sellerResponsesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SellerReviewResponsePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reports<T extends Prisma.SellerReview$reportsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SellerReview$reportsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SellerReviewReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -2396,6 +2546,30 @@ export type SellerReviewDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.
    * Limit how many SellerReviews to delete.
    */
   limit?: number
+}
+
+/**
+ * SellerReview.likes
+ */
+export type SellerReview$likesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SellerReviewLike
+   */
+  select?: Prisma.SellerReviewLikeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SellerReviewLike
+   */
+  omit?: Prisma.SellerReviewLikeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SellerReviewLikeInclude<ExtArgs> | null
+  where?: Prisma.SellerReviewLikeWhereInput
+  orderBy?: Prisma.SellerReviewLikeOrderByWithRelationInput | Prisma.SellerReviewLikeOrderByWithRelationInput[]
+  cursor?: Prisma.SellerReviewLikeWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SellerReviewLikeScalarFieldEnum | Prisma.SellerReviewLikeScalarFieldEnum[]
 }
 
 /**

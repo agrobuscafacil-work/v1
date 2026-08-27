@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Search, SlidersHorizontal, X, Star, Leaf, ChevronDown, Grid3X3, List, Loader2, ShoppingCart } from 'lucide-react';
+import { Search, SlidersHorizontal, X, Star, Leaf, ChevronDown, Grid3X3, List, Loader2, ShoppingCart, MessageCircle } from 'lucide-react';
 import type { Metadata } from 'next';
 import { useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
@@ -33,6 +33,9 @@ interface DisplayProduct {
   unit: string;
   freeShipping: boolean;
   createdAt: Date;
+  saleMode: 'DIRECT' | 'CONTACT_ONLY';
+  supplierWhatsapp?: string;
+  productCode?: string;
 }
 
 export default function ProductsPage() {
@@ -42,6 +45,7 @@ export default function ProductsPage() {
   const [sortBy, setSortBy] = useState('relevance');
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedSupplierId, setSelectedSupplierId] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 500000]);
   const [minRating, setMinRating] = useState(0);
@@ -54,6 +58,11 @@ export default function ProductsPage() {
   const firstLoad = useRef(true);
 
   useEffect(() => {
+    const supplierId = new URLSearchParams(window.location.search).get('supplierId');
+    if (supplierId) setSelectedSupplierId(supplierId);
+  }, []);
+
+  useEffect(() => {
     const ctrl = new AbortController();
     const load = async () => {
       if (firstLoad.current) {
@@ -64,6 +73,7 @@ export default function ProductsPage() {
         const params: Record<string, string | number> = { limit: 50 };
         if (selectedCategory !== 'all') params.categoryId = selectedCategory;
         if (searchTerm) params.search = searchTerm;
+        if (selectedSupplierId) params.supplierId = selectedSupplierId;
         const res = await api.get('/products', { params, signal: ctrl.signal });
         const data = res.data.data?.data ?? [];
         setProducts(
@@ -82,6 +92,9 @@ export default function ProductsPage() {
             unit: p.unit || 'un',
             freeShipping: !!p.freeShipping,
             createdAt: p.createdAt ? new Date(p.createdAt) : new Date(),
+            saleMode: p.saleMode || 'DIRECT',
+            supplierWhatsapp: p.supplier?.whatsapp || '',
+                      productCode: p.productCode?.code || '',
           })),
         );
       } catch {
@@ -94,7 +107,7 @@ export default function ProductsPage() {
     };
     load();
     return () => ctrl.abort();
-  }, [selectedCategory, searchTerm]);
+  }, [selectedCategory, searchTerm, selectedSupplierId]);
 
   const priceCap = useMemo(() => {
     const max = products.reduce((m, p) => Math.max(m, p.price), 0);
@@ -340,6 +353,7 @@ export default function ProductsPage() {
                         <p className="text-xl font-bold text-primary-600">
                           R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                         </p>
+                        {product.productCode && <p className="text-xs text-gray-500">Código: {product.productCode}</p>}
                         {product.comparePrice && (
                           <p className="text-sm text-gray-400 line-through">
                             R$ {product.comparePrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
@@ -349,7 +363,10 @@ export default function ProductsPage() {
                     </div>
                   </Link>
                   <div className="p-3 pt-0">
-                    <button
+                    {product.saleMode === 'CONTACT_ONLY' ? <div className="flex gap-2">
+                      {product.supplierWhatsapp && <a href={`https://wa.me/${product.supplierWhatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }} className="btn-primary flex-1 gap-2 text-xs"><MessageCircle className="h-4 w-4" /> WhatsApp</a>}
+                      <Link href={`/suppliers/${product.supplierId}`} onClick={(e) => { e.stopPropagation(); }} className="btn-outline flex-1 gap-2 text-xs"><MessageCircle className="h-4 w-4" /> Chat Online</Link>
+                    </div> : <button
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -368,7 +385,7 @@ export default function ProductsPage() {
                       className="btn-primary w-full gap-2 text-sm"
                     >
                       <ShoppingCart className="h-4 w-4" /> Comprar
-                    </button>
+                    </button>}
                   </div>
                 </div>
               ))}

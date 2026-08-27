@@ -300,6 +300,8 @@ export type UserWhereInput = {
   orders?: Prisma.OrderListRelationFilter
   reviews?: Prisma.ReviewListRelationFilter
   sellerReviews?: Prisma.SellerReviewListRelationFilter
+  reviewLikes?: Prisma.ReviewLikeListRelationFilter
+  sellerReviewLikes?: Prisma.SellerReviewLikeListRelationFilter
   reviewResponses?: Prisma.ReviewResponseListRelationFilter
   sellerResponses?: Prisma.SellerReviewResponseListRelationFilter
   reviewReportsReported?: Prisma.ReviewReportListRelationFilter
@@ -343,6 +345,8 @@ export type UserOrderByWithRelationInput = {
   orders?: Prisma.OrderOrderByRelationAggregateInput
   reviews?: Prisma.ReviewOrderByRelationAggregateInput
   sellerReviews?: Prisma.SellerReviewOrderByRelationAggregateInput
+  reviewLikes?: Prisma.ReviewLikeOrderByRelationAggregateInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeOrderByRelationAggregateInput
   reviewResponses?: Prisma.ReviewResponseOrderByRelationAggregateInput
   sellerResponses?: Prisma.SellerReviewResponseOrderByRelationAggregateInput
   reviewReportsReported?: Prisma.ReviewReportOrderByRelationAggregateInput
@@ -389,6 +393,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   orders?: Prisma.OrderListRelationFilter
   reviews?: Prisma.ReviewListRelationFilter
   sellerReviews?: Prisma.SellerReviewListRelationFilter
+  reviewLikes?: Prisma.ReviewLikeListRelationFilter
+  sellerReviewLikes?: Prisma.SellerReviewLikeListRelationFilter
   reviewResponses?: Prisma.ReviewResponseListRelationFilter
   sellerResponses?: Prisma.SellerReviewResponseListRelationFilter
   reviewReportsReported?: Prisma.ReviewReportListRelationFilter
@@ -482,6 +488,8 @@ export type UserCreateInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportCreateNestedManyWithoutReporterInput
@@ -525,6 +533,8 @@ export type UserUncheckedCreateInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedCreateNestedManyWithoutReporterInput
@@ -568,6 +578,8 @@ export type UserUpdateInput = {
   orders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUpdateManyWithoutReporterNestedInput
@@ -611,6 +623,8 @@ export type UserUncheckedUpdateInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedUpdateManyWithoutReporterNestedInput
@@ -880,6 +894,20 @@ export type UserUpdateOneRequiredWithoutReviewsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutReviewsInput, Prisma.UserUpdateWithoutReviewsInput>, Prisma.UserUncheckedUpdateWithoutReviewsInput>
 }
 
+export type UserCreateNestedOneWithoutReviewLikesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutReviewLikesInput, Prisma.UserUncheckedCreateWithoutReviewLikesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReviewLikesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutReviewLikesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutReviewLikesInput, Prisma.UserUncheckedCreateWithoutReviewLikesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReviewLikesInput
+  upsert?: Prisma.UserUpsertWithoutReviewLikesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutReviewLikesInput, Prisma.UserUpdateWithoutReviewLikesInput>, Prisma.UserUncheckedUpdateWithoutReviewLikesInput>
+}
+
 export type UserCreateNestedOneWithoutSellerResponsesInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutSellerResponsesInput, Prisma.UserUncheckedCreateWithoutSellerResponsesInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutSellerResponsesInput
@@ -906,6 +934,20 @@ export type UserUpdateOneRequiredWithoutSellerReviewsNestedInput = {
   upsert?: Prisma.UserUpsertWithoutSellerReviewsInput
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSellerReviewsInput, Prisma.UserUpdateWithoutSellerReviewsInput>, Prisma.UserUncheckedUpdateWithoutSellerReviewsInput>
+}
+
+export type UserCreateNestedOneWithoutSellerReviewLikesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSellerReviewLikesInput, Prisma.UserUncheckedCreateWithoutSellerReviewLikesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSellerReviewLikesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutSellerReviewLikesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSellerReviewLikesInput, Prisma.UserUncheckedCreateWithoutSellerReviewLikesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSellerReviewLikesInput
+  upsert?: Prisma.UserUpsertWithoutSellerReviewLikesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSellerReviewLikesInput, Prisma.UserUpdateWithoutSellerReviewLikesInput>, Prisma.UserUncheckedUpdateWithoutSellerReviewLikesInput>
 }
 
 export type UserCreateNestedOneWithoutReviewResponsesInput = {
@@ -1119,6 +1161,8 @@ export type UserCreateWithoutCustomerProfileInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportCreateNestedManyWithoutReporterInput
@@ -1161,6 +1205,8 @@ export type UserUncheckedCreateWithoutCustomerProfileInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedCreateNestedManyWithoutReporterInput
@@ -1219,6 +1265,8 @@ export type UserUpdateWithoutCustomerProfileInput = {
   orders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUpdateManyWithoutReporterNestedInput
@@ -1261,6 +1309,8 @@ export type UserUncheckedUpdateWithoutCustomerProfileInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedUpdateManyWithoutReporterNestedInput
@@ -1303,6 +1353,8 @@ export type UserCreateWithoutSupplierProfileInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportCreateNestedManyWithoutReporterInput
@@ -1345,6 +1397,8 @@ export type UserUncheckedCreateWithoutSupplierProfileInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedCreateNestedManyWithoutReporterInput
@@ -1403,6 +1457,8 @@ export type UserUpdateWithoutSupplierProfileInput = {
   orders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUpdateManyWithoutReporterNestedInput
@@ -1445,6 +1501,8 @@ export type UserUncheckedUpdateWithoutSupplierProfileInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedUpdateManyWithoutReporterNestedInput
@@ -1487,6 +1545,8 @@ export type UserCreateWithoutAddressesInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportCreateNestedManyWithoutReporterInput
@@ -1529,6 +1589,8 @@ export type UserUncheckedCreateWithoutAddressesInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedCreateNestedManyWithoutReporterInput
@@ -1587,6 +1649,8 @@ export type UserUpdateWithoutAddressesInput = {
   orders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUpdateManyWithoutReporterNestedInput
@@ -1629,6 +1693,8 @@ export type UserUncheckedUpdateWithoutAddressesInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedUpdateManyWithoutReporterNestedInput
@@ -1672,6 +1738,8 @@ export type UserCreateWithoutCartInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportCreateNestedManyWithoutReporterInput
@@ -1714,6 +1782,8 @@ export type UserUncheckedCreateWithoutCartInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedCreateNestedManyWithoutReporterInput
@@ -1772,6 +1842,8 @@ export type UserUpdateWithoutCartInput = {
   orders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUpdateManyWithoutReporterNestedInput
@@ -1814,6 +1886,8 @@ export type UserUncheckedUpdateWithoutCartInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedUpdateManyWithoutReporterNestedInput
@@ -1855,6 +1929,8 @@ export type UserCreateWithoutOrdersInput = {
   addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportCreateNestedManyWithoutReporterInput
@@ -1897,6 +1973,8 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedCreateNestedManyWithoutReporterInput
@@ -1955,6 +2033,8 @@ export type UserUpdateWithoutOrdersInput = {
   addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUpdateManyWithoutReporterNestedInput
@@ -1997,6 +2077,8 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedUpdateManyWithoutReporterNestedInput
@@ -2039,6 +2121,8 @@ export type UserCreateWithoutReviewsInput = {
   addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderCreateNestedManyWithoutCustomerInput
   sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportCreateNestedManyWithoutReporterInput
@@ -2081,6 +2165,8 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput
   sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedCreateNestedManyWithoutReporterInput
@@ -2139,6 +2225,8 @@ export type UserUpdateWithoutReviewsInput = {
   addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput
   sellerReviews?: Prisma.SellerReviewUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUpdateManyWithoutReporterNestedInput
@@ -2181,6 +2269,200 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput
   sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedUpdateManyWithoutUserNestedInput
+  reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutUserNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutUserNestedInput
+  reviewReportsReported?: Prisma.ReviewReportUncheckedUpdateManyWithoutReporterNestedInput
+  reviewReportsResolved?: Prisma.ReviewReportUncheckedUpdateManyWithoutResolverNestedInput
+  sellerReviewReportsReported?: Prisma.SellerReviewReportUncheckedUpdateManyWithoutReporterNestedInput
+  sellerReviewReportsResolved?: Prisma.SellerReviewReportUncheckedUpdateManyWithoutResolverNestedInput
+  cart?: Prisma.CartUncheckedUpdateOneWithoutUserNestedInput
+  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
+  messagesSent?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
+  supportNotes?: Prisma.SupportTicketNoteUncheckedUpdateManyWithoutAdminNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutCustomerNestedInput
+  paymentCustomers?: Prisma.PaymentCustomerUncheckedUpdateManyWithoutUserNestedInput
+  paymentCards?: Prisma.PaymentCardUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutReviewLikesInput = {
+  id?: string
+  email: string
+  password: string
+  name: string
+  document: string
+  phone?: string | null
+  avatarUrl?: string | null
+  role?: $Enums.UserRole
+  active?: boolean
+  verified?: boolean
+  verificationToken?: string | null
+  resetToken?: string | null
+  resetTokenExp?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  customerProfile?: Prisma.CustomerProfileCreateNestedOneWithoutUserInput
+  supplierProfile?: Prisma.SupplierProfileCreateNestedOneWithoutUserInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutCustomerInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeCreateNestedManyWithoutUserInput
+  reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutUserInput
+  sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutUserInput
+  reviewReportsReported?: Prisma.ReviewReportCreateNestedManyWithoutReporterInput
+  reviewReportsResolved?: Prisma.ReviewReportCreateNestedManyWithoutResolverInput
+  sellerReviewReportsReported?: Prisma.SellerReviewReportCreateNestedManyWithoutReporterInput
+  sellerReviewReportsResolved?: Prisma.SellerReviewReportCreateNestedManyWithoutResolverInput
+  cart?: Prisma.CartCreateNestedOneWithoutUserInput
+  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
+  messagesSent?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
+  supportNotes?: Prisma.SupportTicketNoteCreateNestedManyWithoutAdminInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutCustomerInput
+  paymentCustomers?: Prisma.PaymentCustomerCreateNestedManyWithoutUserInput
+  paymentCards?: Prisma.PaymentCardCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutReviewLikesInput = {
+  id?: string
+  email: string
+  password: string
+  name: string
+  document: string
+  phone?: string | null
+  avatarUrl?: string | null
+  role?: $Enums.UserRole
+  active?: boolean
+  verified?: boolean
+  verificationToken?: string | null
+  resetToken?: string | null
+  resetTokenExp?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  customerProfile?: Prisma.CustomerProfileUncheckedCreateNestedOneWithoutUserInput
+  supplierProfile?: Prisma.SupplierProfileUncheckedCreateNestedOneWithoutUserInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedCreateNestedManyWithoutUserInput
+  reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutUserInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutUserInput
+  reviewReportsReported?: Prisma.ReviewReportUncheckedCreateNestedManyWithoutReporterInput
+  reviewReportsResolved?: Prisma.ReviewReportUncheckedCreateNestedManyWithoutResolverInput
+  sellerReviewReportsReported?: Prisma.SellerReviewReportUncheckedCreateNestedManyWithoutReporterInput
+  sellerReviewReportsResolved?: Prisma.SellerReviewReportUncheckedCreateNestedManyWithoutResolverInput
+  cart?: Prisma.CartUncheckedCreateNestedOneWithoutUserInput
+  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
+  messagesSent?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
+  supportNotes?: Prisma.SupportTicketNoteUncheckedCreateNestedManyWithoutAdminInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCustomerInput
+  paymentCustomers?: Prisma.PaymentCustomerUncheckedCreateNestedManyWithoutUserInput
+  paymentCards?: Prisma.PaymentCardUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutReviewLikesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutReviewLikesInput, Prisma.UserUncheckedCreateWithoutReviewLikesInput>
+}
+
+export type UserUpsertWithoutReviewLikesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutReviewLikesInput, Prisma.UserUncheckedUpdateWithoutReviewLikesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutReviewLikesInput, Prisma.UserUncheckedCreateWithoutReviewLikesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutReviewLikesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutReviewLikesInput, Prisma.UserUncheckedUpdateWithoutReviewLikesInput>
+}
+
+export type UserUpdateWithoutReviewLikesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  document?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetTokenExp?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerProfile?: Prisma.CustomerProfileUpdateOneWithoutUserNestedInput
+  supplierProfile?: Prisma.SupplierProfileUpdateOneWithoutUserNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  sellerReviews?: Prisma.SellerReviewUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUpdateManyWithoutUserNestedInput
+  reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutUserNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutUserNestedInput
+  reviewReportsReported?: Prisma.ReviewReportUpdateManyWithoutReporterNestedInput
+  reviewReportsResolved?: Prisma.ReviewReportUpdateManyWithoutResolverNestedInput
+  sellerReviewReportsReported?: Prisma.SellerReviewReportUpdateManyWithoutReporterNestedInput
+  sellerReviewReportsResolved?: Prisma.SellerReviewReportUpdateManyWithoutResolverNestedInput
+  cart?: Prisma.CartUpdateOneWithoutUserNestedInput
+  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
+  messagesSent?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
+  supportNotes?: Prisma.SupportTicketNoteUpdateManyWithoutAdminNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutCustomerNestedInput
+  paymentCustomers?: Prisma.PaymentCustomerUpdateManyWithoutUserNestedInput
+  paymentCards?: Prisma.PaymentCardUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutReviewLikesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  document?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetTokenExp?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerProfile?: Prisma.CustomerProfileUncheckedUpdateOneWithoutUserNestedInput
+  supplierProfile?: Prisma.SupplierProfileUncheckedUpdateOneWithoutUserNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedUpdateManyWithoutReporterNestedInput
@@ -2224,6 +2506,8 @@ export type UserCreateWithoutSellerResponsesInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportCreateNestedManyWithoutReporterInput
   reviewReportsResolved?: Prisma.ReviewReportCreateNestedManyWithoutResolverInput
@@ -2266,6 +2550,8 @@ export type UserUncheckedCreateWithoutSellerResponsesInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedCreateNestedManyWithoutReporterInput
   reviewReportsResolved?: Prisma.ReviewReportUncheckedCreateNestedManyWithoutResolverInput
@@ -2324,6 +2610,8 @@ export type UserUpdateWithoutSellerResponsesInput = {
   orders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUpdateManyWithoutReporterNestedInput
   reviewReportsResolved?: Prisma.ReviewReportUpdateManyWithoutResolverNestedInput
@@ -2366,6 +2654,8 @@ export type UserUncheckedUpdateWithoutSellerResponsesInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedUpdateManyWithoutReporterNestedInput
   reviewReportsResolved?: Prisma.ReviewReportUncheckedUpdateManyWithoutResolverNestedInput
@@ -2407,6 +2697,8 @@ export type UserCreateWithoutSellerReviewsInput = {
   addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportCreateNestedManyWithoutReporterInput
@@ -2449,6 +2741,8 @@ export type UserUncheckedCreateWithoutSellerReviewsInput = {
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedCreateNestedManyWithoutReporterInput
@@ -2507,6 +2801,8 @@ export type UserUpdateWithoutSellerReviewsInput = {
   addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUpdateManyWithoutReporterNestedInput
@@ -2549,6 +2845,200 @@ export type UserUncheckedUpdateWithoutSellerReviewsInput = {
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedUpdateManyWithoutUserNestedInput
+  reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutUserNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutUserNestedInput
+  reviewReportsReported?: Prisma.ReviewReportUncheckedUpdateManyWithoutReporterNestedInput
+  reviewReportsResolved?: Prisma.ReviewReportUncheckedUpdateManyWithoutResolverNestedInput
+  sellerReviewReportsReported?: Prisma.SellerReviewReportUncheckedUpdateManyWithoutReporterNestedInput
+  sellerReviewReportsResolved?: Prisma.SellerReviewReportUncheckedUpdateManyWithoutResolverNestedInput
+  cart?: Prisma.CartUncheckedUpdateOneWithoutUserNestedInput
+  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutUserNestedInput
+  messagesSent?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
+  supportNotes?: Prisma.SupportTicketNoteUncheckedUpdateManyWithoutAdminNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutCustomerNestedInput
+  paymentCustomers?: Prisma.PaymentCustomerUncheckedUpdateManyWithoutUserNestedInput
+  paymentCards?: Prisma.PaymentCardUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutSellerReviewLikesInput = {
+  id?: string
+  email: string
+  password: string
+  name: string
+  document: string
+  phone?: string | null
+  avatarUrl?: string | null
+  role?: $Enums.UserRole
+  active?: boolean
+  verified?: boolean
+  verificationToken?: string | null
+  resetToken?: string | null
+  resetTokenExp?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  customerProfile?: Prisma.CustomerProfileCreateNestedOneWithoutUserInput
+  supplierProfile?: Prisma.SupplierProfileCreateNestedOneWithoutUserInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutCustomerInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
+  reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutUserInput
+  sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutUserInput
+  reviewReportsReported?: Prisma.ReviewReportCreateNestedManyWithoutReporterInput
+  reviewReportsResolved?: Prisma.ReviewReportCreateNestedManyWithoutResolverInput
+  sellerReviewReportsReported?: Prisma.SellerReviewReportCreateNestedManyWithoutReporterInput
+  sellerReviewReportsResolved?: Prisma.SellerReviewReportCreateNestedManyWithoutResolverInput
+  cart?: Prisma.CartCreateNestedOneWithoutUserInput
+  favorites?: Prisma.FavoriteCreateNestedManyWithoutUserInput
+  messagesSent?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
+  supportNotes?: Prisma.SupportTicketNoteCreateNestedManyWithoutAdminInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutCustomerInput
+  paymentCustomers?: Prisma.PaymentCustomerCreateNestedManyWithoutUserInput
+  paymentCards?: Prisma.PaymentCardCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutSellerReviewLikesInput = {
+  id?: string
+  email: string
+  password: string
+  name: string
+  document: string
+  phone?: string | null
+  avatarUrl?: string | null
+  role?: $Enums.UserRole
+  active?: boolean
+  verified?: boolean
+  verificationToken?: string | null
+  resetToken?: string | null
+  resetTokenExp?: Date | string | null
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  customerProfile?: Prisma.CustomerProfileUncheckedCreateNestedOneWithoutUserInput
+  supplierProfile?: Prisma.SupplierProfileUncheckedCreateNestedOneWithoutUserInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
+  reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutUserInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutUserInput
+  reviewReportsReported?: Prisma.ReviewReportUncheckedCreateNestedManyWithoutReporterInput
+  reviewReportsResolved?: Prisma.ReviewReportUncheckedCreateNestedManyWithoutResolverInput
+  sellerReviewReportsReported?: Prisma.SellerReviewReportUncheckedCreateNestedManyWithoutReporterInput
+  sellerReviewReportsResolved?: Prisma.SellerReviewReportUncheckedCreateNestedManyWithoutResolverInput
+  cart?: Prisma.CartUncheckedCreateNestedOneWithoutUserInput
+  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutUserInput
+  messagesSent?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
+  supportNotes?: Prisma.SupportTicketNoteUncheckedCreateNestedManyWithoutAdminInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCustomerInput
+  paymentCustomers?: Prisma.PaymentCustomerUncheckedCreateNestedManyWithoutUserInput
+  paymentCards?: Prisma.PaymentCardUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutSellerReviewLikesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutSellerReviewLikesInput, Prisma.UserUncheckedCreateWithoutSellerReviewLikesInput>
+}
+
+export type UserUpsertWithoutSellerReviewLikesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutSellerReviewLikesInput, Prisma.UserUncheckedUpdateWithoutSellerReviewLikesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutSellerReviewLikesInput, Prisma.UserUncheckedCreateWithoutSellerReviewLikesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutSellerReviewLikesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutSellerReviewLikesInput, Prisma.UserUncheckedUpdateWithoutSellerReviewLikesInput>
+}
+
+export type UserUpdateWithoutSellerReviewLikesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  document?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetTokenExp?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerProfile?: Prisma.CustomerProfileUpdateOneWithoutUserNestedInput
+  supplierProfile?: Prisma.SupplierProfileUpdateOneWithoutUserNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  sellerReviews?: Prisma.SellerReviewUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
+  reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutUserNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutUserNestedInput
+  reviewReportsReported?: Prisma.ReviewReportUpdateManyWithoutReporterNestedInput
+  reviewReportsResolved?: Prisma.ReviewReportUpdateManyWithoutResolverNestedInput
+  sellerReviewReportsReported?: Prisma.SellerReviewReportUpdateManyWithoutReporterNestedInput
+  sellerReviewReportsResolved?: Prisma.SellerReviewReportUpdateManyWithoutResolverNestedInput
+  cart?: Prisma.CartUpdateOneWithoutUserNestedInput
+  favorites?: Prisma.FavoriteUpdateManyWithoutUserNestedInput
+  messagesSent?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
+  supportNotes?: Prisma.SupportTicketNoteUpdateManyWithoutAdminNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutCustomerNestedInput
+  paymentCustomers?: Prisma.PaymentCustomerUpdateManyWithoutUserNestedInput
+  paymentCards?: Prisma.PaymentCardUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutSellerReviewLikesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  document?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetTokenExp?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerProfile?: Prisma.CustomerProfileUncheckedUpdateOneWithoutUserNestedInput
+  supplierProfile?: Prisma.SupplierProfileUncheckedUpdateOneWithoutUserNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedUpdateManyWithoutReporterNestedInput
@@ -2592,6 +3082,8 @@ export type UserCreateWithoutReviewResponsesInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportCreateNestedManyWithoutReporterInput
   reviewReportsResolved?: Prisma.ReviewReportCreateNestedManyWithoutResolverInput
@@ -2634,6 +3126,8 @@ export type UserUncheckedCreateWithoutReviewResponsesInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedCreateNestedManyWithoutReporterInput
   reviewReportsResolved?: Prisma.ReviewReportUncheckedCreateNestedManyWithoutResolverInput
@@ -2692,6 +3186,8 @@ export type UserUpdateWithoutReviewResponsesInput = {
   orders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUpdateManyWithoutReporterNestedInput
   reviewReportsResolved?: Prisma.ReviewReportUpdateManyWithoutResolverNestedInput
@@ -2734,6 +3230,8 @@ export type UserUncheckedUpdateWithoutReviewResponsesInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedUpdateManyWithoutReporterNestedInput
   reviewReportsResolved?: Prisma.ReviewReportUncheckedUpdateManyWithoutResolverNestedInput
@@ -2776,6 +3274,8 @@ export type UserCreateWithoutReviewReportsReportedInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutUserInput
   reviewReportsResolved?: Prisma.ReviewReportCreateNestedManyWithoutResolverInput
@@ -2818,6 +3318,8 @@ export type UserUncheckedCreateWithoutReviewReportsReportedInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutUserInput
   reviewReportsResolved?: Prisma.ReviewReportUncheckedCreateNestedManyWithoutResolverInput
@@ -2865,6 +3367,8 @@ export type UserCreateWithoutReviewReportsResolvedInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportCreateNestedManyWithoutReporterInput
@@ -2907,6 +3411,8 @@ export type UserUncheckedCreateWithoutReviewReportsResolvedInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedCreateNestedManyWithoutReporterInput
@@ -2965,6 +3471,8 @@ export type UserUpdateWithoutReviewReportsReportedInput = {
   orders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutUserNestedInput
   reviewReportsResolved?: Prisma.ReviewReportUpdateManyWithoutResolverNestedInput
@@ -3007,6 +3515,8 @@ export type UserUncheckedUpdateWithoutReviewReportsReportedInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   reviewReportsResolved?: Prisma.ReviewReportUncheckedUpdateManyWithoutResolverNestedInput
@@ -3060,6 +3570,8 @@ export type UserUpdateWithoutReviewReportsResolvedInput = {
   orders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUpdateManyWithoutReporterNestedInput
@@ -3102,6 +3614,8 @@ export type UserUncheckedUpdateWithoutReviewReportsResolvedInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedUpdateManyWithoutReporterNestedInput
@@ -3144,6 +3658,8 @@ export type UserCreateWithoutSellerReviewReportsReportedInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportCreateNestedManyWithoutReporterInput
@@ -3186,6 +3702,8 @@ export type UserUncheckedCreateWithoutSellerReviewReportsReportedInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedCreateNestedManyWithoutReporterInput
@@ -3233,6 +3751,8 @@ export type UserCreateWithoutSellerReviewReportsResolvedInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportCreateNestedManyWithoutReporterInput
@@ -3275,6 +3795,8 @@ export type UserUncheckedCreateWithoutSellerReviewReportsResolvedInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedCreateNestedManyWithoutReporterInput
@@ -3333,6 +3855,8 @@ export type UserUpdateWithoutSellerReviewReportsReportedInput = {
   orders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUpdateManyWithoutReporterNestedInput
@@ -3375,6 +3899,8 @@ export type UserUncheckedUpdateWithoutSellerReviewReportsReportedInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedUpdateManyWithoutReporterNestedInput
@@ -3428,6 +3954,8 @@ export type UserUpdateWithoutSellerReviewReportsResolvedInput = {
   orders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUpdateManyWithoutReporterNestedInput
@@ -3470,6 +3998,8 @@ export type UserUncheckedUpdateWithoutSellerReviewReportsResolvedInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedUpdateManyWithoutReporterNestedInput
@@ -3512,6 +4042,8 @@ export type UserCreateWithoutFavoritesInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportCreateNestedManyWithoutReporterInput
@@ -3554,6 +4086,8 @@ export type UserUncheckedCreateWithoutFavoritesInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedCreateNestedManyWithoutReporterInput
@@ -3612,6 +4146,8 @@ export type UserUpdateWithoutFavoritesInput = {
   orders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUpdateManyWithoutReporterNestedInput
@@ -3654,6 +4190,8 @@ export type UserUncheckedUpdateWithoutFavoritesInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedUpdateManyWithoutReporterNestedInput
@@ -3696,6 +4234,8 @@ export type UserCreateWithoutConversationsInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportCreateNestedManyWithoutReporterInput
@@ -3738,6 +4278,8 @@ export type UserUncheckedCreateWithoutConversationsInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedCreateNestedManyWithoutReporterInput
@@ -3796,6 +4338,8 @@ export type UserUpdateWithoutConversationsInput = {
   orders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUpdateManyWithoutReporterNestedInput
@@ -3838,6 +4382,8 @@ export type UserUncheckedUpdateWithoutConversationsInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedUpdateManyWithoutReporterNestedInput
@@ -3880,6 +4426,8 @@ export type UserCreateWithoutMessagesSentInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportCreateNestedManyWithoutReporterInput
@@ -3922,6 +4470,8 @@ export type UserUncheckedCreateWithoutMessagesSentInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedCreateNestedManyWithoutReporterInput
@@ -3980,6 +4530,8 @@ export type UserUpdateWithoutMessagesSentInput = {
   orders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUpdateManyWithoutReporterNestedInput
@@ -4022,6 +4574,8 @@ export type UserUncheckedUpdateWithoutMessagesSentInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedUpdateManyWithoutReporterNestedInput
@@ -4064,6 +4618,8 @@ export type UserCreateWithoutPaymentCustomersInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportCreateNestedManyWithoutReporterInput
@@ -4106,6 +4662,8 @@ export type UserUncheckedCreateWithoutPaymentCustomersInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedCreateNestedManyWithoutReporterInput
@@ -4164,6 +4722,8 @@ export type UserUpdateWithoutPaymentCustomersInput = {
   orders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUpdateManyWithoutReporterNestedInput
@@ -4206,6 +4766,8 @@ export type UserUncheckedUpdateWithoutPaymentCustomersInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedUpdateManyWithoutReporterNestedInput
@@ -4248,6 +4810,8 @@ export type UserCreateWithoutPaymentCardsInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportCreateNestedManyWithoutReporterInput
@@ -4290,6 +4854,8 @@ export type UserUncheckedCreateWithoutPaymentCardsInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedCreateNestedManyWithoutReporterInput
@@ -4348,6 +4914,8 @@ export type UserUpdateWithoutPaymentCardsInput = {
   orders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUpdateManyWithoutReporterNestedInput
@@ -4390,6 +4958,8 @@ export type UserUncheckedUpdateWithoutPaymentCardsInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedUpdateManyWithoutReporterNestedInput
@@ -4432,6 +5002,8 @@ export type UserCreateWithoutNotificationsInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportCreateNestedManyWithoutReporterInput
@@ -4474,6 +5046,8 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedCreateNestedManyWithoutReporterInput
@@ -4532,6 +5106,8 @@ export type UserUpdateWithoutNotificationsInput = {
   orders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUpdateManyWithoutReporterNestedInput
@@ -4574,6 +5150,8 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedUpdateManyWithoutReporterNestedInput
@@ -4616,6 +5194,8 @@ export type UserCreateWithoutSupportTicketsInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportCreateNestedManyWithoutReporterInput
@@ -4658,6 +5238,8 @@ export type UserUncheckedCreateWithoutSupportTicketsInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedCreateNestedManyWithoutReporterInput
@@ -4716,6 +5298,8 @@ export type UserUpdateWithoutSupportTicketsInput = {
   orders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUpdateManyWithoutReporterNestedInput
@@ -4758,6 +5342,8 @@ export type UserUncheckedUpdateWithoutSupportTicketsInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedUpdateManyWithoutReporterNestedInput
@@ -4800,6 +5386,8 @@ export type UserCreateWithoutSupportNotesInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportCreateNestedManyWithoutReporterInput
@@ -4842,6 +5430,8 @@ export type UserUncheckedCreateWithoutSupportNotesInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutUserInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedCreateNestedManyWithoutUserInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedCreateNestedManyWithoutUserInput
   reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutUserInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutUserInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedCreateNestedManyWithoutReporterInput
@@ -4900,6 +5490,8 @@ export type UserUpdateWithoutSupportNotesInput = {
   orders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUpdateManyWithoutReporterNestedInput
@@ -4942,6 +5534,8 @@ export type UserUncheckedUpdateWithoutSupportNotesInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutUserNestedInput
+  reviewLikes?: Prisma.ReviewLikeUncheckedUpdateManyWithoutUserNestedInput
+  sellerReviewLikes?: Prisma.SellerReviewLikeUncheckedUpdateManyWithoutUserNestedInput
   reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutUserNestedInput
   reviewReportsReported?: Prisma.ReviewReportUncheckedUpdateManyWithoutReporterNestedInput
@@ -4968,6 +5562,8 @@ export type UserCountOutputType = {
   orders: number
   reviews: number
   sellerReviews: number
+  reviewLikes: number
+  sellerReviewLikes: number
   reviewResponses: number
   sellerResponses: number
   reviewReportsReported: number
@@ -4989,6 +5585,8 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   orders?: boolean | UserCountOutputTypeCountOrdersArgs
   reviews?: boolean | UserCountOutputTypeCountReviewsArgs
   sellerReviews?: boolean | UserCountOutputTypeCountSellerReviewsArgs
+  reviewLikes?: boolean | UserCountOutputTypeCountReviewLikesArgs
+  sellerReviewLikes?: boolean | UserCountOutputTypeCountSellerReviewLikesArgs
   reviewResponses?: boolean | UserCountOutputTypeCountReviewResponsesArgs
   sellerResponses?: boolean | UserCountOutputTypeCountSellerResponsesArgs
   reviewReportsReported?: boolean | UserCountOutputTypeCountReviewReportsReportedArgs
@@ -5041,6 +5639,20 @@ export type UserCountOutputTypeCountReviewsArgs<ExtArgs extends runtime.Types.Ex
  */
 export type UserCountOutputTypeCountSellerReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.SellerReviewWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountReviewLikesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ReviewLikeWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountSellerReviewLikesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SellerReviewLikeWhereInput
 }
 
 /**
@@ -5168,6 +5780,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   orders?: boolean | Prisma.User$ordersArgs<ExtArgs>
   reviews?: boolean | Prisma.User$reviewsArgs<ExtArgs>
   sellerReviews?: boolean | Prisma.User$sellerReviewsArgs<ExtArgs>
+  reviewLikes?: boolean | Prisma.User$reviewLikesArgs<ExtArgs>
+  sellerReviewLikes?: boolean | Prisma.User$sellerReviewLikesArgs<ExtArgs>
   reviewResponses?: boolean | Prisma.User$reviewResponsesArgs<ExtArgs>
   sellerResponses?: boolean | Prisma.User$sellerResponsesArgs<ExtArgs>
   reviewReportsReported?: boolean | Prisma.User$reviewReportsReportedArgs<ExtArgs>
@@ -5260,6 +5874,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   orders?: boolean | Prisma.User$ordersArgs<ExtArgs>
   reviews?: boolean | Prisma.User$reviewsArgs<ExtArgs>
   sellerReviews?: boolean | Prisma.User$sellerReviewsArgs<ExtArgs>
+  reviewLikes?: boolean | Prisma.User$reviewLikesArgs<ExtArgs>
+  sellerReviewLikes?: boolean | Prisma.User$sellerReviewLikesArgs<ExtArgs>
   reviewResponses?: boolean | Prisma.User$reviewResponsesArgs<ExtArgs>
   sellerResponses?: boolean | Prisma.User$sellerResponsesArgs<ExtArgs>
   reviewReportsReported?: boolean | Prisma.User$reviewReportsReportedArgs<ExtArgs>
@@ -5289,6 +5905,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     orders: Prisma.$OrderPayload<ExtArgs>[]
     reviews: Prisma.$ReviewPayload<ExtArgs>[]
     sellerReviews: Prisma.$SellerReviewPayload<ExtArgs>[]
+    reviewLikes: Prisma.$ReviewLikePayload<ExtArgs>[]
+    sellerReviewLikes: Prisma.$SellerReviewLikePayload<ExtArgs>[]
     reviewResponses: Prisma.$ReviewResponsePayload<ExtArgs>[]
     sellerResponses: Prisma.$SellerReviewResponsePayload<ExtArgs>[]
     reviewReportsReported: Prisma.$ReviewReportPayload<ExtArgs>[]
@@ -5725,6 +6343,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   orders<T extends Prisma.User$ordersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reviews<T extends Prisma.User$reviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   sellerReviews<T extends Prisma.User$sellerReviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sellerReviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SellerReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reviewLikes<T extends Prisma.User$reviewLikesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reviewLikesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewLikePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  sellerReviewLikes<T extends Prisma.User$sellerReviewLikesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sellerReviewLikesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SellerReviewLikePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reviewResponses<T extends Prisma.User$reviewResponsesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reviewResponsesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewResponsePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   sellerResponses<T extends Prisma.User$sellerResponsesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sellerResponsesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SellerReviewResponsePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reviewReportsReported<T extends Prisma.User$reviewReportsReportedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reviewReportsReportedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -6312,6 +6932,54 @@ export type User$sellerReviewsArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.SellerReviewScalarFieldEnum | Prisma.SellerReviewScalarFieldEnum[]
+}
+
+/**
+ * User.reviewLikes
+ */
+export type User$reviewLikesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ReviewLike
+   */
+  select?: Prisma.ReviewLikeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ReviewLike
+   */
+  omit?: Prisma.ReviewLikeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ReviewLikeInclude<ExtArgs> | null
+  where?: Prisma.ReviewLikeWhereInput
+  orderBy?: Prisma.ReviewLikeOrderByWithRelationInput | Prisma.ReviewLikeOrderByWithRelationInput[]
+  cursor?: Prisma.ReviewLikeWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ReviewLikeScalarFieldEnum | Prisma.ReviewLikeScalarFieldEnum[]
+}
+
+/**
+ * User.sellerReviewLikes
+ */
+export type User$sellerReviewLikesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SellerReviewLike
+   */
+  select?: Prisma.SellerReviewLikeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SellerReviewLike
+   */
+  omit?: Prisma.SellerReviewLikeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SellerReviewLikeInclude<ExtArgs> | null
+  where?: Prisma.SellerReviewLikeWhereInput
+  orderBy?: Prisma.SellerReviewLikeOrderByWithRelationInput | Prisma.SellerReviewLikeOrderByWithRelationInput[]
+  cursor?: Prisma.SellerReviewLikeWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SellerReviewLikeScalarFieldEnum | Prisma.SellerReviewLikeScalarFieldEnum[]
 }
 
 /**

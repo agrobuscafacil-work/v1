@@ -3,17 +3,22 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Minus, Plus, Trash2, ShoppingCart as CartIcon, Leaf, ArrowLeft, ArrowRight, Shield, Truck } from 'lucide-react';
+import { Minus, Plus, Trash2, ShoppingCart as CartIcon, Leaf, ArrowLeft, ArrowRight, Shield, Truck, Check } from 'lucide-react';
 import { toast } from '@/lib/toast';
 import { useCart } from '@/hooks/use-cart';
 
 export default function CartPage() {
-  const { items, updateQuantity, removeItem, clearCart, subtotal } = useCart();
+  const { items, selectedProductIds, updateQuantity, removeItem, clearCart, toggleItemSelection, selectAllItems, clearItemSelection } = useCart();
   const [couponCode, setCouponCode] = useState('');
 
-  const shipping = subtotal() > 500 ? 0 : 29.90;
+  const selectedItems = selectedProductIds === null
+    ? items
+    : items.filter((item) => selectedProductIds.includes(item.product.id));
+  const selectedSubtotal = selectedItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+  const allSelected = selectedItems.length === items.length;
+  const shipping = selectedSubtotal > 500 ? 0 : 29.90;
   const discount = 0;
-  const total = subtotal() + shipping - discount;
+  const total = selectedSubtotal + shipping - discount;
 
   if (items.length === 0) {
     return (
@@ -41,11 +46,27 @@ export default function CartPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-4">
+          <div className="flex items-center justify-between px-1">
+            <label className="inline-flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 cursor-pointer">
+              <input type="checkbox" checked={allSelected} onChange={allSelected ? clearItemSelection : selectAllItems} className="sr-only peer" />
+              <span className="h-5 w-5 rounded border border-gray-300 peer-checked:bg-primary-600 peer-checked:border-primary-600 flex items-center justify-center">
+                {allSelected && <Check className="h-3.5 w-3.5 text-white" />}
+              </span>
+              Selecionar todos
+            </label>
+            <span className="text-xs text-gray-500">{selectedItems.length} de {items.length} selecionados</span>
+          </div>
           {items.map((item) => (
             <div
               key={item.product.id}
               className="flex gap-4 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-4"
             >
+              <label className="flex items-center cursor-pointer">
+                <input type="checkbox" aria-label={`Selecionar ${item.product.name}`} checked={selectedProductIds === null || selectedProductIds.includes(item.product.id)} onChange={() => toggleItemSelection(item.product.id)} className="sr-only peer" />
+                <span className="h-5 w-5 rounded border border-gray-300 peer-checked:bg-primary-600 peer-checked:border-primary-600 flex items-center justify-center">
+                  {(selectedProductIds === null || selectedProductIds.includes(item.product.id)) && <Check className="h-3.5 w-3.5 text-white" />}
+                </span>
+              </label>
               <Link href={'/products/' + item.product.slug} className="h-24 w-24 shrink-0 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
                 <Leaf className="h-10 w-10 text-gray-400" />
               </Link>
@@ -93,7 +114,7 @@ export default function CartPage() {
               <div className="flex justify-between">
                 <span className="text-gray-500">Subtotal</span>
                 <span className="font-medium text-gray-900 dark:text-white">
-                  R$ {subtotal().toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                  R$ {selectedSubtotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                 </span>
               </div>
               <div className="flex justify-between">
@@ -129,7 +150,12 @@ export default function CartPage() {
                 />
                 <button className="btn-outline text-sm">Aplicar</button>
               </div>
-              <Link href="/checkout" className="btn-primary w-full gap-2">
+              <Link href="/checkout" aria-disabled={selectedItems.length === 0} onClick={(event) => {
+                if (selectedItems.length === 0) {
+                  event.preventDefault();
+                  toast.error('Selecione pelo menos um produto para continuar.');
+                }
+              }} className={`btn-primary w-full gap-2 ${selectedItems.length === 0 ? 'pointer-events-auto opacity-50' : ''}`}>
                 Seguir para Pagamento <ArrowRight className="h-4 w-4" />
               </Link>
             </div>

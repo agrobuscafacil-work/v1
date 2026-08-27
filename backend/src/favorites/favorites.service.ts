@@ -33,8 +33,8 @@ export class FavoritesService {
       this.prisma.favorite.findMany({
         where, skip, take: limit,
         include: {
-          product: { select: { id: true, name: true, slug: true, price: true, images: true, rating: true, totalReviews: true, stock: true, status: true } },
-          supplier: { select: { id: true, companyName: true, logoUrl: true } },
+          product: { select: { id: true, name: true, slug: true, price: true, images: true, rating: true, totalReviews: true, stock: true, status: true, saleMode: true } },
+          supplier: { select: { id: true, companyName: true, logoUrl: true, whatsapp: true } },
         },
         orderBy: { createdAt: 'desc' },
       }),

@@ -24,10 +24,16 @@ export interface CartItem {
 
 interface CartState {
   items: CartItem[];
+  selectedProductIds: string[] | null;
   addItem: (product: CartProduct, quantity?: number) => Promise<void>;
   removeItem: (productId: string) => void;
+  removeItems: (productIds: string[]) => void;
   updateQuantity: (productId: string, delta: number) => void;
   clearCart: () => void;
+  toggleItemSelection: (productId: string) => void;
+  selectAllItems: () => void;
+  clearItemSelection: () => void;
+  getSelectedItems: () => CartItem[];
   totalItems: () => number;
   subtotal: () => number;
 }
@@ -102,6 +108,7 @@ export const useCart = create<CartState>()(
   persist(
     (set, get) => ({
       items: [],
+      selectedProductIds: null,
 
       addItem: async (product, quantity = 1) => {
         const localAdd = () => {
@@ -118,7 +125,12 @@ export const useCart = create<CartState>()(
               };
             }
             toast.success('Produto adicionado ao carrinho');
-            return { items: [...state.items, { product, quantity }] };
+            return {
+              items: [...state.items, { product, quantity }],
+              selectedProductIds: state.selectedProductIds === null
+                ? null
+                : [...state.selectedProductIds, product.id],
+            };
           });
         };
 
@@ -155,6 +167,9 @@ export const useCart = create<CartState>()(
                 ...state.items,
                 { product, quantity, serverItemId: item.id },
               ],
+              selectedProductIds: state.selectedProductIds === null
+                ? null
+                : [...state.selectedProductIds, product.id],
             };
           });
         } catch (error: any) {
@@ -176,8 +191,29 @@ export const useCart = create<CartState>()(
         }
         set((state) => ({
           items: state.items.filter((i) => i.product.id !== productId),
+          selectedProductIds: state.selectedProductIds === null
+            ? null
+            : state.selectedProductIds.filter((id) => id !== productId),
         }));
         toast.success('Item removido do carrinho');
+      },
+
+      removeItems: (productIds) => {
+        const productIdSet = new Set(productIds);
+        const itemsToRemove = get().items.filter((item) => productIdSet.has(item.product.id));
+        if (cartOwner) {
+          itemsToRemove.forEach((item) => {
+            if (item.serverItemId) {
+              api.delete(`/cart/items/${item.serverItemId}`).catch(() => undefined);
+            }
+          });
+        }
+        set((state) => ({
+          items: state.items.filter((item) => !productIdSet.has(item.product.id)),
+          selectedProductIds: state.selectedProductIds === null
+            ? null
+            : state.selectedProductIds.filter((id) => !productIdSet.has(id)),
+        }));
       },
 
       updateQuantity: (productId, delta) => {
@@ -204,13 +240,37 @@ export const useCart = create<CartState>()(
         if (cartOwner) {
           api.delete('/cart').catch(() => undefined);
         }
-        set({ items: [] });
+        set({ items: [], selectedProductIds: null });
+      },
+
+      toggleItemSelection: (productId) => {
+        set((state) => {
+          const allIds = state.items.map((item) => item.product.id);
+          const selectedIds = state.selectedProductIds === null ? allIds : state.selectedProductIds;
+          const nextSelectedIds = selectedIds.includes(productId)
+            ? selectedIds.filter((id) => id !== productId)
+            : [...selectedIds, productId];
+          return {
+            selectedProductIds: nextSelectedIds.length === allIds.length ? null : nextSelectedIds,
+          };
+        });
+      },
+
+      selectAllItems: () => set({ selectedProductIds: null }),
+
+      clearItemSelection: () => set({ selectedProductIds: [] }),
+
+      getSelectedItems: () => {
+        const { items, selectedProductIds } = get();
+        if (selectedProductIds === null) return items;
+        const selected = new Set(selectedProductIds);
+        return items.filter((item) => selected.has(item.product.id));
       },
 
       totalItems: () => get().items.reduce((sum, i) => sum + i.quantity, 0),
 
       subtotal: () =>
-        get().items.reduce((sum, i) => sum + i.product.price * i.quantity, 0),
+        get().getSelectedItems().reduce((sum, i) => sum + i.product.price * i.quantity, 0),
     }),
     {
       name: 'agro-cart',

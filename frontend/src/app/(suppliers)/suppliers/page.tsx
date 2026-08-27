@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Search, Star, MapPin, Store, Package, ArrowRight, SlidersHorizontal, X, Loader2 } from 'lucide-react';
 import { api } from '@/lib/api';
+import { PRODUCT_FILE_URL } from '@/lib/products';
 
 interface DisplaySupplier {
   id: string;
@@ -16,6 +17,7 @@ interface DisplaySupplier {
   state: string;
   featured: boolean;
   badges: string[];
+  logoUrl: string;
 }
 
 export default function SuppliersPage() {
@@ -41,13 +43,14 @@ export default function SuppliersPage() {
             id: s.id,
             companyName: s.companyName,
             tradingName: s.tradingName || '',
-            rating: Number(s.rating) || 0,
-            totalReviews: Number(s.totalReviews) || 0,
+            rating: Number(s.sellerRating) || 0,
+            totalReviews: Number(s.sellerTotalReviews) || 0,
             totalProducts: Number(s.totalProducts) || 0,
             city: s.addresses?.[0]?.city || '',
             state: s.addresses?.[0]?.state || '',
             featured: !!s.featured,
             badges: Array.isArray(s.badges) ? s.badges : [],
+            logoUrl: s.logoUrl || '',
           })),
         );
       } catch {
@@ -149,8 +152,11 @@ export default function SuppliersPage() {
                   className="group rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-6 card-hover"
                 >
                   <div className="flex items-start gap-4 mb-4">
-                    <div className="h-16 w-16 shrink-0 rounded-2xl bg-primary-50 dark:bg-primary-950 flex items-center justify-center">
-                      <Store className="h-8 w-8 text-primary-600" />
+                    <div className="h-16 w-16 shrink-0 rounded-2xl bg-primary-50 dark:bg-primary-950 flex items-center justify-center overflow-hidden">
+                      {supplier.logoUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={PRODUCT_FILE_URL(supplier.logoUrl)} alt={`Logo de ${supplier.companyName}`} className="h-full w-full object-cover" />
+                      ) : <Store className="h-8 w-8 text-primary-600" />}
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 transition-colors">

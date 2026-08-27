@@ -20,6 +20,7 @@ export interface CreateProductPayload {
   brand?: string;
   comparePrice?: number;
   images?: string[];
+  saleMode?: 'DIRECT' | 'CONTACT_ONLY';
 }
 
 export type UpdateProductPayload = Partial<CreateProductPayload> & { status?: Product['status'] };

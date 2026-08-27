@@ -1,5 +1,6 @@
-import { IsString, IsNumber, IsOptional, IsArray, Min } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsArray, IsEnum, Min } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { SaleMode } from '../../generated/prisma/client';
 
 export class UpdateProductDto {
   @ApiPropertyOptional()
@@ -49,4 +50,9 @@ export class UpdateProductDto {
   @IsOptional()
   @IsArray()
   images?: string[];
+
+  @ApiPropertyOptional({ enum: SaleMode })
+  @IsOptional()
+  @IsEnum(SaleMode)
+  saleMode?: SaleMode;
 }
