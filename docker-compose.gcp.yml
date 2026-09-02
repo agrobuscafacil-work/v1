@@ -7,8 +7,8 @@
 #   docker compose -f docker-compose.gcp.yml run --rm --no-deps backend npx prisma migrate deploy
 #   docker compose -f docker-compose.gcp.yml up -d --no-deps backend
 #
-# As variáveis ${...} são lidas de um arquivo .env.gcp (ou do ambiente) na VM.
-# O arquivo da service account do GCS precisa estar em docker/gcp/credentials.json.
+# Autenticação GCS via ADC (Application Default Credentials) da VM.
+# A VM deve ter Service Account com role 'roles/storage.objectAdmin' nos buckets.
 
 services:
   backend:
@@ -39,10 +39,7 @@ services:
       - GCS_BUCKET=${GCS_BUCKET}
       # Bucket PRIVADO para anexos de suporte (nunca público).
       - GCS_PRIVATE_BUCKET=${GCS_PRIVATE_BUCKET:?GCS_PRIVATE_BUCKET é obrigatório}
-      - GCS_CREDENTIALS_FILE=${GCS_CREDENTIALS_FILE:-/etc/gcp/credentials.json}
       - GCS_PUBLIC_BASE_URL=${GCS_PUBLIC_BASE_URL}
-    volumes:
-      - ./docker/gcp:/etc/gcp:ro
     depends_on:
       postgres:
         condition: service_healthy

@@ -16,7 +16,9 @@ export class RedisThrottlerStorage implements ThrottlerStorage {
   private redisAvailable = false;
 
   constructor(@Inject('REDIS_CLIENT') private readonly redis: Redis) {
-    this.redis.status === 'ready' ? (this.redisAvailable = true) : null;
+    if (this.redis.status === 'ready') {
+      this.redisAvailable = true;
+    }
     this.redis.on('ready', () => {
       this.redisAvailable = true;
       this.logger.log('Throttler storage switched to Redis');
