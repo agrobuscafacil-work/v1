@@ -116,23 +116,25 @@ async function main() {
 
   // Categorias globais
   const CATEGORIES = [
-    { name: 'Sementes', slug: 'sementes', description: 'Sementes para plantio' },
-    { name: 'Fertilizantes', slug: 'fertilizantes', description: 'Fertilizantes e nutrientes' },
-    { name: 'Defensivos', slug: 'defensivos', description: 'Defensivos agrícolas' },
-    { name: 'Máquinas', slug: 'maquinas', description: 'Máquinas e equipamentos' },
-    { name: 'Irrigação', slug: 'irrigacao', description: 'Sistemas de irrigação' },
-    { name: 'Implementos', slug: 'implementos', description: 'Implementos agrícolas' },
-    { name: 'Pecuária', slug: 'pecuaria', description: 'Insumos pecuários' },
-    { name: 'Tecnologia', slug: 'tecnologia', description: 'Tecnologia agrícola' },
-    { name: 'Armazenagem', slug: 'armazenagem', description: 'Soluções de armazenagem' },
-    { name: 'Diversos', slug: 'diversos', description: 'Diversos' },
+    { name: 'Insumos Agrícolas', slug: 'insumos-agricolas', description: 'Fertilizantes, adubos, sementes, mudas, corretivos, bioinsumos e produtos para nutrição e proteção das culturas.', order: 1 },
+    { name: 'Máquinas e Implementos', slug: 'maquinas-e-implementos', description: 'Tratores, colheitadeiras, plantadeiras, pulverizadores, implementos, peças e acessórios para mecanização rural.', order: 2 },
+    { name: 'Equipamentos Rurais', slug: 'equipamentos-rurais', description: 'Irrigação, bombas, motores, geradores, equipamentos de ordenha, medição, manejo e instalações rurais.', order: 3 },
+    { name: 'Cultivo e Produção', slug: 'cultivo-e-producao', description: 'Culturas, mudas, produtos de colheita, grãos, frutas, hortaliças e materiais para produção agrícola.', order: 4 },
+    { name: 'Pecuária', slug: 'pecuaria', description: 'Animais de produção, produtos pecuários e itens relacionados à criação e manejo animal.', order: 5 },
+    { name: 'Produtos para Animais', slug: 'produtos-para-animais', description: 'Rações, suplementos, medicamentos, vacinas, equipamentos e acessórios para alimentação, saúde e manejo animal.', order: 6 },
+    { name: 'Apicultura', slug: 'apicultura', description: 'Colmeias, equipamentos, vestimentas e produtos apícolas como mel, própolis, cera e geleia real.', order: 7 },
+    { name: 'Ferramentas e Equipamentos', slug: 'ferramentas-e-equipamentos', description: 'Ferramentas manuais, elétricas, mecânicas, hidráulicas, pneumáticas e equipamentos de oficina e manutenção.', order: 8 },
+    { name: 'Infraestrutura Rural', slug: 'infraestrutura-rural', description: 'Galpões, currais, cercas, estufas, silos, armazenamento, pós-colheita e materiais de construção rural.', order: 9 },
+    { name: 'EPI e Vestuário', slug: 'epi-e-vestuario', description: 'Luvas, botas, óculos, capacetes, respiradores, roupas de proteção e vestuário para trabalhadores rurais.', order: 10 },
+    { name: 'Tecnologia Agrícola', slug: 'tecnologia-agricola', description: 'Softwares, drones, GPS, sensores, automação, IoT, monitoramento, telemetria e agricultura de precisão.', order: 11 },
+    { name: 'Serviços', slug: 'servicos', description: 'Serviços agrícolas, pecuários, de máquinas, manutenção, transporte, consultoria, construção e outros.', order: 12 },
   ];
   const categoryMap = new Map<string, string>();
   for (const c of CATEGORIES) {
     const cat = await prisma.category.upsert({
       where: { slug: c.slug },
-      update: {},
-      create: { name: c.name, slug: c.slug, description: c.description, active: true },
+      update: { name: c.name, description: c.description, active: true, order: c.order },
+      create: { name: c.name, slug: c.slug, description: c.description, active: true, order: c.order },
     });
     categoryMap.set(c.name, cat.id);
   }
@@ -149,30 +151,30 @@ async function main() {
   }
 
   const PRODUCTS: ProductSeed[] = [
-    { name: 'Semente de Soja Transgênica RR', slug: 'semente-soja-transgenica-rr', description: 'Semente de soja transgênica Roundup Ready de alta produtividade.', price: 189.90, stock: 45, supplierName: 'Sementes Silva', categoryName: 'Sementes' },
-    { name: 'Fertilizante NPK 20-10-10', slug: 'fertilizante-npk-20-10-10', description: 'Fertilizante granulado NPK para diversas culturas.', price: 89.90, stock: 120, supplierName: 'Fertilizantes ABC', categoryName: 'Fertilizantes' },
-    { name: 'Defensivo Agrícola Glifosato', slug: 'defensivo-agricola-glifosato', description: 'Herbicida sistêmico não seletivo para controle de plantas daninhas.', price: 45.90, stock: 3, supplierName: 'Agro Tech Ltda', categoryName: 'Defensivos' },
-    { name: 'Trator Agrícola 75cv', slug: 'trator-agricola-75cv', description: 'Trator agrícola 75cv 4x2 ideal para médias propriedades.', price: 89990.00, stock: 5, supplierName: 'Máquinas Agrícolas LTDA', categoryName: 'Máquinas' },
-    { name: 'Arado de Disco 4 Discos', slug: 'arado-disco-4-discos', description: 'Arado de disco reversível com 4 discos de 26 polegadas.', price: 3499.90, stock: 10, supplierName: 'Agro Tech Ltda', categoryName: 'Implementos' },
-    { name: 'Sistema de Irrigação por Gotejamento', slug: 'sistema-irrigacao-gotejamento', description: 'Sistema completo de irrigação por gotejamento para 1000m².', price: 1299.90, stock: 8, supplierName: 'IrrigaFácil', categoryName: 'Irrigação' },
-    { name: 'Milho Híbrido Safrinha', slug: 'milho-hibrido-safrinha', description: 'Semente de milho híbrido para safrinha de alta produtividade.', price: 259.90, stock: 72, supplierName: 'Sementes Genetix', categoryName: 'Sementes' },
-    { name: 'Inseticida Biológico Lagarta', slug: 'inseticida-biologico-lagarta', description: 'Inseticida biológico para controle de lagartas.', price: 78.50, stock: 34, supplierName: 'BioDefensivos Naturais', categoryName: 'Defensivos' },
-    { name: 'Colheitadeira Automotriz', slug: 'colheitadeira-automotriz', description: 'Colheitadeira automotriz de alto desempenho para grãos.', price: 349990.00, stock: 2, supplierName: 'Máquinas Agrícolas LTDA', categoryName: 'Máquinas' },
-    { name: 'Fungicida Tratamento Sementes', slug: 'fungicida-tratamento-sementes', description: 'Fungicida para tratamento de sementes com amplo espectro.', price: 112.30, stock: 56, supplierName: 'Defensivos Nacional', categoryName: 'Defensivos' },
-    { name: 'Kit Irrigação por Aspersão', slug: 'kit-irrigacao-aspersao', description: 'Kit completo de irrigação por aspersão para 500m².', price: 2450.00, stock: 6, supplierName: 'IrrigaTech Solutions', categoryName: 'Irrigação' },
-    { name: 'Pulverizador Costal 20L', slug: 'pulverizador-costal-20l', description: 'Pulverizador costal manual com capacidade para 20 litros.', price: 549.90, stock: 22, supplierName: 'Agro Tech Ltda', categoryName: 'Implementos' },
-    { name: 'Sistema de GPS Agrícola', slug: 'sistema-gps-agricola', description: 'Sistema de GPS para agricultura de precisão com correção RTK.', price: 3899.00, stock: 7, supplierName: 'AgroTec Sistemas', categoryName: 'Tecnologia' },
-    { name: 'Silo Metálico 5000Kg', slug: 'silo-metalico-5000kg', description: 'Silo metálico para armazenagem de grãos com capacidade de 5000kg.', price: 18990.00, stock: 3, supplierName: 'Armazenagem Total', categoryName: 'Armazenagem' },
-    { name: 'Fertilizante Orgânico Húmus', slug: 'fertilizante-organico-humus', description: 'Húmus de minhoca 100% orgânico para adubação.', price: 42.50, stock: 66, supplierName: 'Orgânicos do Vale', categoryName: 'Fertilizantes' },
-    { name: 'Defensivo Natural Neem', slug: 'defensivo-natural-neem', description: 'Defensivo natural à base de óleo de neem.', price: 36.90, stock: 41, supplierName: 'BioDefensivos Naturais', categoryName: 'Defensivos' },
-    { name: 'Adubo Foliar Líquido', slug: 'adubo-foliar-liquido', description: 'Adubo foliar líquido concentrado com micronutrientes.', price: 67.80, stock: 93, supplierName: 'NutriPlant Fertilizantes', categoryName: 'Fertilizantes' },
-    { name: 'Conjunto de Grade Aradora', slug: 'conjunto-grade-aradora', description: 'Grade aradora de arrasto com 24 discos de 20 polegadas.', price: 7890.00, stock: 4, supplierName: 'Agro Tech Ltda', categoryName: 'Implementos' },
-    { name: 'Cerca Elétrica Rural', slug: 'cerca-eletrica-rural', description: 'Kit cerca elétrica rural para pastagem com 1000m de alcance.', price: 1299.00, stock: 15, supplierName: 'Agro Tech Ltda', categoryName: 'Diversos' },
-    { name: 'Drone Agrícola Pulverizador', slug: 'drone-agricola-pulverizador', description: 'Drone agrícola para pulverização com capacidade de 10L.', price: 45990.00, stock: 2, supplierName: 'AgroTec Sistemas', categoryName: 'Tecnologia' },
-    { name: 'Veículo Utilitário Rural', slug: 'veiculo-utilitario-rural', description: 'Veículo utilitário 4x4 para trabalho no campo.', price: 129990.00, stock: 1, supplierName: 'Máquinas Agrícolas LTDA', categoryName: 'Máquinas' },
-    { name: 'Semente de Pastagem Braquiária', slug: 'semente-pastagem-braquiaria', description: 'Semente de pastagem Braquiária brizantha para 1 hectare.', price: 79.90, stock: 155, supplierName: 'Sementes Silva', categoryName: 'Sementes' },
-    { name: 'Ração para Gado Leiteiro', slug: 'racao-gado-leiteiro', description: 'Ração balanceada para gado leiteiro com 22% de proteína.', price: 89.90, stock: 200, supplierName: 'Pecuária Forte', categoryName: 'Pecuária' },
-    { name: 'Suplemento Mineral Bovino', slug: 'suplemento-mineral-bovino', description: 'Suplemento mineral para bovinos com 90 dias de consumo.', price: 145.00, stock: 88, supplierName: 'Pecuária Forte', categoryName: 'Pecuária' },
+    { name: 'Semente de Soja Transgênica RR', slug: 'semente-soja-transgenica-rr', description: 'Semente de soja transgênica Roundup Ready de alta produtividade.', price: 189.90, stock: 45, supplierName: 'Sementes Silva', categoryName: 'Insumos Agrícolas' },
+    { name: 'Fertilizante NPK 20-10-10', slug: 'fertilizante-npk-20-10-10', description: 'Fertilizante granulado NPK para diversas culturas.', price: 89.90, stock: 120, supplierName: 'Fertilizantes ABC', categoryName: 'Insumos Agrícolas' },
+    { name: 'Defensivo Agrícola Glifosato', slug: 'defensivo-agricola-glifosato', description: 'Herbicida sistêmico não seletivo para controle de plantas daninhas.', price: 45.90, stock: 3, supplierName: 'Agro Tech Ltda', categoryName: 'Insumos Agrícolas' },
+    { name: 'Trator Agrícola 75cv', slug: 'trator-agricola-75cv', description: 'Trator agrícola 75cv 4x2 ideal para médias propriedades.', price: 89990.00, stock: 5, supplierName: 'Máquinas Agrícolas LTDA', categoryName: 'Máquinas e Implementos' },
+    { name: 'Arado de Disco 4 Discos', slug: 'arado-disco-4-discos', description: 'Arado de disco reversível com 4 discos de 26 polegadas.', price: 3499.90, stock: 10, supplierName: 'Agro Tech Ltda', categoryName: 'Máquinas e Implementos' },
+    { name: 'Sistema de Irrigação por Gotejamento', slug: 'sistema-irrigacao-gotejamento', description: 'Sistema completo de irrigação por gotejamento para 1000m².', price: 1299.90, stock: 8, supplierName: 'IrrigaFácil', categoryName: 'Equipamentos Rurais' },
+    { name: 'Milho Híbrido Safrinha', slug: 'milho-hibrido-safrinha', description: 'Semente de milho híbrido para safrinha de alta produtividade.', price: 259.90, stock: 72, supplierName: 'Sementes Genetix', categoryName: 'Insumos Agrícolas' },
+    { name: 'Inseticida Biológico Lagarta', slug: 'inseticida-biologico-lagarta', description: 'Inseticida biológico para controle de lagartas.', price: 78.50, stock: 34, supplierName: 'BioDefensivos Naturais', categoryName: 'Insumos Agrícolas' },
+    { name: 'Colheitadeira Automotriz', slug: 'colheitadeira-automotriz', description: 'Colheitadeira automotriz de alto desempenho para grãos.', price: 349990.00, stock: 2, supplierName: 'Máquinas Agrícolas LTDA', categoryName: 'Máquinas e Implementos' },
+    { name: 'Fungicida Tratamento Sementes', slug: 'fungicida-tratamento-sementes', description: 'Fungicida para tratamento de sementes com amplo espectro.', price: 112.30, stock: 56, supplierName: 'Defensivos Nacional', categoryName: 'Insumos Agrícolas' },
+    { name: 'Kit Irrigação por Aspersão', slug: 'kit-irrigacao-aspersao', description: 'Kit completo de irrigação por aspersão para 500m².', price: 2450.00, stock: 6, supplierName: 'IrrigaTech Solutions', categoryName: 'Equipamentos Rurais' },
+    { name: 'Pulverizador Costal 20L', slug: 'pulverizador-costal-20l', description: 'Pulverizador costal manual com capacidade para 20 litros.', price: 549.90, stock: 22, supplierName: 'Agro Tech Ltda', categoryName: 'Máquinas e Implementos' },
+    { name: 'Sistema de GPS Agrícola', slug: 'sistema-gps-agricola', description: 'Sistema de GPS para agricultura de precisão com correção RTK.', price: 3899.00, stock: 7, supplierName: 'AgroTec Sistemas', categoryName: 'Tecnologia Agrícola' },
+    { name: 'Silo Metálico 5000Kg', slug: 'silo-metalico-5000kg', description: 'Silo metálico para armazenagem de grãos com capacidade de 5000kg.', price: 18990.00, stock: 3, supplierName: 'Armazenagem Total', categoryName: 'Infraestrutura Rural' },
+    { name: 'Fertilizante Orgânico Húmus', slug: 'fertilizante-organico-humus', description: 'Húmus de minhoca 100% orgânico para adubação.', price: 42.50, stock: 66, supplierName: 'Orgânicos do Vale', categoryName: 'Insumos Agrícolas' },
+    { name: 'Defensivo Natural Neem', slug: 'defensivo-natural-neem', description: 'Defensivo natural à base de óleo de neem.', price: 36.90, stock: 41, supplierName: 'BioDefensivos Naturais', categoryName: 'Insumos Agrícolas' },
+    { name: 'Adubo Foliar Líquido', slug: 'adubo-foliar-liquido', description: 'Adubo foliar líquido concentrado com micronutrientes.', price: 67.80, stock: 93, supplierName: 'NutriPlant Fertilizantes', categoryName: 'Insumos Agrícolas' },
+    { name: 'Conjunto de Grade Aradora', slug: 'conjunto-grade-aradora', description: 'Grade aradora de arrasto com 24 discos de 20 polegadas.', price: 7890.00, stock: 4, supplierName: 'Agro Tech Ltda', categoryName: 'Máquinas e Implementos' },
+    { name: 'Cerca Elétrica Rural', slug: 'cerca-eletrica-rural', description: 'Kit cerca elétrica rural para pastagem com 1000m de alcance.', price: 1299.00, stock: 15, supplierName: 'Agro Tech Ltda', categoryName: 'Infraestrutura Rural' },
+    { name: 'Drone Agrícola Pulverizador', slug: 'drone-agricola-pulverizador', description: 'Drone agrícola para pulverização com capacidade de 10L.', price: 45990.00, stock: 2, supplierName: 'AgroTec Sistemas', categoryName: 'Tecnologia Agrícola' },
+    { name: 'Veículo Utilitário Rural', slug: 'veiculo-utilitario-rural', description: 'Veículo utilitário 4x4 para trabalho no campo.', price: 129990.00, stock: 1, supplierName: 'Máquinas Agrícolas LTDA', categoryName: 'Máquinas e Implementos' },
+    { name: 'Semente de Pastagem Braquiária', slug: 'semente-pastagem-braquiaria', description: 'Semente de pastagem Braquiária brizantha para 1 hectare.', price: 79.90, stock: 155, supplierName: 'Sementes Silva', categoryName: 'Insumos Agrícolas' },
+    { name: 'Ração para Gado Leiteiro', slug: 'racao-gado-leiteiro', description: 'Ração balanceada para gado leiteiro com 22% de proteína.', price: 89.90, stock: 200, supplierName: 'Pecuária Forte', categoryName: 'Produtos para Animais' },
+    { name: 'Suplemento Mineral Bovino', slug: 'suplemento-mineral-bovino', description: 'Suplemento mineral para bovinos com 90 dias de consumo.', price: 145.00, stock: 88, supplierName: 'Pecuária Forte', categoryName: 'Produtos para Animais' },
   ];
 
   for (const p of PRODUCTS) {

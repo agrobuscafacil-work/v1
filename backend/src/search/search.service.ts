@@ -9,11 +9,11 @@ export class SearchService {
   constructor(private prisma: PrismaService) {}
 
   async search(params: {
-    q?: string; categoryId?: string; supplierId?: string;
+    q?: string; categoryId?: string; category?: string; supplierId?: string;
     minPrice?: number; maxPrice?: number; city?: string; state?: string;
     page?: number; limit?: number; sort?: string;
   }) {
-    const { q, categoryId, supplierId, minPrice, maxPrice, city, state, page: rawPage = 1, limit: rawLimit = 20, sort } = params;
+    const { q, categoryId, category, supplierId, minPrice, maxPrice, city, state, page: rawPage = 1, limit: rawLimit = 20, sort } = params;
     const page = parsePage(rawPage);
     const limit = parseLimit(rawLimit, 20);
     const skip = (page - 1) * limit;
@@ -35,6 +35,7 @@ export class SearchService {
       ];
     }
     if (categoryId) productWhere.categoryId = categoryId;
+    if (category) productWhere.category = { slug: category };
     if (supplierId) productWhere.supplierId = supplierId;
     if (minPrice || maxPrice) {
       productWhere.price = {};

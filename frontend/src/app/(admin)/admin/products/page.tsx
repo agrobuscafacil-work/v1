@@ -5,8 +5,10 @@ import Image from 'next/image';
 import { Package, Search, Edit2, X, Save, Loader2, Eye, Store, DollarSign, Package as PackageIcon, Tag, Hash, ChevronLeft, ChevronRight, Trash2, Calendar, ShoppingBag } from 'lucide-react';
 import { toast } from '@/lib/toast';
 import { api } from '@/lib/api';
+import { productCategories } from '@/lib/categories';
 import ConfirmDialog from '@/components/ui/confirm-dialog';
 import { PRODUCT_FILE_URL } from '@/lib/products';
+import type { Category } from '@/types';
 
 interface ProductItem {
   id: string;
@@ -17,7 +19,7 @@ interface ProductItem {
   status: string;
   images: string[];
   createdAt: string;
-  category: { id: string; name: string } | null;
+  category: { id: string; name: string; slug: string } | null;
   supplier: { id: string; companyName: string } | null;
 }
 
@@ -52,6 +54,8 @@ export default function AdminProductsPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('');
+  const [categories, setCategories] = useState<Category[]>([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
@@ -63,12 +67,17 @@ export default function AdminProductsPage() {
   const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
+    api.get('/categories').then((res) => setCategories(res.data.data ?? [])).catch(() => setCategories([]));
+  }, []);
+
+  useEffect(() => {
     let cancelled = false;
     const load = async () => {
       setLoading(true);
       try {
         const params: Record<string, string | number> = { page, limit: 10, status: statusFilter || 'ALL' };
         if (search.trim()) params.search = search.trim();
+        if (categoryFilter) params.category = categoryFilter;
         const res = await api.get('/products', { params });
         const payload = res.data.data;
         if (cancelled) return;
@@ -89,7 +98,7 @@ export default function AdminProductsPage() {
     };
     load();
     return () => { cancelled = true; };
-  }, [page, statusFilter, search, refreshKey]);
+  }, [page, statusFilter, categoryFilter, search, refreshKey]);
 
   function startEdit(p: ProductItem) {
     setEditItem({ ...p });
@@ -104,6 +113,7 @@ export default function AdminProductsPage() {
         price: editItem.price,
         stock: editItem.stock,
         status: editItem.status,
+        categoryId: editItem.category?.id,
       });
       toast.success('Produto atualizado');
       setEditItem(null);
@@ -154,6 +164,12 @@ export default function AdminProductsPage() {
           <option value="">Todos os status</option>
           {STATUS_OPTIONS.map((s) => (
             <option key={s} value={s}>{STATUS_STYLES[s]?.label || s}</option>
+          ))}
+        </select>
+        <select value={categoryFilter} onChange={(e) => { setCategoryFilter(e.target.value); setPage(1); }} className="input-field text-sm w-full sm:w-56">
+          <option value="">Todas as categorias</option>
+          {productCategories.map((category) => (
+            <option key={category.slug} value={category.slug}>{category.name}</option>
           ))}
         </select>
       </div>
@@ -341,7 +357,19 @@ export default function AdminProductsPage() {
                 </div>
                 <div>
                   <label className="label-field">Categoria</label>
-                  <input type="text" value={editItem.category?.name || '—'} disabled className="input-field opacity-70" />
+                  <select
+                    value={editItem.category?.id || ''}
+                    onChange={(e) => {
+                      const category = categories.find((item) => item.id === e.target.value);
+                      if (category) setEditItem({ ...editItem, category });
+                    }}
+                    className="input-field"
+                  >
+                    {productCategories.map((category) => {
+                      const option = categories.find((item) => item.slug === category.slug);
+                      return option ? <option key={option.id} value={option.id}>{category.name}</option> : null;
+                    })}
+                  </select>
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-4">

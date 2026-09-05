@@ -3,8 +3,9 @@
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Package, Loader2, Upload, Save, X, AlertTriangle } from 'lucide-react';
+import { Package, Loader2, Upload, Save, X, AlertTriangle, Truck } from 'lucide-react';
 import { toast } from '@/lib/toast';
+import { getCategorySaleMode, productCategories } from '@/lib/categories';
 import { fetchCategories, createProduct, uploadProductImage } from '@/lib/products';
 import type { Category } from '@/types';
 
@@ -52,7 +53,9 @@ export default function NewProductPage() {
     description: '',
     price: '',
     stock: '',
-    saleMode: 'DIRECT' as 'DIRECT' | 'CONTACT_ONLY',
+    shippingBaseCost: '',
+    shippingAdditionalCost: '',
+    shippingFreeDistanceKm: '',
   });
 
   const [imageUrl, setImageUrl] = useState('');
@@ -76,6 +79,11 @@ export default function NewProductPage() {
       active = false;
     };
   }, []);
+
+  const selectedCategorySlug = productCategories.find((category) => {
+    const apiCategory = categories.find((item) => item.slug === category.slug);
+    return form.categoryId === category.slug || form.categoryId === apiCategory?.id;
+  })?.slug;
 
   useEffect(() => {
     return () => {
@@ -125,10 +133,14 @@ export default function NewProductPage() {
     e.preventDefault();
     const price = parseFloat(form.price.replace(',', '.'));
     const stock = parseInt(form.stock || '0', 10);
+    const shippingBaseCost = parseFloat(form.shippingBaseCost.replace(',', '.')) || 0;
+    const shippingAdditionalCost = parseFloat(form.shippingAdditionalCost.replace(',', '.')) || 0;
+    const shippingFreeDistanceKm = parseFloat(form.shippingFreeDistanceKm.replace(',', '.')) || 0;
     if (!form.name.trim()) return toast.error('Informe o nome do produto.');
     if (!form.categoryId) return toast.error('Selecione uma categoria.');
     if (!form.description.trim()) return toast.error('Informe a descrição.');
     if (isNaN(price) || price < 0) return toast.error('Informe um preço válido.');
+    if (shippingBaseCost < 0 || shippingAdditionalCost < 0 || shippingFreeDistanceKm < 0) return toast.error('Informe valores de frete válidos.');
 
     setIsLoading(true);
     try {
@@ -138,9 +150,11 @@ export default function NewProductPage() {
         categoryId: form.categoryId,
         price,
         stock: isNaN(stock) || stock < 0 ? 0 : stock,
+        shippingBaseCost,
+        shippingAdditionalCost,
+        shippingFreeDistanceKm,
         unit: 'un',
         images: imageUrl ? [imageUrl] : [],
-        saleMode: form.saleMode,
       });
       toast.success('Produto cadastrado com sucesso!');
       router.push('/supplier/products');
@@ -180,9 +194,10 @@ export default function NewProductPage() {
                 className="input-field"
               >
                 <option value="">{loadingCats ? 'Carregando...' : 'Selecione'}</option>
-                {categories.map((c) => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
-                ))}
+                {productCategories.map((category) => {
+                  const apiCategory = categories.find((item) => item.slug === category.slug);
+                  return <option key={category.slug} value={apiCategory?.id || category.slug}>{category.name}</option>;
+                })}
               </select>
             </div>
             <div>
@@ -200,21 +215,18 @@ export default function NewProductPage() {
 
         <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Tipo de Venda</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <label className={`flex items-center gap-3 rounded-lg border p-4 cursor-pointer ${form.saleMode === 'DIRECT' ? 'border-primary-500 bg-primary-50 dark:bg-primary-950' : 'border-gray-200 dark:border-gray-700'}`}>
-              <input type="radio" name="saleMode" value="DIRECT" checked={form.saleMode === 'DIRECT'} onChange={() => setForm({ ...form, saleMode: 'DIRECT' })} />
-              <span><span className="block font-medium">Direta pelo site</span><span className="text-xs text-gray-500">Cliente compra e paga pelo site.</span></span>
-            </label>
-            <label className={`flex items-center gap-3 rounded-lg border p-4 cursor-pointer ${form.saleMode === 'CONTACT_ONLY' ? 'border-primary-500 bg-primary-50 dark:bg-primary-950' : 'border-gray-200 dark:border-gray-700'}`}>
-              <input type="radio" name="saleMode" value="CONTACT_ONLY" checked={form.saleMode === 'CONTACT_ONLY'} onChange={() => setForm({ ...form, saleMode: 'CONTACT_ONLY' })} />
-              <span><span className="block font-medium">Somente contato</span><span className="text-xs text-gray-500">Cliente negocia diretamente com o fornecedor.</span></span>
-            </label>
-          </div>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            {!selectedCategorySlug
+              ? 'Selecione uma categoria para definir o tipo de venda.'
+              : getCategorySaleMode(selectedCategorySlug) === 'CONTACT_ONLY'
+                ? 'Somente contato: o cliente negocia diretamente com o fornecedor.'
+                : 'Direta pelo site: o cliente pode comprar e pagar pelo site.'}
+          </p>
         </div>
 
         <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Preço e Estoque</h2>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="label-field">Preço (R$)</label>
               <input
@@ -237,6 +249,27 @@ export default function NewProductPage() {
                 className="input-field"
                 placeholder="0"
               />
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
+            <Truck className="h-5 w-5 text-primary-600" /> Configuração de Frete
+          </h2>
+          <p className="text-sm text-gray-500 mb-4">Defina o frete padrão e o adicional cobrado quando a distância ultrapassar o limite informado.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label className="label-field">Frete padrão (R$)</label>
+                <input type="text" inputMode="decimal" value={form.shippingBaseCost} onChange={(e) => setForm({ ...form, shippingBaseCost: e.target.value.replace(/[^\d,.]/g, '') })} className="input-field" placeholder="9,00" />
+            </div>
+            <div>
+              <label className="label-field">Valor adicional (R$)</label>
+                <input type="text" inputMode="decimal" value={form.shippingAdditionalCost} onChange={(e) => setForm({ ...form, shippingAdditionalCost: e.target.value.replace(/[^\d,.]/g, '') })} className="input-field" placeholder="10,00" />
+            </div>
+            <div>
+              <label className="label-field">Limite sem adicional (km)</label>
+                <input type="text" inputMode="decimal" value={form.shippingFreeDistanceKm} onChange={(e) => setForm({ ...form, shippingFreeDistanceKm: e.target.value.replace(/[^\d,.]/g, '') })} className="input-field" placeholder="50" />
             </div>
           </div>
         </div>

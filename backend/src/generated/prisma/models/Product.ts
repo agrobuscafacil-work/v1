@@ -38,6 +38,9 @@ export type ProductAvgAggregateOutputType = {
   height: runtime.Decimal | null
   width: runtime.Decimal | null
   depth: runtime.Decimal | null
+  shippingBaseCost: runtime.Decimal | null
+  shippingAdditionalCost: runtime.Decimal | null
+  shippingFreeDistanceKm: runtime.Decimal | null
   preparationTime: number | null
   viewCount: number | null
   saleCount: number | null
@@ -57,6 +60,9 @@ export type ProductSumAggregateOutputType = {
   height: runtime.Decimal | null
   width: runtime.Decimal | null
   depth: runtime.Decimal | null
+  shippingBaseCost: runtime.Decimal | null
+  shippingAdditionalCost: runtime.Decimal | null
+  shippingFreeDistanceKm: runtime.Decimal | null
   preparationTime: number | null
   viewCount: number | null
   saleCount: number | null
@@ -90,6 +96,9 @@ export type ProductMinAggregateOutputType = {
   depth: runtime.Decimal | null
   status: $Enums.ProductStatus | null
   saleMode: $Enums.SaleMode | null
+  shippingBaseCost: runtime.Decimal | null
+  shippingAdditionalCost: runtime.Decimal | null
+  shippingFreeDistanceKm: runtime.Decimal | null
   statusReason: string | null
   featured: boolean | null
   freeShipping: boolean | null
@@ -130,6 +139,9 @@ export type ProductMaxAggregateOutputType = {
   depth: runtime.Decimal | null
   status: $Enums.ProductStatus | null
   saleMode: $Enums.SaleMode | null
+  shippingBaseCost: runtime.Decimal | null
+  shippingAdditionalCost: runtime.Decimal | null
+  shippingFreeDistanceKm: runtime.Decimal | null
   statusReason: string | null
   featured: boolean | null
   freeShipping: boolean | null
@@ -174,6 +186,9 @@ export type ProductCountAggregateOutputType = {
   specifications: number
   status: number
   saleMode: number
+  shippingBaseCost: number
+  shippingAdditionalCost: number
+  shippingFreeDistanceKm: number
   statusReason: number
   featured: number
   freeShipping: number
@@ -202,6 +217,9 @@ export type ProductAvgAggregateInputType = {
   height?: true
   width?: true
   depth?: true
+  shippingBaseCost?: true
+  shippingAdditionalCost?: true
+  shippingFreeDistanceKm?: true
   preparationTime?: true
   viewCount?: true
   saleCount?: true
@@ -221,6 +239,9 @@ export type ProductSumAggregateInputType = {
   height?: true
   width?: true
   depth?: true
+  shippingBaseCost?: true
+  shippingAdditionalCost?: true
+  shippingFreeDistanceKm?: true
   preparationTime?: true
   viewCount?: true
   saleCount?: true
@@ -254,6 +275,9 @@ export type ProductMinAggregateInputType = {
   depth?: true
   status?: true
   saleMode?: true
+  shippingBaseCost?: true
+  shippingAdditionalCost?: true
+  shippingFreeDistanceKm?: true
   statusReason?: true
   featured?: true
   freeShipping?: true
@@ -294,6 +318,9 @@ export type ProductMaxAggregateInputType = {
   depth?: true
   status?: true
   saleMode?: true
+  shippingBaseCost?: true
+  shippingAdditionalCost?: true
+  shippingFreeDistanceKm?: true
   statusReason?: true
   featured?: true
   freeShipping?: true
@@ -338,6 +365,9 @@ export type ProductCountAggregateInputType = {
   specifications?: true
   status?: true
   saleMode?: true
+  shippingBaseCost?: true
+  shippingAdditionalCost?: true
+  shippingFreeDistanceKm?: true
   statusReason?: true
   featured?: true
   freeShipping?: true
@@ -469,6 +499,9 @@ export type ProductGroupByOutputType = {
   specifications: runtime.JsonValue | null
   status: $Enums.ProductStatus
   saleMode: $Enums.SaleMode
+  shippingBaseCost: runtime.Decimal
+  shippingAdditionalCost: runtime.Decimal
+  shippingFreeDistanceKm: runtime.Decimal
   statusReason: string | null
   featured: boolean
   freeShipping: boolean
@@ -536,6 +569,9 @@ export type ProductWhereInput = {
   specifications?: Prisma.JsonNullableFilter<"Product">
   status?: Prisma.EnumProductStatusFilter<"Product"> | $Enums.ProductStatus
   saleMode?: Prisma.EnumSaleModeFilter<"Product"> | $Enums.SaleMode
+  shippingBaseCost?: Prisma.DecimalFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: Prisma.DecimalFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: Prisma.DecimalFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: Prisma.StringNullableFilter<"Product"> | string | null
   featured?: Prisma.BoolFilter<"Product"> | boolean
   freeShipping?: Prisma.BoolFilter<"Product"> | boolean
@@ -589,6 +625,9 @@ export type ProductOrderByWithRelationInput = {
   specifications?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   saleMode?: Prisma.SortOrder
+  shippingBaseCost?: Prisma.SortOrder
+  shippingAdditionalCost?: Prisma.SortOrder
+  shippingFreeDistanceKm?: Prisma.SortOrder
   statusReason?: Prisma.SortOrderInput | Prisma.SortOrder
   featured?: Prisma.SortOrder
   freeShipping?: Prisma.SortOrder
@@ -645,6 +684,9 @@ export type ProductWhereUniqueInput = Prisma.AtLeast<{
   specifications?: Prisma.JsonNullableFilter<"Product">
   status?: Prisma.EnumProductStatusFilter<"Product"> | $Enums.ProductStatus
   saleMode?: Prisma.EnumSaleModeFilter<"Product"> | $Enums.SaleMode
+  shippingBaseCost?: Prisma.DecimalFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: Prisma.DecimalFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: Prisma.DecimalFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: Prisma.StringNullableFilter<"Product"> | string | null
   featured?: Prisma.BoolFilter<"Product"> | boolean
   freeShipping?: Prisma.BoolFilter<"Product"> | boolean
@@ -698,6 +740,9 @@ export type ProductOrderByWithAggregationInput = {
   specifications?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   saleMode?: Prisma.SortOrder
+  shippingBaseCost?: Prisma.SortOrder
+  shippingAdditionalCost?: Prisma.SortOrder
+  shippingFreeDistanceKm?: Prisma.SortOrder
   statusReason?: Prisma.SortOrderInput | Prisma.SortOrder
   featured?: Prisma.SortOrder
   freeShipping?: Prisma.SortOrder
@@ -750,6 +795,9 @@ export type ProductScalarWhereWithAggregatesInput = {
   specifications?: Prisma.JsonNullableWithAggregatesFilter<"Product">
   status?: Prisma.EnumProductStatusWithAggregatesFilter<"Product"> | $Enums.ProductStatus
   saleMode?: Prisma.EnumSaleModeWithAggregatesFilter<"Product"> | $Enums.SaleMode
+  shippingBaseCost?: Prisma.DecimalWithAggregatesFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: Prisma.DecimalWithAggregatesFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: Prisma.DecimalWithAggregatesFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
   featured?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
   freeShipping?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
@@ -792,6 +840,9 @@ export type ProductCreateInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.ProductStatus
   saleMode?: $Enums.SaleMode
+  shippingBaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: string | null
   featured?: boolean
   freeShipping?: boolean
@@ -845,6 +896,9 @@ export type ProductUncheckedCreateInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.ProductStatus
   saleMode?: $Enums.SaleMode
+  shippingBaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: string | null
   featured?: boolean
   freeShipping?: boolean
@@ -894,6 +948,9 @@ export type ProductUpdateInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   saleMode?: Prisma.EnumSaleModeFieldUpdateOperationsInput | $Enums.SaleMode
+  shippingBaseCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   freeShipping?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -947,6 +1004,9 @@ export type ProductUncheckedUpdateInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   saleMode?: Prisma.EnumSaleModeFieldUpdateOperationsInput | $Enums.SaleMode
+  shippingBaseCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   freeShipping?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -998,6 +1058,9 @@ export type ProductCreateManyInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.ProductStatus
   saleMode?: $Enums.SaleMode
+  shippingBaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: string | null
   featured?: boolean
   freeShipping?: boolean
@@ -1040,6 +1103,9 @@ export type ProductUpdateManyMutationInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   saleMode?: Prisma.EnumSaleModeFieldUpdateOperationsInput | $Enums.SaleMode
+  shippingBaseCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   freeShipping?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1084,6 +1150,9 @@ export type ProductUncheckedUpdateManyInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   saleMode?: Prisma.EnumSaleModeFieldUpdateOperationsInput | $Enums.SaleMode
+  shippingBaseCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   freeShipping?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1138,6 +1207,9 @@ export type ProductCountOrderByAggregateInput = {
   specifications?: Prisma.SortOrder
   status?: Prisma.SortOrder
   saleMode?: Prisma.SortOrder
+  shippingBaseCost?: Prisma.SortOrder
+  shippingAdditionalCost?: Prisma.SortOrder
+  shippingFreeDistanceKm?: Prisma.SortOrder
   statusReason?: Prisma.SortOrder
   featured?: Prisma.SortOrder
   freeShipping?: Prisma.SortOrder
@@ -1164,6 +1236,9 @@ export type ProductAvgOrderByAggregateInput = {
   height?: Prisma.SortOrder
   width?: Prisma.SortOrder
   depth?: Prisma.SortOrder
+  shippingBaseCost?: Prisma.SortOrder
+  shippingAdditionalCost?: Prisma.SortOrder
+  shippingFreeDistanceKm?: Prisma.SortOrder
   preparationTime?: Prisma.SortOrder
   viewCount?: Prisma.SortOrder
   saleCount?: Prisma.SortOrder
@@ -1197,6 +1272,9 @@ export type ProductMaxOrderByAggregateInput = {
   depth?: Prisma.SortOrder
   status?: Prisma.SortOrder
   saleMode?: Prisma.SortOrder
+  shippingBaseCost?: Prisma.SortOrder
+  shippingAdditionalCost?: Prisma.SortOrder
+  shippingFreeDistanceKm?: Prisma.SortOrder
   statusReason?: Prisma.SortOrder
   featured?: Prisma.SortOrder
   freeShipping?: Prisma.SortOrder
@@ -1237,6 +1315,9 @@ export type ProductMinOrderByAggregateInput = {
   depth?: Prisma.SortOrder
   status?: Prisma.SortOrder
   saleMode?: Prisma.SortOrder
+  shippingBaseCost?: Prisma.SortOrder
+  shippingAdditionalCost?: Prisma.SortOrder
+  shippingFreeDistanceKm?: Prisma.SortOrder
   statusReason?: Prisma.SortOrder
   featured?: Prisma.SortOrder
   freeShipping?: Prisma.SortOrder
@@ -1263,6 +1344,9 @@ export type ProductSumOrderByAggregateInput = {
   height?: Prisma.SortOrder
   width?: Prisma.SortOrder
   depth?: Prisma.SortOrder
+  shippingBaseCost?: Prisma.SortOrder
+  shippingAdditionalCost?: Prisma.SortOrder
+  shippingFreeDistanceKm?: Prisma.SortOrder
   preparationTime?: Prisma.SortOrder
   viewCount?: Prisma.SortOrder
   saleCount?: Prisma.SortOrder
@@ -1533,6 +1617,9 @@ export type ProductCreateWithoutSupplierInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.ProductStatus
   saleMode?: $Enums.SaleMode
+  shippingBaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: string | null
   featured?: boolean
   freeShipping?: boolean
@@ -1584,6 +1671,9 @@ export type ProductUncheckedCreateWithoutSupplierInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.ProductStatus
   saleMode?: $Enums.SaleMode
+  shippingBaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: string | null
   featured?: boolean
   freeShipping?: boolean
@@ -1664,6 +1754,9 @@ export type ProductScalarWhereInput = {
   specifications?: Prisma.JsonNullableFilter<"Product">
   status?: Prisma.EnumProductStatusFilter<"Product"> | $Enums.ProductStatus
   saleMode?: Prisma.EnumSaleModeFilter<"Product"> | $Enums.SaleMode
+  shippingBaseCost?: Prisma.DecimalFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: Prisma.DecimalFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: Prisma.DecimalFilter<"Product"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: Prisma.StringNullableFilter<"Product"> | string | null
   featured?: Prisma.BoolFilter<"Product"> | boolean
   freeShipping?: Prisma.BoolFilter<"Product"> | boolean
@@ -1706,6 +1799,9 @@ export type ProductCreateWithoutCategoryInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.ProductStatus
   saleMode?: $Enums.SaleMode
+  shippingBaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: string | null
   featured?: boolean
   freeShipping?: boolean
@@ -1757,6 +1853,9 @@ export type ProductUncheckedCreateWithoutCategoryInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.ProductStatus
   saleMode?: $Enums.SaleMode
+  shippingBaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: string | null
   featured?: boolean
   freeShipping?: boolean
@@ -1832,6 +1931,9 @@ export type ProductCreateWithoutProductCodeInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.ProductStatus
   saleMode?: $Enums.SaleMode
+  shippingBaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: string | null
   featured?: boolean
   freeShipping?: boolean
@@ -1884,6 +1986,9 @@ export type ProductUncheckedCreateWithoutProductCodeInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.ProductStatus
   saleMode?: $Enums.SaleMode
+  shippingBaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: string | null
   featured?: boolean
   freeShipping?: boolean
@@ -1948,6 +2053,9 @@ export type ProductUpdateWithoutProductCodeInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   saleMode?: Prisma.EnumSaleModeFieldUpdateOperationsInput | $Enums.SaleMode
+  shippingBaseCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   freeShipping?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2000,6 +2108,9 @@ export type ProductUncheckedUpdateWithoutProductCodeInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   saleMode?: Prisma.EnumSaleModeFieldUpdateOperationsInput | $Enums.SaleMode
+  shippingBaseCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   freeShipping?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2048,6 +2159,9 @@ export type ProductCreateWithoutPromotionsInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.ProductStatus
   saleMode?: $Enums.SaleMode
+  shippingBaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: string | null
   featured?: boolean
   freeShipping?: boolean
@@ -2100,6 +2214,9 @@ export type ProductUncheckedCreateWithoutPromotionsInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.ProductStatus
   saleMode?: $Enums.SaleMode
+  shippingBaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: string | null
   featured?: boolean
   freeShipping?: boolean
@@ -2164,6 +2281,9 @@ export type ProductUpdateWithoutPromotionsInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   saleMode?: Prisma.EnumSaleModeFieldUpdateOperationsInput | $Enums.SaleMode
+  shippingBaseCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   freeShipping?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2216,6 +2336,9 @@ export type ProductUncheckedUpdateWithoutPromotionsInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   saleMode?: Prisma.EnumSaleModeFieldUpdateOperationsInput | $Enums.SaleMode
+  shippingBaseCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   freeShipping?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2264,6 +2387,9 @@ export type ProductCreateWithoutCouponsInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.ProductStatus
   saleMode?: $Enums.SaleMode
+  shippingBaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: string | null
   featured?: boolean
   freeShipping?: boolean
@@ -2316,6 +2442,9 @@ export type ProductUncheckedCreateWithoutCouponsInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.ProductStatus
   saleMode?: $Enums.SaleMode
+  shippingBaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: string | null
   featured?: boolean
   freeShipping?: boolean
@@ -2380,6 +2509,9 @@ export type ProductUpdateWithoutCouponsInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   saleMode?: Prisma.EnumSaleModeFieldUpdateOperationsInput | $Enums.SaleMode
+  shippingBaseCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   freeShipping?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2432,6 +2564,9 @@ export type ProductUncheckedUpdateWithoutCouponsInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   saleMode?: Prisma.EnumSaleModeFieldUpdateOperationsInput | $Enums.SaleMode
+  shippingBaseCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   freeShipping?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2480,6 +2615,9 @@ export type ProductCreateWithoutCartItemsInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.ProductStatus
   saleMode?: $Enums.SaleMode
+  shippingBaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: string | null
   featured?: boolean
   freeShipping?: boolean
@@ -2532,6 +2670,9 @@ export type ProductUncheckedCreateWithoutCartItemsInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.ProductStatus
   saleMode?: $Enums.SaleMode
+  shippingBaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: string | null
   featured?: boolean
   freeShipping?: boolean
@@ -2596,6 +2737,9 @@ export type ProductUpdateWithoutCartItemsInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   saleMode?: Prisma.EnumSaleModeFieldUpdateOperationsInput | $Enums.SaleMode
+  shippingBaseCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   freeShipping?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2648,6 +2792,9 @@ export type ProductUncheckedUpdateWithoutCartItemsInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   saleMode?: Prisma.EnumSaleModeFieldUpdateOperationsInput | $Enums.SaleMode
+  shippingBaseCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   freeShipping?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2696,6 +2843,9 @@ export type ProductCreateWithoutOrderItemsInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.ProductStatus
   saleMode?: $Enums.SaleMode
+  shippingBaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: string | null
   featured?: boolean
   freeShipping?: boolean
@@ -2748,6 +2898,9 @@ export type ProductUncheckedCreateWithoutOrderItemsInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.ProductStatus
   saleMode?: $Enums.SaleMode
+  shippingBaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: string | null
   featured?: boolean
   freeShipping?: boolean
@@ -2812,6 +2965,9 @@ export type ProductUpdateWithoutOrderItemsInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   saleMode?: Prisma.EnumSaleModeFieldUpdateOperationsInput | $Enums.SaleMode
+  shippingBaseCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   freeShipping?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2864,6 +3020,9 @@ export type ProductUncheckedUpdateWithoutOrderItemsInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   saleMode?: Prisma.EnumSaleModeFieldUpdateOperationsInput | $Enums.SaleMode
+  shippingBaseCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   freeShipping?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2912,6 +3071,9 @@ export type ProductCreateWithoutReviewsInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.ProductStatus
   saleMode?: $Enums.SaleMode
+  shippingBaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: string | null
   featured?: boolean
   freeShipping?: boolean
@@ -2964,6 +3126,9 @@ export type ProductUncheckedCreateWithoutReviewsInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.ProductStatus
   saleMode?: $Enums.SaleMode
+  shippingBaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: string | null
   featured?: boolean
   freeShipping?: boolean
@@ -3028,6 +3193,9 @@ export type ProductUpdateWithoutReviewsInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   saleMode?: Prisma.EnumSaleModeFieldUpdateOperationsInput | $Enums.SaleMode
+  shippingBaseCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   freeShipping?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3080,6 +3248,9 @@ export type ProductUncheckedUpdateWithoutReviewsInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   saleMode?: Prisma.EnumSaleModeFieldUpdateOperationsInput | $Enums.SaleMode
+  shippingBaseCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   freeShipping?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3128,6 +3299,9 @@ export type ProductCreateWithoutFavoritesInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.ProductStatus
   saleMode?: $Enums.SaleMode
+  shippingBaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: string | null
   featured?: boolean
   freeShipping?: boolean
@@ -3180,6 +3354,9 @@ export type ProductUncheckedCreateWithoutFavoritesInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.ProductStatus
   saleMode?: $Enums.SaleMode
+  shippingBaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: string | null
   featured?: boolean
   freeShipping?: boolean
@@ -3244,6 +3421,9 @@ export type ProductUpdateWithoutFavoritesInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   saleMode?: Prisma.EnumSaleModeFieldUpdateOperationsInput | $Enums.SaleMode
+  shippingBaseCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   freeShipping?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3296,6 +3476,9 @@ export type ProductUncheckedUpdateWithoutFavoritesInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   saleMode?: Prisma.EnumSaleModeFieldUpdateOperationsInput | $Enums.SaleMode
+  shippingBaseCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   freeShipping?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3345,6 +3528,9 @@ export type ProductCreateManySupplierInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.ProductStatus
   saleMode?: $Enums.SaleMode
+  shippingBaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: string | null
   featured?: boolean
   freeShipping?: boolean
@@ -3387,6 +3573,9 @@ export type ProductUpdateWithoutSupplierInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   saleMode?: Prisma.EnumSaleModeFieldUpdateOperationsInput | $Enums.SaleMode
+  shippingBaseCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   freeShipping?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3438,6 +3627,9 @@ export type ProductUncheckedUpdateWithoutSupplierInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   saleMode?: Prisma.EnumSaleModeFieldUpdateOperationsInput | $Enums.SaleMode
+  shippingBaseCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   freeShipping?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3488,6 +3680,9 @@ export type ProductUncheckedUpdateManyWithoutSupplierInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   saleMode?: Prisma.EnumSaleModeFieldUpdateOperationsInput | $Enums.SaleMode
+  shippingBaseCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   freeShipping?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3531,6 +3726,9 @@ export type ProductCreateManyCategoryInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.ProductStatus
   saleMode?: $Enums.SaleMode
+  shippingBaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: string | null
   featured?: boolean
   freeShipping?: boolean
@@ -3573,6 +3771,9 @@ export type ProductUpdateWithoutCategoryInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   saleMode?: Prisma.EnumSaleModeFieldUpdateOperationsInput | $Enums.SaleMode
+  shippingBaseCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   freeShipping?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3624,6 +3825,9 @@ export type ProductUncheckedUpdateWithoutCategoryInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   saleMode?: Prisma.EnumSaleModeFieldUpdateOperationsInput | $Enums.SaleMode
+  shippingBaseCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   freeShipping?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3674,6 +3878,9 @@ export type ProductUncheckedUpdateManyWithoutCategoryInput = {
   specifications?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   status?: Prisma.EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
   saleMode?: Prisma.EnumSaleModeFieldUpdateOperationsInput | $Enums.SaleMode
+  shippingBaseCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingAdditionalCost?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFreeDistanceKm?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   freeShipping?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -3794,6 +4001,9 @@ export type ProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   specifications?: boolean
   status?: boolean
   saleMode?: boolean
+  shippingBaseCost?: boolean
+  shippingAdditionalCost?: boolean
+  shippingFreeDistanceKm?: boolean
   statusReason?: boolean
   featured?: boolean
   freeShipping?: boolean
@@ -3848,6 +4058,9 @@ export type ProductSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   specifications?: boolean
   status?: boolean
   saleMode?: boolean
+  shippingBaseCost?: boolean
+  shippingAdditionalCost?: boolean
+  shippingFreeDistanceKm?: boolean
   statusReason?: boolean
   featured?: boolean
   freeShipping?: boolean
@@ -3894,6 +4107,9 @@ export type ProductSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   specifications?: boolean
   status?: boolean
   saleMode?: boolean
+  shippingBaseCost?: boolean
+  shippingAdditionalCost?: boolean
+  shippingFreeDistanceKm?: boolean
   statusReason?: boolean
   featured?: boolean
   freeShipping?: boolean
@@ -3940,6 +4156,9 @@ export type ProductSelectScalar = {
   specifications?: boolean
   status?: boolean
   saleMode?: boolean
+  shippingBaseCost?: boolean
+  shippingAdditionalCost?: boolean
+  shippingFreeDistanceKm?: boolean
   statusReason?: boolean
   featured?: boolean
   freeShipping?: boolean
@@ -3954,7 +4173,7 @@ export type ProductSelectScalar = {
   deletedAt?: boolean
 }
 
-export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "supplierId" | "categoryId" | "name" | "slug" | "description" | "shortDescription" | "brand" | "model" | "sku" | "barcode" | "unit" | "minimumQuantity" | "price" | "comparePrice" | "costPrice" | "discountPercent" | "stock" | "stockAlert" | "weight" | "height" | "width" | "depth" | "images" | "videos" | "tags" | "specifications" | "status" | "saleMode" | "statusReason" | "featured" | "freeShipping" | "allowPickup" | "preparationTime" | "viewCount" | "saleCount" | "rating" | "totalReviews" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["product"]>
+export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "supplierId" | "categoryId" | "name" | "slug" | "description" | "shortDescription" | "brand" | "model" | "sku" | "barcode" | "unit" | "minimumQuantity" | "price" | "comparePrice" | "costPrice" | "discountPercent" | "stock" | "stockAlert" | "weight" | "height" | "width" | "depth" | "images" | "videos" | "tags" | "specifications" | "status" | "saleMode" | "shippingBaseCost" | "shippingAdditionalCost" | "shippingFreeDistanceKm" | "statusReason" | "featured" | "freeShipping" | "allowPickup" | "preparationTime" | "viewCount" | "saleCount" | "rating" | "totalReviews" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["product"]>
 export type ProductInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   supplier?: boolean | Prisma.SupplierProfileDefaultArgs<ExtArgs>
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
@@ -4019,6 +4238,9 @@ export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     specifications: runtime.JsonValue | null
     status: $Enums.ProductStatus
     saleMode: $Enums.SaleMode
+    shippingBaseCost: runtime.Decimal
+    shippingAdditionalCost: runtime.Decimal
+    shippingFreeDistanceKm: runtime.Decimal
     statusReason: string | null
     featured: boolean
     freeShipping: boolean
@@ -4492,6 +4714,9 @@ export interface ProductFieldRefs {
   readonly specifications: Prisma.FieldRef<"Product", 'Json'>
   readonly status: Prisma.FieldRef<"Product", 'ProductStatus'>
   readonly saleMode: Prisma.FieldRef<"Product", 'SaleMode'>
+  readonly shippingBaseCost: Prisma.FieldRef<"Product", 'Decimal'>
+  readonly shippingAdditionalCost: Prisma.FieldRef<"Product", 'Decimal'>
+  readonly shippingFreeDistanceKm: Prisma.FieldRef<"Product", 'Decimal'>
   readonly statusReason: Prisma.FieldRef<"Product", 'String'>
   readonly featured: Prisma.FieldRef<"Product", 'Boolean'>
   readonly freeShipping: Prisma.FieldRef<"Product", 'Boolean'>

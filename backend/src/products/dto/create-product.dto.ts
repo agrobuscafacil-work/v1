@@ -1,6 +1,5 @@
-import { IsString, IsNumber, IsOptional, IsArray, IsEnum, Min, MaxLength } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsArray, Min, MaxLength } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { SaleMode } from '../../generated/prisma/client';
 
 export class CreateProductDto {
   @ApiProperty()
@@ -38,6 +37,24 @@ export class CreateProductDto {
   @Min(0)
   stock?: number;
 
+  @ApiPropertyOptional({ description: 'Valor padrão do frete em reais' })
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  shippingBaseCost?: number;
+
+  @ApiPropertyOptional({ description: 'Valor adicional do frete em reais quando exceder a distância gratuita' })
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  shippingAdditionalCost?: number;
+
+  @ApiPropertyOptional({ description: 'Distância máxima em quilômetros sem cobrança adicional' })
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  shippingFreeDistanceKm?: number;
+
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
@@ -62,8 +79,4 @@ export class CreateProductDto {
   @IsOptional()
   specifications?: any;
 
-  @ApiPropertyOptional({ enum: SaleMode, default: SaleMode.DIRECT })
-  @IsOptional()
-  @IsEnum(SaleMode)
-  saleMode?: SaleMode;
 }

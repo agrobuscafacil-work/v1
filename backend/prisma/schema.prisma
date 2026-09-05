@@ -350,6 +350,9 @@ model Product {
   specifications   Json?
   status           ProductStatus   @default(ACTIVE)
   saleMode         SaleMode        @default(DIRECT)
+  shippingBaseCost Decimal         @default(0) @db.Decimal(12, 2)
+  shippingAdditionalCost Decimal   @default(0) @db.Decimal(12, 2)
+  shippingFreeDistanceKm Decimal   @default(0) @db.Decimal(10, 2)
   statusReason     String?
   featured         Boolean         @default(false)
   freeShipping     Boolean         @default(false)

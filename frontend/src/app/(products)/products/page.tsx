@@ -7,6 +7,7 @@ import { Search, SlidersHorizontal, X, Star, Leaf, ChevronDown, Grid3X3, List, L
 import type { Metadata } from 'next';
 import { useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
+import { productCategories } from '@/lib/categories';
 import { PRODUCT_FILE_URL } from '@/lib/products';
 import { useCart } from '@/hooks/use-cart';
 
@@ -51,15 +52,19 @@ export default function ProductsPage() {
   const [minRating, setMinRating] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [products, setProducts] = useState<DisplayProduct[]>([]);
-  const [categories, setCategories] = useState<{ id: string; name: string }[]>([
+  const categories = [
     { id: 'all', name: 'Todas as Categorias' },
-  ]);
+    ...productCategories.map(({ slug, name }) => ({ id: slug, name })),
+  ];
 
   const firstLoad = useRef(true);
 
   useEffect(() => {
-    const supplierId = new URLSearchParams(window.location.search).get('supplierId');
+    const query = new URLSearchParams(window.location.search);
+    const supplierId = query.get('supplierId');
+    const category = query.get('category');
     if (supplierId) setSelectedSupplierId(supplierId);
+    if (category && categories.some((item) => item.id === category)) setSelectedCategory(category);
   }, []);
 
   useEffect(() => {
@@ -71,7 +76,7 @@ export default function ProductsPage() {
       }
       try {
         const params: Record<string, string | number> = { limit: 50 };
-        if (selectedCategory !== 'all') params.categoryId = selectedCategory;
+        if (selectedCategory !== 'all') params.category = selectedCategory;
         if (searchTerm) params.search = searchTerm;
         if (selectedSupplierId) params.supplierId = selectedSupplierId;
         const res = await api.get('/products', { params, signal: ctrl.signal });
@@ -116,16 +121,6 @@ export default function ProductsPage() {
 
   const effMin = Math.min(priceRange[0], priceCap);
   const effMax = Math.min(priceRange[1], priceCap);
-
-  useEffect(() => {
-    api
-      .get('/categories')
-      .then((res) => {
-        const data = res.data.data ?? [];
-        setCategories([{ id: 'all', name: 'Todas as Categorias' }, ...data.map((c: any) => ({ id: c.id, name: c.name }))]);
-      })
-      .catch(() => {});
-  }, []);
 
   const filteredProducts = products
     .filter((p) => {

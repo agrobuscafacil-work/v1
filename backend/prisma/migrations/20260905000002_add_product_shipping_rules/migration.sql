@@ -1,0 +1,4 @@
+ALTER TABLE "Product"
+  ADD COLUMN "shippingBaseCost" DECIMAL(12, 2) NOT NULL DEFAULT 0,
+  ADD COLUMN "shippingAdditionalCost" DECIMAL(12, 2) NOT NULL DEFAULT 0,
+  ADD COLUMN "shippingFreeDistanceKm" DECIMAL(10, 2) NOT NULL DEFAULT 0;
