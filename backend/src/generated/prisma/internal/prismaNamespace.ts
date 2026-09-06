@@ -4224,6 +4224,7 @@ export const ProductScalarFieldEnum = {
   shippingBaseCost: 'shippingBaseCost',
   shippingAdditionalCost: 'shippingAdditionalCost',
   shippingFreeDistanceKm: 'shippingFreeDistanceKm',
+  shippingCoverage: 'shippingCoverage',
   statusReason: 'statusReason',
   featured: 'featured',
   freeShipping: 'freeShipping',

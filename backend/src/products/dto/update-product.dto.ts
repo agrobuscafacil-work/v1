@@ -53,6 +53,11 @@ export class UpdateProductDto {
   @Min(0)
   shippingFreeDistanceKm?: number;
 
+  @ApiPropertyOptional({ enum: ['ALL_BRAZIL', 'LOCAL_REGION'] })
+  @IsOptional()
+  @IsString()
+  shippingCoverage?: 'ALL_BRAZIL' | 'LOCAL_REGION';
+
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()

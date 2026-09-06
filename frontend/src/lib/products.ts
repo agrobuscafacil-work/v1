@@ -19,6 +19,7 @@ export interface CreateProductPayload {
   shippingBaseCost?: number;
   shippingAdditionalCost?: number;
   shippingFreeDistanceKm?: number;
+  shippingCoverage?: 'ALL_BRAZIL' | 'LOCAL_REGION';
   unit?: string;
   brand?: string;
   comparePrice?: number;

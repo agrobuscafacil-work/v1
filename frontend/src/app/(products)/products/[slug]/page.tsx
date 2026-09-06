@@ -34,6 +34,7 @@ interface ProductDetail {
   tags: string[];
   status: string;
   saleMode: 'DIRECT' | 'CONTACT_ONLY';
+  shippingCoverage: 'ALL_BRAZIL' | 'LOCAL_REGION';
     productCode?: string;
   featured: boolean;
   freeShipping: boolean;
@@ -140,6 +141,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           tags: Array.isArray(p.tags) ? p.tags : [],
           status: p.status,
           saleMode: p.saleMode || 'DIRECT',
+          shippingCoverage: p.shippingCoverage === 'LOCAL_REGION' ? 'LOCAL_REGION' : 'ALL_BRAZIL',
                     productCode: p.productCode?.code || '',
           featured: !!p.featured,
           freeShipping: !!p.freeShipping,
@@ -606,7 +608,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           <div className="grid grid-cols-2 gap-3 text-sm">
             <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
               <Truck className="h-4 w-4 text-primary-600" />
-              <span>Frete para todo Brasil</span>
+              <span>{product.shippingCoverage === 'LOCAL_REGION' ? 'Frete para local e região' : 'Frete para todo Brasil'}</span>
             </div>
             <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
               <Shield className="h-4 w-4 text-primary-600" />

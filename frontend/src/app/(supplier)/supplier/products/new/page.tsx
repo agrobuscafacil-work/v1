@@ -56,6 +56,7 @@ export default function NewProductPage() {
     shippingBaseCost: '',
     shippingAdditionalCost: '',
     shippingFreeDistanceKm: '',
+    shippingCoverage: 'ALL_BRAZIL' as 'ALL_BRAZIL' | 'LOCAL_REGION',
   });
 
   const [imageUrl, setImageUrl] = useState('');
@@ -153,6 +154,7 @@ export default function NewProductPage() {
         shippingBaseCost,
         shippingAdditionalCost,
         shippingFreeDistanceKm,
+        shippingCoverage: form.shippingCoverage,
         unit: 'un',
         images: imageUrl ? [imageUrl] : [],
       });
@@ -258,6 +260,16 @@ export default function NewProductPage() {
             <Truck className="h-5 w-5 text-primary-600" /> Configuração de Frete
           </h2>
           <p className="text-sm text-gray-500 mb-4">Defina o frete padrão e o adicional cobrado quando a distância ultrapassar o limite informado.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+            <label className={`flex items-start gap-3 rounded-lg border p-3 cursor-pointer ${form.shippingCoverage === 'ALL_BRAZIL' ? 'border-primary-500 bg-primary-50 dark:bg-primary-950' : 'border-gray-200 dark:border-gray-700'}`}>
+              <input type="radio" name="shippingCoverage" value="ALL_BRAZIL" checked={form.shippingCoverage === 'ALL_BRAZIL'} onChange={() => setForm({ ...form, shippingCoverage: 'ALL_BRAZIL' })} className="mt-1 accent-primary-600" />
+              <span><span className="block text-sm font-medium text-gray-900 dark:text-white">Frete para todo Brasil</span><span className="text-xs text-gray-500">Disponível para qualquer CEP.</span></span>
+            </label>
+            <label className={`flex items-start gap-3 rounded-lg border p-3 cursor-pointer ${form.shippingCoverage === 'LOCAL_REGION' ? 'border-primary-500 bg-primary-50 dark:bg-primary-950' : 'border-gray-200 dark:border-gray-700'}`}>
+              <input type="radio" name="shippingCoverage" value="LOCAL_REGION" checked={form.shippingCoverage === 'LOCAL_REGION'} onChange={() => setForm({ ...form, shippingCoverage: 'LOCAL_REGION' })} className="mt-1 accent-primary-600" />
+              <span><span className="block text-sm font-medium text-gray-900 dark:text-white">Frete para local e região</span><span className="text-xs text-gray-500">Limitado à distância configurada.</span></span>
+            </label>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label className="label-field">Frete padrão (R$)</label>

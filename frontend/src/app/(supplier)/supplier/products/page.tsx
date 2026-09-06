@@ -22,6 +22,7 @@ interface EditableProduct {
   shippingBaseCost: string;
   shippingAdditionalCost: string;
   shippingFreeDistanceKm: string;
+  shippingCoverage: 'ALL_BRAZIL' | 'LOCAL_REGION';
   status: string;
   images: string[];
   saleMode: 'DIRECT' | 'CONTACT_ONLY';
@@ -63,6 +64,7 @@ export default function SupplierProductsPage() {
             shippingBaseCost: String(Number(p.shippingBaseCost) || 0),
             shippingAdditionalCost: String(Number(p.shippingAdditionalCost) || 0),
             shippingFreeDistanceKm: String(Number(p.shippingFreeDistanceKm) || 0),
+            shippingCoverage: p.shippingCoverage === 'LOCAL_REGION' ? 'LOCAL_REGION' : 'ALL_BRAZIL',
             status: p.status,
             images: p.images ?? [],
             saleMode: p.saleMode || 'DIRECT',
@@ -106,6 +108,7 @@ export default function SupplierProductsPage() {
         shippingBaseCost: parseNonNegativeNumber(editItem.shippingBaseCost),
         shippingAdditionalCost: parseNonNegativeNumber(editItem.shippingAdditionalCost),
         shippingFreeDistanceKm: parseNonNegativeNumber(editItem.shippingFreeDistanceKm),
+        shippingCoverage: editItem.shippingCoverage,
         status: editItem.status === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE',
         images: editItem.images,
       });
@@ -123,6 +126,7 @@ export default function SupplierProductsPage() {
                 shippingBaseCost: String(Number(updated.shippingBaseCost) || 0),
                 shippingAdditionalCost: String(Number(updated.shippingAdditionalCost) || 0),
                 shippingFreeDistanceKm: String(Number(updated.shippingFreeDistanceKm) || 0),
+                shippingCoverage: updated.shippingCoverage === 'LOCAL_REGION' ? 'LOCAL_REGION' : 'ALL_BRAZIL',
                 status: updated.status,
                 images: updated.images ?? [],
               }
@@ -416,6 +420,16 @@ export default function SupplierProductsPage() {
                     <label className="label-field min-h-10 flex items-end">Limite sem adicional (km)</label>
                     <input type="text" inputMode="decimal" value={editItem?.shippingFreeDistanceKm ?? ''} onChange={(e) => setEditItem((current) => current ? { ...current, shippingFreeDistanceKm: e.target.value.replace(/[^\d,.]/g, '') } : current)} className="input-field" placeholder="50" />
                   </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+                  <label className={`flex items-start gap-3 rounded-lg border p-3 cursor-pointer ${editItem.shippingCoverage === 'ALL_BRAZIL' ? 'border-primary-500 bg-primary-50 dark:bg-primary-950' : 'border-gray-200 dark:border-gray-700'}`}>
+                    <input type="radio" name="editShippingCoverage" checked={editItem.shippingCoverage === 'ALL_BRAZIL'} onChange={() => setEditItem({ ...editItem, shippingCoverage: 'ALL_BRAZIL' })} className="mt-1 accent-primary-600" />
+                    <span><span className="block text-sm font-medium">Frete para todo Brasil</span><span className="text-xs text-gray-500">Disponível para qualquer CEP.</span></span>
+                  </label>
+                  <label className={`flex items-start gap-3 rounded-lg border p-3 cursor-pointer ${editItem.shippingCoverage === 'LOCAL_REGION' ? 'border-primary-500 bg-primary-50 dark:bg-primary-950' : 'border-gray-200 dark:border-gray-700'}`}>
+                    <input type="radio" name="editShippingCoverage" checked={editItem.shippingCoverage === 'LOCAL_REGION'} onChange={() => setEditItem({ ...editItem, shippingCoverage: 'LOCAL_REGION' })} className="mt-1 accent-primary-600" />
+                    <span><span className="block text-sm font-medium">Frete para local e região</span><span className="text-xs text-gray-500">Limitado à distância configurada.</span></span>
+                  </label>
                 </div>
               </div>
               <div>

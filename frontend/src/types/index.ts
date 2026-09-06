@@ -94,6 +94,7 @@ export interface Product {
   shippingBaseCost: number;
   shippingAdditionalCost: number;
   shippingFreeDistanceKm: number;
+  shippingCoverage: 'ALL_BRAZIL' | 'LOCAL_REGION';
   featured: boolean;
   freeShipping: boolean;
   rating: number;

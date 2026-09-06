@@ -80,6 +80,10 @@ export class ProductsService {
       : SaleMode.DIRECT;
   }
 
+  private shippingCoverage(value?: string): 'ALL_BRAZIL' | 'LOCAL_REGION' {
+    return value === 'LOCAL_REGION' ? 'LOCAL_REGION' : 'ALL_BRAZIL';
+  }
+
   private async safeDeleteImageFiles(images: string[], exceptProductId?: string) {
     for (const img of images) {
       if (typeof img !== 'string' || !INTERNAL_IMAGE_PATTERN.test(img)) continue;
@@ -135,6 +139,7 @@ export class ProductsService {
         unit: dto.unit || 'un',
         status: ProductStatus.ACTIVE,
         saleMode: this.saleModeForCategory(category.slug),
+        shippingCoverage: this.shippingCoverage(dto.shippingCoverage),
       },
       include: { category: true, supplier: true },
       });
@@ -278,6 +283,7 @@ supplier: {
         ...updateData,
         categoryId: category.id,
         saleMode: this.saleModeForCategory(category.slug),
+        shippingCoverage: this.shippingCoverage(dto.shippingCoverage ?? existing.shippingCoverage),
         images: nextImages,
         status: dto.status as ProductStatus,
       },

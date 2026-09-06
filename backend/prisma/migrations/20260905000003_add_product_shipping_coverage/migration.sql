@@ -1,0 +1,2 @@
+ALTER TABLE "Product"
+  ADD COLUMN "shippingCoverage" TEXT NOT NULL DEFAULT 'ALL_BRAZIL';
