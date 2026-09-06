@@ -14,6 +14,7 @@ import { api } from '@/lib/api';
 import { PRODUCT_FILE_URL } from '@/lib/products';
 import { openSupplierConversation, sendMessage } from '@/lib/chat-api';
 import ConfirmDialog from '@/components/ui/confirm-dialog';
+import { FaFacebookF, FaLink, FaRegEnvelope, FaWhatsapp } from 'react-icons/fa6';
 
 interface ProductDetail {
   id: string;
@@ -33,6 +34,7 @@ interface ProductDetail {
   tags: string[];
   status: string;
   saleMode: 'DIRECT' | 'CONTACT_ONLY';
+  shippingCoverage: 'ALL_BRAZIL' | 'LOCAL_REGION';
     productCode?: string;
   featured: boolean;
   freeShipping: boolean;
@@ -104,6 +106,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
   const [deletingReviewId, setDeletingReviewId] = useState<string | null>(null);
   const [confirmDeleteReview, setConfirmDeleteReview] = useState<ProductReview | null>(null);
   const [likingReviewId, setLikingReviewId] = useState<string | null>(null);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [shareCopied, setShareCopied] = useState(false);
   const router = useRouter();
   const { addItem } = useCart();
   const { user } = useAuth();
@@ -137,6 +141,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           tags: Array.isArray(p.tags) ? p.tags : [],
           status: p.status,
           saleMode: p.saleMode || 'DIRECT',
+          shippingCoverage: p.shippingCoverage === 'LOCAL_REGION' ? 'LOCAL_REGION' : 'ALL_BRAZIL',
                     productCode: p.productCode?.code || '',
           featured: !!p.featured,
           freeShipping: !!p.freeShipping,
@@ -384,6 +389,33 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
     setExpandedReviews((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
+  const productUrl = typeof window !== 'undefined' ? window.location.href : '';
+  const shareTitle = product ? `Confira este produto: ${product.name}` : '';
+
+  const copyProductLink = async () => {
+    if (!productUrl) return;
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(productUrl);
+      } else {
+        const input = document.createElement('textarea');
+        input.value = productUrl;
+        input.setAttribute('readonly', '');
+        input.style.position = 'fixed';
+        input.style.opacity = '0';
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        input.remove();
+      }
+      setShareCopied(true);
+      toast.success('Link copiado!');
+      window.setTimeout(() => setShareCopied(false), 2000);
+    } catch {
+      toast.error('Não foi possível copiar o link.');
+    }
+  };
+
   const sortedReviews = [...reviews].sort((a, b) => {
     const aIsMine = user?.id && a.userId === user.id;
     const bIsMine = user?.id && b.userId === user.id;
@@ -518,16 +550,65 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
               >
                 <Heart className={`h-5 w-5 ${isFavorited ? 'fill-red-500' : ''}`} />
               </button>
-              <button className="btn-outline px-3">
-                <Share2 className="h-5 w-5" />
-              </button>
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => { setShareOpen((open) => !open); setShareCopied(false); }}
+                  aria-label="Compartilhar produto"
+                  title="Compartilhar produto"
+                  className="btn-outline px-3"
+                >
+                  <Share2 className="h-5 w-5" />
+                </button>
+                {shareOpen && (
+                  <div className="absolute right-0 top-full z-20 mt-2 flex items-center gap-2 rounded-xl border border-gray-200 bg-white p-2 shadow-lg dark:border-gray-700 dark:bg-gray-900">
+                    <a
+                      href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(productUrl)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Compartilhar no Facebook"
+                      title="Facebook"
+                      className="flex h-9 w-9 items-center justify-center rounded-lg text-[#1877F2] hover:bg-blue-50 dark:hover:bg-blue-950"
+                    >
+                      <FaFacebookF className="h-4 w-4" />
+                    </a>
+                    <a
+                      href={`https://wa.me/?text=${encodeURIComponent(`${shareTitle} ${productUrl}`)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Compartilhar no WhatsApp"
+                      title="WhatsApp"
+                      className="flex h-9 w-9 items-center justify-center rounded-lg text-[#25D366] hover:bg-green-50 dark:hover:bg-green-950"
+                    >
+                      <FaWhatsapp className="h-5 w-5" />
+                    </a>
+                    <a
+                      href={`mailto:?subject=${encodeURIComponent(shareTitle)}&body=${encodeURIComponent(productUrl)}`}
+                      aria-label="Compartilhar por e-mail"
+                      title="E-mail"
+                      className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                    >
+                      <FaRegEnvelope className="h-4 w-4" />
+                    </a>
+                    <button
+                      type="button"
+                      onClick={copyProductLink}
+                      aria-label="Copiar link do produto"
+                      title={shareCopied ? 'Link copiado' : 'Copiar link'}
+                      className="flex h-9 w-9 items-center justify-center rounded-lg text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-950"
+                    >
+                      <FaLink className="h-4 w-4" />
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3 text-sm">
             <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
               <Truck className="h-4 w-4 text-primary-600" />
-              <span>Frete para todo Brasil</span>
+              <span>{product.shippingCoverage === 'LOCAL_REGION' ? 'Frete para local e região' : 'Frete para todo Brasil'}</span>
             </div>
             <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
               <Shield className="h-4 w-4 text-primary-600" />

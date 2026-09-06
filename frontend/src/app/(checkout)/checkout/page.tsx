@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { ShoppingBag, MapPin, CreditCard, Truck, Shield, Loader2, ChevronRight, Leaf, Star } from 'lucide-react';
+import { ShoppingBag, MapPin, CreditCard, Truck, Shield, Loader2, ChevronRight, Leaf, Star, Calculator } from 'lucide-react';
 import { toast } from '@/lib/toast';
 import { api } from '@/lib/api';
 import { useCart } from '@/hooks/use-cart';
@@ -47,7 +47,7 @@ const emptyNewCard = {
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, selectedProductIds, removeItems } = useCart();
-  const [step, setStep] = useState<'address' | 'payment' | 'confirm'>('address');
+  const [step, setStep] = useState<'address' | 'shipping' | 'payment' | 'confirm'>('address');
   const [isLoading, setIsLoading] = useState(false);
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [selectedAddressId, setSelectedAddressId] = useState('');
@@ -59,13 +59,16 @@ export default function CheckoutPage() {
   const [newCard, setNewCard] = useState(emptyNewCard);
   const [installments, setInstallments] = useState(1);
   const [idempotencyKey, setIdempotencyKey] = useState('');
+  const [shippingCost, setShippingCost] = useState<number | null>(null);
+  const [shippingDistanceKm, setShippingDistanceKm] = useState<number | null>(null);
+  const [shippingLoading, setShippingLoading] = useState(false);
 
   const selectedItems = selectedProductIds === null
     ? items
     : items.filter((item) => selectedProductIds.includes(item.product.id));
   const selectedSubtotal = selectedItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
-  const shipping = selectedSubtotal > 500 ? 0 : 29.9;
   const discount = 0;
+  const shipping = shippingCost ?? 0;
   const total = selectedSubtotal + shipping - discount;
   const selectedAddress = addresses.find((a) => a.id === selectedAddressId);
 
@@ -100,9 +103,38 @@ export default function CheckoutPage() {
     }
   };
 
-  const goToPayment = () => {
+  const goToShipping = async () => {
     if (!selectedAddress) {
       toast.error('Selecione um endereço de entrega.');
+      return;
+    }
+    const supplierIds = new Set(selectedItems.map((item) => item.product.supplierId).filter(Boolean));
+    if (supplierIds.size !== 1) {
+      toast.error('Selecione produtos do mesmo fornecedor para calcular o frete.');
+      return;
+    }
+    setShippingLoading(true);
+    try {
+      const supplierId = selectedItems[0]?.product.supplierId;
+      const response = await api.post(`/shipping/calculate/${supplierId}`, {
+        zipCode: selectedAddress.zipCode,
+        subtotal: selectedSubtotal,
+        productIds: [...new Set(selectedItems.map((item) => item.product.id))],
+      });
+      const quote = response.data.data ?? response.data;
+      setShippingCost(Number(quote.shippingCost) || 0);
+      setShippingDistanceKm(Number(quote.distanceKm) || 0);
+      setStep('shipping');
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || 'Não foi possível calcular o frete.');
+    } finally {
+      setShippingLoading(false);
+    }
+  };
+
+  const goToPayment = () => {
+    if (shippingCost === null) {
+      toast.error('Calcule o frete antes de continuar.');
       return;
     }
     if (paymentMethod === 'CREDIT_CARD') loadCards();
@@ -153,6 +185,7 @@ export default function CheckoutPage() {
         shippingCost: shipping,
         total,
         paymentMethod,
+        addressId: selectedAddress.id,
       });
       const order = orderRes.data.data;
 
@@ -245,19 +278,19 @@ export default function CheckoutPage() {
         </h1>
 
         <div className="flex items-center gap-2 mb-8 text-sm">
-          {['address', 'payment', 'confirm'].map((s, i) => (
+          {['address', 'shipping', 'payment', 'confirm'].map((s, i) => (
             <div key={s} className="flex items-center gap-2">
               <div className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold ${
                 step === s ? 'bg-primary-600 text-white' :
-                ['address', 'payment', 'confirm'].indexOf(step) >= i ? 'bg-primary-100 dark:bg-primary-900 text-primary-700' :
+                ['address', 'shipping', 'payment', 'confirm'].indexOf(step) >= i ? 'bg-primary-100 dark:bg-primary-900 text-primary-700' :
                 'bg-gray-100 dark:bg-gray-800 text-gray-400'
               }`}>{i + 1}</div>
               <span className={`text-xs font-medium hidden sm:inline ${
                 step === s ? 'text-primary-600' : 'text-gray-500'
               }`}>
-                {s === 'address' ? 'Endereço' : s === 'payment' ? 'Pagamento' : 'Confirmação'}
+                {s === 'address' ? 'Endereço' : s === 'shipping' ? 'Frete' : s === 'payment' ? 'Pagamento' : 'Confirmação'}
               </span>
-              {i < 2 && <ChevronRight className="h-4 w-4 text-gray-300" />}
+              {i < 3 && <ChevronRight className="h-4 w-4 text-gray-300" />}
             </div>
           ))}
         </div>
@@ -303,9 +336,23 @@ export default function CheckoutPage() {
                     ))}
                   </div>
                 )}
-                <button onClick={goToPayment} className="btn-primary">
-                  Continuar para Pagamento
+                <button onClick={goToShipping} disabled={shippingLoading} className="btn-primary gap-2">
+                  {shippingLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+                  {shippingLoading ? 'Calculando frete...' : 'Calcular Frete'}
                 </button>
+              </div>
+            )}
+
+            {step === 'shipping' && (
+              <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                  <Calculator className="h-5 w-5 text-primary-600" /> Cálculo de Frete
+                </h2>
+                <div className="rounded-lg bg-gray-50 dark:bg-gray-800 p-4 space-y-2 mb-6">
+                  <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400"><span>Distância estimada</span><span>{shippingDistanceKm?.toFixed(2)} km</span></div>
+                  <div className="flex justify-between font-semibold text-gray-900 dark:text-white"><span>Frete</span><span>{shipping === 0 ? 'Grátis' : `R$ ${shipping.toFixed(2)}`}</span></div>
+                </div>
+                <button onClick={goToPayment} className="btn-primary" disabled={shippingLoading}>Continuar para Pagamento</button>
               </div>
             )}
 
@@ -543,7 +590,7 @@ export default function CheckoutPage() {
               </div>
               <div className="flex justify-between text-gray-600 dark:text-gray-400">
                 <span>Frete</span>
-                <span>{shipping === 0 ? 'Grátis' : `R$ ${shipping.toFixed(2)}`}</span>
+                <span>{shippingCost === null ? 'A calcular' : shipping === 0 ? 'Grátis' : `R$ ${shipping.toFixed(2)}`}</span>
               </div>
               <div className="border-t border-gray-200 dark:border-gray-700 pt-3 flex justify-between font-semibold text-gray-900 dark:text-white">
                 <span>Total</span>

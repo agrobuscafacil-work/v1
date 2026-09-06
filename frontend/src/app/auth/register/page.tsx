@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from '@/lib/toast';
 import { useAuth } from '@/hooks/use-auth';
+import PasswordInput from '@/components/ui/password-input';
 import { Leaf, Loader2 } from 'lucide-react';
 import { useState, useCallback } from 'react';
 
@@ -200,11 +201,9 @@ export default function RegisterPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div onFocus={() => setPasswordFocused(true)} onBlur={() => setPasswordFocused(false)}>
               <label htmlFor="password" className="label-field">Senha</label>
-              <input
+              <PasswordInput
                 id="password"
-                type="password"
                 autoComplete="new-password"
-                className="input-field"
                 placeholder="Mín. 8: maiúscula, minúscula, nº e símbolo"
                 {...register('password')}
               />
@@ -219,11 +218,9 @@ export default function RegisterPage() {
 
             <div>
               <label htmlFor="confirmPassword" className="label-field">Confirmar senha</label>
-              <input
+              <PasswordInput
                 id="confirmPassword"
-                type="password"
                 autoComplete="new-password"
-                className="input-field"
                 placeholder="Repita a senha"
                 {...register('confirmPassword')}
               />

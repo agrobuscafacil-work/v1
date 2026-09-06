@@ -27,7 +27,7 @@ export class CategoriesService {
     const categories = await this.prisma.category.findMany({
       where: { active: true },
       include: { children: true },
-      orderBy: { name: 'asc' },
+      orderBy: [{ order: 'asc' }, { name: 'asc' }],
     });
     return categories;
   }

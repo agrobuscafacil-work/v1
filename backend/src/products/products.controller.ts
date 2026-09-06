@@ -51,6 +51,7 @@ export class ProductsController {
   @ApiQuery({ name: 'page', required: false })
   @ApiQuery({ name: 'limit', required: false })
   @ApiQuery({ name: 'categoryId', required: false })
+  @ApiQuery({ name: 'category', required: false })
   @ApiQuery({ name: 'supplierId', required: false })
   @ApiQuery({ name: 'search', required: false })
   @ApiQuery({ name: 'minPrice', required: false })
@@ -59,13 +60,13 @@ export class ProductsController {
   @ApiQuery({ name: 'status', required: false })
   async findAll(
     @Query('page') page?: number, @Query('limit') limit?: number,
-    @Query('categoryId') categoryId?: string, @Query('supplierId') supplierId?: string,
+    @Query('categoryId') categoryId?: string, @Query('category') category?: string, @Query('supplierId') supplierId?: string,
     @Query('search') search?: string, @Query('minPrice') minPrice?: string,
     @Query('maxPrice') maxPrice?: string, @Query('featured') featured?: string,
     @Query('status') status?: string,
   ) {
     return this.productsService.findAll({
-      page, limit, categoryId, supplierId, search,
+      page, limit, categoryId, category, supplierId, search,
       minPrice: minPrice ? parseFloat(minPrice) : undefined,
       maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
       featured: featured === 'true',

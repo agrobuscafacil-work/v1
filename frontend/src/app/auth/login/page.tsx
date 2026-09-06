@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from '@/lib/toast';
 import { useAuth } from '@/hooks/use-auth';
+import PasswordInput from '@/components/ui/password-input';
 import { Leaf, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -77,11 +78,9 @@ export default function LoginPage() {
 
           <div>
             <label htmlFor="password" className="label-field">Senha</label>
-            <input
+            <PasswordInput
               id="password"
-              type="password"
               autoComplete="current-password"
-              className="input-field"
               placeholder="Sua senha"
               {...register('password')}
             />

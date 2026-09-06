@@ -19,6 +19,21 @@ import { parsePage, parseLimit } from '../common/utils/pagination';
 const INTERNAL_IMAGE_PATTERN = /^\/products\/images\/[A-Za-z0-9._-]+$/;
 const EXTERNAL_IMAGE_PATTERN = /^https?:\/\/.+/i;
 
+const PRODUCT_CATEGORY_DEFINITIONS: Record<string, { name: string; description: string; order: number }> = {
+  'insumos-agricolas': { name: 'Insumos Agrícolas', description: 'Fertilizantes, adubos, sementes, mudas, corretivos, bioinsumos e proteção das culturas.', order: 1 },
+  'maquinas-e-implementos': { name: 'Máquinas e Implementos', description: 'Tratores, colheitadeiras, plantadeiras, pulverizadores, implementos e peças.', order: 2 },
+  'equipamentos-rurais': { name: 'Equipamentos Rurais', description: 'Irrigação, bombas, motores, geradores, medição, manejo e instalações rurais.', order: 3 },
+  'cultivo-e-producao': { name: 'Cultivo e Produção', description: 'Culturas, mudas, colheitas, grãos, frutas, hortaliças e materiais de produção.', order: 4 },
+  pecuaria: { name: 'Pecuária', description: 'Animais de produção, produtos pecuários e itens para criação e manejo animal.', order: 5 },
+  'produtos-para-animais': { name: 'Produtos para Animais', description: 'Rações, suplementos, medicamentos, vacinas e acessórios para animais.', order: 6 },
+  apicultura: { name: 'Apicultura', description: 'Colmeias, equipamentos, vestimentas, mel, própolis, cera e geleia real.', order: 7 },
+  'ferramentas-e-equipamentos': { name: 'Ferramentas e Equipamentos', description: 'Ferramentas manuais, elétricas, mecânicas e equipamentos de oficina.', order: 8 },
+  'infraestrutura-rural': { name: 'Infraestrutura Rural', description: 'Galpões, currais, cercas, estufas, silos, pós-colheita e construção rural.', order: 9 },
+  'epi-e-vestuario': { name: 'EPI e Vestuário', description: 'Luvas, botas, óculos, capacetes, respiradores e roupas de proteção.', order: 10 },
+  'tecnologia-agricola': { name: 'Tecnologia Agrícola', description: 'Softwares, drones, GPS, sensores, automação, IoT e monitoramento.', order: 11 },
+  servicos: { name: 'Serviços', description: 'Serviços agrícolas, pecuários, de máquinas, manutenção, transporte e consultoria.', order: 12 },
+};
+
 @Injectable()
 export class ProductsService {
   private readonly logger = new Logger(ProductsService.name);
@@ -39,6 +54,34 @@ export class ProductsService {
       safe.push(img);
     }
     return safe;
+  }
+
+  private async resolveCategory(categoryId: string) {
+    const category = await this.prisma.category.findFirst({
+      where: { OR: [{ id: categoryId }, { slug: categoryId }] },
+      select: { id: true, slug: true },
+    });
+    if (category) return category;
+
+    const definition = PRODUCT_CATEGORY_DEFINITIONS[categoryId];
+    if (!definition) throw new NotFoundException('Category not found');
+
+    return this.prisma.category.upsert({
+      where: { slug: categoryId },
+      update: { name: definition.name, description: definition.description, order: definition.order, active: true },
+      create: { slug: categoryId, ...definition, active: true },
+      select: { id: true, slug: true },
+    });
+  }
+
+  private saleModeForCategory(slug: string): SaleMode {
+    return ['servicos', 'infraestrutura-rural', 'pecuaria', 'maquinas-e-implementos'].includes(slug)
+      ? SaleMode.CONTACT_ONLY
+      : SaleMode.DIRECT;
+  }
+
+  private shippingCoverage(value?: string): 'ALL_BRAZIL' | 'LOCAL_REGION' {
+    return value === 'LOCAL_REGION' ? 'LOCAL_REGION' : 'ALL_BRAZIL';
   }
 
   private async safeDeleteImageFiles(images: string[], exceptProductId?: string) {
@@ -75,6 +118,7 @@ export class ProductsService {
   async create(userId: string, dto: CreateProductDto) {
     const supplier = await this.prisma.supplierProfile.findUnique({ where: { userId } });
     if (!supplier) throw new NotFoundException('Supplier profile not found');
+    const category = await this.resolveCategory(dto.categoryId);
 
     const product = await this.prisma.$transaction(async (tx) => {
       const created = await tx.product.create({
@@ -87,14 +131,15 @@ export class ProductsService {
         price: dto.price,
         comparePrice: dto.comparePrice,
         stock: dto.stock || 0,
-        categoryId: dto.categoryId,
+        categoryId: category.id,
         brand: dto.brand,
         images: this.sanitizeImages(dto.images),
         tags: dto.tags || [],
         specifications: dto.specifications || {},
         unit: dto.unit || 'un',
         status: ProductStatus.ACTIVE,
-        saleMode: dto.saleMode || SaleMode.DIRECT,
+        saleMode: this.saleModeForCategory(category.slug),
+        shippingCoverage: this.shippingCoverage(dto.shippingCoverage),
       },
       include: { category: true, supplier: true },
       });
@@ -107,10 +152,10 @@ export class ProductsService {
   }
 
   async findAll(params: {
-    page?: number; limit?: number; categoryId?: string; supplierId?: string;
+    page?: number; limit?: number; categoryId?: string; category?: string; supplierId?: string;
     search?: string; minPrice?: number; maxPrice?: number; status?: string; featured?: boolean;
   }) {
-    const { page: rawPage = 1, limit: rawLimit = 10, categoryId, supplierId, search, minPrice, maxPrice, status, featured } = params;
+    const { page: rawPage = 1, limit: rawLimit = 10, categoryId, category, supplierId, search, minPrice, maxPrice, status, featured } = params;
     const page = parsePage(rawPage);
     const limit = parseLimit(rawLimit);
     const skip = (page - 1) * limit;
@@ -121,6 +166,7 @@ export class ProductsService {
       where.status = ProductStatus.ACTIVE;
     }
     if (categoryId) where.categoryId = categoryId;
+    if (category) where.category = { slug: category };
     if (supplierId) where.supplierId = supplierId;
     if (featured) where.featured = true;
     if (minPrice || maxPrice) {
@@ -228,11 +274,16 @@ supplier: {
     const nextImages = dto.images !== undefined ? this.sanitizeImages(dto.images) : existingImages;
     const removed = existingImages.filter((img) => !nextImages.includes(img));
     await this.safeDeleteImageFiles(removed, id);
+    const category = dto.categoryId ? await this.resolveCategory(dto.categoryId) : await this.resolveCategory(existing.categoryId);
+    const { categoryId: _categoryId, ...updateData } = dto;
 
     const product = await this.prisma.product.update({
       where: { id },
       data: {
-        ...dto,
+        ...updateData,
+        categoryId: category.id,
+        saleMode: this.saleModeForCategory(category.slug),
+        shippingCoverage: this.shippingCoverage(dto.shippingCoverage ?? existing.shippingCoverage),
         images: nextImages,
         status: dto.status as ProductStatus,
       },
@@ -253,9 +304,20 @@ supplier: {
       throw new ForbiddenException('Você não tem permissão para excluir este produto');
     }
 
+    const orderItemCount = await this.prisma.orderItem.count({ where: { productId: id } });
+    if (orderItemCount > 0) {
+      await this.prisma.product.update({
+        where: { id },
+        data: { deletedAt: new Date(), status: ProductStatus.DISCONTINUED },
+      });
+      this.logger.log(`Product soft-deleted because it has order history: ${id}`);
+      return { message: 'Product removed successfully' };
+    }
+
     await this.safeDeleteImageFiles(product.images || [], id);
 
     try {
+      await this.prisma.productCode.deleteMany({ where: { productId: id } });
       await this.prisma.product.delete({ where: { id } });
     } catch (err: any) {
       if (err?.code === 'P2003') {
@@ -267,9 +329,10 @@ supplier: {
         try {
           await this.prisma.product.delete({ where: { id } });
         } catch {
-          throw new BadRequestException(
-            'Este produto possui pedidos registrados e não pode ser excluído.',
-          );
+          await this.prisma.product.update({
+            where: { id },
+            data: { deletedAt: new Date(), status: ProductStatus.DISCONTINUED },
+          });
         }
       } else {
         throw err;

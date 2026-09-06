@@ -91,6 +91,10 @@ export interface Product {
   specifications?: any;
   status: 'ACTIVE' | 'INACTIVE' | 'OUT_OF_STOCK' | 'DISCONTINUED';
   saleMode: 'DIRECT' | 'CONTACT_ONLY';
+  shippingBaseCost: number;
+  shippingAdditionalCost: number;
+  shippingFreeDistanceKm: number;
+  shippingCoverage: 'ALL_BRAZIL' | 'LOCAL_REGION';
   featured: boolean;
   freeShipping: boolean;
   rating: number;
