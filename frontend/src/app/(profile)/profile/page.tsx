@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { toast } from '@/lib/toast';
 import { User, Mail, Phone, MapPin, Lock, Package, Save, Loader2, Plus, Pencil, Trash2, X, CreditCard, Star } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
+import PasswordInput from '@/components/ui/password-input';
 import { api } from '@/lib/api';
 import { getCardToken } from '@/lib/card-token';
 import Link from 'next/link';
@@ -549,21 +550,21 @@ export default function ProfilePage() {
               <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)} className="space-y-4 max-w-lg">
                 <div>
                   <label className="label-field">Senha atual</label>
-                  <input type="password" className="input-field" {...passwordForm.register('currentPassword')} />
+                  <PasswordInput autoComplete="current-password" {...passwordForm.register('currentPassword')} />
                   {passwordForm.formState.errors.currentPassword && (
                     <p className="text-sm text-red-500 mt-1">{passwordForm.formState.errors.currentPassword.message}</p>
                   )}
                 </div>
                 <div>
                   <label className="label-field">Nova senha</label>
-                  <input type="password" className="input-field" {...passwordForm.register('newPassword')} />
+                  <PasswordInput autoComplete="new-password" {...passwordForm.register('newPassword')} />
                   {passwordForm.formState.errors.newPassword && (
                     <p className="text-sm text-red-500 mt-1">{passwordForm.formState.errors.newPassword.message}</p>
                   )}
                 </div>
                 <div>
                   <label className="label-field">Confirmar nova senha</label>
-                  <input type="password" className="input-field" {...passwordForm.register('confirmPassword')} />
+                  <PasswordInput autoComplete="new-password" {...passwordForm.register('confirmPassword')} />
                   {passwordForm.formState.errors.confirmPassword && (
                     <p className="text-sm text-red-500 mt-1">{passwordForm.formState.errors.confirmPassword.message}</p>
                   )}

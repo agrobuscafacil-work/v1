@@ -29,14 +29,15 @@ export class ServicesController {
   @ApiQuery({ name: 'page', required: false })
   @ApiQuery({ name: 'limit', required: false })
   @ApiQuery({ name: 'categoryId', required: false })
+  @ApiQuery({ name: 'category', required: false })
   @ApiQuery({ name: 'supplierId', required: false })
   @ApiQuery({ name: 'search', required: false })
   async findAll(
     @Query('page') page?: number, @Query('limit') limit?: number,
-    @Query('categoryId') categoryId?: string, @Query('supplierId') supplierId?: string,
+    @Query('categoryId') categoryId?: string, @Query('category') category?: string, @Query('supplierId') supplierId?: string,
     @Query('search') search?: string,
   ) {
-    return this.servicesService.findAll({ page, limit, categoryId, supplierId, search });
+    return this.servicesService.findAll({ page, limit, categoryId, category, supplierId, search });
   }
 
   @Get(':id')

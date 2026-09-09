@@ -3,8 +3,9 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Package, Search, Plus, Edit2, Trash2, Save, Loader2, Eye, X, DollarSign, Tag, Hash, Upload } from 'lucide-react';
+import { Package, Search, Plus, Edit2, Trash2, Save, Loader2, Eye, X, DollarSign, Tag, Hash, Upload, Truck } from 'lucide-react';
 import { toast } from '@/lib/toast';
+import { getCategorySaleMode, productCategories } from '@/lib/categories';
 import { fetchMyProducts, updateProduct, removeProduct, fetchCategories, uploadProductImage, PRODUCT_FILE_URL } from '@/lib/products';
 import type { Product, Category } from '@/types';
 
@@ -14,12 +15,22 @@ interface EditableProduct {
   id: string;
   name: string;
   categoryId: string;
+  categorySlug: string;
   categoryName: string;
   price: number;
   stock: number;
+  shippingBaseCost: string;
+  shippingAdditionalCost: string;
+  shippingFreeDistanceKm: string;
+  shippingCoverage: 'ALL_BRAZIL' | 'LOCAL_REGION';
   status: string;
   images: string[];
   saleMode: 'DIRECT' | 'CONTACT_ONLY';
+}
+
+function parseNonNegativeNumber(value: string): number {
+  const parsed = Number(value.replace(',', '.'));
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
 }
 
 export default function SupplierProductsPage() {
@@ -46,9 +57,14 @@ export default function SupplierProductsPage() {
             id: p.id,
             name: p.name,
             categoryId: p.categoryId,
+            categorySlug: p.category?.slug || '',
             categoryName: p.category?.name || '',
             price: Number(p.price),
             stock: Number(p.stock),
+            shippingBaseCost: String(Number(p.shippingBaseCost) || 0),
+            shippingAdditionalCost: String(Number(p.shippingAdditionalCost) || 0),
+            shippingFreeDistanceKm: String(Number(p.shippingFreeDistanceKm) || 0),
+            shippingCoverage: p.shippingCoverage === 'LOCAL_REGION' ? 'LOCAL_REGION' : 'ALL_BRAZIL',
             status: p.status,
             images: p.images ?? [],
             saleMode: p.saleMode || 'DIRECT',
@@ -89,9 +105,12 @@ export default function SupplierProductsPage() {
         categoryId: editItem.categoryId,
         price: editItem.price,
         stock: editItem.stock,
+        shippingBaseCost: parseNonNegativeNumber(editItem.shippingBaseCost),
+        shippingAdditionalCost: parseNonNegativeNumber(editItem.shippingAdditionalCost),
+        shippingFreeDistanceKm: parseNonNegativeNumber(editItem.shippingFreeDistanceKm),
+        shippingCoverage: editItem.shippingCoverage,
         status: editItem.status === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE',
         images: editItem.images,
-        saleMode: editItem.saleMode,
       });
       setItems((prev) =>
         prev.map((x) =>
@@ -100,9 +119,14 @@ export default function SupplierProductsPage() {
                 ...x,
                 name: updated.name,
                 categoryId: updated.categoryId,
+                categorySlug: updated.category?.slug || x.categorySlug,
                 categoryName: updated.category?.name || x.categoryName,
                 price: Number(updated.price),
                 stock: Number(updated.stock),
+                shippingBaseCost: String(Number(updated.shippingBaseCost) || 0),
+                shippingAdditionalCost: String(Number(updated.shippingAdditionalCost) || 0),
+                shippingFreeDistanceKm: String(Number(updated.shippingFreeDistanceKm) || 0),
+                shippingCoverage: updated.shippingCoverage === 'LOCAL_REGION' ? 'LOCAL_REGION' : 'ALL_BRAZIL',
                 status: updated.status,
                 images: updated.images ?? [],
               }
@@ -310,10 +334,11 @@ export default function SupplierProductsPage() {
               </div>
               <div>
                 <label className="label-field">Tipo de Venda</label>
-                <select value={editItem?.saleMode || 'DIRECT'} onChange={(e) => setEditItem((current) => current ? { ...current, saleMode: e.target.value as EditableProduct['saleMode'] } : current)} className="input-field">
-                  <option value="DIRECT">Direta pelo site</option>
-                  <option value="CONTACT_ONLY">Somente contato</option>
-                </select>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {getCategorySaleMode(productCategories.find((category) => categories.some((item) => item.id === editItem?.categoryId && item.slug === category.slug))?.slug) === 'CONTACT_ONLY'
+                    ? 'Somente contato'
+                    : 'Direta pelo site'}
+                </p>
               </div>
             </div>
             <div className="flex justify-end p-5 border-t border-gray-100 dark:border-gray-800">
@@ -325,26 +350,39 @@ export default function SupplierProductsPage() {
 
       {editItem && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-          <div className="w-full max-w-lg rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-2xl">
+          <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-2xl">
             <div className="flex items-center justify-between p-5 border-b border-gray-100 dark:border-gray-800">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Editar Produto</h2>
               <button onClick={() => setEditItem(null)} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400">
                 <X className="h-5 w-5" />
               </button>
             </div>
-            <div className="p-5 space-y-4">
+            <div className="p-4 sm:p-6 space-y-5">
               <div>
                 <label className="label-field">Nome</label>
                 <input type="text" value={editItem.name} onChange={(e) => setEditItem({ ...editItem, name: e.target.value })} className="input-field" />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="label-field">Categoria</label>
-                  <select value={editItem.categoryId} onChange={(e) => setEditItem({ ...editItem, categoryId: e.target.value })} className="input-field">
+                  <select
+                    value={editItem.categorySlug || editItem.categoryId}
+                    onChange={(e) => {
+                      const category = productCategories.find((item) => item.slug === e.target.value);
+                      const apiCategory = categories.find((item) => item.slug === e.target.value);
+                      setEditItem({
+                        ...editItem,
+                        categoryId: apiCategory?.id || e.target.value,
+                        categorySlug: e.target.value,
+                        categoryName: category?.name || apiCategory?.name || editItem.categoryName,
+                      });
+                    }}
+                    className="input-field"
+                  >
                     <option value="">Selecione</option>
-                    {categories.map((c) => (
-                      <option key={c.id} value={c.id}>{c.name}</option>
-                    ))}
+                    {productCategories.map((category) => {
+                      return <option key={category.slug} value={category.slug}>{category.name}</option>;
+                    })}
                   </select>
                 </div>
                 <div>
@@ -355,7 +393,7 @@ export default function SupplierProductsPage() {
                   </select>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="label-field">Preço (R$)</label>
                   <input type="number" step="0.01" value={editItem.price} onChange={(e) => setEditItem({ ...editItem, price: parseFloat(e.target.value) || 0 })} className="input-field" />
@@ -363,6 +401,35 @@ export default function SupplierProductsPage() {
                 <div>
                   <label className="label-field">Estoque</label>
                   <input type="number" value={editItem.stock} onChange={(e) => setEditItem({ ...editItem, stock: parseInt(e.target.value) || 0 })} className="input-field" />
+                </div>
+              </div>
+              <div className="rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                  <Truck className="h-4 w-4 text-primary-600" /> Configuração de Frete
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="min-w-0">
+                    <label className="label-field min-h-10 flex items-end">Frete padrão (R$)</label>
+                    <input type="text" inputMode="decimal" value={editItem?.shippingBaseCost ?? ''} onChange={(e) => setEditItem((current) => current ? { ...current, shippingBaseCost: e.target.value.replace(/[^\d,.]/g, '') } : current)} className="input-field" placeholder="9,00" />
+                  </div>
+                  <div className="min-w-0">
+                    <label className="label-field min-h-10 flex items-end">Valor adicional (R$)</label>
+                    <input type="text" inputMode="decimal" value={editItem?.shippingAdditionalCost ?? ''} onChange={(e) => setEditItem((current) => current ? { ...current, shippingAdditionalCost: e.target.value.replace(/[^\d,.]/g, '') } : current)} className="input-field" placeholder="10,00" />
+                  </div>
+                  <div className="min-w-0">
+                    <label className="label-field min-h-10 flex items-end">Limite sem adicional (km)</label>
+                    <input type="text" inputMode="decimal" value={editItem?.shippingFreeDistanceKm ?? ''} onChange={(e) => setEditItem((current) => current ? { ...current, shippingFreeDistanceKm: e.target.value.replace(/[^\d,.]/g, '') } : current)} className="input-field" placeholder="50" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+                  <label className={`flex items-start gap-3 rounded-lg border p-3 cursor-pointer ${editItem.shippingCoverage === 'ALL_BRAZIL' ? 'border-primary-500 bg-primary-50 dark:bg-primary-950' : 'border-gray-200 dark:border-gray-700'}`}>
+                    <input type="radio" name="editShippingCoverage" checked={editItem.shippingCoverage === 'ALL_BRAZIL'} onChange={() => setEditItem({ ...editItem, shippingCoverage: 'ALL_BRAZIL' })} className="mt-1 accent-primary-600" />
+                    <span><span className="block text-sm font-medium">Frete para todo Brasil</span><span className="text-xs text-gray-500">Disponível para qualquer CEP.</span></span>
+                  </label>
+                  <label className={`flex items-start gap-3 rounded-lg border p-3 cursor-pointer ${editItem.shippingCoverage === 'LOCAL_REGION' ? 'border-primary-500 bg-primary-50 dark:bg-primary-950' : 'border-gray-200 dark:border-gray-700'}`}>
+                    <input type="radio" name="editShippingCoverage" checked={editItem.shippingCoverage === 'LOCAL_REGION'} onChange={() => setEditItem({ ...editItem, shippingCoverage: 'LOCAL_REGION' })} className="mt-1 accent-primary-600" />
+                    <span><span className="block text-sm font-medium">Frete para local e região</span><span className="text-xs text-gray-500">Limitado à distância configurada.</span></span>
+                  </label>
                 </div>
               </div>
               <div>

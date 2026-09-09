@@ -3,22 +3,10 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Search, Shield, Truck, Leaf, ArrowRight, Star, Clock, TrendingUp, Store, Sprout, Wheat, Sun, Wind, ShoppingCart, MessageCircle } from 'lucide-react';
+import { Search, Shield, Truck, Leaf, ArrowRight, Star, Clock, TrendingUp, Store, Sprout, Wheat, Sun, Wind } from 'lucide-react';
 import { api } from '@/lib/api';
+import { productCategories } from '@/lib/categories';
 import { PRODUCT_FILE_URL } from '@/lib/products';
-import { useCart } from '@/hooks/use-cart';
-
-const categoryIcons: Record<string, any> = {
-  insumos: Sprout,
-  maquinas: Wheat,
-  sementes: Leaf,
-  fertilizantes: Sun,
-  defensivos: Shield,
-  irrigacao: Wind,
-  pecuaria: Store,
-  armazenagem: Truck,
-};
 
 const steps = [
   { icon: Search, title: 'Busque', description: 'Encontre produtos, máquinas e serviços para sua produção rural.' },
@@ -26,12 +14,6 @@ const steps = [
   { icon: Truck, title: 'Receba', description: 'Receba seus insumos no prazo, com logística especializada para o agro.' },
   { icon: Leaf, title: 'Cultive', description: 'Produza mais e melhor com os melhores fornecedores do mercado.' },
 ];
-
-interface CategoryItem {
-  name: string;
-  slug: string;
-  icon: any;
-}
 
 interface FeaturedProduct {
   id: string;
@@ -59,32 +41,17 @@ interface TopSupplier {
 }
 
 export default function HomePage() {
-  const router = useRouter();
-  const { addItem } = useCart();
-  const [categories, setCategories] = useState<CategoryItem[]>([]);
   const [featuredProducts, setFeaturedProducts] = useState<FeaturedProduct[]>([]);
   const [topSuppliers, setTopSuppliers] = useState<TopSupplier[]>([]);
+  const categories = productCategories;
 
   useEffect(() => {
     const load = async () => {
       try {
-        const [catRes, prodRes, supRes] = await Promise.all([
-          api.get('/categories').catch(() => null),
+        const [prodRes, supRes] = await Promise.all([
           api.get('/products', { params: { featured: true, limit: 4 } }).catch(() => null),
           api.get('/suppliers', { params: { limit: 50 } }).catch(() => null),
-        ]);        if (catRes) {
-          const payload = Array.isArray(catRes.data.data) ? catRes.data.data : [];
-          setCategories(
-            payload
-              .filter((c: any) => c.slug)
-              .map((c: any) => ({
-                name: c.name,
-                slug: c.slug,
-                icon: categoryIcons[c.slug] || categoryIcons[c.slug?.toLowerCase()] || Store,
-              }))
-              .slice(0, 8),
-          );
-        }
+        ]);
 
         if (prodRes) {
           let payload = prodRes.data.data?.data ?? [];
@@ -212,8 +179,8 @@ export default function HomePage() {
                 Ver todas <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4">
-              {categories.map((cat) => {
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              {categories.slice(0, 4).map((cat) => {
                 const Icon = cat.icon;
                 return (
                   <Link
@@ -226,14 +193,15 @@ export default function HomePage() {
                     </div>
                     <div className="text-center">
                       <p className="text-sm font-medium text-gray-900 dark:text-white">{cat.name}</p>
+                      <p className="mt-1 text-xs text-gray-500 dark:text-gray-400 line-clamp-2">{cat.description}</p>
                     </div>
                   </Link>
                 );
               })}
             </div>
             <div className="mt-6 text-center sm:hidden">
-              <Link href="/categories" className="btn-outline text-sm">
-                Ver todas as categorias
+              <Link href="/categories" className="btn-outline text-sm inline-flex items-center gap-1">
+                Ver todas <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
           </div>
@@ -298,29 +266,6 @@ export default function HomePage() {
                       </p>
                     </div>
                   </Link>
-                  <div className="p-3 pt-0">
-                    {product.saleMode === 'CONTACT_ONLY' ? <div className="flex gap-2 p-3 pt-0">
-                      {product.supplierWhatsapp && <a href={`https://wa.me/${product.supplierWhatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="btn-primary flex-1 gap-2 text-xs"><MessageCircle className="h-4 w-4" /> WhatsApp</a>}
-                      <Link href={`/suppliers/${product.supplierId}`} className="btn-outline flex-1 gap-2 text-xs"><MessageCircle className="h-4 w-4" /> Chat Online</Link>
-                    </div> : <button
-                      onClick={() => {
-                        addItem({
-                          id: product.id,
-                          name: product.name,
-                          slug: product.slug,
-                          price: product.price,
-                          unit: product.unit,
-                          image: product.image ? PRODUCT_FILE_URL(product.image) : '',
-                          supplierName: product.supplier,
-                          supplierId: product.supplierId,
-                        }, 1);
-                        router.push('/checkout');
-                      }}
-                      className="btn-primary w-full gap-2 text-sm"
-                    >
-                      <ShoppingCart className="h-4 w-4" /> Comprar
-                    </button>}
-                  </div>
                 </div>
               ))}
             </div>

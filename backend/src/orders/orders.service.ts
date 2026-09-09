@@ -6,6 +6,7 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 import { ConfirmDeliveryDto } from './dto/confirm-delivery.dto';
 import { NotificationsService } from '../notifications/notifications.service';
+import { ShippingService } from '../shipping/shipping.service';
 import { parsePage, parseLimit } from '../common/utils/pagination';
 
 @Injectable()
@@ -15,6 +16,7 @@ export class OrdersService {
   constructor(
     private prisma: PrismaService,
     private notificationsService: NotificationsService,
+    private shippingService: ShippingService,
   ) {}
 
   private isAdmin(role?: string) {
@@ -62,6 +64,8 @@ export class OrdersService {
   }
 
   async create(userId: string, dto: CreateOrderDto) {
+    const address = await this.prisma.address.findFirst({ where: { id: dto.addressId, userId }, select: { zipCode: true } });
+    if (!address) throw new BadRequestException('Delivery address not found');
     const productIds = dto.items.map((item) => item.productId);
     const products = await this.prisma.product.findMany({
       where: { id: { in: productIds } },
@@ -100,7 +104,8 @@ export class OrdersService {
       0,
     );
     // Pricing is always computed server-side and never trusted from the client.
-    const shippingCost = await this.computeShippingCost(dto.supplierId, subtotal);
+    const shippingQuote = await this.shippingService.calculateProductShipping(dto.supplierId, address.zipCode, productIds);
+    const shippingCost = shippingQuote.shippingCost;
     const discount = await this.computeDiscount(dto.supplierId, subtotal, dto.couponCode);
     const total = subtotal + shippingCost - discount;
 
@@ -109,6 +114,7 @@ export class OrdersService {
         orderNumber: `ABF-${Date.now()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`,
         customerId: userId,
         supplierId: dto.supplierId,
+        addressId: dto.addressId,
         status: OrderStatus.PENDING,
         total,
         subtotal,

@@ -52,14 +52,15 @@ export class ServicesService {
   }
 
   async findAll(params: {
-    page?: number; limit?: number; categoryId?: string; supplierId?: string; search?: string; status?: string;
+    page?: number; limit?: number; categoryId?: string; category?: string; supplierId?: string; search?: string; status?: string;
   }) {
-    const { page: rawPage = 1, limit: rawLimit = 10, categoryId, supplierId, search, status } = params;
+    const { page: rawPage = 1, limit: rawLimit = 10, categoryId, category, supplierId, search, status } = params;
     const page = parsePage(rawPage);
     const limit = parseLimit(rawLimit);
     const skip = (page - 1) * limit;
     const where: any = { deletedAt: null };
     if (categoryId) where.categoryId = categoryId;
+    if (category) where.category = { slug: category };
     if (supplierId) where.supplierId = supplierId;
     if (status) where.status = status;
     if (search) {

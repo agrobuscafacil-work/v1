@@ -16,11 +16,14 @@ export interface CreateProductPayload {
   categoryId: string;
   price: number;
   stock?: number;
+  shippingBaseCost?: number;
+  shippingAdditionalCost?: number;
+  shippingFreeDistanceKm?: number;
+  shippingCoverage?: 'ALL_BRAZIL' | 'LOCAL_REGION';
   unit?: string;
   brand?: string;
   comparePrice?: number;
   images?: string[];
-  saleMode?: 'DIRECT' | 'CONTACT_ONLY';
 }
 
 export type UpdateProductPayload = Partial<CreateProductPayload> & { status?: Product['status'] };

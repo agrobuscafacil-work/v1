@@ -28,6 +28,10 @@ export class CreateOrderDto {
   @IsString()
   supplierId: string;
 
+  @ApiProperty()
+  @IsString()
+  addressId: string;
+
   @ApiProperty({ type: [OrderItemDto] })
   @IsArray()
   @ValidateNested({ each: true })

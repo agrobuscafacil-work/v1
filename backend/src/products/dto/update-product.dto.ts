@@ -1,6 +1,5 @@
-import { IsString, IsNumber, IsOptional, IsArray, IsEnum, Min } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsArray, Min } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { SaleMode } from '../../generated/prisma/client';
 
 export class UpdateProductDto {
   @ApiPropertyOptional()
@@ -38,6 +37,29 @@ export class UpdateProductDto {
 
   @ApiPropertyOptional()
   @IsOptional()
+  @IsNumber()
+  @Min(0)
+  shippingBaseCost?: number;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  shippingAdditionalCost?: number;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  shippingFreeDistanceKm?: number;
+
+  @ApiPropertyOptional({ enum: ['ALL_BRAZIL', 'LOCAL_REGION'] })
+  @IsOptional()
+  @IsString()
+  shippingCoverage?: 'ALL_BRAZIL' | 'LOCAL_REGION';
+
+  @ApiPropertyOptional()
+  @IsOptional()
   @IsString()
   brand?: string;
 
@@ -51,8 +73,4 @@ export class UpdateProductDto {
   @IsArray()
   images?: string[];
 
-  @ApiPropertyOptional({ enum: SaleMode })
-  @IsOptional()
-  @IsEnum(SaleMode)
-  saleMode?: SaleMode;
 }

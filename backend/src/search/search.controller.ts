@@ -15,6 +15,7 @@ export class SearchController {
   @ApiQuery({ name: 'q', required: false })
   @ApiQuery({ name: 'type', required: false, enum: ['products', 'services', 'suppliers'] })
   @ApiQuery({ name: 'categoryId', required: false })
+  @ApiQuery({ name: 'category', required: false })
   @ApiQuery({ name: 'minPrice', required: false })
   @ApiQuery({ name: 'maxPrice', required: false })
   @ApiQuery({ name: 'sort', required: false, enum: ['price_asc', 'price_desc', 'name', 'newest'] })
@@ -22,12 +23,12 @@ export class SearchController {
   @ApiQuery({ name: 'limit', required: false })
   async search(
     @Query('q') q?: string, @Query('type') type?: string,
-    @Query('categoryId') categoryId?: string,
+    @Query('categoryId') categoryId?: string, @Query('category') category?: string,
     @Query('minPrice') minPrice?: string, @Query('maxPrice') maxPrice?: string,
     @Query('sort') sort?: string, @Query('page') page?: number, @Query('limit') limit?: number,
   ) {
     return this.searchService.search({
-      q, categoryId,
+      q, categoryId, category,
       minPrice: minPrice ? parseFloat(minPrice) : undefined,
       maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
       sort, page, limit,
