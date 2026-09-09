@@ -83,10 +83,12 @@ async function bootstrap() {
   app.use(compression());
   app.use(cookieParser());
 
-  const corsOrigins = (configService.get<string>('CORS_ORIGIN') || 'http://localhost:3000')
+  const corsOrigins = (configService.get<string>('CORS_ORIGIN') || 'https://agrobuscafacil.vercel.app')
     .split(',')
     .map((origin) => origin.trim())
     .filter(Boolean);
+
+  const isProd = configService.get<string>('NODE_ENV') === 'production';
 
   app.enableCors({
     origin: corsOrigins,
@@ -98,6 +100,7 @@ async function bootstrap() {
       'Accept',
       'Idempotency-Key',
     ],
+    exposedHeaders: ['Content-Disposition'],
   });
 
   app.useGlobalPipes(
@@ -128,7 +131,7 @@ async function bootstrap() {
     new LoggingInterceptor(),
   );
 
-  if (configService.get<boolean>('SWAGGER_ENABLED')) {
+  if (configService.get<boolean>('SWAGGER_ENABLED') && configService.get<string>('NODE_ENV') !== 'production') {
     const config = new DocumentBuilder()
       .setTitle(
         configService.get<string>('SWAGGER_TITLE') || 'AgroBuscaFácil API',

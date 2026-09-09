@@ -141,31 +141,7 @@ docker compose -f "$APP_DIR/docker-compose.gcp.yml" up -d --no-deps backend
 docker compose -f "$APP_DIR/docker-compose.gcp.yml" restart nginx
 
 # ============================================================
-# 5. Deploy Frontend (Cloud Run)
-# ============================================================
-step "Deploy do frontend no Cloud Run"
-cd "$APP_DIR/frontend"
-
-if gcloud run services describe agrobusca-frontend --region=us-central1 >/dev/null 2>&1; then
-  step "Atualizando serviço Cloud Run existente"
-  gcloud run deploy agrobusca-frontend \
-    --source . --region=us-central1 \
-    --allow-unauthenticated --port=3000 \
-    --set-env-vars="NEXT_PUBLIC_API_URL=https://api.agrobuscafacil.com.br/api/v1" \
-    --memory=512Mi --cpu=1 --min-instances=0 --max-instances=10 \
-    --quiet
-else
-  step "Criando novo serviço Cloud Run"
-  gcloud run deploy agrobusca-frontend \
-    --source . --region=us-central1 \
-    --allow-unauthenticated --port=3000 \
-    --set-env-vars="NEXT_PUBLIC_API_URL=https://api.agrobuscafacil.com.br/api/v1" \
-    --memory=512Mi --cpu=1 --min-instances=0 --max-instances=10 \
-    --quiet
-fi
-
-# ============================================================
-# 6. Health Checks
+# 5. Health Checks
 # ============================================================
 step "Validando health checks"
 sleep 10
@@ -182,7 +158,6 @@ check_url() {
 }
 
 check_url "https://api.agrobuscafacil.com.br/api/v1" "API" || err "API não respondeu 2xx"
-check_url "https://www.agrobuscafacil.com.br" "Frontend" || err "Frontend não respondeu 2xx"
 
 # Teste rápido de auth
 step "Teste de autenticação (login + refresh)"
@@ -197,7 +172,7 @@ else
 fi
 
 # ============================================================
-# 7. Backup Automático (cron)
+# 6. Backup Automático (cron)
 # ============================================================
 step "Instalando backup diário (3h da manhã)"
 mkdir -p "$APP_DIR/scripts"
@@ -213,11 +188,11 @@ echo -e "\n${GREEN}============================================================$
 echo -e "${GREEN}🎉 DEPLOY CONCLUÍDO COM SUCESSO (ADC)${NC}"
 echo -e "${GREEN}============================================================${NC}"
 echo "API:      https://api.agrobuscafacil.com.br"
-echo "Frontend: https://www.agrobuscafacil.com.br"
+echo "Frontend: https://agrobuscafacil.vercel.app (deploy via Vercel)"
 echo "Swagger:  https://api.agrobuscafacil.com.br/docs (desabilitado em prod)"
 echo -e "${GREEN}============================================================${NC}"
 echo -e "\nPróximos passos:"
-echo "  1. Teste login/cadastro em https://www.agrobuscafacil.com.br"
+echo "  1. Deploy do frontend na Vercel (git push origin main)"
 echo "  2. Configure monitoramento (Uptime checks, alertas)"
 echo "  3. Teste backup: bash $APP_DIR/scripts/backup-db.sh"
 echo "  4. Verifique logs: docker compose -f docker-compose.gcp.yml logs -f backend"
