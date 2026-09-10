@@ -3,12 +3,19 @@ const nextConfig = {
   turbopack: {
     root: __dirname,
   },
-  output: 'standalone',
   images: {
-    unoptimized: true,
-    formats: ['image/avif', 'image/webp'],
-    deviceSizes: [640, 768, 1024, 1280, 1536],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'storage.googleapis.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'api.agrobuscafacil.com.br',
+        pathname: '/uploads/**',
+      },
+    ],
   },
   experimental: {
     optimizePackageImports: ['lucide-react', 'date-fns', '@tanstack/react-query'],
@@ -19,6 +26,30 @@ const nextConfig = {
   compress: true,
   poweredByHeader: false,
   reactStrictMode: true,
+  
+  // Rewrites para proxy de API
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'https://api.agrobuscafacil.com.br/api/:path*',
+      },
+    ];
+  },
+
+  // Headers de segurança
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          { key: 'X-Frame-Options', value: 'DENY' },
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+        ],
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;
