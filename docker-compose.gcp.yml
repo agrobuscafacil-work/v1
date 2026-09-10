@@ -1,5 +1,5 @@
 # docker-compose para o Google Cloud (Compute Engine / e2-micro)
-# Backend + Postgres + Redis + NGINX. O frontend fica no Cloud Run.
+# Backend + Postgres + Redis + NGINX. O frontend está na Vercel.
 #
 # Uso (dentro da VM):
 #   docker compose -f docker-compose.gcp.yml build --pull backend
@@ -27,7 +27,7 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - CORS_ORIGIN=${CORS_ORIGIN:-https://www.agrobuscafacil.com.br}
+      - CORS_ORIGIN=${CORS_ORIGIN:-https://agrobuscafacil.vercel.app}
       - JWT_SECRET=${JWT_SECRET:?JWT_SECRET é obrigatório}
       - JWT_EXPIRES_IN=15m
       - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:?JWT_REFRESH_SECRET é obrigatório}
