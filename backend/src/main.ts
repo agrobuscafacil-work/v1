@@ -83,7 +83,7 @@ async function bootstrap() {
   app.use(compression());
   app.use(cookieParser());
 
-  const corsOrigins = (configService.get<string>('CORS_ORIGIN') || 'https://agrobuscafacil.vercel.app')
+  const corsOrigins = (configService.get<string>('CORS_ORIGIN') || 'https://agrobuscafacil-one.vercel.app')
     .split(',')
     .map((origin) => origin.trim())
     .filter(Boolean);

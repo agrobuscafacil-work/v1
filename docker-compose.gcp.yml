@@ -27,7 +27,7 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - CORS_ORIGIN=${CORS_ORIGIN:-https://agrobuscafacil.vercel.app}
+      - CORS_ORIGIN=${CORS_ORIGIN:-https://agrobuscafacil-one.vercel.app}
       - JWT_SECRET=${JWT_SECRET:?JWT_SECRET é obrigatório}
       - JWT_EXPIRES_IN=15m
       - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:?JWT_REFRESH_SECRET é obrigatório}

@@ -188,7 +188,7 @@ echo -e "\n${GREEN}============================================================$
 echo -e "${GREEN}🎉 DEPLOY CONCLUÍDO COM SUCESSO (ADC)${NC}"
 echo -e "${GREEN}============================================================${NC}"
 echo "API:      https://api.agrobuscafacil.com.br"
-echo "Frontend: https://agrobuscafacil.vercel.app (deploy via Vercel)"
+echo "Frontend: https://agrobuscafacil-one.vercel.app (deploy via Vercel)"
 echo "Swagger:  https://api.agrobuscafacil.com.br/docs (desabilitado em prod)"
 echo -e "${GREEN}============================================================${NC}"
 echo -e "\nPróximos passos:"
