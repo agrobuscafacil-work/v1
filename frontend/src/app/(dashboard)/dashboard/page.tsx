@@ -1,26 +1,43 @@
 'use client';
 
+'use client';
+
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/use-auth';
+import { api } from '@/lib/api';
 import {
   Package, Heart, User, MapPin, ShoppingCart, TrendingUp, Clock,
   CheckCircle, XCircle, Loader2, ArrowRight, Store, LogOut,
+  Trash2, Edit, MoreVertical,
 } from 'lucide-react';
 
-const statsCards = [
-  { label: 'Pedidos Totais', value: '12', icon: Package, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-950' },
-  { label: 'Entregues', value: '9', icon: CheckCircle, color: 'text-green-600', bg: 'bg-green-50 dark:bg-green-950' },
-  { label: 'Em Andamento', value: '2', icon: Clock, color: 'text-yellow-600', bg: 'bg-yellow-50 dark:bg-yellow-950' },
-  { label: 'Cancelados', value: '1', icon: XCircle, color: 'text-red-600', bg: 'bg-red-50 dark:bg-red-950' },
-];
+interface StatCard {
+  label: string;
+  value: string | number;
+  icon: React.ElementType;
+  color: string;
+  bg: string;
+}
 
-const recentOrders = [
-  { id: '1', orderNumber: 'ABF-2024-0003', status: 'PROCESSING', total: 899.90, items: 2, createdAt: '2024-03-25T09:15:00' },
-  { id: '2', orderNumber: 'ABF-2024-0002', status: 'SHIPPED', total: 3499.90, items: 1, createdAt: '2024-03-20T14:00:00' },
-  { id: '3', orderNumber: 'ABF-2024-0001', status: 'DELIVERED', total: 12589.90, items: 3, createdAt: '2024-03-15T10:30:00' },
-];
+interface Order {
+  id: string;
+  orderNumber: string;
+  status: string;
+  total: number;
+  items: number;
+  createdAt: string;
+}
+
+interface DashboardStats {
+  totalOrders: number;
+  totalRevenue: number;
+  pendingOrders: number;
+  processingOrders: number;
+  cancelledOrders: number;
+  deliveredOrders: number;
+}
 
 const statusLabels: Record<string, { label: string; color: string }> = {
   PENDING: { label: 'Pendente', color: 'badge-yellow' },
@@ -44,12 +61,55 @@ export default function DashboardPage() {
   const router = useRouter();
   const { user, isAuthenticated, isLoading, logout } = useAuth();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [stats, setStats] = useState<{
+    totalOrders: number;
+    totalRevenue: number;
+    pendingOrders: number;
+    processingOrders: number;
+    cancelledOrders: number;
+    deliveredOrders: number;
+  }>({ totalOrders: 0, totalRevenue: 0, pendingOrders: 0, processingOrders: 0, cancelledOrders: 0, deliveredOrders: 0 });
+  const [recentOrders, setRecentOrders] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       router.push('/auth/login');
     }
   }, [isLoading, isAuthenticated, router]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!isAuthenticated) return;
+      setLoading(true);
+      try {
+        const [statsRes, ordersRes] = await Promise.all([
+          api.get('/dashboard/supplier/stats'),
+          api.get('/dashboard/supplier/sales', { params: { limit: 5 } }),
+        ]);
+        const s = statsRes.data.data;
+        const orders = ordersRes.data.data;
+
+        setStats({
+          totalOrders: s.totalOrders || 0,
+          totalRevenue: s.totalRevenue || 0,
+          pendingOrders: s.pendingOrders || 0,
+          processingOrders: s.processingOrders || 0,
+          cancelledOrders: s.cancelledOrders || 0,
+          deliveredOrders: s.deliveredOrders || 0,
+        });
+        setRecentOrders(orders.data || []);
+      } catch (error) {
+        console.error('Error loading dashboard:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (isAuthenticated) {
+      fetchData();
+    }
+  }, [isAuthenticated]);
 
   if (isLoading) {
     return (
@@ -69,6 +129,15 @@ export default function DashboardPage() {
     router.push('/');
   };
 
+  const quickLinks = [
+    { href: '/products', label: 'Produtos', icon: ShoppingCart, description: 'Explorar produtos disponíveis' },
+    { href: '/suppliers', label: 'Fornecedores', icon: Store, description: 'Ver fornecedores cadastrados' },
+    { href: '/favorites', label: 'Favoritos', icon: Heart, description: 'Seus produtos salvos' },
+    { href: '/profile', label: 'Perfil', icon: User, description: 'Editar seus dados pessoais' },
+    { href: '/orders', label: 'Pedidos', icon: Package, description: 'Histórico completo de pedidos' },
+    { href: '/profile', label: 'Endereços', icon: MapPin, description: 'Gerenciar endereços de entrega' },
+  ];
+
   return (
     <div className="container-page py-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
@@ -85,7 +154,12 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {statsCards.map((stat) => (
+        {[
+          { label: 'Pedidos Totais', value: stats.totalOrders, icon: Package, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-950' },
+          { label: 'Entregues', value: stats.deliveredOrders, icon: CheckCircle, color: 'text-green-600', bg: 'bg-green-50 dark:bg-green-950' },
+          { label: 'Em Andamento', value: stats.processingOrders, icon: Clock, color: 'text-yellow-600', bg: 'bg-yellow-50 dark:bg-yellow-950' },
+          { label: 'Cancelados', value: stats.cancelledOrders, icon: XCircle, color: 'text-red-600', bg: 'bg-red-50 dark:bg-red-950' },
+        ].map((stat) => (
           <div key={stat.label} className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4">
             <div className="flex items-center gap-3">
               <div className={`h-10 w-10 rounded-lg ${stat.bg} flex items-center justify-center`}>

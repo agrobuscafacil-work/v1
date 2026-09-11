@@ -1,8 +1,9 @@
-import { Injectable, NotFoundException, UnauthorizedException, BadRequestException, Logger } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException, BadRequestException, Logger, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { UpdateUserAdminDto } from './dto/update-user-admin.dto';
+import { CreateUserAdminDto } from './dto/create-user-admin.dto';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { parsePage, parseLimit } from '../common/utils/pagination';
@@ -180,7 +181,7 @@ export class UsersService {
     return { message: 'Password updated successfully' };
   }
 
-  async remove(id: string) {
+async remove(id: string) {
     await this.findById(id);
 
     await this.prisma.user.update({
@@ -190,5 +191,51 @@ export class UsersService {
 
     this.logger.log(`User soft deleted: ${id}`);
     return { message: 'Account deleted successfully' };
+  }
+
+  async createByAdmin(dto: CreateUserAdminDto) {
+    const existing = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+    });
+    if (existing) {
+      throw new ConflictException('Email already registered');
+    }
+
+    const existingDoc = await this.prisma.user.findUnique({
+      where: { document: dto.document },
+    });
+    if (existingDoc) {
+      throw new ConflictException('Document already registered');
+    }
+
+    const saltRounds = Number(this.configService.get('BCRYPT_SALT_ROUNDS')) || 12;
+    const hashedPassword = await bcrypt.hash(dto.password, 12);
+
+    const user = await this.prisma.user.create({
+      data: {
+        email: dto.email,
+        name: dto.name,
+        password: hashedPassword,
+        document: dto.document,
+        phone: dto.phone,
+        role: dto.role,
+        active: dto.active ?? true,
+        verified: false,
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        document: true,
+        phone: true,
+        role: true,
+        active: true,
+        verified: true,
+        createdAt: true,
+      },
+    });
+
+this.logger.log(`User created by admin: ${user.email}`);
+    return user;
   }
 }

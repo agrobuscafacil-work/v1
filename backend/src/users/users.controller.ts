@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Post,
   Put,
   Delete,
   Body,
@@ -15,11 +16,13 @@ import {
   ApiOperation,
   ApiBearerAuth,
   ApiQuery,
+  ApiResponse,
 } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { UpdateUserAdminDto } from './dto/update-user-admin.dto';
+import { CreateUserAdminDto } from './dto/create-user-admin.dto';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
@@ -47,6 +50,17 @@ export class UsersController {
     @Query('search') search?: string,
   ) {
     return this.usersService.findAll({ page, limit, role, search });
+  }
+
+  @Post()
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Create user (admin)' })
+  @ApiResponse({ status: 201, description: 'User created successfully' })
+  @ApiResponse({ status: 409, description: 'Email or document already registered' })
+  async createByAdmin(@Body() dto: CreateUserAdminDto) {
+    return this.usersService.createByAdmin(dto);
   }
 
   @Get('me')

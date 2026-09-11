@@ -1,7 +1,5 @@
-'use client';
-
 import { useEffect, useState } from 'react';
-import { Users, Search, Edit2, X, CheckCircle, XCircle, Save, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Users, Search, Edit2, X, CheckCircle, XCircle, Save, Loader2, ChevronLeft, ChevronRight, Plus, Trash2, AlertCircle, Shield, Download, Mail } from 'lucide-react';
 import { toast } from '@/lib/toast';
 import { api } from '@/lib/api';
 import type { User } from '@/types';
@@ -22,7 +20,25 @@ export default function AdminUsersPage() {
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const [editUser, setEditUser] = useState<User | null>(null);
+  const [newUser, setNewUser] = useState<{
+    name: string;
+    email: string;
+    password: string;
+    document: string;
+    phone: string;
+    role: User['role'];
+    active: boolean;
+  } | null>(null);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<User | null>(null);
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const [exporting, setExporting] = useState(false);
+  const [viewUser, setViewUser] = useState<User | null>(null);
+  const [deleting, setDeleting] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<User | null>(null);
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -50,6 +66,53 @@ export default function AdminUsersPage() {
     setEditUser({ ...u });
   }
 
+  function startCreate() {
+    setNewUser({
+      name: '',
+      email: '',
+      password: '',
+      document: '',
+      phone: '',
+      role: 'CUSTOMER',
+      active: true,
+    });
+  }
+
+  async function createUser() {
+    if (!newUser) return;
+    if (!newUser.name || !newUser.email || !newUser.password || !newUser.document) {
+      toast.error('Preencha todos os campos obrigatórios');
+      return;
+    }
+    setSaving(true);
+    try {
+      const res = await api.post('/users', newUser);
+      toast.success('Usuário criado com sucesso');
+      setNewUser(null);
+      setPage(1);
+      const res2 = await api.get('/users', { params: { page: 1, limit: 10 } });
+      const payload = res2.data.data;
+      setUsers(payload?.data ?? []);
+      setTotal(payload?.meta?.total ?? 0);
+      setTotalPages(payload?.meta?.totalPages ?? 0);
+    } catch (e: any) {
+      toast.error(e?.response?.data?.message || 'Erro ao criar usuário');
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function doToggle(u: User) {
+    try {
+      const res = await api.put(`/users/${u.id}`, { active: !u.active });
+      const updated = res.data.data;
+      setUsers(users.map((x) => (x.id === updated.id ? updated : x)));
+      toast.success('Status alterado');
+    } catch (e: any) {
+      toast.error(e?.response?.data?.message || 'Erro ao alterar status');
+    }
+  }
+
   async function saveEdit() {
     if (!editUser) return;
     setSaving(true);
@@ -70,6 +133,46 @@ export default function AdminUsersPage() {
     }
   }
 
+  function startEdit(u: User) {
+    setEditUser({ ...u });
+  }
+
+  function startCreate() {
+    setNewUser({
+      name: '',
+      email: '',
+      password: '',
+      document: '',
+      phone: '',
+      role: 'CUSTOMER',
+      active: true,
+    });
+  }
+
+  async function createUser() {
+    if (!newUser) return;
+    if (!newUser.name || !newUser.email || !newUser.password || !newUser.document) {
+      toast.error('Preencha todos os campos obrigatórios');
+      return;
+    }
+    setSaving(true);
+    try {
+      const res = await api.post('/users', newUser);
+      toast.success('Usuário criado com sucesso');
+      setNewUser(null);
+      setPage(1);
+      const res2 = await api.get('/users', { params: { page: 1, limit: 10 } });
+      const payload = res2.data.data;
+      setUsers(payload?.data ?? []);
+      setTotal(payload?.meta?.total ?? 0);
+      setTotalPages(payload?.meta?.totalPages ?? 0);
+    } catch (e: any) {
+      toast.error(e?.response?.data?.message || 'Erro ao criar usuário');
+    } finally {
+      setSaving(false);
+    }
+  }
+
   async function doToggle(u: User) {
     try {
       const res = await api.put(`/users/${u.id}`, { active: !u.active });
@@ -81,6 +184,42 @@ export default function AdminUsersPage() {
     }
   }
 
+  async function saveEdit() {
+    if (!editUser) return;
+    setSaving(true);
+    try {
+      const res = await api.put(`/users/${editUser.id}`, {
+        name: editUser.name,
+        role: editUser.role,
+        active: editUser.active,
+      });
+      const updated = res.data.data;
+      setUsers(users.map((u) => (u.id === updated.id ? updated : u)));
+      toast.success('Usuário atualizado');
+      setEditUser(null);
+    } catch (e: any) {
+      toast.error(e?.response?.data?.message || 'Erro ao atualizar usuário');
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  function startEdit(u: User) {
+    setEditUser({ ...u });
+  }
+
+  function startCreate() {
+    setNewUser({
+      name: '',
+      email: '',
+      password: '',
+      document: '',
+      phone: '',
+      role: 'CUSTOMER',
+      active: true,
+    });
+  }
+
   return (
     <div className="p-6 lg:p-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
@@ -88,6 +227,10 @@ export default function AdminUsersPage() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Usuarios</h1>
           <p className="text-sm text-gray-500 mt-1">Gerencie todos os usuarios da plataforma.</p>
         </div>
+        <button onClick={startCreate} className="btn-primary gap-2">
+          <Plus className="h-4 w-4" />
+          Novo Usuário
+        </button>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-4 mb-6">
@@ -163,36 +306,36 @@ export default function AdminUsersPage() {
                     </tr>
                   );
                 })}
-            </tbody>
-          </table>
-        </div>
-        {loading && (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-6 w-6 animate-spin text-primary-600" />
+              </tbody>
+            </table>
           </div>
-        )}
-        {!loading && users.length === 0 && (
-          <div className="text-center py-12">
-            <Users className="h-10 w-10 text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-500">Nenhum usuario encontrado.</p>
-          </div>
-        )}
-        {!loading && users.length > 0 && (
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 border-t border-gray-100 dark:border-gray-800">
-            <p className="text-sm text-gray-500">
-              {total} usuário(s) - página {page} de {totalPages || 1}
-            </p>
-            <div className="flex items-center gap-2">
-              <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1} className="btn-ghost p-1.5 disabled:opacity-40" aria-label="Página anterior">
-                <ChevronLeft className="h-4 w-4" />
-              </button>
-              <button onClick={() => setPage((p) => Math.min(totalPages || 1, p + 1))} disabled={page >= totalPages} className="btn-ghost p-1.5 disabled:opacity-40" aria-label="Próxima página">
-                <ChevronRight className="h-4 w-4" />
-              </button>
+          {loading && (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="h-6 w-6 animate-spin text-primary-600" />
             </div>
-          </div>
-        )}
-      </div>
+          )}
+          {!loading && users.length === 0 && (
+            <div className="text-center py-12">
+              <Users className="h-10 w-10 text-gray-300 mx-auto mb-3" />
+              <p className="text-gray-500">Nenhum usuario encontrado.</p>
+            </div>
+          )}
+          {!loading && users.length > 0 && (
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 border-t border-gray-100 dark:border-gray-800">
+              <p className="text-sm text-gray-500">
+                {total} usuário(s) - página {page} de {totalPages || 1}
+              </p>
+              <div className="flex items-center gap-2">
+                <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1} className="btn-ghost p-1.5 disabled:opacity-40" aria-label="Página anterior">
+                  <ChevronLeft className="h-4 w-4" />
+                </button>
+                <button onClick={() => setPage((p) => Math.min(totalPages || 1, p + 1))} disabled={page >= totalPages} className="btn-ghost p-1.5 disabled:opacity-40" aria-label="Próxima página">
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
 
       {editUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
@@ -236,6 +379,66 @@ export default function AdminUsersPage() {
               <button onClick={saveEdit} disabled={saving} className="btn-primary text-sm gap-2">
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                 {saving ? 'Salvando...' : 'Salvar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {newUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+          <div className="w-full max-w-lg rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-2xl">
+            <div className="flex items-center justify-between p-5 border-b border-gray-100 dark:border-gray-800">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Novo Usuario</h2>
+              <button onClick={() => setNewUser(null)} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="p-5 space-y-4">
+              <div>
+                <label className="label-field">Nome</label>
+                <input type="text" value={newUser.name} onChange={(e) => setNewUser({ ...newUser, name: e.target.value })} className="input-field" placeholder="Nome completo" required />
+              </div>
+              <div>
+                <label className="label-field">Email</label>
+                <input type="email" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} className="input-field" placeholder="email@exemplo.com" required />
+              </div>
+              <div>
+                <label className="label-field">Senha</label>
+                <input type="password" value={newUser.password} onChange={(e) => setNewUser({ ...newUser, password: e.target.value })} className="input-field" placeholder="Mínimo 8 caracteres" required minLength={8} />
+              </div>
+              <div>
+                <label className="label-field">Documento (CPF/CNPJ)</label>
+                <input type="text" value={newUser.document} onChange={(e) => setNewUser({ ...newUser, document: e.target.value })} className="input-field" placeholder="000.000.000-00 ou 00.000.000/0000-00" required />
+              </div>
+              <div>
+                <label className="label-field">Telefone</label>
+                <input type="text" value={newUser.phone} onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })} className="input-field" placeholder="(11) 99999-9999" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="label-field">Tipo</label>
+                  <select value={newUser.role} onChange={(e) => setNewUser({ ...newUser, role: e.target.value as User['role'] })} className="input-field" required>
+                    <option value="CUSTOMER">Cliente</option>
+                    <option value="SUPPLIER">Fornecedor</option>
+                    <option value="ADMIN">Administrador</option>
+                    <option value="SUPER_ADMIN">Super Admin</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="label-field">Status</label>
+                  <select value={newUser.active ? 'Ativo' : 'Bloqueado'} onChange={(e) => setNewUser({ ...newUser, active: e.target.value === 'Ativo' })} className="input-field">
+                    <option value="Ativo">Ativo</option>
+                    <option value="Bloqueado">Bloqueado</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center justify-end gap-3 p-5 border-t border-gray-100 dark:border-gray-800">
+              <button onClick={() => setNewUser(null)} className="btn-outline text-sm">Cancelar</button>
+              <button onClick={createUser} disabled={saving} className="btn-primary text-sm gap-2">
+                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                {saving ? 'Salvando...' : 'Criar Usuario'}
               </button>
             </div>
           </div>
