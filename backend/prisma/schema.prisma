@@ -132,9 +132,10 @@ model User {
   role              UserRole  @default(CUSTOMER)
   active            Boolean   @default(true)
   verified          Boolean   @default(false)
-  verificationToken String?
-  resetToken        String?
-  resetTokenExp     DateTime?
+  emailConfirmationToken String?
+  emailConfirmationExpires DateTime?
+  resetPasswordToken String?
+  resetPasswordExpires DateTime?
   twoFactorEnabled  Boolean   @default(false)
   twoFactorSecret   String?
   lastLoginAt       DateTime?

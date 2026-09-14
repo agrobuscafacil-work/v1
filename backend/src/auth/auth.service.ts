@@ -3,6 +3,7 @@ import {
   UnauthorizedException,
   ConflictException,
   Logger,
+  BadRequestException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -12,6 +13,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { v4 as uuidv4 } from 'uuid';
+import { MailService } from '../common/mail/mail.service';
 
 interface TokenMeta {
   ip?: string;
@@ -36,6 +38,7 @@ export class AuthService {
     private prisma: PrismaService,
     private jwtService: JwtService,
     private configService: ConfigService,
+    private mailService: MailService,
   ) {}
 
   async register(dto: RegisterDto, meta?: TokenMeta) {
@@ -315,5 +318,133 @@ export class AuthService {
       verified: user.verified,
       active: user.active,
     };
+  }
+
+  async forgotPassword(email: string) {
+    const user = await this.prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      return { message: 'Se o e-mail estiver cadastrado, você receberá instruções para redefinir a senha.' };
+    }
+
+    const resetToken = uuidv4();
+    const resetExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        resetPasswordToken: createHash('sha256').update(resetToken).digest('hex'),
+        resetPasswordExpires: resetExpires,
+      },
+    });
+
+    const resetUrl = `${this.configService.get('FRONTEND_URL') || 'https://agrobuscafacil.com'}/auth/reset-password`;
+    await this.mailService.sendPasswordResetEmail(user.email, user.name || 'Usuário', resetToken, resetUrl);
+
+    this.logger.log(`Password reset email sent to: ${user.email}`);
+    return { message: 'Se o e-mail estiver cadastrado, você receberá instruções para redefinir a senha.' };
+  }
+
+  async resetPassword(token: string, newPassword: string) {
+    const hashedToken = createHash('sha256').update(token).digest('hex');
+
+    const user = await this.prisma.user.findFirst({
+      where: {
+        resetPasswordToken: hashedToken,
+        resetPasswordExpires: { gt: new Date() },
+      },
+    });
+
+    if (!user) {
+      throw new BadRequestException('Token inválido ou expirado. Solicite uma nova redefinição de senha.');
+    }
+
+    const saltRounds = Number(this.configService.get('BCRYPT_SALT_ROUNDS')) || 12;
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password: hashedPassword,
+        resetPasswordToken: null,
+        resetPasswordExpires: null,
+      },
+    });
+
+    this.logger.log(`Password reset for user: ${user.email}`);
+    return { message: 'Senha redefinida com sucesso. Faça login com sua nova senha.' };
+  }
+
+  async confirmEmail(token: string) {
+    const hashedToken = createHash('sha256').update(token).digest('hex');
+
+    const user = await this.prisma.user.findFirst({
+      where: {
+        emailConfirmationToken: hashedToken,
+        emailConfirmationExpires: { gt: new Date() },
+      },
+    });
+
+    if (!user) {
+      throw new BadRequestException('Token de confirmação inválido ou expirado. Solicite um novo e-mail de confirmação.');
+    }
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        verified: true,
+        emailConfirmationToken: null,
+        emailConfirmationExpires: null,
+      },
+    });
+
+    await this.mailService.sendWelcomeEmail(user.email, user.name || 'Usuário');
+
+    this.logger.log(`Email confirmed for user: ${user.email}`);
+    return { message: 'E-mail confirmado com sucesso! Sua conta está ativa.' };
+  }
+
+  async resendConfirmation(email: string) {
+    const user = await this.prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      return { message: 'Se o e-mail estiver cadastrado, você receberá um novo e-mail de confirmação.' };
+    }
+
+    if (user.verified) {
+      throw new BadRequestException('Este e-mail já foi confirmado. Faça login para acessar sua conta.');
+    }
+
+    const confirmationToken = uuidv4();
+    const confirmationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        emailConfirmationToken: createHash('sha256').update(confirmationToken).digest('hex'),
+        emailConfirmationExpires: confirmationExpires,
+      },
+    });
+
+    const confirmUrl = `${this.configService.get('FRONTEND_URL') || 'https://agrobuscafacil.com'}/auth/confirm-email`;
+    await this.mailService.sendEmailConfirmation(user.email, user.name || 'Usuário', confirmationToken, confirmUrl);
+
+    this.logger.log(`Confirmation email resent to: ${user.email}`);
+    return { message: 'Se o e-mail estiver cadastrado, você receberá um novo e-mail de confirmação.' };
+  }
+
+  async resendWelcomeEmail(userId: string) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new BadRequestException('Usuário não encontrado');
+    }
+
+    if (user.role === 'SUPPLIER') {
+      const supplier = await this.prisma.supplierProfile.findUnique({ where: { userId: user.id } });
+      await this.mailService.sendSupplierWelcomeEmail(user.email, user.name || 'Usuário', supplier?.companyName || 'Sua Empresa');
+    } else {
+      await this.mailService.sendWelcomeEmail(user.email, user.name || 'Usuário');
+    }
+
+    this.logger.log(`Welcome email resent to: ${user.email}`);
+    return { message: 'E-mail de boas-vindas reenviado com sucesso.' };
   }
 }

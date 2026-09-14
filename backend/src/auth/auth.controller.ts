@@ -8,6 +8,7 @@ import {
   UseGuards,
   Req,
   UnauthorizedException,
+  BadRequestException,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { ConfigService } from '@nestjs/config';
@@ -21,6 +22,7 @@ import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { ForgotPasswordDto, ResetPasswordDto, ConfirmEmailDto, ResendConfirmationDto } from './dto/password-reset.dto';
 import { Public } from '../common/decorators/public.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
@@ -141,5 +143,55 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async me(@CurrentUser() user: any) {
     return this.authService.me(user.id);
+  }
+
+  @Post('forgot-password')
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Request password reset email' })
+  @ApiResponse({ status: 200, description: 'Reset email sent (if account exists)' })
+  async forgotPassword(@Body() dto: ForgotPasswordDto) {
+    return this.authService.forgotPassword(dto.email);
+  }
+
+  @Post('reset-password')
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Reset password with token' })
+  @ApiResponse({ status: 200, description: 'Password reset successful' })
+  @ApiResponse({ status: 400, description: 'Invalid or expired token' })
+  async resetPassword(@Body() dto: ResetPasswordDto) {
+    return this.authService.resetPassword(dto.token, dto.password);
+  }
+
+  @Post('confirm-email')
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Confirm email with token' })
+  @ApiResponse({ status: 200, description: 'Email confirmed successfully' })
+  @ApiResponse({ status: 400, description: 'Invalid or expired token' })
+  async confirmEmail(@Body() dto: ConfirmEmailDto) {
+    return this.authService.confirmEmail(dto.token);
+  }
+
+  @Post('resend-confirmation')
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Resend email confirmation' })
+  @ApiResponse({ status: 200, description: 'Confirmation email sent (if account exists)' })
+  @ApiResponse({ status: 400, description: 'Email already confirmed' })
+  async resendConfirmation(@Body() dto: ResendConfirmationDto) {
+    return this.authService.resendConfirmation(dto.email);
+  }
+
+  @Post('resend-welcome')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Resend welcome email' })
+  @ApiResponse({ status: 200, description: 'Welcome email resent' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  async resendWelcome(@CurrentUser() user: any) {
+    return this.authService.resendWelcomeEmail(user.id);
   }
 }

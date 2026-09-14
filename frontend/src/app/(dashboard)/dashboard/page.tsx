@@ -48,15 +48,6 @@ const statusLabels: Record<string, { label: string; color: string }> = {
   CANCELLED: { label: 'Cancelado', color: 'badge-red' },
 };
 
-const quickLinks = [
-  { href: '/products', label: 'Produtos', icon: ShoppingCart, description: 'Explorar produtos disponíveis' },
-  { href: '/suppliers', label: 'Fornecedores', icon: Store, description: 'Ver fornecedores cadastrados' },
-  { href: '/favorites', label: 'Favoritos', icon: Heart, description: 'Seus produtos salvos' },
-  { href: '/profile', label: 'Perfil', icon: User, description: 'Editar seus dados pessoais' },
-  { href: '/orders', label: 'Pedidos', icon: Package, description: 'Histórico completo de pedidos' },
-  { href: '/profile', label: 'Endereços', icon: MapPin, description: 'Gerenciar endereços de entrega' },
-];
-
 export default function DashboardPage() {
   const router = useRouter();
   const { user, isAuthenticated, isLoading, logout } = useAuth();

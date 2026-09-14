@@ -1,5 +1,7 @@
+'use client';
+
 import { useEffect, useState } from 'react';
-import { Users, Search, Edit2, X, CheckCircle, XCircle, Save, Loader2, ChevronLeft, ChevronRight, Plus, Trash2, AlertCircle, Shield, Download, Mail } from 'lucide-react';
+import { Users, Search, Edit2, X, CheckCircle, XCircle, Save, Loader2, ChevronLeft, ChevronRight, Plus, Trash2, Download, Mail, Eye, RefreshCcw, AlertCircle } from 'lucide-react';
 import { toast } from '@/lib/toast';
 import { api } from '@/lib/api';
 import type { User } from '@/types';
@@ -35,10 +37,6 @@ export default function AdminUsersPage() {
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [exporting, setExporting] = useState(false);
   const [viewUser, setViewUser] = useState<User | null>(null);
-  const [deleting, setDeleting] = useState<string | null>(null);
-  const [confirmDelete, setConfirmDelete] = useState<User | null>(null);
-  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
-  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -133,91 +131,103 @@ export default function AdminUsersPage() {
     }
   }
 
-  function startEdit(u: User) {
-    setEditUser({ ...u });
+  async function deleteUser(user: User) {
+    setConfirmDelete(user);
   }
 
-  function startCreate() {
-    setNewUser({
-      name: '',
-      email: '',
-      password: '',
-      document: '',
-      phone: '',
-      role: 'CUSTOMER',
-      active: true,
-    });
-  }
-
-  async function createUser() {
-    if (!newUser) return;
-    if (!newUser.name || !newUser.email || !newUser.password || !newUser.document) {
-      toast.error('Preencha todos os campos obrigatórios');
-      return;
-    }
-    setSaving(true);
+  async function confirmDeleteAction() {
+    if (!confirmDelete) return;
+    setDeleting(confirmDelete.id);
     try {
-      const res = await api.post('/users', newUser);
-      toast.success('Usuário criado com sucesso');
-      setNewUser(null);
-      setPage(1);
-      const res2 = await api.get('/users', { params: { page: 1, limit: 10 } });
-      const payload = res2.data.data;
-      setUsers(payload?.data ?? []);
-      setTotal(payload?.meta?.total ?? 0);
-      setTotalPages(payload?.meta?.totalPages ?? 0);
+      await api.delete(`/users/${confirmDelete.id}`);
+      toast.success('Usuário excluído com sucesso');
+      setUsers(users.filter(u => u.id !== confirmDelete?.id));
+      if (total > 0) setTotal(prev => prev - 1);
     } catch (e: any) {
-      toast.error(e?.response?.data?.message || 'Erro ao criar usuário');
+      toast.error(e?.response?.data?.message || 'Erro ao excluir usuário');
     } finally {
-      setSaving(false);
+      setDeleting(null);
+      setConfirmDelete(null);
     }
   }
 
-  async function doToggle(u: User) {
+  async function bulkDelete() {
+    if (selectedUsers.length === 0) return;
+    setDeleting('bulk');
     try {
-      const res = await api.put(`/users/${u.id}`, { active: !u.active });
-      const updated = res.data.data;
-      setUsers(users.map((x) => (x.id === updated.id ? updated : x)));
-      toast.success('Status alterado');
+      await api.delete('/users/bulk', { data: { ids: selectedUsers } });
+      toast.success(`${selectedUsers.length} usuário(s) excluído(s) com sucesso`);
+      setUsers(users.filter(u => !selectedUsers.includes(u.id)));
+      setSelectedUsers([]);
+      setTotal(prev => prev - selectedUsers.length);
     } catch (e: any) {
-      toast.error(e?.response?.data?.message || 'Erro ao alterar status');
+      toast.error(e?.response?.data?.message || 'Erro ao excluir usuários');
+    } finally {
+      setDeleting(null);
     }
   }
 
-  async function saveEdit() {
-    if (!editUser) return;
-    setSaving(true);
+  function toggleSelectUser(userId: string) {
+    setSelectedUsers(prev =>
+      prev.includes(userId)
+        ? prev.filter(id => id !== userId)
+        : [...prev, userId]
+    );
+  }
+
+  function toggleSelectAll() {
+    if (selectedUsers.length === users.length) {
+      setSelectedUsers([]);
+    } else {
+      setSelectedUsers(users.map(u => u.id));
+    }
+  }
+
+  async function exportUsers() {
+    setExporting(true);
     try {
-      const res = await api.put(`/users/${editUser.id}`, {
-        name: editUser.name,
-        role: editUser.role,
-        active: editUser.active,
+      const res = await api.get('/users/export', {
+        params: { role: roleFilter !== 'all' ? roleFilter : undefined, search: search.trim() || undefined },
+        responseType: 'blob'
       });
-      const updated = res.data.data;
-      setUsers(users.map((u) => (u.id === updated.id ? updated : u)));
-      toast.success('Usuário atualizado');
-      setEditUser(null);
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `usuarios_${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      toast.success('Exportação concluída');
     } catch (e: any) {
-      toast.error(e?.response?.data?.message || 'Erro ao atualizar usuário');
+      toast.error(e?.response?.data?.message || 'Erro ao exportar usuários');
     } finally {
-      setSaving(false);
+      setExporting(false);
     }
   }
 
-  function startEdit(u: User) {
-    setEditUser({ ...u });
+  function viewUserDetail(u: User) {
+    setViewUser(u);
   }
 
-  function startCreate() {
-    setNewUser({
-      name: '',
-      email: '',
-      password: '',
-      document: '',
-      phone: '',
-      role: 'CUSTOMER',
-      active: true,
-    });
+  async function resetPassword(user: User) {
+    if (!confirm('Tem certeza que deseja enviar email de redefinição de senha?')) return;
+    try {
+      await api.post(`/users/${user.id}/reset-password`);
+      toast.success('E-mail de redefinição de senha enviado');
+    } catch (e: any) {
+      toast.error(e?.response?.data?.message || 'Erro ao enviar e-mail de redefinição');
+    }
+  }
+
+  async function resendWelcomeEmail(user: User) {
+    if (!confirm('Tem certeza que deseja reenviar e-mail de boas-vindas?')) return;
+    try {
+      await api.post(`/users/${user.id}/resend-welcome`);
+      toast.success('E-mail de boas-vindas reenviado');
+    } catch (e: any) {
+      toast.error(e?.response?.data?.message || 'Erro ao reenviar e-mail');
+    }
   }
 
   return (
@@ -231,6 +241,43 @@ export default function AdminUsersPage() {
           <Plus className="h-4 w-4" />
           Novo Usuário
         </button>
+
+        <div className="hidden sm:block sm:flex items-center gap-2">
+          <select value={roleFilter} onChange={(e) => { setRoleFilter(e.target.value); setPage(1); }} className="input-field text-sm w-44">
+            <option value="all">Todos os tipos</option>
+            <option value="CUSTOMER">Clientes</option>
+            <option value="SUPPLIER">Fornecedores</option>
+            <option value="ADMIN">Administradores</option>
+            <option value="SUPER_ADMIN">Super Admin</option>
+          </select>
+          <label className="text-xs text-gray-500 ml-2">Filtrar por tipo</label>
+        </div>
+
+        <div className="flex items-center gap-2 sm:hidden">
+          <button onClick={exportUsers} className="btn-ghost text-sm">
+            <Download className="h-4 w-4 mr-1" />
+            Exportar
+          </button>
+        </div>
+
+        {selectedUsers.length > 0 && (
+          <div className="flex items-center gap-2 sm:hidden">
+            <button onClick={bulkDelete} className="btn-error text-sm">
+              <Trash2 className="h-4 w-4 mr-1" />
+              Excluir {selectedUsers.length}
+            </button>
+          </div>
+        )}
+
+        <div className="sm:flex sm:items-center sm:gap-4">
+          <button onClick={toggleSelectAll} className={selectedUsers.length > 0 ? 'btn-ghost text-sm' : 'opacity-40 cursor-not-allowed'}>
+            {selectedUsers.length === users.length ? 'Desselecionar todos' : 'Selecionar todos'}
+          </button>
+          <button onClick={bulkDelete} className="btn-error sm:hidden text-sm">
+            <Trash2 className="h-4 w-4 mr-1" />
+            Excluir
+          </button>
+        </div>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-4 mb-6">
@@ -252,6 +299,7 @@ export default function AdminUsersPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-xs text-gray-500 uppercase border-b border-gray-100 dark:border-gray-800">
+                <th className="p-4 font-medium">Selecionar</th>
                 <th className="p-4 font-medium">Usuario</th>
                 <th className="p-4 font-medium">Email</th>
                 <th className="p-4 font-medium">Tipo</th>
@@ -275,6 +323,12 @@ export default function AdminUsersPage() {
                           : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300';
                   return (
                     <tr key={u.id} className="border-b border-gray-50 dark:border-gray-800/50 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                      <td className="p-4">
+                        <input type="checkbox"
+                          checked={selectedUsers.includes(u.id)}
+                          onChange={() => toggleSelectUser(u.id)}
+                          className="checkbox-checkbox h-4 w-4 text-primary-600" />
+                      </td>
                       <td className="p-4 flex items-center gap-3">
                         <div className="h-8 w-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-xs font-bold text-primary-600">{u.name?.charAt(0) || 'U'}</div>
                         <span className="font-medium text-gray-900 dark:text-white">{u.name}</span>
@@ -301,41 +355,53 @@ export default function AdminUsersPage() {
                           <button onClick={() => doToggle(u)} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-red-600">
                             {u.active ? <XCircle className="h-4 w-4" /> : <CheckCircle className="h-4 w-4" />}
                           </button>
+                          <button onClick={() => viewUserDetail(u)} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-cyan-400">
+                            <Eye className="h-4 w-4" />
+                          </button>
+                          <button onClick={() => resetPassword(u)} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-orange-400">
+                            <RefreshCcw className="h-4 w-4" />
+                          </button>
+                          <button onClick={() => resendWelcomeEmail(u)} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-green-400">
+                            <Mail className="h-4 w-4" />
+                          </button>
+                          <button onClick={() => deleteUser(u)} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-red-600">
+                            <Trash2 className="h-4 w-4" />
+                          </button>
                         </div>
                       </td>
                     </tr>
                   );
                 })}
-              </tbody>
-            </table>
-          </div>
-          {loading && (
-            <div className="flex items-center justify-center py-12">
-              <Loader2 className="h-6 w-6 animate-spin text-primary-600" />
-            </div>
-          )}
-          {!loading && users.length === 0 && (
-            <div className="text-center py-12">
-              <Users className="h-10 w-10 text-gray-300 mx-auto mb-3" />
-              <p className="text-gray-500">Nenhum usuario encontrado.</p>
-            </div>
-          )}
-          {!loading && users.length > 0 && (
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 border-t border-gray-100 dark:border-gray-800">
-              <p className="text-sm text-gray-500">
-                {total} usuário(s) - página {page} de {totalPages || 1}
-              </p>
-              <div className="flex items-center gap-2">
-                <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1} className="btn-ghost p-1.5 disabled:opacity-40" aria-label="Página anterior">
-                  <ChevronLeft className="h-4 w-4" />
-                </button>
-                <button onClick={() => setPage((p) => Math.min(totalPages || 1, p + 1))} disabled={page >= totalPages} className="btn-ghost p-1.5 disabled:opacity-40" aria-label="Próxima página">
-                  <ChevronRight className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-          )}
+            </tbody>
+          </table>
         </div>
+        {loading && (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="h-6 w-6 animate-spin text-primary-600" />
+          </div>
+        )}
+        {!loading && users.length === 0 && (
+          <div className="text-center py-12">
+            <Users className="h-10 w-10 text-gray-300 mx-auto mb-3" />
+            <p className="text-gray-500">Nenhum usuario encontrado.</p>
+          </div>
+        )}
+        {!loading && users.length > 0 && (
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 border-t border-gray-100 dark:border-gray-800">
+            <p className="text-sm text-gray-500">
+              {total} usuário(s) - página {page} de {totalPages || 1}
+            </p>
+            <div className="flex items-center gap-2">
+              <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1} className="btn-ghost p-1.5 disabled:opacity-40" aria-label="Página anterior">
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+              <button onClick={() => setPage((p) => Math.min(totalPages || 1, p + 1))} disabled={page >= totalPages} className="btn-ghost p-1.5 disabled:opacity-40" aria-label="Próxima página">
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
 
       {editUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
@@ -440,6 +506,79 @@ export default function AdminUsersPage() {
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                 {saving ? 'Salvando...' : 'Criar Usuario'}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {viewUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+          <div className="w-full max-w-lg rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-2xl">
+            <div className="flex items-center justify-between p-5 border-b border-gray-100 dark:border-gray-800">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Visualizar Usuario</h2>
+              <button onClick={() => setViewUser(null)} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="p-5 space-y-4">
+              <div>
+                <label className="label-field">Nome</label>
+                <input type="text" value={viewUser.name} disabled className="input-field" />
+              </div>
+              <div>
+                <label className="label-field">Email</label>
+                <input type="email" value={viewUser.email} disabled className="input-field" />
+              </div>
+              <div>
+                <label className="label-field">Tipo</label>
+                <input type="text" value={ROLE_LABELS[viewUser.role] || viewUser.role} disabled className="input-field" />
+              </div>
+              <div>
+                <label className="label-field">Status</label>
+                <select disabled className="input-field">
+                  <option value="Ativo" selected={viewUser.active}>Ativo</option>
+                  <option value="Bloqueado" selected={!viewUser.active}>Bloqueado</option>
+                </select>
+              </div>
+              <div>
+                <label className="label-field">Telefone</label>
+                <input type="text" value={viewUser.phone || '—'} disabled className="input-field" />
+              </div>
+              <div>
+                <label className="label-field">Documento</label>
+                <input type="text" value={viewUser.document || '—'} disabled className="input-field" />
+              </div>
+              <div>
+                <label className="label-field">Cadastro</label>
+                <input type="text" value={viewUser.createdAt ? new Date(viewUser.createdAt).toLocaleDateString('pt-BR') : '—'} disabled className="input-field" />
+              </div>
+            </div>
+            <div className="flex items-center justify-end gap-3 p-5 border-t border-gray-100 dark:border-gray-800">
+              <button onClick={() => setViewUser(null)} className="btn-outline text-sm">Fechar</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {confirmDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+          <div className="w-full max-w-md rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-2xl">
+            <div className="p-5">
+              <div className="flex items-center gap-3 mb-4">
+                <AlertCircle className="h-6 w-6 text-yellow-500" />
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Confirmar Exclusão</h3>
+              </div>
+              <p className="text-gray-600 dark:text-gray-300 mb-6">
+                Tem certeza que deseja excluir o usuário <strong>{confirmDelete.name}</strong> ({confirmDelete.email})?
+                Esta ação não pode ser desfeita.
+              </p>
+              <div className="flex justify-end gap-3">
+                <button onClick={() => setConfirmDelete(null)} className="btn-outline">Cancelar</button>
+                <button onClick={confirmDeleteAction} disabled={!!deleting} className="btn-error gap-2">
+                  {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                  {deleting ? 'Excluindo...' : 'Excluir'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
