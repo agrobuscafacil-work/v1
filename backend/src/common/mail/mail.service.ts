@@ -21,8 +21,11 @@ export class MailService {
     const pass = this.configService.get<string>('SMTP_PASS');
     const from = this.configService.get<string>('SMTP_FROM') || 'noreply@agrobuscafacil.com';
 
+    this.logger.log(`SMTP Config: host=${host}, port=${port}, user=${user}, from=${from}, pass=${pass ? '***' : 'MISSING'}`);
+
     if (!host || !user || !pass) {
       this.logger.warn('SMTP not configured. Emails will be logged instead of sent.');
+      this.logger.warn(`Missing: host=${!host}, user=${!user}, pass=${!pass}`);
       this.transporter = null as any;
       return;
     }
@@ -33,13 +36,16 @@ export class MailService {
       secure: port === 465,
       auth: { user, pass },
       tls: { rejectUnauthorized: false },
+      debug: true,  // Enable debug logs
+      logger: true, // Log to console
     });
 
     this.transporter.verify((error) => {
       if (error) {
-        this.logger.error('SMTP connection failed:', error);
+        this.logger.error('SMTP connection failed:', error.message);
+        this.logger.error('Full error:', JSON.stringify(error, null, 2));
       } else {
-        this.logger.log('SMTP connection established');
+        this.logger.log('SMTP connection established successfully');
       }
     });
   }
@@ -54,17 +60,21 @@ export class MailService {
     }
 
     try {
-      await this.transporter.sendMail({
+      this.logger.log(`Sending email to ${options.to} with subject: ${options.subject}`);
+      const info = await this.transporter.sendMail({
         from,
         to: options.to,
         subject: options.subject,
         html: options.html,
         text: options.text,
       });
-      this.logger.log(`Email sent to ${options.to}: ${options.subject}`);
+      this.logger.log(`Email sent successfully to ${options.to}: ${options.subject}`);
+      this.logger.log(`Message ID: ${info.messageId}`);
+      this.logger.log(`Response: ${info.response}`);
       return true;
     } catch (error) {
-      this.logger.error(`Failed to send email to ${options.to}:`, error);
+      this.logger.error(`Failed to send email to ${options.to}:`, error.message);
+      this.logger.error('Full error:', JSON.stringify(error, null, 2));
       return false;
     }
   }
