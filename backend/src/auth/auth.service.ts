@@ -447,4 +447,28 @@ export class AuthService {
     this.logger.log(`Welcome email resent to: ${user.email}`);
     return { message: 'E-mail de boas-vindas reenviado com sucesso.' };
   }
+
+  async sendAdminPasswordResetEmail(userId: string) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new BadRequestException('Usuário não encontrado');
+    }
+
+    const resetToken = uuidv4();
+    const resetExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        resetPasswordToken: createHash('sha256').update(resetToken).digest('hex'),
+        resetPasswordExpires: resetExpires,
+      },
+    });
+
+    const resetUrl = `${this.configService.get('FRONTEND_URL') || 'https://agrobuscafacil.com'}/auth/reset-password`;
+    await this.mailService.sendAdminPasswordResetEmail(user.email, user.name || 'Usuário', resetToken, resetUrl);
+
+    this.logger.log(`Admin password reset email sent to: ${user.email}`);
+    return { message: 'E-mail de redefinição de senha enviado com sucesso.' };
+  }
 }

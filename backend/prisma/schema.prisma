@@ -15,6 +15,12 @@ enum UserRole {
   SUPER_ADMIN
 }
 
+enum SupplierTier {
+  BASIC
+  STANDARD
+  PREMIUM
+}
+
 enum SupplierStatus {
   PENDING
   APPROVED
@@ -206,6 +212,10 @@ model SupplierProfile {
   whatsapp              String?
   email                 String
   status                SupplierStatus @default(PENDING)
+  tier                  SupplierTier   @default(BASIC)
+  maxProducts           Int            @default(1)
+  hasPaymentAccess      Boolean        @default(false)
+  hasReportsAccess      Boolean        @default(false)
   statusReason          String?
   approvedAt            DateTime?
   reviewedBy            String?

@@ -27,6 +27,7 @@ export type AggregateSupplierProfile = {
 }
 
 export type SupplierProfileAvgAggregateOutputType = {
+  maxProducts: number | null
   rating: runtime.Decimal | null
   totalReviews: number | null
   sellerRating: runtime.Decimal | null
@@ -40,6 +41,7 @@ export type SupplierProfileAvgAggregateOutputType = {
 }
 
 export type SupplierProfileSumAggregateOutputType = {
+  maxProducts: number | null
   rating: runtime.Decimal | null
   totalReviews: number | null
   sellerRating: runtime.Decimal | null
@@ -68,6 +70,10 @@ export type SupplierProfileMinAggregateOutputType = {
   whatsapp: string | null
   email: string | null
   status: $Enums.SupplierStatus | null
+  tier: $Enums.SupplierTier | null
+  maxProducts: number | null
+  hasPaymentAccess: boolean | null
+  hasReportsAccess: boolean | null
   statusReason: string | null
   approvedAt: Date | null
   reviewedBy: string | null
@@ -103,6 +109,10 @@ export type SupplierProfileMaxAggregateOutputType = {
   whatsapp: string | null
   email: string | null
   status: $Enums.SupplierStatus | null
+  tier: $Enums.SupplierTier | null
+  maxProducts: number | null
+  hasPaymentAccess: boolean | null
+  hasReportsAccess: boolean | null
   statusReason: string | null
   approvedAt: Date | null
   reviewedBy: string | null
@@ -138,6 +148,10 @@ export type SupplierProfileCountAggregateOutputType = {
   whatsapp: number
   email: number
   status: number
+  tier: number
+  maxProducts: number
+  hasPaymentAccess: number
+  hasReportsAccess: number
   statusReason: number
   approvedAt: number
   reviewedBy: number
@@ -165,6 +179,7 @@ export type SupplierProfileCountAggregateOutputType = {
 
 
 export type SupplierProfileAvgAggregateInputType = {
+  maxProducts?: true
   rating?: true
   totalReviews?: true
   sellerRating?: true
@@ -178,6 +193,7 @@ export type SupplierProfileAvgAggregateInputType = {
 }
 
 export type SupplierProfileSumAggregateInputType = {
+  maxProducts?: true
   rating?: true
   totalReviews?: true
   sellerRating?: true
@@ -206,6 +222,10 @@ export type SupplierProfileMinAggregateInputType = {
   whatsapp?: true
   email?: true
   status?: true
+  tier?: true
+  maxProducts?: true
+  hasPaymentAccess?: true
+  hasReportsAccess?: true
   statusReason?: true
   approvedAt?: true
   reviewedBy?: true
@@ -241,6 +261,10 @@ export type SupplierProfileMaxAggregateInputType = {
   whatsapp?: true
   email?: true
   status?: true
+  tier?: true
+  maxProducts?: true
+  hasPaymentAccess?: true
+  hasReportsAccess?: true
   statusReason?: true
   approvedAt?: true
   reviewedBy?: true
@@ -276,6 +300,10 @@ export type SupplierProfileCountAggregateInputType = {
   whatsapp?: true
   email?: true
   status?: true
+  tier?: true
+  maxProducts?: true
+  hasPaymentAccess?: true
+  hasReportsAccess?: true
   statusReason?: true
   approvedAt?: true
   reviewedBy?: true
@@ -403,6 +431,10 @@ export type SupplierProfileGroupByOutputType = {
   whatsapp: string | null
   email: string
   status: $Enums.SupplierStatus
+  tier: $Enums.SupplierTier
+  maxProducts: number
+  hasPaymentAccess: boolean
+  hasReportsAccess: boolean
   statusReason: string | null
   approvedAt: Date | null
   reviewedBy: string | null
@@ -466,6 +498,10 @@ export type SupplierProfileWhereInput = {
   whatsapp?: Prisma.StringNullableFilter<"SupplierProfile"> | string | null
   email?: Prisma.StringFilter<"SupplierProfile"> | string
   status?: Prisma.EnumSupplierStatusFilter<"SupplierProfile"> | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFilter<"SupplierProfile"> | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFilter<"SupplierProfile"> | number
+  hasPaymentAccess?: Prisma.BoolFilter<"SupplierProfile"> | boolean
+  hasReportsAccess?: Prisma.BoolFilter<"SupplierProfile"> | boolean
   statusReason?: Prisma.StringNullableFilter<"SupplierProfile"> | string | null
   approvedAt?: Prisma.DateTimeNullableFilter<"SupplierProfile"> | Date | string | null
   reviewedBy?: Prisma.StringNullableFilter<"SupplierProfile"> | string | null
@@ -524,6 +560,10 @@ export type SupplierProfileOrderByWithRelationInput = {
   whatsapp?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  tier?: Prisma.SortOrder
+  maxProducts?: Prisma.SortOrder
+  hasPaymentAccess?: Prisma.SortOrder
+  hasReportsAccess?: Prisma.SortOrder
   statusReason?: Prisma.SortOrderInput | Prisma.SortOrder
   approvedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   reviewedBy?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -585,6 +625,10 @@ export type SupplierProfileWhereUniqueInput = Prisma.AtLeast<{
   whatsapp?: Prisma.StringNullableFilter<"SupplierProfile"> | string | null
   email?: Prisma.StringFilter<"SupplierProfile"> | string
   status?: Prisma.EnumSupplierStatusFilter<"SupplierProfile"> | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFilter<"SupplierProfile"> | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFilter<"SupplierProfile"> | number
+  hasPaymentAccess?: Prisma.BoolFilter<"SupplierProfile"> | boolean
+  hasReportsAccess?: Prisma.BoolFilter<"SupplierProfile"> | boolean
   statusReason?: Prisma.StringNullableFilter<"SupplierProfile"> | string | null
   approvedAt?: Prisma.DateTimeNullableFilter<"SupplierProfile"> | Date | string | null
   reviewedBy?: Prisma.StringNullableFilter<"SupplierProfile"> | string | null
@@ -643,6 +687,10 @@ export type SupplierProfileOrderByWithAggregationInput = {
   whatsapp?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  tier?: Prisma.SortOrder
+  maxProducts?: Prisma.SortOrder
+  hasPaymentAccess?: Prisma.SortOrder
+  hasReportsAccess?: Prisma.SortOrder
   statusReason?: Prisma.SortOrderInput | Prisma.SortOrder
   approvedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   reviewedBy?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -691,6 +739,10 @@ export type SupplierProfileScalarWhereWithAggregatesInput = {
   whatsapp?: Prisma.StringNullableWithAggregatesFilter<"SupplierProfile"> | string | null
   email?: Prisma.StringWithAggregatesFilter<"SupplierProfile"> | string
   status?: Prisma.EnumSupplierStatusWithAggregatesFilter<"SupplierProfile"> | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierWithAggregatesFilter<"SupplierProfile"> | $Enums.SupplierTier
+  maxProducts?: Prisma.IntWithAggregatesFilter<"SupplierProfile"> | number
+  hasPaymentAccess?: Prisma.BoolWithAggregatesFilter<"SupplierProfile"> | boolean
+  hasReportsAccess?: Prisma.BoolWithAggregatesFilter<"SupplierProfile"> | boolean
   statusReason?: Prisma.StringNullableWithAggregatesFilter<"SupplierProfile"> | string | null
   approvedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"SupplierProfile"> | Date | string | null
   reviewedBy?: Prisma.StringNullableWithAggregatesFilter<"SupplierProfile"> | string | null
@@ -730,6 +782,10 @@ export type SupplierProfileCreateInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -788,6 +844,10 @@ export type SupplierProfileUncheckedCreateInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -844,6 +904,10 @@ export type SupplierProfileUpdateInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -902,6 +966,10 @@ export type SupplierProfileUncheckedUpdateInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -959,6 +1027,10 @@ export type SupplierProfileCreateManyInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -998,6 +1070,10 @@ export type SupplierProfileUpdateManyMutationInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1038,6 +1114,10 @@ export type SupplierProfileUncheckedUpdateManyInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1091,6 +1171,10 @@ export type SupplierProfileCountOrderByAggregateInput = {
   whatsapp?: Prisma.SortOrder
   email?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  tier?: Prisma.SortOrder
+  maxProducts?: Prisma.SortOrder
+  hasPaymentAccess?: Prisma.SortOrder
+  hasReportsAccess?: Prisma.SortOrder
   statusReason?: Prisma.SortOrder
   approvedAt?: Prisma.SortOrder
   reviewedBy?: Prisma.SortOrder
@@ -1116,6 +1200,7 @@ export type SupplierProfileCountOrderByAggregateInput = {
 }
 
 export type SupplierProfileAvgOrderByAggregateInput = {
+  maxProducts?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   totalReviews?: Prisma.SortOrder
   sellerRating?: Prisma.SortOrder
@@ -1144,6 +1229,10 @@ export type SupplierProfileMaxOrderByAggregateInput = {
   whatsapp?: Prisma.SortOrder
   email?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  tier?: Prisma.SortOrder
+  maxProducts?: Prisma.SortOrder
+  hasPaymentAccess?: Prisma.SortOrder
+  hasReportsAccess?: Prisma.SortOrder
   statusReason?: Prisma.SortOrder
   approvedAt?: Prisma.SortOrder
   reviewedBy?: Prisma.SortOrder
@@ -1179,6 +1268,10 @@ export type SupplierProfileMinOrderByAggregateInput = {
   whatsapp?: Prisma.SortOrder
   email?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  tier?: Prisma.SortOrder
+  maxProducts?: Prisma.SortOrder
+  hasPaymentAccess?: Prisma.SortOrder
+  hasReportsAccess?: Prisma.SortOrder
   statusReason?: Prisma.SortOrder
   approvedAt?: Prisma.SortOrder
   reviewedBy?: Prisma.SortOrder
@@ -1199,6 +1292,7 @@ export type SupplierProfileMinOrderByAggregateInput = {
 }
 
 export type SupplierProfileSumOrderByAggregateInput = {
+  maxProducts?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   totalReviews?: Prisma.SortOrder
   sellerRating?: Prisma.SortOrder
@@ -1258,6 +1352,10 @@ export type SupplierProfileCreatebadgesInput = {
 
 export type EnumSupplierStatusFieldUpdateOperationsInput = {
   set?: $Enums.SupplierStatus
+}
+
+export type EnumSupplierTierFieldUpdateOperationsInput = {
+  set?: $Enums.SupplierTier
 }
 
 export type NullableIntFieldUpdateOperationsInput = {
@@ -1541,6 +1639,10 @@ export type SupplierProfileCreateWithoutUserInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -1597,6 +1699,10 @@ export type SupplierProfileUncheckedCreateWithoutUserInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -1669,6 +1775,10 @@ export type SupplierProfileUpdateWithoutUserInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1725,6 +1835,10 @@ export type SupplierProfileUncheckedUpdateWithoutUserInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1781,6 +1895,10 @@ export type SupplierProfileCreateWithoutFoundationHistoryInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -1838,6 +1956,10 @@ export type SupplierProfileUncheckedCreateWithoutFoundationHistoryInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -1909,6 +2031,10 @@ export type SupplierProfileUpdateWithoutFoundationHistoryInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1966,6 +2092,10 @@ export type SupplierProfileUncheckedUpdateWithoutFoundationHistoryInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2021,6 +2151,10 @@ export type SupplierProfileCreateWithoutAddressesInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -2078,6 +2212,10 @@ export type SupplierProfileUncheckedCreateWithoutAddressesInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -2149,6 +2287,10 @@ export type SupplierProfileUpdateWithoutAddressesInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2206,6 +2348,10 @@ export type SupplierProfileUncheckedUpdateWithoutAddressesInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2261,6 +2407,10 @@ export type SupplierProfileCreateWithoutCategoriesInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -2318,6 +2468,10 @@ export type SupplierProfileUncheckedCreateWithoutCategoriesInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -2389,6 +2543,10 @@ export type SupplierProfileUpdateWithoutCategoriesInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2446,6 +2604,10 @@ export type SupplierProfileUncheckedUpdateWithoutCategoriesInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2501,6 +2663,10 @@ export type SupplierProfileCreateWithoutProductsInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -2558,6 +2724,10 @@ export type SupplierProfileUncheckedCreateWithoutProductsInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -2629,6 +2799,10 @@ export type SupplierProfileUpdateWithoutProductsInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2686,6 +2860,10 @@ export type SupplierProfileUncheckedUpdateWithoutProductsInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2741,6 +2919,10 @@ export type SupplierProfileCreateWithoutServicesInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -2798,6 +2980,10 @@ export type SupplierProfileUncheckedCreateWithoutServicesInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -2869,6 +3055,10 @@ export type SupplierProfileUpdateWithoutServicesInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2926,6 +3116,10 @@ export type SupplierProfileUncheckedUpdateWithoutServicesInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2981,6 +3175,10 @@ export type SupplierProfileCreateWithoutPromotionsInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -3038,6 +3236,10 @@ export type SupplierProfileUncheckedCreateWithoutPromotionsInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -3109,6 +3311,10 @@ export type SupplierProfileUpdateWithoutPromotionsInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3166,6 +3372,10 @@ export type SupplierProfileUncheckedUpdateWithoutPromotionsInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3221,6 +3431,10 @@ export type SupplierProfileCreateWithoutCouponsInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -3278,6 +3492,10 @@ export type SupplierProfileUncheckedCreateWithoutCouponsInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -3349,6 +3567,10 @@ export type SupplierProfileUpdateWithoutCouponsInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3406,6 +3628,10 @@ export type SupplierProfileUncheckedUpdateWithoutCouponsInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3461,6 +3687,10 @@ export type SupplierProfileCreateWithoutWorkingHoursInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -3518,6 +3748,10 @@ export type SupplierProfileUncheckedCreateWithoutWorkingHoursInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -3589,6 +3823,10 @@ export type SupplierProfileUpdateWithoutWorkingHoursInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3646,6 +3884,10 @@ export type SupplierProfileUncheckedUpdateWithoutWorkingHoursInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3701,6 +3943,10 @@ export type SupplierProfileCreateWithoutOrdersInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -3758,6 +4004,10 @@ export type SupplierProfileUncheckedCreateWithoutOrdersInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -3829,6 +4079,10 @@ export type SupplierProfileUpdateWithoutOrdersInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3886,6 +4140,10 @@ export type SupplierProfileUncheckedUpdateWithoutOrdersInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3941,6 +4199,10 @@ export type SupplierProfileCreateWithoutReviewsInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -3998,6 +4260,10 @@ export type SupplierProfileUncheckedCreateWithoutReviewsInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -4069,6 +4335,10 @@ export type SupplierProfileUpdateWithoutReviewsInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4126,6 +4396,10 @@ export type SupplierProfileUncheckedUpdateWithoutReviewsInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4181,6 +4455,10 @@ export type SupplierProfileCreateWithoutSellerResponsesInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -4238,6 +4516,10 @@ export type SupplierProfileUncheckedCreateWithoutSellerResponsesInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -4309,6 +4591,10 @@ export type SupplierProfileUpdateWithoutSellerResponsesInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4366,6 +4652,10 @@ export type SupplierProfileUncheckedUpdateWithoutSellerResponsesInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4421,6 +4711,10 @@ export type SupplierProfileCreateWithoutSellerReviewsInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -4478,6 +4772,10 @@ export type SupplierProfileUncheckedCreateWithoutSellerReviewsInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -4549,6 +4847,10 @@ export type SupplierProfileUpdateWithoutSellerReviewsInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4606,6 +4908,10 @@ export type SupplierProfileUncheckedUpdateWithoutSellerReviewsInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4661,6 +4967,10 @@ export type SupplierProfileCreateWithoutReviewResponsesInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -4718,6 +5028,10 @@ export type SupplierProfileUncheckedCreateWithoutReviewResponsesInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -4789,6 +5103,10 @@ export type SupplierProfileUpdateWithoutReviewResponsesInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4846,6 +5164,10 @@ export type SupplierProfileUncheckedUpdateWithoutReviewResponsesInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4901,6 +5223,10 @@ export type SupplierProfileCreateWithoutFavoritesInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -4958,6 +5284,10 @@ export type SupplierProfileUncheckedCreateWithoutFavoritesInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -5029,6 +5359,10 @@ export type SupplierProfileUpdateWithoutFavoritesInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5086,6 +5420,10 @@ export type SupplierProfileUncheckedUpdateWithoutFavoritesInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5141,6 +5479,10 @@ export type SupplierProfileCreateWithoutConversationsInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -5198,6 +5540,10 @@ export type SupplierProfileUncheckedCreateWithoutConversationsInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -5269,6 +5615,10 @@ export type SupplierProfileUpdateWithoutConversationsInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5326,6 +5676,10 @@ export type SupplierProfileUncheckedUpdateWithoutConversationsInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5381,6 +5735,10 @@ export type SupplierProfileCreateWithoutChatSettingsInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -5438,6 +5796,10 @@ export type SupplierProfileUncheckedCreateWithoutChatSettingsInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -5509,6 +5871,10 @@ export type SupplierProfileUpdateWithoutChatSettingsInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5566,6 +5932,10 @@ export type SupplierProfileUncheckedUpdateWithoutChatSettingsInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5621,6 +5991,10 @@ export type SupplierProfileCreateWithoutBannersInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -5678,6 +6052,10 @@ export type SupplierProfileUncheckedCreateWithoutBannersInput = {
   whatsapp?: string | null
   email: string
   status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  maxProducts?: number
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -5749,6 +6127,10 @@ export type SupplierProfileUpdateWithoutBannersInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5806,6 +6188,10 @@ export type SupplierProfileUncheckedUpdateWithoutBannersInput = {
   whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6028,6 +6414,10 @@ export type SupplierProfileSelect<ExtArgs extends runtime.Types.Extensions.Inter
   whatsapp?: boolean
   email?: boolean
   status?: boolean
+  tier?: boolean
+  maxProducts?: boolean
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: boolean
   approvedAt?: boolean
   reviewedBy?: boolean
@@ -6087,6 +6477,10 @@ export type SupplierProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   whatsapp?: boolean
   email?: boolean
   status?: boolean
+  tier?: boolean
+  maxProducts?: boolean
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: boolean
   approvedAt?: boolean
   reviewedBy?: boolean
@@ -6128,6 +6522,10 @@ export type SupplierProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   whatsapp?: boolean
   email?: boolean
   status?: boolean
+  tier?: boolean
+  maxProducts?: boolean
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: boolean
   approvedAt?: boolean
   reviewedBy?: boolean
@@ -6169,6 +6567,10 @@ export type SupplierProfileSelectScalar = {
   whatsapp?: boolean
   email?: boolean
   status?: boolean
+  tier?: boolean
+  maxProducts?: boolean
+  hasPaymentAccess?: boolean
+  hasReportsAccess?: boolean
   statusReason?: boolean
   approvedAt?: boolean
   reviewedBy?: boolean
@@ -6193,7 +6595,7 @@ export type SupplierProfileSelectScalar = {
   deletedAt?: boolean
 }
 
-export type SupplierProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "companyName" | "tradingName" | "document" | "stateRegistration" | "municipalRegistration" | "description" | "logoUrl" | "bannerUrl" | "website" | "phone" | "whatsapp" | "email" | "status" | "statusReason" | "approvedAt" | "reviewedBy" | "rating" | "totalReviews" | "sellerRating" | "sellerTotalReviews" | "totalProducts" | "totalOrders" | "totalSales" | "foundedYear" | "employeesCount" | "businessHours" | "deliveryInfo" | "certifications" | "badges" | "socialNetworks" | "featured" | "viewCount" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["supplierProfile"]>
+export type SupplierProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "companyName" | "tradingName" | "document" | "stateRegistration" | "municipalRegistration" | "description" | "logoUrl" | "bannerUrl" | "website" | "phone" | "whatsapp" | "email" | "status" | "tier" | "maxProducts" | "hasPaymentAccess" | "hasReportsAccess" | "statusReason" | "approvedAt" | "reviewedBy" | "rating" | "totalReviews" | "sellerRating" | "sellerTotalReviews" | "totalProducts" | "totalOrders" | "totalSales" | "foundedYear" | "employeesCount" | "businessHours" | "deliveryInfo" | "certifications" | "badges" | "socialNetworks" | "featured" | "viewCount" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["supplierProfile"]>
 export type SupplierProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   products?: boolean | Prisma.SupplierProfile$productsArgs<ExtArgs>
@@ -6260,6 +6662,10 @@ export type $SupplierProfilePayload<ExtArgs extends runtime.Types.Extensions.Int
     whatsapp: string | null
     email: string
     status: $Enums.SupplierStatus
+    tier: $Enums.SupplierTier
+    maxProducts: number
+    hasPaymentAccess: boolean
+    hasReportsAccess: boolean
     statusReason: string | null
     approvedAt: Date | null
     reviewedBy: string | null
@@ -6738,6 +7144,10 @@ export interface SupplierProfileFieldRefs {
   readonly whatsapp: Prisma.FieldRef<"SupplierProfile", 'String'>
   readonly email: Prisma.FieldRef<"SupplierProfile", 'String'>
   readonly status: Prisma.FieldRef<"SupplierProfile", 'SupplierStatus'>
+  readonly tier: Prisma.FieldRef<"SupplierProfile", 'SupplierTier'>
+  readonly maxProducts: Prisma.FieldRef<"SupplierProfile", 'Int'>
+  readonly hasPaymentAccess: Prisma.FieldRef<"SupplierProfile", 'Boolean'>
+  readonly hasReportsAccess: Prisma.FieldRef<"SupplierProfile", 'Boolean'>
   readonly statusReason: Prisma.FieldRef<"SupplierProfile", 'String'>
   readonly approvedAt: Prisma.FieldRef<"SupplierProfile", 'DateTime'>
   readonly reviewedBy: Prisma.FieldRef<"SupplierProfile", 'String'>

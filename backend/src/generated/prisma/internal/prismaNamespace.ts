@@ -4113,6 +4113,10 @@ export const SupplierProfileScalarFieldEnum = {
   whatsapp: 'whatsapp',
   email: 'email',
   status: 'status',
+  tier: 'tier',
+  maxProducts: 'maxProducts',
+  hasPaymentAccess: 'hasPaymentAccess',
+  hasReportsAccess: 'hasReportsAccess',
   statusReason: 'statusReason',
   approvedAt: 'approvedAt',
   reviewedBy: 'reviewedBy',
@@ -5032,6 +5036,20 @@ export type EnumSupplierStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$P
  * Reference to a field of type 'SupplierStatus[]'
  */
 export type ListEnumSupplierStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SupplierStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'SupplierTier'
+ */
+export type EnumSupplierTierFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SupplierTier'>
+    
+
+
+/**
+ * Reference to a field of type 'SupplierTier[]'
+ */
+export type ListEnumSupplierTierFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SupplierTier[]'>
     
 
 

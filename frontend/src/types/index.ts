@@ -1,5 +1,25 @@
 export type UserRole = 'CUSTOMER' | 'SUPPLIER' | 'ADMIN' | 'SUPER_ADMIN';
 
+export type SupplierTier = 'BASIC' | 'STANDARD' | 'PREMIUM';
+
+export interface SupplierTierConfig {
+  maxProducts: number;
+  hasPaymentAccess: boolean;
+  hasReportsAccess: boolean;
+}
+
+export const SUPPLIER_TIER_CONFIG: Record<SupplierTier, SupplierTierConfig> = {
+  BASIC: { maxProducts: 1, hasPaymentAccess: false, hasReportsAccess: false },
+  STANDARD: { maxProducts: 5, hasPaymentAccess: true, hasReportsAccess: false },
+  PREMIUM: { maxProducts: -1, hasPaymentAccess: true, hasReportsAccess: true },
+};
+
+export const SUPPLIER_TIER_LABELS: Record<SupplierTier, string> = {
+  BASIC: 'Básico',
+  STANDARD: 'Padrão',
+  PREMIUM: 'Premium',
+};
+
 export interface User {
   id: string;
   email: string;
@@ -26,6 +46,10 @@ export interface SupplierProfile {
   whatsapp?: string;
   email: string;
   status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'BLOCKED';
+  tier: SupplierTier;
+  maxProducts: number;
+  hasPaymentAccess: boolean;
+  hasReportsAccess: boolean;
   rating: number;
   totalReviews: number;
   totalProducts: number;

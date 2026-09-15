@@ -19,6 +19,15 @@ export const UserRole = {
 export type UserRole = (typeof UserRole)[keyof typeof UserRole]
 
 
+export const SupplierTier = {
+  BASIC: 'BASIC',
+  STANDARD: 'STANDARD',
+  PREMIUM: 'PREMIUM'
+} as const
+
+export type SupplierTier = (typeof SupplierTier)[keyof typeof SupplierTier]
+
+
 export const SupplierStatus = {
   PENDING: 'PENDING',
   APPROVED: 'APPROVED',

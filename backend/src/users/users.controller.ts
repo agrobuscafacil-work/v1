@@ -27,13 +27,17 @@ import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { AuthService } from '../auth/auth.service';
 
 @ApiTags('Users')
 @ApiBearerAuth('JWT-auth')
 @UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly authService: AuthService,
+  ) {}
 
   @Get()
   @UseGuards(RolesGuard)
@@ -111,5 +115,25 @@ export class UsersController {
   @ApiOperation({ summary: 'Delete current user account' })
   async remove(@CurrentUser() user: any) {
     return this.usersService.remove(user.id);
+  }
+
+  @Post(':id/reset-password')
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Send password reset email (admin)' })
+  @ApiResponse({ status: 200, description: 'Reset email sent' })
+  async adminResetPassword(@Param('id') id: string) {
+    return this.authService.sendAdminPasswordResetEmail(id);
+  }
+
+  @Post(':id/resend-welcome')
+  @UseGuards(RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Resend welcome email (admin)' })
+  @ApiResponse({ status: 200, description: 'Welcome email resent' })
+  async adminResendWelcome(@Param('id') id: string) {
+    return this.authService.resendWelcomeEmail(id);
   }
 }

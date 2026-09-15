@@ -224,4 +224,39 @@ export class MailService {
 
     return this.sendEmail({ to: email, subject, html });
   }
+
+  async sendAdminPasswordResetEmail(email: string, name: string, resetToken: string, resetUrl: string): Promise<boolean> {
+    const subject = 'Redefinição de senha - AgroBuscaFácil (Solicitada pelo Admin)';
+    const html = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      </head>
+      <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
+          <h1 style="color: white; margin: 0; font-size: 28px;">AgroBuscaFácil</h1>
+        </div>
+        <div style="background: #f9fafb; padding: 30px; border-radius: 0 0 12px 12px; border: 1px solid #e5e7eb; border-top: none;">
+          <h2 style="color: #1f2937; margin-top: 0;">Redefinição de senha</h2>
+          <p style="font-size: 16px;">Olá <strong>${name}</strong>,</p>
+          <p style="font-size: 16px;">Um administrador solicitou a redefinição da senha da sua conta. Se foi você quem fez essa solicitação, clique no botão abaixo:</p>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${resetUrl}?token=${resetToken}" style="background: #16a34a; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-block; font-size: 16px;">Redefinir minha senha</a>
+          </div>
+          <p style="font-size: 14px; color: #6b7280;">Ou copie e cole este link no seu navegador:</p>
+          <p style="font-size: 13px; color: #16a34a; word-break: break-all; background: #f0fdf4; padding: 12px; border-radius: 6px; border: 1px solid #dcfce7;">${resetUrl}?token=${resetToken}</p>
+          <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;">
+          <p style="font-size: 13px; color: #9ca3af;">Este link expira em <strong>1 hora</strong> por segurança.</p>
+          <p style="font-size: 13px; color: #9ca3af;">Se você não solicitou esta redefinição, por favor ignore este e-mail ou entre em contato com nosso suporte.</p>
+          <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;">
+          <p style="font-size: 12px; color: #9ca3af; text-align: center;">© 2024 AgroBuscaFácil. Todos os direitos reservados.</p>
+        </div>
+      </body>
+      </html>
+    `;
+
+    return this.sendEmail({ to: email, subject, html });
+  }
 }
