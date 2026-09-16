@@ -4732,14 +4732,15 @@ export type BannerScalarFieldEnum = (typeof BannerScalarFieldEnum)[keyof typeof 
 
 export const AuditLogScalarFieldEnum = {
   id: 'id',
-  userId: 'userId',
+  adminId: 'adminId',
   action: 'action',
-  entity: 'entity',
-  entityId: 'entityId',
+  resourceType: 'resourceType',
+  resourceId: 'resourceId',
   oldValue: 'oldValue',
   newValue: 'newValue',
   ipAddress: 'ipAddress',
   userAgent: 'userAgent',
+  metadata: 'metadata',
   createdAt: 'createdAt'
 } as const
 

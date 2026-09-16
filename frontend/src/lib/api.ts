@@ -2,12 +2,30 @@ import axios from 'axios';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api/v1';
 
+// Helper to get CSRF token from cookies
+function getCsrfToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  const match = document.cookie.match(/(?:^|; )csrf_token=([^;]+)/);
+  return match ? match[1] : null;
+}
+
 export const api = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
   withCredentials: true,
+});
+
+// Add CSRF token to all mutating requests
+api.interceptors.request.use((config) => {
+  if (['post', 'put', 'patch', 'delete'].includes(config.method?.toLowerCase() || '')) {
+    const csrfToken = getCsrfToken();
+    if (csrfToken) {
+      config.headers['X-CSRF-Token'] = csrfToken;
+    }
+  }
+  return config;
 });
 
 let isRefreshing = false;

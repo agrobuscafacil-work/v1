@@ -172,6 +172,7 @@ model User {
   conversations   Conversation[]      @relation("CustomerConversations")
   paymentCustomers PaymentCustomer[]
   paymentCards    PaymentCard[]
+  auditLogs       AuditLog[]
 
   @@index([email])
   @@index([document])
@@ -213,9 +214,6 @@ model SupplierProfile {
   email                 String
   status                SupplierStatus @default(PENDING)
   tier                  SupplierTier   @default(BASIC)
-  maxProducts           Int            @default(1)
-  hasPaymentAccess      Boolean        @default(false)
-  hasReportsAccess      Boolean        @default(false)
   statusReason          String?
   approvedAt            DateTime?
   reviewedBy            String?
@@ -1004,19 +1002,22 @@ model Banner {
 
 model AuditLog {
   id        String   @id @default(uuid())
-  userId    String?
+  adminId   String
+  admin     User     @relation(fields: [adminId], references: [id])
   action    String
-  entity    String
-  entityId  String?
+  resourceType String
+  resourceId String?
   oldValue  Json?
   newValue  Json?
   ipAddress String?
   userAgent String?
+  metadata  Json?
   createdAt DateTime @default(now())
 
-  @@index([userId])
-  @@index([entity, entityId])
+  @@index([adminId])
   @@index([action])
+  @@index([resourceType])
+  @@index([resourceId])
   @@index([createdAt])
 }
 

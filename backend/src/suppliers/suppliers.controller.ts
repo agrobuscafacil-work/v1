@@ -6,6 +6,8 @@ import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery, ApiConsumes } from '@ne
 import { SuppliersService } from './suppliers.service';
 import { CreateSupplierDto } from './dto/create-supplier.dto';
 import { UpdateSupplierDto } from './dto/update-supplier.dto';
+import { UpdateSupplierAdminDto } from './dto/update-supplier-admin.dto';
+import { UpdateSupplierTierDto } from './dto/update-supplier-tier.dto';
 import { SupplierStoreAddressDto } from './dto/supplier-store-address.dto';
 import { SupplierApprovalDto } from './dto/supplier-approval.dto';
 import { UpdateSupplierWorkingHoursDto } from './dto/supplier-working-hours.dto';
@@ -141,12 +143,41 @@ export class SuppliersController {
     return this.suppliersService.findById(id);
   }
 
-  @Put(':id')
+  @Put('me')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
-  @ApiOperation({ summary: 'Update supplier profile' })
-  async update(@CurrentUser() user: any, @Param('id') id: string, @Body() dto: UpdateSupplierDto) {
-    return this.suppliersService.update(id, dto, user);
+  @ApiOperation({ summary: 'Update own supplier profile' })
+  async updateOwn(@CurrentUser() user: any, @Body() dto: UpdateSupplierDto) {
+    return this.suppliersService.updateOwn(user.id, dto);
+  }
+
+  @Put('me/tier')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Update own supplier tier' })
+  async updateOwnTier(@CurrentUser() user: any, @Body() dto: UpdateSupplierTierDto) {
+    return this.suppliersService.updateOwnTier(user.id, dto.tier);
+  }
+
+  @Put(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Update supplier profile (admin)' })
+  async updateAdmin(@Param('id') id: string, @Body() dto: UpdateSupplierAdminDto) {
+    return this.suppliersService.update(id, dto, { role: 'ADMIN' } as any);
+  }
+
+  @Put(':id/tier')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Update supplier tier (owner or admin)' })
+  async updateTier(
+    @CurrentUser() user: any,
+    @Param('id') id: string,
+    @Body() dto: UpdateSupplierTierDto,
+  ) {
+    return this.suppliersService.updateTier(id, dto.tier, user);
   }
 
   @Put(':id/approval')

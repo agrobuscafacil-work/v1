@@ -533,12 +533,12 @@ export class SupportService {
   ) {
     await this.prisma.auditLog.create({
       data: {
-        userId,
+        adminId: userId,
         action,
-        entity,
-        entityId,
+        resourceType: entity,
+        resourceId: entityId,
         oldValue: oldValue ?? undefined,
-        newValue,
+        newValue: newValue ?? undefined,
         ipAddress: audit?.ip || null,
         userAgent: audit?.userAgent || null,
       },

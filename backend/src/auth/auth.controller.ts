@@ -26,6 +26,7 @@ import { ForgotPasswordDto, ResetPasswordDto, ConfirmEmailDto, ResendConfirmatio
 import { Public } from '../common/decorators/public.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
+import { Throttle } from '@nestjs/throttler';
 
 const ACCESS_COOKIE = 'accessToken';
 const REFRESH_COOKIE = 'refreshToken';
@@ -68,6 +69,7 @@ export class AuthController {
 
   @Post('register')
   @Public()
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Register new user' })
   @ApiResponse({ status: 201, description: 'User registered successfully' })
@@ -83,6 +85,7 @@ export class AuthController {
 
   @Post('login')
   @Public()
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Authenticate user' })
   @ApiResponse({ status: 200, description: 'Login successful' })
@@ -147,6 +150,7 @@ export class AuthController {
 
   @Post('forgot-password')
   @Public()
+  @Throttle({ default: { limit: 3, ttl: 3600000 } })
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Request password reset email' })
   @ApiResponse({ status: 200, description: 'Reset email sent (if account exists)' })
@@ -156,6 +160,7 @@ export class AuthController {
 
   @Post('reset-password')
   @Public()
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Reset password with token' })
   @ApiResponse({ status: 200, description: 'Password reset successful' })

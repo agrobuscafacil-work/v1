@@ -260,10 +260,14 @@ export default function HomePage() {
                         <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{product.rating.toFixed(1)}</span>
                         <span className="text-xs text-gray-500">({product.reviews})</span>
                       </div>
-                      <p className="text-xl font-bold bg-gradient-to-r from-primary-600 to-green-600 bg-clip-text text-transparent">
-                                              {product.productCode && <p className="text-xs text-gray-500">Código: {product.productCode}</p>}
-                        R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                      </p>
+                      <div className="space-y-1">
+                        {product.productCode && (
+                          <p className="text-xs text-gray-500">Código: {product.productCode}</p>
+                        )}
+                        <p className="text-xl font-bold bg-gradient-to-r from-primary-600 to-green-600 bg-clip-text text-transparent">
+                          R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                        </p>
+                      </div>
                     </div>
                   </Link>
                 </div>
@@ -380,7 +384,7 @@ export default function HomePage() {
                 Cadastre sua empresa e alcance milhares de compradores do agronegócio em todo o Brasil.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/auth/register" className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-secondary-500 to-yellow-500 px-8 py-3 text-base font-semibold text-white shadow-lg hover:from-secondary-600 hover:to-yellow-600 transition-all duration-200">
+                <Link href="/vender" className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-secondary-500 to-yellow-500 px-8 py-3 text-base font-semibold text-white shadow-lg hover:from-secondary-600 hover:to-yellow-600 transition-all duration-200">
                   Quero Vender
                 </Link>
                 <Link href="/auth/register" className="inline-flex items-center justify-center rounded-xl border-2 border-white/30 px-8 py-3 text-base font-semibold text-white hover:bg-white/10 backdrop-blur-sm transition-all duration-200">

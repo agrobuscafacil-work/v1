@@ -94,6 +94,14 @@ export class ProductsService {
       const ext = path.extname(filename).toLowerCase();
       if (!PRODUCT_ALLOWED_EXTENSIONS.has(ext)) continue;
 
+      // Security: Resolve the path and ensure it's within the upload directory
+      const uploadDir = path.resolve(PRODUCT_UPLOAD_PATH);
+      const filePath = path.resolve(uploadDir, filename);
+      if (!filePath.startsWith(uploadDir)) {
+        this.logger.warn(`Path traversal attempt blocked: ${img}`);
+        continue;
+      }
+
       // Never delete a file still referenced by another product.
       if (exceptProductId) {
         const referencedElsewhere = await this.prisma.product.count({
@@ -102,7 +110,6 @@ export class ProductsService {
         if (referencedElsewhere > 0) continue;
       }
 
-      const filePath = path.join(PRODUCT_UPLOAD_PATH, filename);
       try {
         if (this.storage.isCloud) {
           await this.storage.delete('products', filename);

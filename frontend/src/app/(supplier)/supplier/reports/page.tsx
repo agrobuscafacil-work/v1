@@ -30,7 +30,7 @@ function buildMonthlySeries(sales: any) {
   while (d <= now) {
     slots.push({
       key: d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'),
-      month: monthNames[d.getMonth()],
+      month: monthNames[d.getMonth()] + '/' + String(d.getFullYear()).slice(2),
       value: 0,
     });
     d.setMonth(d.getMonth() + 1);
@@ -42,14 +42,14 @@ function buildMonthlySeries(sales: any) {
     const slot = slots.find((s) => s.key === key);
     if (slot) slot.value += Number(o.total) || 0;
   });
-  return slots.map(({ month, value }) => ({ month, value }));
+  return slots.map(({ key, month, value }) => ({ key, month, value }));
 }
 
 export default function SupplierReportsPage() {
   const [exportMenu, setExportMenu] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<{ totalProducts: number; totalServices: number; totalOrders: number; totalRevenue: number } | null>(null);
-  const [monthlySales, setMonthlySales] = useState<{ month: string; value: number }[]>([]);
+  const [monthlySales, setMonthlySales] = useState<{ key: string; month: string; value: number }[]>([]);
   const [topProducts, setTopProducts] = useState<any[]>([]);
   const [orders, setOrders] = useState<{ id: string; orderNumber: string; customer: string; items: number; total: number; status: string; createdAt: string }[]>([]);
 
@@ -156,7 +156,7 @@ export default function SupplierReportsPage() {
         <div className="h-48">
           <div className="flex items-end gap-2 h-36 mb-2">
             {monthlySales.map((d) => (
-              <div key={d.month} className="flex-1 flex flex-col items-center gap-1">
+              <div key={d.key} className="flex-1 flex flex-col items-center gap-1">
                 <div className="w-full bg-primary-500 rounded-t" style={{ height: (d.value / maxSale) * 100 + '%' }} />
                 <span className="text-xs text-gray-500">{d.month}</span>
               </div>

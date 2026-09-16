@@ -78,10 +78,50 @@ async function bootstrap() {
   app.use(
     helmet({
       crossOriginResourcePolicy: { policy: 'cross-origin' },
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          scriptSrc: ["'self'"],
+          imgSrc: ["'self'", 'data:', 'https:'],
+          connectSrc: ["'self'"],
+          fontSrc: ["'self'"],
+          objectSrc: ["'none'"],
+          mediaSrc: ["'self'"],
+          frameSrc: ["'none'"],
+        },
+      },
+      crossOriginEmbedderPolicy: false,
+      referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+      hsts: {
+        maxAge: 31536000,
+        includeSubDomains: true,
+        preload: true,
+      },
+      xssFilter: true,
+      noSniff: true,
+      hidePoweredBy: true,
     }),
   );
-  app.use(compression());
+app.use(compression());
   app.use(cookieParser());
+
+  // SameSite cookie configuration for CSRF protection via SameSite
+  const cookieOptions = {
+    httpOnly: true,
+    secure: configService.get<string>('NODE_ENV') === 'production',
+    sameSite: 'lax' as const,
+    path: '/',
+  };
+
+  // Apply SameSite to all cookies
+  app.use((req: any, res: any, next: any) => {
+    const originalCookie = res.cookie.bind(res);
+    res.cookie = (name: string, value: string, options: any = {}) => {
+      return originalCookie(name, value, { ...cookieOptions, ...options });
+    };
+    next();
+  });
 
   const corsOrigins = (configService.get<string>('CORS_ORIGIN') || 'https://agrobuscafacil-one.vercel.app')
     .split(',')

@@ -1,15 +1,16 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from '@/lib/toast';
 import { useAuth } from '@/hooks/use-auth';
 import PasswordInput from '@/components/ui/password-input';
-import { Leaf, Loader2 } from 'lucide-react';
-import { useState, useCallback } from 'react';
+import { Leaf, Loader2, CreditCard, Shield, BarChart3, Infinity, Check, ChevronRight } from 'lucide-react';
+import { useState, useCallback, useEffect } from 'react';
+import { SUPPLIER_TIER_LABELS, SUPPLIER_TIER_CONFIG, type SupplierTier } from '@/types';
 
 const registerSchema = z.object({
   name: z.string().min(3, 'Nome deve ter no mínimo 3 caracteres'),
@@ -49,12 +50,35 @@ function maskPhone(value: string): string {
 
 export default function RegisterPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { register: registerUser } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [userType, setUserType] = useState<'buyer' | 'supplier'>('buyer');
+  const [selectedTier, setSelectedTier] = useState<SupplierTier | null>(null);
+  const [showPlanSelection, setShowPlanSelection] = useState(false);
   const [docValue, setDocValue] = useState('');
   const [phoneValue, setPhoneValue] = useState('');
   const [passwordFocused, setPasswordFocused] = useState(false);
+
+  // Check if tier is pre-selected from URL params (coming from vender page)
+  const preSelectedTier = searchParams.get('tier') as 'BASIC' | 'STANDARD' | 'PREMIUM' | null;
+
+  useEffect(() => {
+    if (preSelectedTier && ['BASIC', 'STANDARD', 'PREMIUM'].includes(preSelectedTier)) {
+      setUserType('supplier');
+      setSelectedTier(preSelectedTier as SupplierTier);
+      setShowPlanSelection(true);
+    }
+  }, [preSelectedTier]);
+
+  // Show plan selection when supplier is selected
+  useEffect(() => {
+    if (userType === 'supplier') {
+      setShowPlanSelection(true);
+    } else {
+      setShowPlanSelection(false);
+    }
+  }, [userType, selectedTier]);
 
   const {
     register,
@@ -89,7 +113,14 @@ export default function RegisterPage() {
         role: userType === 'supplier' ? 'SUPPLIER' : 'CUSTOMER',
       });
       toast.success('Cadastro realizado com sucesso!');
-      router.push('/');
+      
+      // If registered as supplier, redirect to vender page with tier parameter
+      if (userType === 'supplier') {
+        const tier = searchParams.get('tier') || selectedTier || 'BASIC';
+        router.push(`/vender?tier=${tier}`);
+      } else {
+        router.push('/');
+      }
     } catch (error: any) {
       const data = error?.response?.data;
       const validationError = data?.error?.errors?.[0];
@@ -115,31 +146,96 @@ export default function RegisterPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-2 mb-6 p-1 bg-gray-100 dark:bg-gray-800 rounded-lg">
-          <button
-            type="button"
-            onClick={() => setUserType('buyer')}
-            className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-              userType === 'buyer'
-                ? 'bg-white dark:bg-gray-900 text-gray-900 dark:text-white shadow-sm'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-            }`}
-          >
-            Quero Comprar
-          </button>
-          <button
-            type="button"
-            onClick={() => setUserType('supplier')}
-            className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-              userType === 'supplier'
-                ? 'bg-white dark:bg-gray-900 text-gray-900 dark:text-white shadow-sm'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-            }`}
-          >
-            Sou Fornecedor
-          </button>
-        </div>
+        {!showPlanSelection && (
+          <div className="grid grid-cols-2 gap-2 mb-6 p-1 bg-gray-100 dark:bg-gray-800 rounded-lg">
+            <button
+              type="button"
+              onClick={() => setUserType('buyer')}
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                userType === 'buyer'
+                  ? 'bg-white dark:bg-gray-900 text-gray-900 dark:text-white shadow-sm'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+              }`}
+            >
+              Quero Comprar
+            </button>
+            <button
+              type="button"
+              onClick={() => { setUserType('supplier'); setShowPlanSelection(true); }}
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                userType === 'supplier'
+                  ? 'bg-white dark:bg-gray-900 text-gray-900 dark:text-white shadow-sm'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+              }`}
+            >
+              Sou Fornecedor
+            </button>
+          </div>
+        )}
 
+        {showPlanSelection && (
+          <div className="mb-6">
+            <p className="text-center text-sm text-gray-600 dark:text-gray-400 mb-4">
+              Escolha seu plano para comecar a vender
+            </p>
+            <div className="grid grid-cols-3 gap-4">
+              {(['BASIC', 'STANDARD', 'PREMIUM'] as SupplierTier[]).map((tier) => {
+                const config = SUPPLIER_TIER_CONFIG[tier];
+                const isSelected = selectedTier === tier;
+                const price = tier === 'BASIC' ? 0 : tier === 'STANDARD' ? 99 : 299;
+                return (
+                  <div
+                    key={tier}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => setSelectedTier(tier)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setSelectedTier(tier); }}
+                    className="relative p-4 rounded-xl border-2 transition-all cursor-pointer bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800"
+                  >
+                    <div className="text-center mb-3">
+                      <h3 className="font-semibold text-gray-900 dark:text-white">{SUPPLIER_TIER_LABELS[tier]}</h3>
+                      <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                        {price === 0 ? 'Gratis' : 'R$ ' + price}
+                        <span className="text-sm font-normal text-gray-500">/mes</span>
+                      </p>
+                    </div>
+                    <ul className="space-y-2 mb-4">
+                      <li className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                        <Check className="h-4 w-4 text-green-500" />
+                        {config.maxProducts === -1 ? 'Ilimitados' : config.maxProducts}
+                      </li>
+                      <li className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                        {config.hasPaymentAccess ? (
+                          <Check className="h-4 w-4 text-green-500" />
+                        ) : (
+                          <span className="h-4 w-4 text-gray-300" />
+                        )}
+                        Pagamentos online
+                      </li>
+                      <li className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                        {config.hasReportsAccess ? (
+                          <Check className="h-4 w-4 text-green-500" />
+                        ) : (
+                          <span className="h-4 w-4 text-gray-300" />
+                        )}
+                        Relatorios de vendas
+                      </li>
+                    </ul>
+                    <div
+                      className={
+                        isSelected
+                          ? 'w-full py-2 rounded-lg font-medium text-sm text-center bg-primary-600 text-white'
+                          : 'w-full py-2 rounded-lg font-medium text-sm text-center bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
+                      }
+                    >
+                      {price === 0 ? 'Comecar Gratis' : 'Assinar plano'}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <label htmlFor="name" className="label-field">Nome completo</label>

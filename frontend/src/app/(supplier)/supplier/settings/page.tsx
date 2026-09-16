@@ -2,11 +2,12 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { Save, Loader2, Upload, MessageCircle, Wifi, WifiOff, ToggleLeft, ToggleRight, MapPin, LocateFixed, Clock } from 'lucide-react';
+import { Save, Loader2, Upload, MessageCircle, Wifi, WifiOff, ToggleLeft, ToggleRight, MapPin, LocateFixed, Clock, CreditCard, Shield, BarChart3, Infinity, ChevronRight, AlertCircle, Check, X } from 'lucide-react';
 import { toast } from '@/lib/toast';
 import { ChatSettings, defaultChatSettings } from '@/lib/chat-settings';
 import { api } from '@/lib/api';
 import { PRODUCT_FILE_URL } from '@/lib/products';
+import { SUPPLIER_TIER_LABELS, SUPPLIER_TIER_CONFIG, type SupplierTier } from '@/types';
 
 const MAX_LOGO_SIZE = 5 * 1024 * 1024;
 const LOGO_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/gif'];
@@ -50,12 +51,13 @@ const defaultWorkingHours: WorkingHour[] = WEEK_DAYS.map(({ dayOfWeek }) => ({ d
 export default function SupplierSettingsPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [supplier, setSupplier] = useState<{ id: string; companyName: string; description: string; phone: string; whatsapp: string; logoUrl: string } | null>(null);
+  const [supplier, setSupplier] = useState<{ id: string; companyName: string; description: string; phone: string; whatsapp: string; logoUrl: string; tier: 'BASIC' | 'STANDARD' | 'PREMIUM' } | null>(null);
   const [settings, setSettings] = useState<ChatSettings>(defaultChatSettings);
   const [address, setAddress] = useState<StoreAddress>(emptyAddress);
   const [locating, setLocating] = useState(false);
   const [workingHours, setWorkingHours] = useState<WorkingHour[]>(defaultWorkingHours);
   const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [showPlanChange, setShowPlanChange] = useState(false);
   const logoInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -80,6 +82,7 @@ export default function SupplierSettingsPage() {
           phone: me.phone ?? '',
           whatsapp: me.whatsapp ?? '',
           logoUrl: me.logoUrl ?? '',
+          tier: me.tier ?? 'BASIC',
         });
         const savedAddress = me.addresses?.[0];
         if (savedAddress) {
@@ -134,10 +137,11 @@ export default function SupplierSettingsPage() {
       const hasAddress = [address.zipCode, address.street, address.number, address.complement, address.neighborhood, address.city, address.state].some((value) => value !== '');
       if (hasAddress && (!address.zipCode || !address.street || !address.number || !address.neighborhood || !address.city || address.state.length !== 2)) {
         toast.error('Preencha o endereço completo antes de salvar.');
+        setIsSaving(false);
         return;
       }
       await Promise.all([
-        api.put(`/suppliers/${supplier.id}`, {
+        api.put('/suppliers/me', {
           companyName: supplier.companyName,
           description: supplier.description,
           phone: supplier.phone,
@@ -166,6 +170,21 @@ export default function SupplierSettingsPage() {
 
   function updateWorkingHour(dayOfWeek: number, changes: Partial<WorkingHour>) {
     setWorkingHours((current) => current.map((hour) => hour.dayOfWeek === dayOfWeek ? { ...hour, ...changes } : hour));
+  }
+
+  async function handlePlanChange(newTier: 'BASIC' | 'STANDARD' | 'PREMIUM') {
+    if (!supplier?.id) return;
+    setIsSaving(true);
+    try {
+      await api.put(`/suppliers/${supplier.id}/tier`, { tier: newTier });
+      toast.success('Plano alterado com sucesso!');
+      setSupplier((prev) => prev ? { ...prev, tier: newTier } : prev);
+      setShowPlanChange(false);
+    } catch (e: any) {
+      toast.error(e?.response?.data?.message || 'Erro ao alterar plano.');
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   function useCurrentLocation() {
@@ -250,6 +269,96 @@ export default function SupplierSettingsPage() {
           </button>
         </div>
         <div className="pt-4 border-t border-gray-200 dark:border-gray-800" />
+      </div>
+
+      {/* Plano Atual */}
+      <h2 className="text-xl font-bold text-gray-900 dark:text-white mt-8 mb-4 flex items-center gap-2">
+        <CreditCard className="h-5 w-5" /> Plano Atual
+      </h2>
+      <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-xs text-gray-500">Plano Atual</p>
+            <p className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+              <span className="px-3 py-1 rounded-full font-semibold text-sm bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300">
+                {SUPPLIER_TIER_LABELS[supplier?.tier || 'BASIC']}
+              </span>
+            </p>
+          </div>
+          <button
+            onClick={() => setShowPlanChange(true)}
+            className="btn-outline gap-2"
+            type="button"
+          >
+            <ChevronRight className="h-4 w-4" />
+            Alterar Plano
+          </button>
+        </div>
+
+        {showPlanChange && (
+          <div className="rounded-xl border border-primary-200 dark:border-primary-800 bg-primary-50 dark:bg-primary-950 p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Alterar Plano</h3>
+              <button onClick={() => setShowPlanChange(false)} className="text-gray-400 hover:text-gray-600" type="button">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Escolha seu novo plano. As alteracoes entram em vigor imediatamente.
+            </p>
+            <div className="grid grid-cols-3 gap-4">
+              {(['BASIC', 'STANDARD', 'PREMIUM'] as SupplierTier[]).map((tier) => {
+                const config = SUPPLIER_TIER_CONFIG[tier];
+                const price = tier === 'BASIC' ? 0 : tier === 'STANDARD' ? 99 : 299;
+                const isCurrent = supplier?.tier === tier;
+                return (
+                  <div
+                    key={tier}
+                    className="relative p-4 rounded-xl border-2 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800"
+                  >
+                    <div className="text-center mb-3">
+                      <h3 className="font-semibold text-gray-900 dark:text-white">{SUPPLIER_TIER_LABELS[tier]}</h3>
+                      <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                        {price === 0 ? 'Gratis' : 'R$ ' + price}
+                        <span className="text-sm font-normal text-gray-500">/mes</span>
+                      </p>
+                    </div>
+                    <ul className="space-y-2 mb-4">
+                      <li className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                        <Check className="h-4 w-4 text-green-500" />
+                        {config.maxProducts === -1 ? 'Ilimitados' : config.maxProducts}
+                      </li>
+                      <li className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                        {config.hasPaymentAccess ? (
+                          <Check className="h-4 w-4 text-green-500" />
+                        ) : (
+                          <span className="h-4 w-4 text-gray-300" />
+                        )}
+                        Pagamentos online
+                      </li>
+                      <li className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                        {config.hasReportsAccess ? (
+                          <Check className="h-4 w-4 text-green-500" />
+                        ) : (
+                          <span className="h-4 w-4 text-gray-300" />
+                        )}
+                        Relatorios de vendas
+                      </li>
+                    </ul>
+                    <button
+                      type="button"
+                      onClick={() => handlePlanChange(tier)}
+                      disabled={isSaving || isCurrent}
+                      className="w-full py-2 rounded-lg font-medium text-sm bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50"
+                    >
+                      {isCurrent ? 'Plano Atual' : 'Alterar para ' + SUPPLIER_TIER_LABELS[tier]}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
 
       <h2 className="text-xl font-bold text-gray-900 dark:text-white mt-8 mb-4 flex items-center gap-2">

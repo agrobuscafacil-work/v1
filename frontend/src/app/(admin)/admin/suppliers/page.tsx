@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Store, Search, CheckCircle, XCircle, X, Loader2, MessageCircle, Send, ChevronLeft, ChevronRight, MapPin, Pencil, Crown, CreditCard, FileText, Shield } from 'lucide-react';
+import { Store, Search, CheckCircle, XCircle, X, Loader2, MessageCircle, Send, ChevronLeft, ChevronRight, MapPin, Pencil, Crown, CreditCard, FileText, Shield, HelpCircle } from 'lucide-react';
 import { toast } from '@/lib/toast';
 import { api } from '@/lib/api';
 import ConfirmDialog from '@/components/ui/confirm-dialog';
@@ -17,9 +17,6 @@ interface SupplierItem {
   city: string;
   state: string;
   tier: 'BASIC' | 'STANDARD' | 'PREMIUM';
-  maxProducts: number;
-  hasPaymentAccess: boolean;
-  hasReportsAccess: boolean;
 }
 
 interface SupplierForm {
@@ -31,9 +28,6 @@ interface SupplierForm {
   website: string;
   description: string;
   tier: 'BASIC' | 'STANDARD' | 'PREMIUM';
-  maxProducts: number;
-  hasPaymentAccess: boolean;
-  hasReportsAccess: boolean;
 }
 
 interface ChatMessage {
@@ -84,7 +78,7 @@ export default function AdminSuppliersPage() {
   const [editSupplier, setEditSupplier] = useState<SupplierItem | null>(null);
   const [editForm, setEditForm] = useState<SupplierForm>({
     companyName: '', tradingName: '', phone: '', whatsapp: '', email: '', website: '', description: '',
-    tier: 'BASIC', maxProducts: 1, hasPaymentAccess: false, hasReportsAccess: false,
+    tier: 'BASIC',
   });
 
   useEffect(() => {
@@ -109,9 +103,6 @@ export default function AdminSuppliersPage() {
           city: s.addresses?.[0]?.city || '',
           state: s.addresses?.[0]?.state || '',
           tier: s.tier || 'BASIC',
-          maxProducts: s.maxProducts || 1,
-          hasPaymentAccess: s.hasPaymentAccess || false,
-          hasReportsAccess: s.hasReportsAccess || false,
         })));
         setTotalPages(payload.meta?.totalPages ?? 1);
       } catch {
@@ -237,9 +228,6 @@ export default function AdminSuppliersPage() {
       website: '',
       description: '',
       tier: s.tier || 'BASIC',
-      maxProducts: s.maxProducts || 1,
-      hasPaymentAccess: s.hasPaymentAccess || false,
-      hasReportsAccess: s.hasReportsAccess || false,
     });
     api.get(`/suppliers/${s.id}`)
       .then((res) => {
@@ -252,9 +240,6 @@ export default function AdminSuppliersPage() {
           whatsapp: sup.whatsapp || '',
           website: sup.website || '',
           tier: sup.tier || prev.tier,
-          maxProducts: sup.maxProducts ?? prev.maxProducts,
-          hasPaymentAccess: sup.hasPaymentAccess ?? prev.hasPaymentAccess,
-          hasReportsAccess: sup.hasReportsAccess ?? prev.hasReportsAccess,
           description: sup.description || '',
         }));
       })
@@ -278,6 +263,8 @@ export default function AdminSuppliersPage() {
       if (editForm.email.trim()) payload.email = editForm.email.trim();
       if (editForm.website.trim()) payload.website = editForm.website.trim();
       if (editForm.description.trim()) payload.description = editForm.description.trim();
+      // Include tier field
+      payload.tier = editForm.tier;
       await api.put(`/suppliers/${editSupplier.id}`, payload);
       toast.success('Fornecedor atualizado!');
       setEditSupplier(null);
@@ -295,6 +282,30 @@ export default function AdminSuppliersPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Fornecedores</h1>
           <p className="text-sm text-gray-500 mt-1">Gerencie os fornecedores da plataforma.</p>
+        </div>
+      </div>
+
+      {/* Explicação do cadastro e perfis */}
+      <div className="mb-6 rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950 p-5">
+        <div className="flex items-start gap-3">
+          <div className="h-10 w-10 rounded-lg bg-blue-100 dark:bg-blue-900 flex items-center justify-center flex-shrink-0">
+            <HelpCircle className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+          </div>
+          <div className="flex-1">
+            <h3 className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2">Como funciona o cadastro e perfis de fornecedores</h3>
+            <div className="space-y-2 text-sm text-blue-800 dark:text-blue-200">
+              <p><strong>1. Cadastro:</strong> Fornecedores se cadastram pelo site público (/auth/register, opção Sou Fornecedor) preenchendo dados da empresa (CNPJ, razão social, endereço, etc.). O cadastro entra com status <span className="font-medium">PENDENTE</span>.</p>
+              <p><strong>2. Aprovação:</strong> O admin analisa a documentação e clica em <span className="font-medium">Aprovar</span> ou <span className="font-medium">Rejeitar</span>. Ao aprovar, o fornecedor ganha acesso ao painel.</p>
+              <p><strong>3. Perfis (Tiers):</strong> Cada fornecedor tem um plano que define seus limites:</p>
+              <ul className="list-disc list-inside mt-1 space-y-1">
+                <li><strong>Básico:</strong> 1 produto | Sem pagamentos online | Sem relatórios</li>
+                <li><strong>Padrão:</strong> Até 5 produtos | Com pagamentos online | Sem relatórios</li>
+                <li><strong>Premium:</strong> Produtos ilimitados | Pagamentos online | Relatórios completos</li>
+              </ul>
+              <p><strong>4. Edição:</strong> Clique no ícone de lápis <Pencil className="h-3.5 w-3.5 inline" /> para alterar o plano, limite de produtos, acesso a pagamentos e relatórios.</p>
+              <p><strong>5. Bloqueio:</strong> Fornecedores aprovados podem ser <span className="font-medium">Bloqueados</span> (perdem acesso) ou <span className="font-medium">Ativados</span> novamente.</p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -326,12 +337,12 @@ export default function AdminSuppliersPage() {
                 <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{supplier.name}</p>
                 <p className="text-xs text-gray-500">{supplier.email}</p>
               </div>
-              <div className="flex flex-col items-end gap-1">
-                <div className="flex flex-wrap gap-1">
+<div className="flex flex-col items-end gap-1">
+                <div className="flex flex-wrap gap-1 mb-2">
                   <span className={'text-xs px-2 py-0.5 rounded-full font-medium ' + (STATUS_STYLES[supplier.status]?.className || 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300')}>
                     {STATUS_STYLES[supplier.status]?.label || supplier.status}
                   </span>
-                  <span className={'text-xs px-2 py-0.5 rounded-full font-medium ' + (TIER_LABELS[supplier.tier]?.className || 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300')}>
+                  <span className={'px-3 py-1 rounded-full font-semibold text-sm ' + (TIER_LABELS[supplier.tier]?.className || 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300')}>
                     {TIER_LABELS[supplier.tier]?.label || supplier.tier}
                   </span>
                 </div>
@@ -347,8 +358,8 @@ export default function AdminSuppliersPage() {
             </div>
             <div className="grid grid-cols-3 gap-3 text-center mb-3">
               <div>
-                <p className="text-sm font-bold text-gray-900 dark:text-white">{supplier.products} / {supplier.maxProducts === -1 ? '∞' : supplier.maxProducts}</p>
-                <p className="text-xs text-gray-500">Produtos</p>
+                <p className="text-sm font-bold text-gray-900 dark:text-white">{supplier.products} / {supplier.tier === 'PREMIUM' ? '∞' : supplier.tier === 'STANDARD' ? '5' : '1'}</p>
+                <p className="text-xs text-gray-500">Produtos ({supplier.tier})</p>
               </div>
               <div>
                 <p className="text-sm font-bold text-gray-900 dark:text-white">{supplier.rating > 0 ? supplier.rating : '-'}</p>
@@ -404,15 +415,20 @@ export default function AdminSuppliersPage() {
         </div>
       )}
 
-      {editSupplier && (
+{editSupplier && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
           <div className="w-full max-w-lg rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-2xl flex flex-col" style={{ maxHeight: '640px' }}>
             <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-800">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-sm font-bold text-primary-600">{editSupplier.name.charAt(0)}</div>
-                <div>
+                <div className="h-10 w-10 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-sm font-bold text-primary-600 flex-shrink-0">{editSupplier.name.charAt(0)}</div>
+                <div className="flex flex-col">
                   <p className="text-sm font-semibold text-gray-900 dark:text-white">Editar Fornecedor</p>
-                  <p className="text-xs text-gray-500">{editSupplier.name}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-xs text-gray-500">{editSupplier.name}</p>
+                    <span className={'px-3 py-1 rounded-full font-semibold text-sm ' + (TIER_LABELS[editSupplier.tier]?.className || 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300')}>
+                      {TIER_LABELS[editSupplier.tier]?.label || editSupplier.tier}
+                    </span>
+                  </div>
                 </div>
               </div>
               <button onClick={() => setEditSupplier(null)} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400">
@@ -456,24 +472,7 @@ export default function AdminSuppliersPage() {
                     <option value="STANDARD">Padrão (até 5 produtos, com pagamentos, sem relatórios)</option>
                     <option value="PREMIUM">Premium (produtos ilimitados, pagamentos e relatórios)</option>
                   </select>
-                </div>
-                <div className="grid grid-cols-3 gap-3">
-                  <div>
-                    <label className="label-field">Limite de Produtos</label>
-                    <input type="number" min="0" className="input-field text-sm" value={editForm.maxProducts} onChange={(e) => setEditField('maxProducts', parseInt(e.target.value) || 0)} />
-                  </div>
-                  <div className="flex items-end">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input type="checkbox" checked={editForm.hasPaymentAccess} onChange={(e) => setEditField('hasPaymentAccess', e.target.checked)} className="checkbox-checkbox h-4 w-4" />
-                      <span className="text-sm">Acesso a Pagamentos</span>
-                    </label>
-                  </div>
-                  <div className="flex items-end">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input type="checkbox" checked={editForm.hasReportsAccess} onChange={(e) => setEditField('hasReportsAccess', e.target.checked)} className="checkbox-checkbox h-4 w-4" />
-                      <span className="text-sm">Acesso a Relatórios</span>
-                    </label>
-                  </div>
+                  <p className="text-xs text-gray-500 mt-1">Os limites de produtos, acesso a pagamentos e relatórios são definidos automaticamente pelo plano escolhido.</p>
                 </div>
               </div>
               <div className="flex gap-2 pt-2">

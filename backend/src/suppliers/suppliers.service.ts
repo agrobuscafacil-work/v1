@@ -2,10 +2,11 @@ import { Injectable, NotFoundException, ConflictException, ForbiddenException, B
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateSupplierDto } from './dto/create-supplier.dto';
 import { UpdateSupplierDto } from './dto/update-supplier.dto';
+import { UpdateSupplierAdminDto } from './dto/update-supplier-admin.dto';
 import { SupplierStoreAddressDto } from './dto/supplier-store-address.dto';
 import { SupplierWorkingHourDto } from './dto/supplier-working-hours.dto';
 import { SupplierApprovalDto } from './dto/supplier-approval.dto';
-import { SupplierStatus } from '../generated/prisma/client';
+import { SupplierStatus, SupplierTier } from '../generated/prisma/client';
 import { Prisma } from '../generated/prisma/client';
 import { parsePage, parseLimit } from '../common/utils/pagination';
 
@@ -17,6 +18,7 @@ const publicSupplierSelect: Prisma.SupplierProfileSelect = {
   logoUrl: true,
   bannerUrl: true,
   website: true,
+  tier: true,
   email: true,
   phone: true,
   rating: true,
@@ -230,7 +232,7 @@ export class SuppliersService {
     });
   }
 
-  async update(id: string, dto: UpdateSupplierDto, user: { id: string; role: string }) {
+  async update(id: string, dto: UpdateSupplierDto | UpdateSupplierAdminDto, user: { id: string; role: string }) {
     const supplier = await this.prisma.supplierProfile.findUnique({
       where: { id },
       select: { id: true, userId: true },
@@ -240,7 +242,49 @@ export class SuppliersService {
     if (!isAdmin && supplier.userId !== user.id) {
       throw new ForbiddenException('You cannot update this supplier profile');
     }
+
     return this.prisma.supplierProfile.update({ where: { id }, data: dto });
+  }
+
+  async updateOwn(userId: string, dto: UpdateSupplierDto) {
+    const supplier = await this.prisma.supplierProfile.findUnique({
+      where: { userId },
+      select: { id: true },
+    });
+    if (!supplier) throw new NotFoundException('Supplier profile not found');
+    return this.prisma.supplierProfile.update({ where: { id: supplier.id }, data: dto });
+  }
+
+  async updateTier(id: string, tier: SupplierTier, user: { id: string; role: string }) {
+    const supplier = await this.prisma.supplierProfile.findUnique({
+      where: { id },
+      select: { id: true, userId: true },
+    });
+    if (!supplier) throw new NotFoundException('Supplier not found');
+    const isAdmin = user.role === 'ADMIN' || user.role === 'SUPER_ADMIN';
+    if (!isAdmin && supplier.userId !== user.id) {
+      throw new ForbiddenException('You cannot update this supplier profile');
+    }
+    const updated = await this.prisma.supplierProfile.update({
+      where: { id },
+      data: { tier },
+    });
+    this.logger.log(`Supplier ${id} tier changed to ${tier}`);
+    return updated;
+  }
+
+  async updateOwnTier(userId: string, tier: SupplierTier) {
+    const supplier = await this.prisma.supplierProfile.findUnique({
+      where: { userId },
+      select: { id: true },
+    });
+    if (!supplier) throw new NotFoundException('Supplier profile not found');
+    const updated = await this.prisma.supplierProfile.update({
+      where: { id: supplier.id },
+      data: { tier },
+    });
+    this.logger.log(`Supplier ${supplier.id} tier changed to ${tier} by owner`);
+    return updated;
   }
 
   async approve(id: string, dto: SupplierApprovalDto) {

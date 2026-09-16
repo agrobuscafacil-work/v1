@@ -8,6 +8,7 @@ interface JwtPayload {
   sub: string;
   email: string;
   role: string;
+  supplierId?: string;
   iat?: number;
   exp?: number;
 }
@@ -55,22 +56,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException('Account is inactive');
     }
 
-    let supplierId: string | undefined;
-    if (user.role === 'SUPPLIER') {
-      const supplier = await this.prisma.supplierProfile.findUnique({
-        where: { userId: user.id },
-        select: { id: true },
-      });
-      supplierId = supplier?.id;
-    }
-
     return {
       id: user.id,
       email: user.email,
       name: user.name,
       role: user.role,
       verified: user.verified,
-      supplierId,
+      supplierId: payload.supplierId,
     };
   }
 }
