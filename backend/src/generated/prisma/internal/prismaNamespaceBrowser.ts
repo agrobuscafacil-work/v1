@@ -54,6 +54,7 @@ export const ModelName = {
   User: 'User',
   CustomerProfile: 'CustomerProfile',
   SupplierProfile: 'SupplierProfile',
+  SupplierSubscription: 'SupplierSubscription',
   SupplierFoundationHistory: 'SupplierFoundationHistory',
   Address: 'Address',
   Category: 'Category',
@@ -176,9 +177,6 @@ export const SupplierProfileScalarFieldEnum = {
   email: 'email',
   status: 'status',
   tier: 'tier',
-  maxProducts: 'maxProducts',
-  hasPaymentAccess: 'hasPaymentAccess',
-  hasReportsAccess: 'hasReportsAccess',
   statusReason: 'statusReason',
   approvedAt: 'approvedAt',
   reviewedBy: 'reviewedBy',
@@ -204,6 +202,23 @@ export const SupplierProfileScalarFieldEnum = {
 } as const
 
 export type SupplierProfileScalarFieldEnum = (typeof SupplierProfileScalarFieldEnum)[keyof typeof SupplierProfileScalarFieldEnum]
+
+
+export const SupplierSubscriptionScalarFieldEnum = {
+  id: 'id',
+  supplierId: 'supplierId',
+  userId: 'userId',
+  tier: 'tier',
+  amount: 'amount',
+  currency: 'currency',
+  status: 'status',
+  stripeSessionId: 'stripeSessionId',
+  paidAt: 'paidAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SupplierSubscriptionScalarFieldEnum = (typeof SupplierSubscriptionScalarFieldEnum)[keyof typeof SupplierSubscriptionScalarFieldEnum]
 
 
 export const SupplierFoundationHistoryScalarFieldEnum = {

@@ -170,6 +170,16 @@ export const SupportAttachmentType = {
 export type SupportAttachmentType = (typeof SupportAttachmentType)[keyof typeof SupportAttachmentType]
 
 
+export const SubscriptionStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  CANCELLED: 'CANCELLED',
+  EXPIRED: 'EXPIRED'
+} as const
+
+export type SubscriptionStatus = (typeof SubscriptionStatus)[keyof typeof SubscriptionStatus]
+
+
 export const ReviewReportReason = {
   SPAM: 'SPAM',
   OFFENSIVE_CONTENT: 'OFFENSIVE_CONTENT',

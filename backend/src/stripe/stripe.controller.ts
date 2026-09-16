@@ -14,8 +14,11 @@ import {
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { StripeService } from './stripe.service';
 import { CreateStripeSessionDto } from './dto/create-stripe-session.dto';
+import { CreatePlanCheckoutSessionDto } from './dto/create-plan-checkout-session.dto';
 import { Public } from '../common/decorators/public.decorator';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../common/guards/roles.guard';
+import { Roles } from '../common/decorators/roles.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { UseGuards } from '@nestjs/common';
 
@@ -41,6 +44,31 @@ export class StripeController {
       cancelUrl,
       dto.orderId,
     );
+  }
+
+  @Post('create-plan-checkout-session')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Create Stripe Checkout session for supplier plan' })
+  async createPlanCheckoutSession(@CurrentUser() user: any, @Body() dto: CreatePlanCheckoutSessionDto) {
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const successUrl = dto.successUrl || `${baseUrl}/vender?success=true&tier=${dto.tier}`;
+    const cancelUrl = dto.cancelUrl || `${baseUrl}/vender?canceled=true&tier=${dto.tier}`;
+    return this.stripeService.createPlanCheckoutSession(
+      user.id,
+      dto.tier,
+      successUrl,
+      cancelUrl,
+    );
+  }
+
+  @Get('admin/plan-subscriptions')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Get supplier plan revenue (admin)' })
+  async getPlanSubscriptions() {
+    return this.stripeService.getPlanRevenueSummary();
   }
 
   @Get('session-status/:sessionId')

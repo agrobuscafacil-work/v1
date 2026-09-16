@@ -33,6 +33,11 @@ export type CustomerProfile = Prisma.CustomerProfileModel
  */
 export type SupplierProfile = Prisma.SupplierProfileModel
 /**
+ * Model SupplierSubscription
+ * 
+ */
+export type SupplierSubscription = Prisma.SupplierSubscriptionModel
+/**
  * Model SupplierFoundationHistory
  * 
  */

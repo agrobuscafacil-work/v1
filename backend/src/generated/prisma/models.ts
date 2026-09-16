@@ -11,6 +11,7 @@
 export type * from './models/User'
 export type * from './models/CustomerProfile'
 export type * from './models/SupplierProfile'
+export type * from './models/SupplierSubscription'
 export type * from './models/SupplierFoundationHistory'
 export type * from './models/Address'
 export type * from './models/Category'

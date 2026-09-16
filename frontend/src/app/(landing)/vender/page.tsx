@@ -129,14 +129,8 @@ export default function VenderPage() {
 
     setPaymentLoading(tier);
     try {
-      const res = await api.post('/stripe/create-checkout-session', {
-        items: [{
-          name: `Plano ${SUPPLIER_TIER_LABELS[tier]}`,
-          description: `Assinatura mensal do plano ${SUPPLIER_TIER_LABELS[tier]}`,
-          priceInCents: Math.round(plan.price * 100),
-          quantity: 1,
-          currency: 'brl',
-        }],
+      const res = await api.post('/stripe/create-plan-checkout-session', {
+        tier,
         successUrl: `${window.location.origin}/vender?success=true&tier=${tier}`,
         cancelUrl: `${window.location.origin}/vender?canceled=true&tier=${tier}`,
       });

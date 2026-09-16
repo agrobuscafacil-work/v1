@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { BarChart3, Download, TrendingUp, Users, DollarSign, ShoppingBag, FileText, FileSpreadsheet, Loader2 } from 'lucide-react';
+import { BarChart3, Download, TrendingUp, Users, DollarSign, ShoppingBag, FileText, FileSpreadsheet, Loader2, CreditCard } from 'lucide-react';
 import { toast } from '@/lib/toast';
 import { api } from '@/lib/api';
 import { exportCSV, exportPDF } from '@/lib/export';
@@ -45,9 +45,29 @@ interface Order {
 
 const reportTypes = [
   { id: 'financial', label: 'Relatório Financeiro', icon: DollarSign },
+  { id: 'plans', label: 'Receita de Planos', icon: CreditCard },
   { id: 'usage', label: 'Relatório de Uso', icon: Users },
   { id: 'searches', label: 'Produtos Mais Vendidos', icon: TrendingUp },
 ];
+
+interface PlanSubscription {
+  id: string;
+  tier: string;
+  amount: number;
+  currency: string;
+  status: string;
+  paidAt: string | null;
+  createdAt: string;
+  supplier: { id: string; companyName: string; email: string } | null;
+}
+
+interface PlanRevenue {
+  total: number;
+  count: number;
+  byTier: Record<string, { count: number; total: number }>;
+  monthly: { month: string; total: number; count: number }[];
+  subscriptions: PlanSubscription[];
+}
 
 export default function AdminReportsPage() {
   const [activeReport, setActiveReport] = useState('financial');
@@ -55,6 +75,8 @@ export default function AdminReportsPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [dashboardStats, setDashboardStats] = useState<Record<string, any>>({});
+  const [planRevenue, setPlanRevenue] = useState<PlanRevenue | null>(null);
+  const [planLoading, setPlanLoading] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -77,6 +99,23 @@ export default function AdminReportsPage() {
     };
     load();
   }, []);
+
+  useEffect(() => {
+    if (activeReport !== 'plans' || planRevenue) return;
+    const loadPlans = async () => {
+      setPlanLoading(true);
+      try {
+        const res = await api.get('/stripe/admin/plan-subscriptions');
+        setPlanRevenue(res.data.data ?? null);
+      } catch (e: any) {
+        const msg = e?.response?.data?.message;
+        toast.error(typeof msg === 'string' ? msg : 'Erro ao carregar receita de planos.');
+      } finally {
+        setPlanLoading(false);
+      }
+    };
+    loadPlans();
+  }, [activeReport, planRevenue]);
 
   const delivered = orders.filter((o) => o.status === 'DELIVERED');
   const revenueOrders = delivered.length > 0 ? delivered : orders;
@@ -164,6 +203,16 @@ export default function AdminReportsPage() {
       exportCSV(filename, ['Métrica', 'Valor'], usageData);
     } else if (report === 'searches') {
       exportCSV(filename, ['#', 'Produto', 'Vendidos'], topProducts.map((s, i) => [String(i + 1), s.name, String(s.quantity)]));
+    } else if (report === 'plans') {
+      const rows = (planRevenue?.subscriptions ?? []).map((s) => [
+        s.supplier?.companyName || '—',
+        s.supplier?.email || '—',
+        s.tier,
+        String(Number(s.amount).toFixed(2)),
+        s.paidAt ? new Date(s.paidAt).toLocaleDateString('pt-BR') : '—',
+        s.status,
+      ]);
+      exportCSV(filename, ['Fornecedor', 'Email', 'Plano', 'Valor (R$)', 'Pago em', 'Status'], rows);
     }
     setExportMenu(null);
     toast.success('CSV exportado');
@@ -250,7 +299,7 @@ export default function AdminReportsPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {reportTypes.map((r) => (
           <button
             key={r.id}
@@ -263,7 +312,7 @@ export default function AdminReportsPage() {
             <div className="flex-1">
               <p className="text-sm font-medium text-gray-900 dark:text-white">{r.label}</p>
               <p className="text-xs text-gray-500">
-                {r.id === 'financial' ? 'Receitas, despesas e projeções' : r.id === 'usage' ? 'Usuários ativos e sessões' : 'Termos e categorias populares'}
+                {r.id === 'financial' ? 'Receitas de pedidos e projeções' : r.id === 'plans' ? 'Receita separada das assinaturas de planos' : r.id === 'usage' ? 'Usuários ativos e sessões' : 'Termos e categorias populares'}
               </p>
             </div>
           </button>
@@ -305,6 +354,81 @@ export default function AdminReportsPage() {
                 <p className="text-xl font-bold text-emerald-600">R$ {(totalRevenue - commission).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
               </div>
             </div>
+          </div>
+        )}
+
+        {activeReport === 'plans' && (
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Receita de Planos (separado)</h2>
+              <div className="relative">
+                <button onClick={() => setExportMenu(exportMenu === 'plans' ? null : 'plans')} className="btn-outline text-sm gap-2 inline-flex items-center">
+                  <Download className="h-4 w-4" /> Exportar
+                </button>
+                {exportMenu === 'plans' && (
+                  <div className="absolute right-0 mt-2 w-36 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg z-10">
+                    <button onClick={() => doExportCSV('plans')} className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-t-lg"><FileSpreadsheet className="h-4 w-4" /> CSV</button>
+                    <button onClick={() => doExportPDF('plans')} className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-b-lg"><FileText className="h-4 w-4" /> PDF</button>
+                  </div>
+                )}
+              </div>
+            </div>
+            {planLoading ? (
+              <div className="flex items-center justify-center gap-2 py-8 text-gray-500">
+                <Loader2 className="h-5 w-5 animate-spin" />
+                <span className="text-sm">Carregando receita de planos...</span>
+              </div>
+            ) : !planRevenue || planRevenue.count === 0 ? (
+              <div className="py-8 text-center text-sm text-gray-500">Nenhuma assinatura de plano paga ainda. Os valores recebidos via Stripe aparecerão aqui separados da receita de pedidos.</div>
+            ) : (
+              <>
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div className="rounded-lg bg-gray-50 dark:bg-gray-800 p-4">
+                    <p className="text-sm text-gray-500">Receita de Planos (total)</p>
+                    <p className="text-xl font-bold text-emerald-600">R$ {Number(planRevenue.total).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+                  </div>
+                  <div className="rounded-lg bg-gray-50 dark:bg-gray-800 p-4">
+                    <p className="text-sm text-gray-500">Assinaturas pagas</p>
+                    <p className="text-xl font-bold text-primary-600">{planRevenue.count}</p>
+                  </div>
+                  {Object.entries(planRevenue.byTier).map(([tier, info]) => (
+                    <div key={tier} className="rounded-lg bg-gray-50 dark:bg-gray-800 p-4">
+                      <p className="text-sm text-gray-500">Plano {tier}</p>
+                      <p className="text-xl font-bold text-gray-900 dark:text-white">R$ {Number(info.total).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+                      <p className="text-xs text-gray-500">{info.count} assinatura(s)</p>
+                    </div>
+                  ))}
+                </div>
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Assinaturas recebidas</h3>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="text-left text-xs text-gray-500 uppercase border-b border-gray-100 dark:border-gray-800">
+                        <th className="p-2 font-medium">Fornecedor</th>
+                        <th className="p-2 font-medium">Plano</th>
+                        <th className="p-2 font-medium">Valor</th>
+                        <th className="p-2 font-medium">Pago em</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {planRevenue.subscriptions.map((s) => (
+                        <tr key={s.id} className="border-b border-gray-50 dark:border-gray-800/50">
+                          <td className="p-2">
+                            <p className="font-medium text-gray-900 dark:text-white">{s.supplier?.companyName || '—'}</p>
+                            <p className="text-xs text-gray-500">{s.supplier?.email || ''}</p>
+                          </td>
+                          <td className="p-2">
+                            <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300">{s.tier}</span>
+                          </td>
+                          <td className="p-2 font-semibold text-emerald-600">R$ {Number(s.amount).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                          <td className="p-2 text-gray-500">{s.paidAt ? new Date(s.paidAt).toLocaleDateString('pt-BR') : '—'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            )}
           </div>
         )}
 

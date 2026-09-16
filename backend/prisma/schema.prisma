@@ -254,11 +254,40 @@ model SupplierProfile {
   addresses       Address[]
   chatSettings    ChatSettings?
   foundationHistory SupplierFoundationHistory[]
+  subscriptions   SupplierSubscription[]
 
   @@index([userId])
   @@index([status])
   @@index([rating])
   @@index([featured])
+}
+
+enum SubscriptionStatus {
+  PENDING
+  APPROVED
+  CANCELLED
+  EXPIRED
+}
+
+model SupplierSubscription {
+  id              String             @id @default(uuid())
+  supplierId      String
+  supplier        SupplierProfile    @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  userId          String
+  tier            SupplierTier
+  amount          Decimal            @db.Decimal(12, 2)
+  currency        String             @default("brl")
+  status          SubscriptionStatus @default(PENDING)
+  stripeSessionId String?            @unique
+  paidAt          DateTime?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  @@index([supplierId])
+  @@index([userId])
+  @@index([status])
+  @@index([tier])
+  @@index([createdAt])
 }
 
 model SupplierFoundationHistory {

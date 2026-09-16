@@ -400,6 +400,7 @@ export const ModelName = {
   User: 'User',
   CustomerProfile: 'CustomerProfile',
   SupplierProfile: 'SupplierProfile',
+  SupplierSubscription: 'SupplierSubscription',
   SupplierFoundationHistory: 'SupplierFoundationHistory',
   Address: 'Address',
   Category: 'Category',
@@ -460,7 +461,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "customerProfile" | "supplierProfile" | "supplierFoundationHistory" | "address" | "category" | "product" | "productCode" | "service" | "promotion" | "coupon" | "workingHours" | "cart" | "cartItem" | "order" | "orderItem" | "orderCoupon" | "orderStatusHistory" | "review" | "reviewLike" | "sellerReviewResponse" | "sellerReview" | "sellerReviewLike" | "reviewResponse" | "reviewReport" | "sellerReviewReport" | "favorite" | "conversation" | "message" | "payment" | "paymentCustomer" | "paymentCard" | "paymentEvent" | "chatSettings" | "systemSetting" | "notification" | "banner" | "auditLog" | "systemConfig" | "report" | "supportCategory" | "supportType" | "supportTicket" | "supportAttachment" | "supportTicketNote" | "supportTicketStatusHistory" | "searchLog" | "sessionLog"
+    modelProps: "user" | "customerProfile" | "supplierProfile" | "supplierSubscription" | "supplierFoundationHistory" | "address" | "category" | "product" | "productCode" | "service" | "promotion" | "coupon" | "workingHours" | "cart" | "cartItem" | "order" | "orderItem" | "orderCoupon" | "orderStatusHistory" | "review" | "reviewLike" | "sellerReviewResponse" | "sellerReview" | "sellerReviewLike" | "reviewResponse" | "reviewReport" | "sellerReviewReport" | "favorite" | "conversation" | "message" | "payment" | "paymentCustomer" | "paymentCard" | "paymentEvent" | "chatSettings" | "systemSetting" | "notification" | "banner" | "auditLog" | "systemConfig" | "report" | "supportCategory" | "supportType" | "supportTicket" | "supportAttachment" | "supportTicketNote" | "supportTicketStatusHistory" | "searchLog" | "sessionLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -683,6 +684,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.SupplierProfileCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.SupplierProfileCountAggregateOutputType> | number
+        }
+      }
+    }
+    SupplierSubscription: {
+      payload: Prisma.$SupplierSubscriptionPayload<ExtArgs>
+      fields: Prisma.SupplierSubscriptionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SupplierSubscriptionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierSubscriptionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SupplierSubscriptionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierSubscriptionPayload>
+        }
+        findFirst: {
+          args: Prisma.SupplierSubscriptionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierSubscriptionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SupplierSubscriptionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierSubscriptionPayload>
+        }
+        findMany: {
+          args: Prisma.SupplierSubscriptionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierSubscriptionPayload>[]
+        }
+        create: {
+          args: Prisma.SupplierSubscriptionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierSubscriptionPayload>
+        }
+        createMany: {
+          args: Prisma.SupplierSubscriptionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SupplierSubscriptionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierSubscriptionPayload>[]
+        }
+        delete: {
+          args: Prisma.SupplierSubscriptionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierSubscriptionPayload>
+        }
+        update: {
+          args: Prisma.SupplierSubscriptionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierSubscriptionPayload>
+        }
+        deleteMany: {
+          args: Prisma.SupplierSubscriptionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SupplierSubscriptionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SupplierSubscriptionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierSubscriptionPayload>[]
+        }
+        upsert: {
+          args: Prisma.SupplierSubscriptionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierSubscriptionPayload>
+        }
+        aggregate: {
+          args: Prisma.SupplierSubscriptionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSupplierSubscription>
+        }
+        groupBy: {
+          args: Prisma.SupplierSubscriptionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SupplierSubscriptionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SupplierSubscriptionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SupplierSubscriptionCountAggregateOutputType> | number
         }
       }
     }
@@ -4114,9 +4189,6 @@ export const SupplierProfileScalarFieldEnum = {
   email: 'email',
   status: 'status',
   tier: 'tier',
-  maxProducts: 'maxProducts',
-  hasPaymentAccess: 'hasPaymentAccess',
-  hasReportsAccess: 'hasReportsAccess',
   statusReason: 'statusReason',
   approvedAt: 'approvedAt',
   reviewedBy: 'reviewedBy',
@@ -4142,6 +4214,23 @@ export const SupplierProfileScalarFieldEnum = {
 } as const
 
 export type SupplierProfileScalarFieldEnum = (typeof SupplierProfileScalarFieldEnum)[keyof typeof SupplierProfileScalarFieldEnum]
+
+
+export const SupplierSubscriptionScalarFieldEnum = {
+  id: 'id',
+  supplierId: 'supplierId',
+  userId: 'userId',
+  tier: 'tier',
+  amount: 'amount',
+  currency: 'currency',
+  status: 'status',
+  stripeSessionId: 'stripeSessionId',
+  paidAt: 'paidAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SupplierSubscriptionScalarFieldEnum = (typeof SupplierSubscriptionScalarFieldEnum)[keyof typeof SupplierSubscriptionScalarFieldEnum]
 
 
 export const SupplierFoundationHistoryScalarFieldEnum = {
@@ -5069,6 +5158,20 @@ export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$Prisma
 
 
 /**
+ * Reference to a field of type 'SubscriptionStatus'
+ */
+export type EnumSubscriptionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SubscriptionStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'SubscriptionStatus[]'
+ */
+export type ListEnumSubscriptionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SubscriptionStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'ProductStatus'
  */
 export type EnumProductStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProductStatus'>
@@ -5417,6 +5520,7 @@ export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   customerProfile?: Prisma.CustomerProfileOmit
   supplierProfile?: Prisma.SupplierProfileOmit
+  supplierSubscription?: Prisma.SupplierSubscriptionOmit
   supplierFoundationHistory?: Prisma.SupplierFoundationHistoryOmit
   address?: Prisma.AddressOmit
   category?: Prisma.CategoryOmit

@@ -27,7 +27,6 @@ export type AggregateSupplierProfile = {
 }
 
 export type SupplierProfileAvgAggregateOutputType = {
-  maxProducts: number | null
   rating: runtime.Decimal | null
   totalReviews: number | null
   sellerRating: runtime.Decimal | null
@@ -41,7 +40,6 @@ export type SupplierProfileAvgAggregateOutputType = {
 }
 
 export type SupplierProfileSumAggregateOutputType = {
-  maxProducts: number | null
   rating: runtime.Decimal | null
   totalReviews: number | null
   sellerRating: runtime.Decimal | null
@@ -71,9 +69,6 @@ export type SupplierProfileMinAggregateOutputType = {
   email: string | null
   status: $Enums.SupplierStatus | null
   tier: $Enums.SupplierTier | null
-  maxProducts: number | null
-  hasPaymentAccess: boolean | null
-  hasReportsAccess: boolean | null
   statusReason: string | null
   approvedAt: Date | null
   reviewedBy: string | null
@@ -110,9 +105,6 @@ export type SupplierProfileMaxAggregateOutputType = {
   email: string | null
   status: $Enums.SupplierStatus | null
   tier: $Enums.SupplierTier | null
-  maxProducts: number | null
-  hasPaymentAccess: boolean | null
-  hasReportsAccess: boolean | null
   statusReason: string | null
   approvedAt: Date | null
   reviewedBy: string | null
@@ -149,9 +141,6 @@ export type SupplierProfileCountAggregateOutputType = {
   email: number
   status: number
   tier: number
-  maxProducts: number
-  hasPaymentAccess: number
-  hasReportsAccess: number
   statusReason: number
   approvedAt: number
   reviewedBy: number
@@ -179,7 +168,6 @@ export type SupplierProfileCountAggregateOutputType = {
 
 
 export type SupplierProfileAvgAggregateInputType = {
-  maxProducts?: true
   rating?: true
   totalReviews?: true
   sellerRating?: true
@@ -193,7 +181,6 @@ export type SupplierProfileAvgAggregateInputType = {
 }
 
 export type SupplierProfileSumAggregateInputType = {
-  maxProducts?: true
   rating?: true
   totalReviews?: true
   sellerRating?: true
@@ -223,9 +210,6 @@ export type SupplierProfileMinAggregateInputType = {
   email?: true
   status?: true
   tier?: true
-  maxProducts?: true
-  hasPaymentAccess?: true
-  hasReportsAccess?: true
   statusReason?: true
   approvedAt?: true
   reviewedBy?: true
@@ -262,9 +246,6 @@ export type SupplierProfileMaxAggregateInputType = {
   email?: true
   status?: true
   tier?: true
-  maxProducts?: true
-  hasPaymentAccess?: true
-  hasReportsAccess?: true
   statusReason?: true
   approvedAt?: true
   reviewedBy?: true
@@ -301,9 +282,6 @@ export type SupplierProfileCountAggregateInputType = {
   email?: true
   status?: true
   tier?: true
-  maxProducts?: true
-  hasPaymentAccess?: true
-  hasReportsAccess?: true
   statusReason?: true
   approvedAt?: true
   reviewedBy?: true
@@ -432,9 +410,6 @@ export type SupplierProfileGroupByOutputType = {
   email: string
   status: $Enums.SupplierStatus
   tier: $Enums.SupplierTier
-  maxProducts: number
-  hasPaymentAccess: boolean
-  hasReportsAccess: boolean
   statusReason: string | null
   approvedAt: Date | null
   reviewedBy: string | null
@@ -499,9 +474,6 @@ export type SupplierProfileWhereInput = {
   email?: Prisma.StringFilter<"SupplierProfile"> | string
   status?: Prisma.EnumSupplierStatusFilter<"SupplierProfile"> | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFilter<"SupplierProfile"> | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFilter<"SupplierProfile"> | number
-  hasPaymentAccess?: Prisma.BoolFilter<"SupplierProfile"> | boolean
-  hasReportsAccess?: Prisma.BoolFilter<"SupplierProfile"> | boolean
   statusReason?: Prisma.StringNullableFilter<"SupplierProfile"> | string | null
   approvedAt?: Prisma.DateTimeNullableFilter<"SupplierProfile"> | Date | string | null
   reviewedBy?: Prisma.StringNullableFilter<"SupplierProfile"> | string | null
@@ -542,6 +514,7 @@ export type SupplierProfileWhereInput = {
   addresses?: Prisma.AddressListRelationFilter
   chatSettings?: Prisma.XOR<Prisma.ChatSettingsNullableScalarRelationFilter, Prisma.ChatSettingsWhereInput> | null
   foundationHistory?: Prisma.SupplierFoundationHistoryListRelationFilter
+  subscriptions?: Prisma.SupplierSubscriptionListRelationFilter
 }
 
 export type SupplierProfileOrderByWithRelationInput = {
@@ -561,9 +534,6 @@ export type SupplierProfileOrderByWithRelationInput = {
   email?: Prisma.SortOrder
   status?: Prisma.SortOrder
   tier?: Prisma.SortOrder
-  maxProducts?: Prisma.SortOrder
-  hasPaymentAccess?: Prisma.SortOrder
-  hasReportsAccess?: Prisma.SortOrder
   statusReason?: Prisma.SortOrderInput | Prisma.SortOrder
   approvedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   reviewedBy?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -604,6 +574,7 @@ export type SupplierProfileOrderByWithRelationInput = {
   addresses?: Prisma.AddressOrderByRelationAggregateInput
   chatSettings?: Prisma.ChatSettingsOrderByWithRelationInput
   foundationHistory?: Prisma.SupplierFoundationHistoryOrderByRelationAggregateInput
+  subscriptions?: Prisma.SupplierSubscriptionOrderByRelationAggregateInput
 }
 
 export type SupplierProfileWhereUniqueInput = Prisma.AtLeast<{
@@ -626,9 +597,6 @@ export type SupplierProfileWhereUniqueInput = Prisma.AtLeast<{
   email?: Prisma.StringFilter<"SupplierProfile"> | string
   status?: Prisma.EnumSupplierStatusFilter<"SupplierProfile"> | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFilter<"SupplierProfile"> | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFilter<"SupplierProfile"> | number
-  hasPaymentAccess?: Prisma.BoolFilter<"SupplierProfile"> | boolean
-  hasReportsAccess?: Prisma.BoolFilter<"SupplierProfile"> | boolean
   statusReason?: Prisma.StringNullableFilter<"SupplierProfile"> | string | null
   approvedAt?: Prisma.DateTimeNullableFilter<"SupplierProfile"> | Date | string | null
   reviewedBy?: Prisma.StringNullableFilter<"SupplierProfile"> | string | null
@@ -669,6 +637,7 @@ export type SupplierProfileWhereUniqueInput = Prisma.AtLeast<{
   addresses?: Prisma.AddressListRelationFilter
   chatSettings?: Prisma.XOR<Prisma.ChatSettingsNullableScalarRelationFilter, Prisma.ChatSettingsWhereInput> | null
   foundationHistory?: Prisma.SupplierFoundationHistoryListRelationFilter
+  subscriptions?: Prisma.SupplierSubscriptionListRelationFilter
 }, "id" | "userId" | "document">
 
 export type SupplierProfileOrderByWithAggregationInput = {
@@ -688,9 +657,6 @@ export type SupplierProfileOrderByWithAggregationInput = {
   email?: Prisma.SortOrder
   status?: Prisma.SortOrder
   tier?: Prisma.SortOrder
-  maxProducts?: Prisma.SortOrder
-  hasPaymentAccess?: Prisma.SortOrder
-  hasReportsAccess?: Prisma.SortOrder
   statusReason?: Prisma.SortOrderInput | Prisma.SortOrder
   approvedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   reviewedBy?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -740,9 +706,6 @@ export type SupplierProfileScalarWhereWithAggregatesInput = {
   email?: Prisma.StringWithAggregatesFilter<"SupplierProfile"> | string
   status?: Prisma.EnumSupplierStatusWithAggregatesFilter<"SupplierProfile"> | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierWithAggregatesFilter<"SupplierProfile"> | $Enums.SupplierTier
-  maxProducts?: Prisma.IntWithAggregatesFilter<"SupplierProfile"> | number
-  hasPaymentAccess?: Prisma.BoolWithAggregatesFilter<"SupplierProfile"> | boolean
-  hasReportsAccess?: Prisma.BoolWithAggregatesFilter<"SupplierProfile"> | boolean
   statusReason?: Prisma.StringNullableWithAggregatesFilter<"SupplierProfile"> | string | null
   approvedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"SupplierProfile"> | Date | string | null
   reviewedBy?: Prisma.StringNullableWithAggregatesFilter<"SupplierProfile"> | string | null
@@ -783,9 +746,6 @@ export type SupplierProfileCreateInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -826,6 +786,7 @@ export type SupplierProfileCreateInput = {
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateInput = {
@@ -845,9 +806,6 @@ export type SupplierProfileUncheckedCreateInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -887,6 +845,7 @@ export type SupplierProfileUncheckedCreateInput = {
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUpdateInput = {
@@ -905,9 +864,6 @@ export type SupplierProfileUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -948,6 +904,7 @@ export type SupplierProfileUpdateInput = {
   addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateInput = {
@@ -967,9 +924,6 @@ export type SupplierProfileUncheckedUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1009,6 +963,7 @@ export type SupplierProfileUncheckedUpdateInput = {
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileCreateManyInput = {
@@ -1028,9 +983,6 @@ export type SupplierProfileCreateManyInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -1071,9 +1023,6 @@ export type SupplierProfileUpdateManyMutationInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1115,9 +1064,6 @@ export type SupplierProfileUncheckedUpdateManyInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1172,9 +1118,6 @@ export type SupplierProfileCountOrderByAggregateInput = {
   email?: Prisma.SortOrder
   status?: Prisma.SortOrder
   tier?: Prisma.SortOrder
-  maxProducts?: Prisma.SortOrder
-  hasPaymentAccess?: Prisma.SortOrder
-  hasReportsAccess?: Prisma.SortOrder
   statusReason?: Prisma.SortOrder
   approvedAt?: Prisma.SortOrder
   reviewedBy?: Prisma.SortOrder
@@ -1200,7 +1143,6 @@ export type SupplierProfileCountOrderByAggregateInput = {
 }
 
 export type SupplierProfileAvgOrderByAggregateInput = {
-  maxProducts?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   totalReviews?: Prisma.SortOrder
   sellerRating?: Prisma.SortOrder
@@ -1230,9 +1172,6 @@ export type SupplierProfileMaxOrderByAggregateInput = {
   email?: Prisma.SortOrder
   status?: Prisma.SortOrder
   tier?: Prisma.SortOrder
-  maxProducts?: Prisma.SortOrder
-  hasPaymentAccess?: Prisma.SortOrder
-  hasReportsAccess?: Prisma.SortOrder
   statusReason?: Prisma.SortOrder
   approvedAt?: Prisma.SortOrder
   reviewedBy?: Prisma.SortOrder
@@ -1269,9 +1208,6 @@ export type SupplierProfileMinOrderByAggregateInput = {
   email?: Prisma.SortOrder
   status?: Prisma.SortOrder
   tier?: Prisma.SortOrder
-  maxProducts?: Prisma.SortOrder
-  hasPaymentAccess?: Prisma.SortOrder
-  hasReportsAccess?: Prisma.SortOrder
   statusReason?: Prisma.SortOrder
   approvedAt?: Prisma.SortOrder
   reviewedBy?: Prisma.SortOrder
@@ -1292,7 +1228,6 @@ export type SupplierProfileMinOrderByAggregateInput = {
 }
 
 export type SupplierProfileSumOrderByAggregateInput = {
-  maxProducts?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   totalReviews?: Prisma.SortOrder
   sellerRating?: Prisma.SortOrder
@@ -1374,6 +1309,20 @@ export type SupplierProfileUpdatecertificationsInput = {
 export type SupplierProfileUpdatebadgesInput = {
   set?: string[]
   push?: string | string[]
+}
+
+export type SupplierProfileCreateNestedOneWithoutSubscriptionsInput = {
+  create?: Prisma.XOR<Prisma.SupplierProfileCreateWithoutSubscriptionsInput, Prisma.SupplierProfileUncheckedCreateWithoutSubscriptionsInput>
+  connectOrCreate?: Prisma.SupplierProfileCreateOrConnectWithoutSubscriptionsInput
+  connect?: Prisma.SupplierProfileWhereUniqueInput
+}
+
+export type SupplierProfileUpdateOneRequiredWithoutSubscriptionsNestedInput = {
+  create?: Prisma.XOR<Prisma.SupplierProfileCreateWithoutSubscriptionsInput, Prisma.SupplierProfileUncheckedCreateWithoutSubscriptionsInput>
+  connectOrCreate?: Prisma.SupplierProfileCreateOrConnectWithoutSubscriptionsInput
+  upsert?: Prisma.SupplierProfileUpsertWithoutSubscriptionsInput
+  connect?: Prisma.SupplierProfileWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.SupplierProfileUpdateToOneWithWhereWithoutSubscriptionsInput, Prisma.SupplierProfileUpdateWithoutSubscriptionsInput>, Prisma.SupplierProfileUncheckedUpdateWithoutSubscriptionsInput>
 }
 
 export type SupplierProfileCreateNestedOneWithoutFoundationHistoryInput = {
@@ -1640,9 +1589,6 @@ export type SupplierProfileCreateWithoutUserInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -1682,6 +1628,7 @@ export type SupplierProfileCreateWithoutUserInput = {
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutUserInput = {
@@ -1700,9 +1647,255 @@ export type SupplierProfileUncheckedCreateWithoutUserInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
+  statusReason?: string | null
+  approvedAt?: Date | string | null
+  reviewedBy?: string | null
+  rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
+  totalProducts?: number
+  totalOrders?: number
+  totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  foundedYear?: number | null
+  employeesCount?: number | null
+  businessHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deliveryInfo?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  certifications?: Prisma.SupplierProfileCreatecertificationsInput | string[]
+  badges?: Prisma.SupplierProfileCreatebadgesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  featured?: boolean
+  viewCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  products?: Prisma.ProductUncheckedCreateNestedManyWithoutSupplierInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutSupplierInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutSupplierInput
+  promotions?: Prisma.PromotionUncheckedCreateNestedManyWithoutSupplierInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewUncheckedCreateNestedManyWithoutSupplierInput
+  reviewResponses?: Prisma.ReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedCreateNestedManyWithoutSupplierInput
+  favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutSupplierInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutSupplierInput
+  workingHours?: Prisma.WorkingHoursUncheckedCreateNestedManyWithoutSupplierInput
+  coupons?: Prisma.CouponUncheckedCreateNestedManyWithoutSupplierInput
+  categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutSupplierInput
+  banners?: Prisma.BannerUncheckedCreateNestedManyWithoutSupplierInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
+  chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedCreateNestedManyWithoutSupplierInput
+}
+
+export type SupplierProfileCreateOrConnectWithoutUserInput = {
+  where: Prisma.SupplierProfileWhereUniqueInput
+  create: Prisma.XOR<Prisma.SupplierProfileCreateWithoutUserInput, Prisma.SupplierProfileUncheckedCreateWithoutUserInput>
+}
+
+export type SupplierProfileUpsertWithoutUserInput = {
+  update: Prisma.XOR<Prisma.SupplierProfileUpdateWithoutUserInput, Prisma.SupplierProfileUncheckedUpdateWithoutUserInput>
+  create: Prisma.XOR<Prisma.SupplierProfileCreateWithoutUserInput, Prisma.SupplierProfileUncheckedCreateWithoutUserInput>
+  where?: Prisma.SupplierProfileWhereInput
+}
+
+export type SupplierProfileUpdateToOneWithWhereWithoutUserInput = {
+  where?: Prisma.SupplierProfileWhereInput
+  data: Prisma.XOR<Prisma.SupplierProfileUpdateWithoutUserInput, Prisma.SupplierProfileUncheckedUpdateWithoutUserInput>
+}
+
+export type SupplierProfileUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  companyName?: Prisma.StringFieldUpdateOperationsInput | string
+  tradingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  document?: Prisma.StringFieldUpdateOperationsInput | string
+  stateRegistration?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  municipalRegistration?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
+  totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  foundedYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  employeesCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  businessHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deliveryInfo?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  certifications?: Prisma.SupplierProfileUpdatecertificationsInput | string[]
+  badges?: Prisma.SupplierProfileUpdatebadgesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  viewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  products?: Prisma.ProductUpdateManyWithoutSupplierNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutSupplierNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutSupplierNestedInput
+  promotions?: Prisma.PromotionUpdateManyWithoutSupplierNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUpdateManyWithoutSupplierNestedInput
+  reviewResponses?: Prisma.ReviewResponseUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUpdateManyWithoutSupplierNestedInput
+  favorites?: Prisma.FavoriteUpdateManyWithoutSupplierNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutSupplierNestedInput
+  workingHours?: Prisma.WorkingHoursUpdateManyWithoutSupplierNestedInput
+  coupons?: Prisma.CouponUpdateManyWithoutSupplierNestedInput
+  categories?: Prisma.CategoryUpdateManyWithoutSupplierNestedInput
+  banners?: Prisma.BannerUpdateManyWithoutSupplierNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
+  chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUpdateManyWithoutSupplierNestedInput
+}
+
+export type SupplierProfileUncheckedUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  companyName?: Prisma.StringFieldUpdateOperationsInput | string
+  tradingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  document?: Prisma.StringFieldUpdateOperationsInput | string
+  stateRegistration?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  municipalRegistration?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  whatsapp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
+  tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  sellerRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  totalProducts?: Prisma.IntFieldUpdateOperationsInput | number
+  totalOrders?: Prisma.IntFieldUpdateOperationsInput | number
+  totalSales?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  foundedYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  employeesCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  businessHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deliveryInfo?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  certifications?: Prisma.SupplierProfileUpdatecertificationsInput | string[]
+  badges?: Prisma.SupplierProfileUpdatebadgesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  viewCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  products?: Prisma.ProductUncheckedUpdateManyWithoutSupplierNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutSupplierNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutSupplierNestedInput
+  promotions?: Prisma.PromotionUncheckedUpdateManyWithoutSupplierNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerReviews?: Prisma.SellerReviewUncheckedUpdateManyWithoutSupplierNestedInput
+  reviewResponses?: Prisma.ReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
+  sellerResponses?: Prisma.SellerReviewResponseUncheckedUpdateManyWithoutSupplierNestedInput
+  favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutSupplierNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutSupplierNestedInput
+  workingHours?: Prisma.WorkingHoursUncheckedUpdateManyWithoutSupplierNestedInput
+  coupons?: Prisma.CouponUncheckedUpdateManyWithoutSupplierNestedInput
+  categories?: Prisma.CategoryUncheckedUpdateManyWithoutSupplierNestedInput
+  banners?: Prisma.BannerUncheckedUpdateManyWithoutSupplierNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
+  chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedUpdateManyWithoutSupplierNestedInput
+}
+
+export type SupplierProfileCreateWithoutSubscriptionsInput = {
+  id?: string
+  companyName: string
+  tradingName?: string | null
+  document: string
+  stateRegistration?: string | null
+  municipalRegistration?: string | null
+  description?: string | null
+  logoUrl?: string | null
+  bannerUrl?: string | null
+  website?: string | null
+  phone: string
+  whatsapp?: string | null
+  email: string
+  status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
+  statusReason?: string | null
+  approvedAt?: Date | string | null
+  reviewedBy?: string | null
+  rating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+  sellerRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellerTotalReviews?: number
+  totalProducts?: number
+  totalOrders?: number
+  totalSales?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  foundedYear?: number | null
+  employeesCount?: number | null
+  businessHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deliveryInfo?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  certifications?: Prisma.SupplierProfileCreatecertificationsInput | string[]
+  badges?: Prisma.SupplierProfileCreatebadgesInput | string[]
+  socialNetworks?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  featured?: boolean
+  viewCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  user: Prisma.UserCreateNestedOneWithoutSupplierProfileInput
+  products?: Prisma.ProductCreateNestedManyWithoutSupplierInput
+  services?: Prisma.ServiceCreateNestedManyWithoutSupplierInput
+  orders?: Prisma.OrderCreateNestedManyWithoutSupplierInput
+  promotions?: Prisma.PromotionCreateNestedManyWithoutSupplierInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutSupplierInput
+  sellerReviews?: Prisma.SellerReviewCreateNestedManyWithoutSupplierInput
+  reviewResponses?: Prisma.ReviewResponseCreateNestedManyWithoutSupplierInput
+  sellerResponses?: Prisma.SellerReviewResponseCreateNestedManyWithoutSupplierInput
+  favorites?: Prisma.FavoriteCreateNestedManyWithoutSupplierInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutSupplierInput
+  workingHours?: Prisma.WorkingHoursCreateNestedManyWithoutSupplierInput
+  coupons?: Prisma.CouponCreateNestedManyWithoutSupplierInput
+  categories?: Prisma.CategoryCreateNestedManyWithoutSupplierInput
+  banners?: Prisma.BannerCreateNestedManyWithoutSupplierInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
+  chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
+  foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
+}
+
+export type SupplierProfileUncheckedCreateWithoutSubscriptionsInput = {
+  id?: string
+  userId: string
+  companyName: string
+  tradingName?: string | null
+  document: string
+  stateRegistration?: string | null
+  municipalRegistration?: string | null
+  description?: string | null
+  logoUrl?: string | null
+  bannerUrl?: string | null
+  website?: string | null
+  phone: string
+  whatsapp?: string | null
+  email: string
+  status?: $Enums.SupplierStatus
+  tier?: $Enums.SupplierTier
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -1744,23 +1937,23 @@ export type SupplierProfileUncheckedCreateWithoutUserInput = {
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
 }
 
-export type SupplierProfileCreateOrConnectWithoutUserInput = {
+export type SupplierProfileCreateOrConnectWithoutSubscriptionsInput = {
   where: Prisma.SupplierProfileWhereUniqueInput
-  create: Prisma.XOR<Prisma.SupplierProfileCreateWithoutUserInput, Prisma.SupplierProfileUncheckedCreateWithoutUserInput>
+  create: Prisma.XOR<Prisma.SupplierProfileCreateWithoutSubscriptionsInput, Prisma.SupplierProfileUncheckedCreateWithoutSubscriptionsInput>
 }
 
-export type SupplierProfileUpsertWithoutUserInput = {
-  update: Prisma.XOR<Prisma.SupplierProfileUpdateWithoutUserInput, Prisma.SupplierProfileUncheckedUpdateWithoutUserInput>
-  create: Prisma.XOR<Prisma.SupplierProfileCreateWithoutUserInput, Prisma.SupplierProfileUncheckedCreateWithoutUserInput>
+export type SupplierProfileUpsertWithoutSubscriptionsInput = {
+  update: Prisma.XOR<Prisma.SupplierProfileUpdateWithoutSubscriptionsInput, Prisma.SupplierProfileUncheckedUpdateWithoutSubscriptionsInput>
+  create: Prisma.XOR<Prisma.SupplierProfileCreateWithoutSubscriptionsInput, Prisma.SupplierProfileUncheckedCreateWithoutSubscriptionsInput>
   where?: Prisma.SupplierProfileWhereInput
 }
 
-export type SupplierProfileUpdateToOneWithWhereWithoutUserInput = {
+export type SupplierProfileUpdateToOneWithWhereWithoutSubscriptionsInput = {
   where?: Prisma.SupplierProfileWhereInput
-  data: Prisma.XOR<Prisma.SupplierProfileUpdateWithoutUserInput, Prisma.SupplierProfileUncheckedUpdateWithoutUserInput>
+  data: Prisma.XOR<Prisma.SupplierProfileUpdateWithoutSubscriptionsInput, Prisma.SupplierProfileUncheckedUpdateWithoutSubscriptionsInput>
 }
 
-export type SupplierProfileUpdateWithoutUserInput = {
+export type SupplierProfileUpdateWithoutSubscriptionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   companyName?: Prisma.StringFieldUpdateOperationsInput | string
   tradingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1776,9 +1969,6 @@ export type SupplierProfileUpdateWithoutUserInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1801,6 +1991,7 @@ export type SupplierProfileUpdateWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  user?: Prisma.UserUpdateOneRequiredWithoutSupplierProfileNestedInput
   products?: Prisma.ProductUpdateManyWithoutSupplierNestedInput
   services?: Prisma.ServiceUpdateManyWithoutSupplierNestedInput
   orders?: Prisma.OrderUpdateManyWithoutSupplierNestedInput
@@ -1820,8 +2011,9 @@ export type SupplierProfileUpdateWithoutUserInput = {
   foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
 }
 
-export type SupplierProfileUncheckedUpdateWithoutUserInput = {
+export type SupplierProfileUncheckedUpdateWithoutSubscriptionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   companyName?: Prisma.StringFieldUpdateOperationsInput | string
   tradingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   document?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1836,9 +2028,6 @@ export type SupplierProfileUncheckedUpdateWithoutUserInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1896,9 +2085,6 @@ export type SupplierProfileCreateWithoutFoundationHistoryInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -1938,6 +2124,7 @@ export type SupplierProfileCreateWithoutFoundationHistoryInput = {
   banners?: Prisma.BannerCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutFoundationHistoryInput = {
@@ -1957,9 +2144,6 @@ export type SupplierProfileUncheckedCreateWithoutFoundationHistoryInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -1998,6 +2182,7 @@ export type SupplierProfileUncheckedCreateWithoutFoundationHistoryInput = {
   banners?: Prisma.BannerUncheckedCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileCreateOrConnectWithoutFoundationHistoryInput = {
@@ -2032,9 +2217,6 @@ export type SupplierProfileUpdateWithoutFoundationHistoryInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2074,6 +2256,7 @@ export type SupplierProfileUpdateWithoutFoundationHistoryInput = {
   banners?: Prisma.BannerUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateWithoutFoundationHistoryInput = {
@@ -2093,9 +2276,6 @@ export type SupplierProfileUncheckedUpdateWithoutFoundationHistoryInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2134,6 +2314,7 @@ export type SupplierProfileUncheckedUpdateWithoutFoundationHistoryInput = {
   banners?: Prisma.BannerUncheckedUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileCreateWithoutAddressesInput = {
@@ -2152,9 +2333,6 @@ export type SupplierProfileCreateWithoutAddressesInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -2194,6 +2372,7 @@ export type SupplierProfileCreateWithoutAddressesInput = {
   banners?: Prisma.BannerCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutAddressesInput = {
@@ -2213,9 +2392,6 @@ export type SupplierProfileUncheckedCreateWithoutAddressesInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -2254,6 +2430,7 @@ export type SupplierProfileUncheckedCreateWithoutAddressesInput = {
   banners?: Prisma.BannerUncheckedCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileCreateOrConnectWithoutAddressesInput = {
@@ -2288,9 +2465,6 @@ export type SupplierProfileUpdateWithoutAddressesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2330,6 +2504,7 @@ export type SupplierProfileUpdateWithoutAddressesInput = {
   banners?: Prisma.BannerUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateWithoutAddressesInput = {
@@ -2349,9 +2524,6 @@ export type SupplierProfileUncheckedUpdateWithoutAddressesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2390,6 +2562,7 @@ export type SupplierProfileUncheckedUpdateWithoutAddressesInput = {
   banners?: Prisma.BannerUncheckedUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileCreateWithoutCategoriesInput = {
@@ -2408,9 +2581,6 @@ export type SupplierProfileCreateWithoutCategoriesInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -2450,6 +2620,7 @@ export type SupplierProfileCreateWithoutCategoriesInput = {
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutCategoriesInput = {
@@ -2469,9 +2640,6 @@ export type SupplierProfileUncheckedCreateWithoutCategoriesInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -2510,6 +2678,7 @@ export type SupplierProfileUncheckedCreateWithoutCategoriesInput = {
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileCreateOrConnectWithoutCategoriesInput = {
@@ -2544,9 +2713,6 @@ export type SupplierProfileUpdateWithoutCategoriesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2586,6 +2752,7 @@ export type SupplierProfileUpdateWithoutCategoriesInput = {
   addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateWithoutCategoriesInput = {
@@ -2605,9 +2772,6 @@ export type SupplierProfileUncheckedUpdateWithoutCategoriesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2646,6 +2810,7 @@ export type SupplierProfileUncheckedUpdateWithoutCategoriesInput = {
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileCreateWithoutProductsInput = {
@@ -2664,9 +2829,6 @@ export type SupplierProfileCreateWithoutProductsInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -2706,6 +2868,7 @@ export type SupplierProfileCreateWithoutProductsInput = {
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutProductsInput = {
@@ -2725,9 +2888,6 @@ export type SupplierProfileUncheckedCreateWithoutProductsInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -2766,6 +2926,7 @@ export type SupplierProfileUncheckedCreateWithoutProductsInput = {
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileCreateOrConnectWithoutProductsInput = {
@@ -2800,9 +2961,6 @@ export type SupplierProfileUpdateWithoutProductsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2842,6 +3000,7 @@ export type SupplierProfileUpdateWithoutProductsInput = {
   addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateWithoutProductsInput = {
@@ -2861,9 +3020,6 @@ export type SupplierProfileUncheckedUpdateWithoutProductsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2902,6 +3058,7 @@ export type SupplierProfileUncheckedUpdateWithoutProductsInput = {
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileCreateWithoutServicesInput = {
@@ -2920,9 +3077,6 @@ export type SupplierProfileCreateWithoutServicesInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -2962,6 +3116,7 @@ export type SupplierProfileCreateWithoutServicesInput = {
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutServicesInput = {
@@ -2981,9 +3136,6 @@ export type SupplierProfileUncheckedCreateWithoutServicesInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -3022,6 +3174,7 @@ export type SupplierProfileUncheckedCreateWithoutServicesInput = {
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileCreateOrConnectWithoutServicesInput = {
@@ -3056,9 +3209,6 @@ export type SupplierProfileUpdateWithoutServicesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3098,6 +3248,7 @@ export type SupplierProfileUpdateWithoutServicesInput = {
   addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateWithoutServicesInput = {
@@ -3117,9 +3268,6 @@ export type SupplierProfileUncheckedUpdateWithoutServicesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3158,6 +3306,7 @@ export type SupplierProfileUncheckedUpdateWithoutServicesInput = {
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileCreateWithoutPromotionsInput = {
@@ -3176,9 +3325,6 @@ export type SupplierProfileCreateWithoutPromotionsInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -3218,6 +3364,7 @@ export type SupplierProfileCreateWithoutPromotionsInput = {
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutPromotionsInput = {
@@ -3237,9 +3384,6 @@ export type SupplierProfileUncheckedCreateWithoutPromotionsInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -3278,6 +3422,7 @@ export type SupplierProfileUncheckedCreateWithoutPromotionsInput = {
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileCreateOrConnectWithoutPromotionsInput = {
@@ -3312,9 +3457,6 @@ export type SupplierProfileUpdateWithoutPromotionsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3354,6 +3496,7 @@ export type SupplierProfileUpdateWithoutPromotionsInput = {
   addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateWithoutPromotionsInput = {
@@ -3373,9 +3516,6 @@ export type SupplierProfileUncheckedUpdateWithoutPromotionsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3414,6 +3554,7 @@ export type SupplierProfileUncheckedUpdateWithoutPromotionsInput = {
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileCreateWithoutCouponsInput = {
@@ -3432,9 +3573,6 @@ export type SupplierProfileCreateWithoutCouponsInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -3474,6 +3612,7 @@ export type SupplierProfileCreateWithoutCouponsInput = {
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutCouponsInput = {
@@ -3493,9 +3632,6 @@ export type SupplierProfileUncheckedCreateWithoutCouponsInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -3534,6 +3670,7 @@ export type SupplierProfileUncheckedCreateWithoutCouponsInput = {
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileCreateOrConnectWithoutCouponsInput = {
@@ -3568,9 +3705,6 @@ export type SupplierProfileUpdateWithoutCouponsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3610,6 +3744,7 @@ export type SupplierProfileUpdateWithoutCouponsInput = {
   addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateWithoutCouponsInput = {
@@ -3629,9 +3764,6 @@ export type SupplierProfileUncheckedUpdateWithoutCouponsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3670,6 +3802,7 @@ export type SupplierProfileUncheckedUpdateWithoutCouponsInput = {
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileCreateWithoutWorkingHoursInput = {
@@ -3688,9 +3821,6 @@ export type SupplierProfileCreateWithoutWorkingHoursInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -3730,6 +3860,7 @@ export type SupplierProfileCreateWithoutWorkingHoursInput = {
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutWorkingHoursInput = {
@@ -3749,9 +3880,6 @@ export type SupplierProfileUncheckedCreateWithoutWorkingHoursInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -3790,6 +3918,7 @@ export type SupplierProfileUncheckedCreateWithoutWorkingHoursInput = {
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileCreateOrConnectWithoutWorkingHoursInput = {
@@ -3824,9 +3953,6 @@ export type SupplierProfileUpdateWithoutWorkingHoursInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3866,6 +3992,7 @@ export type SupplierProfileUpdateWithoutWorkingHoursInput = {
   addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateWithoutWorkingHoursInput = {
@@ -3885,9 +4012,6 @@ export type SupplierProfileUncheckedUpdateWithoutWorkingHoursInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3926,6 +4050,7 @@ export type SupplierProfileUncheckedUpdateWithoutWorkingHoursInput = {
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileCreateWithoutOrdersInput = {
@@ -3944,9 +4069,6 @@ export type SupplierProfileCreateWithoutOrdersInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -3986,6 +4108,7 @@ export type SupplierProfileCreateWithoutOrdersInput = {
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutOrdersInput = {
@@ -4005,9 +4128,6 @@ export type SupplierProfileUncheckedCreateWithoutOrdersInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -4046,6 +4166,7 @@ export type SupplierProfileUncheckedCreateWithoutOrdersInput = {
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileCreateOrConnectWithoutOrdersInput = {
@@ -4080,9 +4201,6 @@ export type SupplierProfileUpdateWithoutOrdersInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4122,6 +4240,7 @@ export type SupplierProfileUpdateWithoutOrdersInput = {
   addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateWithoutOrdersInput = {
@@ -4141,9 +4260,6 @@ export type SupplierProfileUncheckedUpdateWithoutOrdersInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4182,6 +4298,7 @@ export type SupplierProfileUncheckedUpdateWithoutOrdersInput = {
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileCreateWithoutReviewsInput = {
@@ -4200,9 +4317,6 @@ export type SupplierProfileCreateWithoutReviewsInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -4242,6 +4356,7 @@ export type SupplierProfileCreateWithoutReviewsInput = {
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutReviewsInput = {
@@ -4261,9 +4376,6 @@ export type SupplierProfileUncheckedCreateWithoutReviewsInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -4302,6 +4414,7 @@ export type SupplierProfileUncheckedCreateWithoutReviewsInput = {
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileCreateOrConnectWithoutReviewsInput = {
@@ -4336,9 +4449,6 @@ export type SupplierProfileUpdateWithoutReviewsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4378,6 +4488,7 @@ export type SupplierProfileUpdateWithoutReviewsInput = {
   addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateWithoutReviewsInput = {
@@ -4397,9 +4508,6 @@ export type SupplierProfileUncheckedUpdateWithoutReviewsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4438,6 +4546,7 @@ export type SupplierProfileUncheckedUpdateWithoutReviewsInput = {
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileCreateWithoutSellerResponsesInput = {
@@ -4456,9 +4565,6 @@ export type SupplierProfileCreateWithoutSellerResponsesInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -4498,6 +4604,7 @@ export type SupplierProfileCreateWithoutSellerResponsesInput = {
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutSellerResponsesInput = {
@@ -4517,9 +4624,6 @@ export type SupplierProfileUncheckedCreateWithoutSellerResponsesInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -4558,6 +4662,7 @@ export type SupplierProfileUncheckedCreateWithoutSellerResponsesInput = {
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileCreateOrConnectWithoutSellerResponsesInput = {
@@ -4592,9 +4697,6 @@ export type SupplierProfileUpdateWithoutSellerResponsesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4634,6 +4736,7 @@ export type SupplierProfileUpdateWithoutSellerResponsesInput = {
   addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateWithoutSellerResponsesInput = {
@@ -4653,9 +4756,6 @@ export type SupplierProfileUncheckedUpdateWithoutSellerResponsesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4694,6 +4794,7 @@ export type SupplierProfileUncheckedUpdateWithoutSellerResponsesInput = {
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileCreateWithoutSellerReviewsInput = {
@@ -4712,9 +4813,6 @@ export type SupplierProfileCreateWithoutSellerReviewsInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -4754,6 +4852,7 @@ export type SupplierProfileCreateWithoutSellerReviewsInput = {
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutSellerReviewsInput = {
@@ -4773,9 +4872,6 @@ export type SupplierProfileUncheckedCreateWithoutSellerReviewsInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -4814,6 +4910,7 @@ export type SupplierProfileUncheckedCreateWithoutSellerReviewsInput = {
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileCreateOrConnectWithoutSellerReviewsInput = {
@@ -4848,9 +4945,6 @@ export type SupplierProfileUpdateWithoutSellerReviewsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4890,6 +4984,7 @@ export type SupplierProfileUpdateWithoutSellerReviewsInput = {
   addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateWithoutSellerReviewsInput = {
@@ -4909,9 +5004,6 @@ export type SupplierProfileUncheckedUpdateWithoutSellerReviewsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4950,6 +5042,7 @@ export type SupplierProfileUncheckedUpdateWithoutSellerReviewsInput = {
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileCreateWithoutReviewResponsesInput = {
@@ -4968,9 +5061,6 @@ export type SupplierProfileCreateWithoutReviewResponsesInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -5010,6 +5100,7 @@ export type SupplierProfileCreateWithoutReviewResponsesInput = {
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutReviewResponsesInput = {
@@ -5029,9 +5120,6 @@ export type SupplierProfileUncheckedCreateWithoutReviewResponsesInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -5070,6 +5158,7 @@ export type SupplierProfileUncheckedCreateWithoutReviewResponsesInput = {
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileCreateOrConnectWithoutReviewResponsesInput = {
@@ -5104,9 +5193,6 @@ export type SupplierProfileUpdateWithoutReviewResponsesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5146,6 +5232,7 @@ export type SupplierProfileUpdateWithoutReviewResponsesInput = {
   addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateWithoutReviewResponsesInput = {
@@ -5165,9 +5252,6 @@ export type SupplierProfileUncheckedUpdateWithoutReviewResponsesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5206,6 +5290,7 @@ export type SupplierProfileUncheckedUpdateWithoutReviewResponsesInput = {
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileCreateWithoutFavoritesInput = {
@@ -5224,9 +5309,6 @@ export type SupplierProfileCreateWithoutFavoritesInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -5266,6 +5348,7 @@ export type SupplierProfileCreateWithoutFavoritesInput = {
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutFavoritesInput = {
@@ -5285,9 +5368,6 @@ export type SupplierProfileUncheckedCreateWithoutFavoritesInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -5326,6 +5406,7 @@ export type SupplierProfileUncheckedCreateWithoutFavoritesInput = {
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileCreateOrConnectWithoutFavoritesInput = {
@@ -5360,9 +5441,6 @@ export type SupplierProfileUpdateWithoutFavoritesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5402,6 +5480,7 @@ export type SupplierProfileUpdateWithoutFavoritesInput = {
   addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateWithoutFavoritesInput = {
@@ -5421,9 +5500,6 @@ export type SupplierProfileUncheckedUpdateWithoutFavoritesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5462,6 +5538,7 @@ export type SupplierProfileUncheckedUpdateWithoutFavoritesInput = {
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileCreateWithoutConversationsInput = {
@@ -5480,9 +5557,6 @@ export type SupplierProfileCreateWithoutConversationsInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -5522,6 +5596,7 @@ export type SupplierProfileCreateWithoutConversationsInput = {
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutConversationsInput = {
@@ -5541,9 +5616,6 @@ export type SupplierProfileUncheckedCreateWithoutConversationsInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -5582,6 +5654,7 @@ export type SupplierProfileUncheckedCreateWithoutConversationsInput = {
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileCreateOrConnectWithoutConversationsInput = {
@@ -5616,9 +5689,6 @@ export type SupplierProfileUpdateWithoutConversationsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5658,6 +5728,7 @@ export type SupplierProfileUpdateWithoutConversationsInput = {
   addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateWithoutConversationsInput = {
@@ -5677,9 +5748,6 @@ export type SupplierProfileUncheckedUpdateWithoutConversationsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5718,6 +5786,7 @@ export type SupplierProfileUncheckedUpdateWithoutConversationsInput = {
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileCreateWithoutChatSettingsInput = {
@@ -5736,9 +5805,6 @@ export type SupplierProfileCreateWithoutChatSettingsInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -5778,6 +5844,7 @@ export type SupplierProfileCreateWithoutChatSettingsInput = {
   banners?: Prisma.BannerCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutChatSettingsInput = {
@@ -5797,9 +5864,6 @@ export type SupplierProfileUncheckedCreateWithoutChatSettingsInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -5838,6 +5902,7 @@ export type SupplierProfileUncheckedCreateWithoutChatSettingsInput = {
   banners?: Prisma.BannerUncheckedCreateNestedManyWithoutSupplierInput
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileCreateOrConnectWithoutChatSettingsInput = {
@@ -5872,9 +5937,6 @@ export type SupplierProfileUpdateWithoutChatSettingsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5914,6 +5976,7 @@ export type SupplierProfileUpdateWithoutChatSettingsInput = {
   banners?: Prisma.BannerUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateWithoutChatSettingsInput = {
@@ -5933,9 +5996,6 @@ export type SupplierProfileUncheckedUpdateWithoutChatSettingsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5974,6 +6034,7 @@ export type SupplierProfileUncheckedUpdateWithoutChatSettingsInput = {
   banners?: Prisma.BannerUncheckedUpdateManyWithoutSupplierNestedInput
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileCreateWithoutBannersInput = {
@@ -5992,9 +6053,6 @@ export type SupplierProfileCreateWithoutBannersInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -6034,6 +6092,7 @@ export type SupplierProfileCreateWithoutBannersInput = {
   addresses?: Prisma.AddressCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsCreateNestedOneWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileUncheckedCreateWithoutBannersInput = {
@@ -6053,9 +6112,6 @@ export type SupplierProfileUncheckedCreateWithoutBannersInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
-  maxProducts?: number
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -6094,6 +6150,7 @@ export type SupplierProfileUncheckedCreateWithoutBannersInput = {
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutSupplierInput
   chatSettings?: Prisma.ChatSettingsUncheckedCreateNestedOneWithoutSupplierInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedCreateNestedManyWithoutSupplierInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedCreateNestedManyWithoutSupplierInput
 }
 
 export type SupplierProfileCreateOrConnectWithoutBannersInput = {
@@ -6128,9 +6185,6 @@ export type SupplierProfileUpdateWithoutBannersInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6170,6 +6224,7 @@ export type SupplierProfileUpdateWithoutBannersInput = {
   addresses?: Prisma.AddressUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUpdateOneWithoutSupplierNestedInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUpdateManyWithoutSupplierNestedInput
 }
 
 export type SupplierProfileUncheckedUpdateWithoutBannersInput = {
@@ -6189,9 +6244,6 @@ export type SupplierProfileUncheckedUpdateWithoutBannersInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
-  maxProducts?: Prisma.IntFieldUpdateOperationsInput | number
-  hasPaymentAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  hasReportsAccess?: Prisma.BoolFieldUpdateOperationsInput | boolean
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6230,6 +6282,7 @@ export type SupplierProfileUncheckedUpdateWithoutBannersInput = {
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutSupplierNestedInput
   chatSettings?: Prisma.ChatSettingsUncheckedUpdateOneWithoutSupplierNestedInput
   foundationHistory?: Prisma.SupplierFoundationHistoryUncheckedUpdateManyWithoutSupplierNestedInput
+  subscriptions?: Prisma.SupplierSubscriptionUncheckedUpdateManyWithoutSupplierNestedInput
 }
 
 
@@ -6254,6 +6307,7 @@ export type SupplierProfileCountOutputType = {
   banners: number
   addresses: number
   foundationHistory: number
+  subscriptions: number
 }
 
 export type SupplierProfileCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -6273,6 +6327,7 @@ export type SupplierProfileCountOutputTypeSelect<ExtArgs extends runtime.Types.E
   banners?: boolean | SupplierProfileCountOutputTypeCountBannersArgs
   addresses?: boolean | SupplierProfileCountOutputTypeCountAddressesArgs
   foundationHistory?: boolean | SupplierProfileCountOutputTypeCountFoundationHistoryArgs
+  subscriptions?: boolean | SupplierProfileCountOutputTypeCountSubscriptionsArgs
 }
 
 /**
@@ -6397,6 +6452,13 @@ export type SupplierProfileCountOutputTypeCountFoundationHistoryArgs<ExtArgs ext
   where?: Prisma.SupplierFoundationHistoryWhereInput
 }
 
+/**
+ * SupplierProfileCountOutputType without action
+ */
+export type SupplierProfileCountOutputTypeCountSubscriptionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SupplierSubscriptionWhereInput
+}
+
 
 export type SupplierProfileSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -6415,9 +6477,6 @@ export type SupplierProfileSelect<ExtArgs extends runtime.Types.Extensions.Inter
   email?: boolean
   status?: boolean
   tier?: boolean
-  maxProducts?: boolean
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: boolean
   approvedAt?: boolean
   reviewedBy?: boolean
@@ -6458,6 +6517,7 @@ export type SupplierProfileSelect<ExtArgs extends runtime.Types.Extensions.Inter
   addresses?: boolean | Prisma.SupplierProfile$addressesArgs<ExtArgs>
   chatSettings?: boolean | Prisma.SupplierProfile$chatSettingsArgs<ExtArgs>
   foundationHistory?: boolean | Prisma.SupplierProfile$foundationHistoryArgs<ExtArgs>
+  subscriptions?: boolean | Prisma.SupplierProfile$subscriptionsArgs<ExtArgs>
   _count?: boolean | Prisma.SupplierProfileCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["supplierProfile"]>
 
@@ -6478,9 +6538,6 @@ export type SupplierProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   email?: boolean
   status?: boolean
   tier?: boolean
-  maxProducts?: boolean
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: boolean
   approvedAt?: boolean
   reviewedBy?: boolean
@@ -6523,9 +6580,6 @@ export type SupplierProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   email?: boolean
   status?: boolean
   tier?: boolean
-  maxProducts?: boolean
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: boolean
   approvedAt?: boolean
   reviewedBy?: boolean
@@ -6568,9 +6622,6 @@ export type SupplierProfileSelectScalar = {
   email?: boolean
   status?: boolean
   tier?: boolean
-  maxProducts?: boolean
-  hasPaymentAccess?: boolean
-  hasReportsAccess?: boolean
   statusReason?: boolean
   approvedAt?: boolean
   reviewedBy?: boolean
@@ -6595,7 +6646,7 @@ export type SupplierProfileSelectScalar = {
   deletedAt?: boolean
 }
 
-export type SupplierProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "companyName" | "tradingName" | "document" | "stateRegistration" | "municipalRegistration" | "description" | "logoUrl" | "bannerUrl" | "website" | "phone" | "whatsapp" | "email" | "status" | "tier" | "maxProducts" | "hasPaymentAccess" | "hasReportsAccess" | "statusReason" | "approvedAt" | "reviewedBy" | "rating" | "totalReviews" | "sellerRating" | "sellerTotalReviews" | "totalProducts" | "totalOrders" | "totalSales" | "foundedYear" | "employeesCount" | "businessHours" | "deliveryInfo" | "certifications" | "badges" | "socialNetworks" | "featured" | "viewCount" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["supplierProfile"]>
+export type SupplierProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "companyName" | "tradingName" | "document" | "stateRegistration" | "municipalRegistration" | "description" | "logoUrl" | "bannerUrl" | "website" | "phone" | "whatsapp" | "email" | "status" | "tier" | "statusReason" | "approvedAt" | "reviewedBy" | "rating" | "totalReviews" | "sellerRating" | "sellerTotalReviews" | "totalProducts" | "totalOrders" | "totalSales" | "foundedYear" | "employeesCount" | "businessHours" | "deliveryInfo" | "certifications" | "badges" | "socialNetworks" | "featured" | "viewCount" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["supplierProfile"]>
 export type SupplierProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   products?: boolean | Prisma.SupplierProfile$productsArgs<ExtArgs>
@@ -6615,6 +6666,7 @@ export type SupplierProfileInclude<ExtArgs extends runtime.Types.Extensions.Inte
   addresses?: boolean | Prisma.SupplierProfile$addressesArgs<ExtArgs>
   chatSettings?: boolean | Prisma.SupplierProfile$chatSettingsArgs<ExtArgs>
   foundationHistory?: boolean | Prisma.SupplierProfile$foundationHistoryArgs<ExtArgs>
+  subscriptions?: boolean | Prisma.SupplierProfile$subscriptionsArgs<ExtArgs>
   _count?: boolean | Prisma.SupplierProfileCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type SupplierProfileIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -6645,6 +6697,7 @@ export type $SupplierProfilePayload<ExtArgs extends runtime.Types.Extensions.Int
     addresses: Prisma.$AddressPayload<ExtArgs>[]
     chatSettings: Prisma.$ChatSettingsPayload<ExtArgs> | null
     foundationHistory: Prisma.$SupplierFoundationHistoryPayload<ExtArgs>[]
+    subscriptions: Prisma.$SupplierSubscriptionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -6663,9 +6716,6 @@ export type $SupplierProfilePayload<ExtArgs extends runtime.Types.Extensions.Int
     email: string
     status: $Enums.SupplierStatus
     tier: $Enums.SupplierTier
-    maxProducts: number
-    hasPaymentAccess: boolean
-    hasReportsAccess: boolean
     statusReason: string | null
     approvedAt: Date | null
     reviewedBy: string | null
@@ -7100,6 +7150,7 @@ export interface Prisma__SupplierProfileClient<T, Null = never, ExtArgs extends 
   addresses<T extends Prisma.SupplierProfile$addressesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SupplierProfile$addressesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AddressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   chatSettings<T extends Prisma.SupplierProfile$chatSettingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SupplierProfile$chatSettingsArgs<ExtArgs>>): Prisma.Prisma__ChatSettingsClient<runtime.Types.Result.GetResult<Prisma.$ChatSettingsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   foundationHistory<T extends Prisma.SupplierProfile$foundationHistoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SupplierProfile$foundationHistoryArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SupplierFoundationHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  subscriptions<T extends Prisma.SupplierProfile$subscriptionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SupplierProfile$subscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SupplierSubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7145,9 +7196,6 @@ export interface SupplierProfileFieldRefs {
   readonly email: Prisma.FieldRef<"SupplierProfile", 'String'>
   readonly status: Prisma.FieldRef<"SupplierProfile", 'SupplierStatus'>
   readonly tier: Prisma.FieldRef<"SupplierProfile", 'SupplierTier'>
-  readonly maxProducts: Prisma.FieldRef<"SupplierProfile", 'Int'>
-  readonly hasPaymentAccess: Prisma.FieldRef<"SupplierProfile", 'Boolean'>
-  readonly hasReportsAccess: Prisma.FieldRef<"SupplierProfile", 'Boolean'>
   readonly statusReason: Prisma.FieldRef<"SupplierProfile", 'String'>
   readonly approvedAt: Prisma.FieldRef<"SupplierProfile", 'DateTime'>
   readonly reviewedBy: Prisma.FieldRef<"SupplierProfile", 'String'>
@@ -7971,6 +8019,30 @@ export type SupplierProfile$foundationHistoryArgs<ExtArgs extends runtime.Types.
   take?: number
   skip?: number
   distinct?: Prisma.SupplierFoundationHistoryScalarFieldEnum | Prisma.SupplierFoundationHistoryScalarFieldEnum[]
+}
+
+/**
+ * SupplierProfile.subscriptions
+ */
+export type SupplierProfile$subscriptionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SupplierSubscription
+   */
+  select?: Prisma.SupplierSubscriptionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SupplierSubscription
+   */
+  omit?: Prisma.SupplierSubscriptionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SupplierSubscriptionInclude<ExtArgs> | null
+  where?: Prisma.SupplierSubscriptionWhereInput
+  orderBy?: Prisma.SupplierSubscriptionOrderByWithRelationInput | Prisma.SupplierSubscriptionOrderByWithRelationInput[]
+  cursor?: Prisma.SupplierSubscriptionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SupplierSubscriptionScalarFieldEnum | Prisma.SupplierSubscriptionScalarFieldEnum[]
 }
 
 /**

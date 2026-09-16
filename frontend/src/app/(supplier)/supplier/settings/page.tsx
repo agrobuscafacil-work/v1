@@ -174,9 +174,30 @@ export default function SupplierSettingsPage() {
 
   async function handlePlanChange(newTier: 'BASIC' | 'STANDARD' | 'PREMIUM') {
     if (!supplier?.id) return;
+    if (newTier !== 'BASIC') {
+      setIsSaving(true);
+      try {
+        const res = await api.post('/stripe/create-plan-checkout-session', {
+          tier: newTier,
+          successUrl: `${window.location.origin}/supplier/settings?plan=success&tier=${newTier}`,
+          cancelUrl: `${window.location.origin}/supplier/settings?plan=canceled`,
+        });
+        const url = res?.data?.data?.url || res?.data?.url;
+        if (url) {
+          window.location.href = url;
+          return;
+        }
+        toast.error('Nao foi possivel iniciar o pagamento. Tente novamente.');
+      } catch (e: any) {
+        toast.error(e?.response?.data?.message || 'Erro ao iniciar pagamento.');
+      } finally {
+        setIsSaving(false);
+      }
+      return;
+    }
     setIsSaving(true);
     try {
-      await api.put(`/suppliers/${supplier.id}/tier`, { tier: newTier });
+      await api.put('/suppliers/me/tier', { tier: newTier });
       toast.success('Plano alterado com sucesso!');
       setSupplier((prev) => prev ? { ...prev, tier: newTier } : prev);
       setShowPlanChange(false);
