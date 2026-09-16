@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Check, X, CreditCard, Shield, BarChart3, Infinity, Loader2, CheckCircle2, Users, ChevronRight } from 'lucide-react';
@@ -63,7 +63,9 @@ const plans = [
   },
 ];
 
-export default function VenderPage() {
+export const dynamic = 'force-dynamic';
+
+function VenderContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
@@ -399,5 +401,13 @@ export default function VenderPage() {
         </div>
       </footer>
     </div>
+  );
+}
+
+export default function VenderPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900"><Loader2 className="h-8 w-8 animate-spin text-primary-600" /></div>}>
+      <VenderContent />
+    </Suspense>
   );
 }

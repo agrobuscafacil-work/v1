@@ -9,7 +9,7 @@ import { toast } from '@/lib/toast';
 import { useAuth } from '@/hooks/use-auth';
 import PasswordInput from '@/components/ui/password-input';
 import { Leaf, Loader2, CreditCard, Shield, BarChart3, Infinity, Check, ChevronRight } from 'lucide-react';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, Suspense } from 'react';
 import { SUPPLIER_TIER_LABELS, SUPPLIER_TIER_CONFIG, type SupplierTier } from '@/types';
 
 const registerSchema = z.object({
@@ -48,7 +48,9 @@ function maskPhone(value: string): string {
   return digits.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
 }
 
-export default function RegisterPage() {
+export const dynamic = 'force-dynamic';
+
+function RegisterContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { register: registerUser } = useAuth();
@@ -339,5 +341,13 @@ export default function RegisterPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div className="w-full max-w-lg mx-auto flex items-center justify-center py-16"><Loader2 className="h-8 w-8 animate-spin text-primary-600" /></div>}>
+      <RegisterContent />
+    </Suspense>
   );
 }
