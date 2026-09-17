@@ -327,7 +327,7 @@ export default function SupplierSettingsPage() {
             <p className="text-sm text-gray-600 dark:text-gray-400">
               Escolha seu novo plano. As alteracoes entram em vigor imediatamente.
             </p>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {(['BASIC', 'STANDARD', 'PREMIUM'] as SupplierTier[]).map((tier) => {
                 const config = SUPPLIER_TIER_CONFIG[tier];
                 const price = tier === 'BASIC' ? 0 : tier === 'STANDARD' ? 99 : 299;

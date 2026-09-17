@@ -180,7 +180,7 @@ function RegisterContent() {
             <p className="text-center text-sm text-gray-600 dark:text-gray-400 mb-4">
               Escolha seu plano para comecar a vender
             </p>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {(['BASIC', 'STANDARD', 'PREMIUM'] as SupplierTier[]).map((tier) => {
                 const config = SUPPLIER_TIER_CONFIG[tier];
                 const isSelected = selectedTier === tier;

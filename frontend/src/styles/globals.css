@@ -58,11 +58,22 @@
 
   html {
     scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 
   body {
     @apply bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100 antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
+    overflow-x: clip;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Prevent iOS Safari auto-zoom on input focus (requires 16px+ on mobile) */
+  @media (max-width: 640px) {
+    .input-field {
+      font-size: 16px;
+    }
   }
 
   ::selection {
@@ -160,5 +171,14 @@
 
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
+  }
+
+  /* Safe-area padding for notched phones (iPhone X+) */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .pt-safe {
+    padding-top: env(safe-area-inset-top);
   }
 }

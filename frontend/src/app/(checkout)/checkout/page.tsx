@@ -465,7 +465,7 @@ export default function CheckoutPage() {
                             onChange={(e) => setNewCard({ ...newCard, holderName: e.target.value })}
                           />
                         </div>
-                        <div className="grid grid-cols-3 gap-4">
+                        <div className="grid grid-cols-3 gap-2 sm:gap-4">
                           <div>
                             <label className="label-field">Mês *</label>
                             <input

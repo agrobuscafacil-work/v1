@@ -404,8 +404,8 @@ export default function AdminUsersPage() {
       </div>
 
       {editUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-          <div className="w-full max-w-lg rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 overflow-y-auto">
+          <div className="w-full max-w-lg max-h-[90dvh] overflow-y-auto rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-2xl my-auto">
             <div className="flex items-center justify-between p-5 border-b border-gray-100 dark:border-gray-800">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Editar Usuario</h2>
               <button onClick={() => setEditUser(null)} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400">
@@ -452,8 +452,8 @@ export default function AdminUsersPage() {
       )}
 
       {newUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-          <div className="w-full max-w-lg rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 overflow-y-auto">
+          <div className="w-full max-w-lg max-h-[90dvh] overflow-y-auto rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-2xl my-auto">
             <div className="flex items-center justify-between p-5 border-b border-gray-100 dark:border-gray-800">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Novo Usuario</h2>
               <button onClick={() => setNewUser(null)} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400">
@@ -512,8 +512,8 @@ export default function AdminUsersPage() {
       )}
 
       {viewUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-          <div className="w-full max-w-lg rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 overflow-y-auto">
+          <div className="w-full max-w-lg max-h-[90dvh] overflow-y-auto rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-2xl my-auto">
             <div className="flex items-center justify-between p-5 border-b border-gray-100 dark:border-gray-800">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Visualizar Usuario</h2>
               <button onClick={() => setViewUser(null)} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400">

@@ -232,7 +232,7 @@ export function Header() {
                         className="fixed inset-0 z-10"
                         onClick={() => setNotifOpen(false)}
                       />
-                      <div className="absolute right-0 z-20 mt-2 w-80 origin-top-right rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg animate-slide-down">
+                      <div className="absolute right-0 z-20 mt-2 w-[calc(100vw-3rem)] max-w-80 origin-top-right rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg animate-slide-down">
                         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-800">
                           <p className="text-sm font-medium text-gray-900 dark:text-white">
                             Notificações

@@ -241,7 +241,7 @@ export default function SupplierDashboardPage() {
     if (!chatCust) return null;
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-        <div className="w-full max-w-lg rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-2xl flex flex-col" style={{ maxHeight: '560px' }}>
+        <div className="w-full max-w-lg max-h-[90dvh] overflow-y-auto rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-2xl flex flex-col">
           <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-800">
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-sm font-bold text-primary-600">{chatCust.avatar}</div>
