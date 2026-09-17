@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 480" preserveAspectRatio="xMidYMax meet" role="img" aria-label="Paisagem de fazenda ao entardecer">
+  <defs>
+    <radialGradient id="abh-sun-glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fde68a" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#fde68a" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="abh-hill-back" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2e7d3f"/>
+      <stop offset="100%" stop-color="#1d4526"/>
+    </linearGradient>
+  </defs>
+
+  <!-- sun -->
+  <circle cx="1180" cy="250" r="130" fill="url(#abh-sun-glow)" opacity="0.55"/>
+  <circle cx="1180" cy="250" r="62" fill="#fcd34d"/>
+  <circle cx="1180" cy="250" r="62" fill="none" stroke="#fef3c7" stroke-width="3" opacity="0.6"/>
+
+  <!-- clouds -->
+  <g fill="#ffffff" opacity="0.10">
+    <ellipse cx="320" cy="120" rx="110" ry="26"/>
+    <ellipse cx="400" cy="105" rx="70" ry="20"/>
+    <ellipse cx="760" cy="80" rx="90" ry="22"/>
+    <ellipse cx="1450" cy="130" rx="100" ry="24"/>
+  </g>
+
+  <!-- birds -->
+  <g stroke="#0d2413" stroke-width="3" fill="none" opacity="0.65" stroke-linecap="round">
+    <path d="M620 140 q10 -10 20 0 q10 -10 20 0"/>
+    <path d="M680 165 q8 -8 16 0 q8 -8 16 0"/>
+    <path d="M1330 180 q8 -8 16 0 q8 -8 16 0"/>
+  </g>
+
+  <!-- back hill -->
+  <path d="M0 340 Q 360 270 760 325 T 1600 310 V480 H0 Z" fill="url(#abh-hill-back)" opacity="0.95"/>
+
+  <!-- field rows fanning from vanishing point -->
+  <g stroke="#bbe0c2" stroke-width="4" opacity="0.28">
+    <line x1="800" y1="335" x2="80" y2="480"/>
+    <line x1="800" y1="335" x2="320" y2="480"/>
+    <line x1="800" y1="335" x2="560" y2="480"/>
+    <line x1="800" y1="335" x2="800" y2="480"/>
+    <line x1="800" y1="335" x2="1040" y2="480"/>
+    <line x1="800" y1="335" x2="1280" y2="480"/>
+    <line x1="800" y1="335" x2="1520" y2="480"/>
+  </g>
+
+  <!-- barn + silo silhouette -->
+  <g fill="#0d2413">
+    <rect x="150" y="300" width="150" height="95"/>
+    <polygon points="130,300 225,245 320,300"/>
+    <rect x="205" y="345" width="40" height="50" fill="#1d4526"/>
+    <rect x="320" y="270" width="52" height="125"/>
+    <ellipse cx="346" cy="270" rx="26" ry="14"/>
+  </g>
+
+  <!-- fence -->
+  <g stroke="#0d2413" stroke-width="5" opacity="0.9">
+    <line x1="1050" y1="360" x2="1050" y2="410"/>
+    <line x1="1150" y1="355" x2="1150" y2="408"/>
+    <line x1="1250" y1="352" x2="1250" y2="406"/>
+    <line x1="1350" y1="350" x2="1350" y2="404"/>
+    <line x1="1040" y1="372" x2="1360" y2="362"/>
+    <line x1="1040" y1="388" x2="1360" y2="380"/>
+  </g>
+
+  <!-- foreground hill -->
+  <path d="M0 425 Q 420 385 820 415 T 1600 405 V480 H0 Z" fill="#142b18"/>
+
+  <!-- wheat tufts -->
+  <g stroke="#fbbf24" stroke-width="3" opacity="0.55" stroke-linecap="round">
+    <path d="M120 472 v-26 M111 458 l9 -7 M129 458 l-9 -7"/>
+    <path d="M1420 474 v-26 M1411 460 l9 -7 M1429 460 l-9 -7"/>
+    <path d="M520 478 v-22 M512 466 l8 -6 M528 466 l-8 -6"/>
+  </g>
+</svg>

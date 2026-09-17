@@ -173,6 +173,24 @@
     display: none;
   }
 
+  /* Furrow rows texture (works on light and dark backgrounds) */
+  .bg-field-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56'%3E%3Cpath d='M0 56 L56 0' stroke='%232e7d3f' stroke-opacity='0.16' stroke-width='2'/%3E%3Cpath d='M-14 14 L14 -14 M42 70 L70 42' stroke='%232e7d3f' stroke-opacity='0.10' stroke-width='2'/%3E%3Ccircle cx='42' cy='42' r='2' fill='%232e7d3f' fill-opacity='0.12'/%3E%3C/svg%3E");
+    background-size: 56px 56px;
+  }
+
+  /* Scattered leaf texture */
+  .bg-leaf-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72'%3E%3Cg fill='%232e7d3f' fill-opacity='0.10'%3E%3Cellipse cx='18' cy='20' rx='7' ry='3.5' transform='rotate(-30 18 20)'/%3E%3Cellipse cx='52' cy='50' rx='7' ry='3.5' transform='rotate(25 52 50)'/%3E%3Ccircle cx='58' cy='14' r='2'/%3E%3Ccircle cx='12' cy='56' r='2'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 72px 72px;
+  }
+
+  /* Film grain texture for a photographic feel (no illustrations) */
+  .bg-grain {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+    background-size: 160px 160px;
+  }
+
   /* Safe-area padding for notched phones (iPhone X+) */
   .pb-safe {
     padding-bottom: env(safe-area-inset-bottom);
