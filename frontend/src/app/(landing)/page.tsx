@@ -103,11 +103,16 @@ export default function HomePage() {
 
   return (
     <>
-      <section className="relative bg-gradient-to-b from-green-950 via-primary-900 to-primary-800 overflow-hidden">
-        <div className="absolute inset-0 bg-field-pattern opacity-20" />
-        <div className="absolute inset-0 bg-grain opacity-[0.12] pointer-events-none" />
-        <div className="absolute -top-32 left-1/2 -translate-x-1/2 h-96 w-[42rem] rounded-full bg-secondary-400/10 blur-3xl pointer-events-none" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary-900/50 to-primary-900" />
+      <section className="relative bg-green-950 overflow-hidden">
+        <Image
+          src="/images/hero-lavoura.jpg"
+          alt="Lavoura de milho ao pôr do sol"
+          fill
+          priority
+          sizes="100vw"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-green-950/80 via-green-950/55 to-green-950/90 pointer-events-none" />
 
         <div className="absolute top-10 left-10 text-green-400/20 animate-leaf-drift">
           <Leaf className="h-16 w-16" />
@@ -369,10 +374,15 @@ export default function HomePage() {
 
       <section className="py-16 lg:py-20 relative">
         <div className="container-page">
-          <div className="relative rounded-2xl bg-gradient-to-br from-primary-700 via-primary-800 to-green-900 overflow-hidden px-8 py-12 lg:py-16 text-center">
-            <div className="absolute inset-0 bg-grain opacity-[0.15] pointer-events-none" />
-            <div className="absolute -top-24 left-1/4 h-64 w-64 rounded-full bg-secondary-400/20 blur-3xl pointer-events-none" />
-            <div className="absolute -bottom-24 right-1/4 h-64 w-64 rounded-full bg-green-400/10 blur-3xl pointer-events-none" />
+          <div className="relative rounded-2xl bg-green-950 overflow-hidden px-8 py-12 lg:py-16 text-center">
+            <Image
+              src="/images/banner-trator.jpg"
+              alt="Trator arando a lavoura visto de cima"
+              fill
+              sizes="100vw"
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-green-950/85 via-green-950/60 to-green-950/40 pointer-events-none" />
             <div className="absolute top-5 left-5 text-green-300/10 animate-leaf-drift">
               <Leaf className="h-12 w-12" />
             </div>
