@@ -1,6 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
+import { PrismaService } from '../../prisma/prisma.service';
 
 interface EmailOptions {
   to: string;
@@ -10,19 +11,45 @@ interface EmailOptions {
 }
 
 @Injectable()
-export class MailService {
+export class MailService implements OnModuleInit {
   private readonly logger = new Logger(MailService.name);
   private transporter: nodemailer.Transporter;
+  private fromAddress: string;
 
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+    private prisma: PrismaService,
+  ) {
+    this.buildFromEnv();
+  }
+
+  async onModuleInit() {
+    await this.refreshFromDatabase().catch((e) =>
+      this.logger.warn(`Could not load SMTP settings from database: ${e?.message}`),
+    );
+  }
+
+  private buildFromEnv() {
     const host = this.configService.get<string>('SMTP_HOST');
     const port = this.configService.get<number>('SMTP_PORT') || 587;
     const user = this.configService.get<string>('SMTP_USER');
     const pass = this.configService.get<string>('SMTP_PASS');
-    const from = this.configService.get<string>('SMTP_FROM') || 'noreply@agrobuscafacil.com';
+    this.fromAddress =
+      this.configService.get<string>('SMTP_FROM') || 'noreply@agrobuscafacil.com';
 
-    this.logger.log(`SMTP Config: host=${host}, port=${port}, user=${user}, from=${from}, pass=${pass ? '***' : 'MISSING'}`);
+    this.logger.log(
+      `SMTP Config (env): host=${host}, port=${port}, user=${user}, from=${this.fromAddress}, pass=${pass ? '***' : 'MISSING'}`,
+    );
+    this.buildTransporter({ host, port, user, pass });
+  }
 
+  private buildTransporter(opts: {
+    host?: string;
+    port?: number;
+    user?: string;
+    pass?: string;
+  }) {
+    const { host, port = 587, user, pass } = opts;
     if (!host || !user || !pass) {
       this.logger.warn('SMTP not configured. Emails will be logged instead of sent.');
       this.logger.warn(`Missing: host=${!host}, user=${!user}, pass=${!pass}`);
@@ -36,22 +63,56 @@ export class MailService {
       secure: port === 465,
       auth: { user, pass },
       tls: { rejectUnauthorized: false },
-      debug: true,  // Enable debug logs
-      logger: true, // Log to console
+      debug: true,
+      logger: true,
     });
 
     this.transporter.verify((error) => {
       if (error) {
         this.logger.error('SMTP connection failed:', error.message);
-        this.logger.error('Full error:', JSON.stringify(error, null, 2));
       } else {
         this.logger.log('SMTP connection established successfully');
       }
     });
   }
 
+  /** Recarrega o transporter a partir das configurações salvas no banco (com fallback para .env). */
+  async refreshFromDatabase() {
+    let rows: { key: string; value: any }[] = [];
+    try {
+      rows = await this.prisma.systemSetting.findMany({
+        where: { key: { startsWith: 'email.' } },
+      });
+    } catch (e: any) {
+      this.logger.warn(`DB settings unavailable, keeping env SMTP config: ${e?.message}`);
+      return;
+    }
+    const db: Record<string, any> = {};
+    for (const row of rows) db[row.key] = row.value;
+    if (db['email.smtpHost'] === undefined) {
+      this.logger.log('No SMTP settings in database, keeping env config');
+      return;
+    }
+    const port = Number(
+      db['email.smtpPort'] ?? this.configService.get('SMTP_PORT') ?? 587,
+    );
+    this.logger.log(
+      `SMTP Config (database): host=${db['email.smtpHost']}, port=${port}, user=${db['email.smtpUser']}, pass=${db['email.smtpPass'] ? '***' : 'MISSING'}`,
+    );
+    this.fromAddress =
+      db['email.smtpFrom'] ??
+      this.configService.get<string>('SMTP_FROM') ??
+      'noreply@agrobuscafacil.com';
+    this.buildTransporter({
+      host: db['email.smtpHost'],
+      port,
+      user: db['email.smtpUser'],
+      pass: db['email.smtpPass'] ?? this.configService.get<string>('SMTP_PASS'),
+    });
+  }
+
   async sendEmail(options: EmailOptions): Promise<boolean> {
-    const from = this.configService.get<string>('SMTP_FROM') || 'noreply@agrobuscafacil.com';
+    const from = this.fromAddress || 'noreply@agrobuscafacil.com';
 
     if (!this.transporter) {
       this.logger.log(`[MOCK EMAIL] To: ${options.to}, Subject: ${options.subject}`);

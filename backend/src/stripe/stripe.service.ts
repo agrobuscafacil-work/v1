@@ -35,6 +35,26 @@ export class StripeService {
     return Boolean(this.configService.get<string>('STRIPE_SECRET_KEY'));
   }
 
+  async testConnection() {
+    if (!this.isConfigured()) {
+      throw new BadRequestException('STRIPE_SECRET_KEY não configurada no servidor');
+    }
+    try {
+      const balance = await this.stripe.balance.retrieve();
+      return {
+        ok: true,
+        livemode: !String(this.configService.get<string>('STRIPE_SECRET_KEY')).startsWith('sk_test_'),
+        currency: this.currency,
+        available: balance.available?.map((b) => ({ amount: b.amount / 100, currency: b.currency })),
+      };
+    } catch (error: any) {
+      this.logger.error(`Stripe test connection failed: ${error?.message}`);
+      throw new BadRequestException(
+        `Falha ao conectar no Stripe: ${error?.message || 'verifique a STRIPE_SECRET_KEY'}`,
+      );
+    }
+  }
+
   async createCheckoutSession(
     userId: string,
     items: StripeLineItem[],

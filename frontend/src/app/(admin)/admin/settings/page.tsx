@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Settings, Save, Loader2, Bell, Shield, Globe, Palette, CreditCard } from 'lucide-react';
+import { Settings, Save, Loader2, Bell, Shield, Globe, Palette, CreditCard, Mail, Send, CheckCircle2, XCircle } from 'lucide-react';
 import { toast } from '@/lib/toast';
 import { api } from '@/lib/api';
 
@@ -22,6 +22,19 @@ const DEFAULTS: Record<string, any> = {
   paymentGateway: 'stripe',
   paymentMaxInstallments: 12,
   paymentMinInstallment: 100,
+  creditCardEnabled: true,
+  pixEnabled: true,
+  boletoEnabled: true,
+  stripePublishableKey: '',
+};
+
+const EMAIL_DEFAULTS = {
+  smtpHost: '',
+  smtpPort: 587,
+  smtpUser: '',
+  smtpPass: '',
+  smtpFrom: '',
+  smtpSecure: 'tls',
 };
 
 export default function AdminSettingsPage() {
@@ -29,13 +42,50 @@ export default function AdminSettingsPage() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('general');
   const [settings, setSettings] = useState<Record<string, any>>(DEFAULTS);
+  const [emailForm, setEmailForm] = useState<Record<string, any>>(EMAIL_DEFAULTS);
+  const [emailMeta, setEmailMeta] = useState<{ passwordConfigured?: boolean; source?: Record<string, string> }>({});
+  const [emailSaving, setEmailSaving] = useState(false);
+  const [emailTesting, setEmailTesting] = useState(false);
+  const [testTo, setTestTo] = useState('');
+  const [providerStatus, setProviderStatus] = useState<{ stripeConfigured?: boolean; mercadopagoEnabled?: boolean }>({});
+  const [stripeTesting, setStripeTesting] = useState(false);
 
   useEffect(() => {
     const load = async () => {
       setLoading(true);
       try {
-        const res = await api.get('/admin/settings');
+        const [res, emailRes, payRes] = await Promise.all([
+          api.get('/admin/settings'),
+          api.get('/admin/settings/email').catch(() => null),
+          api.get('/admin/settings/payments').catch(() => null),
+        ]);
         setSettings({ ...DEFAULTS, ...(res.data.data ?? {}) });
+        const emailData = emailRes?.data?.data;
+        if (emailData) {
+          setEmailForm({
+            smtpHost: emailData.smtpHost ?? '',
+            smtpPort: emailData.smtpPort ?? 587,
+            smtpUser: emailData.smtpUser ?? '',
+            smtpPass: '',
+            smtpFrom: emailData.smtpFrom ?? '',
+            smtpSecure: emailData.smtpSecure ?? 'tls',
+          });
+          setEmailMeta({ passwordConfigured: emailData.passwordConfigured, source: emailData.source });
+        }
+        const payData = payRes?.data?.data;
+        if (payData) {
+          setSettings((prev) => ({
+            ...prev,
+            paymentGateway: payData.gateway ?? prev.paymentGateway,
+            creditCardEnabled: payData.creditCardEnabled ?? prev.creditCardEnabled,
+            pixEnabled: payData.pixEnabled ?? prev.pixEnabled,
+            boletoEnabled: payData.boletoEnabled ?? prev.boletoEnabled,
+            paymentMaxInstallments: payData.maxInstallments ?? prev.paymentMaxInstallments,
+            paymentMinInstallment: payData.minInstallmentAmount ?? prev.paymentMinInstallment,
+            stripePublishableKey: payData.stripePublishableKey ?? prev.stripePublishableKey,
+          }));
+          setProviderStatus(payData.providers ?? {});
+        }
       } catch (e: any) {
         toast.error(e?.response?.data?.message || 'Erro ao carregar configurações');
       } finally {
@@ -74,6 +124,20 @@ export default function AdminSettingsPage() {
       };
       const res = await api.put('/admin/settings', payload);
       setSettings({ ...DEFAULTS, ...(res.data.data ?? {}) });
+      try {
+        await api.put('/admin/settings/payments', {
+          gateway: settings.paymentGateway,
+          creditCardEnabled: !!settings.creditCardEnabled,
+          pixEnabled: !!settings.pixEnabled,
+          boletoEnabled: !!settings.boletoEnabled,
+          maxInstallments: Number(settings.paymentMaxInstallments),
+          minInstallmentAmount: Number(settings.paymentMinInstallment),
+          stripePublishableKey: settings.stripePublishableKey || undefined,
+        });
+      } catch (e: any) {
+        toast.error(e?.response?.data?.message || 'Erro ao salvar configurações de pagamento');
+        return;
+      }
       toast.success('Configurações salvas!');
     } catch (e: any) {
       toast.error(e?.response?.data?.message || 'Erro ao salvar configurações');
@@ -82,8 +146,68 @@ export default function AdminSettingsPage() {
     }
   };
 
+  const saveEmailSettings = async () => {
+    setEmailSaving(true);
+    try {
+      const payload: Record<string, any> = {
+        smtpHost: emailForm.smtpHost,
+        smtpPort: Number(emailForm.smtpPort),
+        smtpUser: emailForm.smtpUser,
+        smtpFrom: emailForm.smtpFrom,
+        smtpSecure: emailForm.smtpSecure,
+      };
+      if (emailForm.smtpPass) payload.smtpPass = emailForm.smtpPass;
+      const res = await api.put('/admin/settings/email', payload);
+      const data = res.data.data ?? {};
+      setEmailForm({
+        smtpHost: data.smtpHost ?? '',
+        smtpPort: data.smtpPort ?? 587,
+        smtpUser: data.smtpUser ?? '',
+        smtpPass: '',
+        smtpFrom: data.smtpFrom ?? '',
+        smtpSecure: data.smtpSecure ?? 'tls',
+      });
+      setEmailMeta({ passwordConfigured: data.passwordConfigured, source: data.source });
+      toast.success('Configurações de e-mail salvas!');
+    } catch (e: any) {
+      toast.error(e?.response?.data?.message || 'Erro ao salvar configurações de e-mail');
+    } finally {
+      setEmailSaving(false);
+    }
+  };
+
+  const sendTestEmail = async () => {
+    if (!testTo.trim()) {
+      toast.error('Informe o e-mail de destino para o teste.');
+      return;
+    }
+    setEmailTesting(true);
+    try {
+      const res = await api.post('/admin/settings/email/test', { to: testTo.trim() });
+      toast.success(res.data.data?.message || 'E-mail de teste enviado!');
+    } catch (e: any) {
+      toast.error(e?.response?.data?.message || 'Falha ao enviar e-mail de teste');
+    } finally {
+      setEmailTesting(false);
+    }
+  };
+
+  const testStripe = async () => {
+    setStripeTesting(true);
+    try {
+      const res = await api.post('/admin/settings/payments/test-stripe');
+      const data = res.data.data ?? {};
+      toast.success(`Stripe OK${data.livemode === false ? ' (modo teste)' : ''}`);
+    } catch (e: any) {
+      toast.error(e?.response?.data?.message || 'Falha ao conectar no Stripe');
+    } finally {
+      setStripeTesting(false);
+    }
+  };
+
   const tabs = [
     { id: 'general', label: 'Gerais', icon: Settings },
+    { id: 'email', label: 'E-mail', icon: Mail },
     { id: 'notifications', label: 'Notificações', icon: Bell },
     { id: 'security', label: 'Segurança', icon: Shield },
     { id: 'appearance', label: 'Aparência', icon: Palette },
@@ -144,6 +268,65 @@ export default function AdminSettingsPage() {
               <div>
                 <label className="label-field">Comissão Padrão (%)</label>
                 <input type="number" className="input-field" value={Number(settings.defaultCommission)} onChange={(e) => setField('defaultCommission', e.target.value)} />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'email' && (
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Configurações de E-mail (SMTP)</h2>
+            <div className="rounded-lg bg-blue-50 dark:bg-blue-950 p-3 text-xs text-blue-700 dark:text-blue-300">
+              Os e-mails de confirmação de cadastro, recuperação de senha e boas-vindas usam estas configurações.
+              Campos marcados como <strong>banco de dados</strong> sobrescrevem o `.env` do servidor.
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="label-field">Servidor SMTP</label>
+                <input type="text" className="input-field" placeholder="smtp.gmail.com" value={emailForm.smtpHost} onChange={(e) => setEmailForm({ ...emailForm, smtpHost: e.target.value })} />
+                {emailMeta.source?.smtpHost && <p className="text-xs text-gray-500 mt-1">Origem: {emailMeta.source.smtpHost === 'database' ? 'banco de dados' : '.env'}</p>}
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="label-field">Porta</label>
+                  <input type="number" className="input-field" value={emailForm.smtpPort} onChange={(e) => setEmailForm({ ...emailForm, smtpPort: e.target.value })} />
+                </div>
+                <div>
+                  <label className="label-field">Segurança</label>
+                  <select className="input-field" value={emailForm.smtpSecure} onChange={(e) => setEmailForm({ ...emailForm, smtpSecure: e.target.value })}>
+                    <option value="tls">TLS (587)</option>
+                    <option value="ssl">SSL (465)</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="label-field">Usuário SMTP</label>
+                <input type="text" className="input-field" placeholder="contato@seudominio.com" value={emailForm.smtpUser} onChange={(e) => setEmailForm({ ...emailForm, smtpUser: e.target.value })} />
+              </div>
+              <div>
+                <label className="label-field">Senha SMTP</label>
+                <input type="password" className="input-field" placeholder={emailMeta.passwordConfigured ? '•••••• (configurada — preencha só para trocar)' : 'Senha ou senha de app'} value={emailForm.smtpPass} onChange={(e) => setEmailForm({ ...emailForm, smtpPass: e.target.value })} autoComplete="new-password" />
+                {emailMeta.passwordConfigured && <p className="text-xs text-green-600 mt-1 flex items-center gap-1"><CheckCircle2 className="h-3 w-3" /> Senha configurada</p>}
+              </div>
+              <div className="col-span-2">
+                <label className="label-field">Remetente (From)</label>
+                <input type="text" className="input-field" placeholder="noreply@seudominio.com" value={emailForm.smtpFrom} onChange={(e) => setEmailForm({ ...emailForm, smtpFrom: e.target.value })} />
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <button onClick={saveEmailSettings} disabled={emailSaving} className="btn-primary gap-2 text-sm">
+                {emailSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                {emailSaving ? 'Salvando...' : 'Salvar E-mail'}
+              </button>
+            </div>
+            <div className="rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">Testar envio</h3>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <input type="email" className="input-field flex-1" placeholder="destino@exemplo.com" value={testTo} onChange={(e) => setTestTo(e.target.value)} />
+                <button onClick={sendTestEmail} disabled={emailTesting} className="btn-outline gap-2 text-sm">
+                  {emailTesting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                  {emailTesting ? 'Enviando...' : 'Enviar teste'}
+                </button>
               </div>
             </div>
           </div>
@@ -232,8 +415,44 @@ export default function AdminSettingsPage() {
                   <option value="mercado-pago">Mercado Pago</option>
                 </select>
               </div>
-              <div className="col-span-2 rounded-lg bg-gray-50 dark:bg-gray-800 p-3 text-xs text-gray-500">
-                A chave de API do gateway de pagamento é gerenciada por variáveis de ambiente no servidor e não fica exposta no painel.
+              <div className="col-span-2">
+                <label className="label-field">Meios de pagamento ativos no checkout</label>
+                <div className="space-y-2">
+                  {[
+                    { key: 'creditCardEnabled', label: 'Cartão de Crédito', desc: 'Via Stripe Checkout' },
+                    { key: 'pixEnabled', label: 'Pix', desc: 'Via Stripe Checkout' },
+                    { key: 'boletoEnabled', label: 'Boleto Bancário', desc: 'Via Stripe Checkout' },
+                  ].map((item) => (
+                    <label key={item.key} className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
+                      <div>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">{item.label}</p>
+                        <p className="text-xs text-gray-500">{item.desc}</p>
+                      </div>
+                      <input type="checkbox" checked={!!settings[item.key]} onChange={(e) => setField(item.key, e.target.checked)} className="accent-primary-600 h-4 w-4" />
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <div className="col-span-2 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">Status dos provedores</h3>
+                <div className="flex flex-wrap gap-2 text-xs">
+                  <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full font-medium ${providerStatus.stripeConfigured ? 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300' : 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300'}`}>
+                    {providerStatus.stripeConfigured ? <CheckCircle2 className="h-3 w-3" /> : <XCircle className="h-3 w-3" />}
+                    Stripe {providerStatus.stripeConfigured ? 'configurado' : 'sem chave'}
+                  </span>
+                  <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full font-medium ${providerStatus.mercadopagoEnabled ? 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300' : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400'}`}>
+                    Mercado Pago {providerStatus.mercadopagoEnabled ? 'ativo' : 'inativo'}
+                  </span>
+                </div>
+                <button onClick={testStripe} disabled={stripeTesting} className="btn-outline gap-2 text-sm mt-3">
+                  {stripeTesting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                  {stripeTesting ? 'Testando...' : 'Testar conexão Stripe'}
+                </button>
+                <p className="text-xs text-gray-500 mt-2">As chaves secretas (Stripe/Mercado Pago) continuam em variáveis de ambiente no servidor e nunca ficam expostas aqui.</p>
+              </div>
+              <div className="col-span-2">
+                <label className="label-field">Chave pública do Stripe (opcional)</label>
+                <input type="text" className="input-field" placeholder="pk_test_..." value={settings.stripePublishableKey || ''} onChange={(e) => setField('stripePublishableKey', e.target.value)} />
               </div>
               <div>
                 <label className="label-field">Parcelamento máximo</label>

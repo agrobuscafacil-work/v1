@@ -19,6 +19,7 @@ import { CreateCardDto } from './dto/create-card.dto';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { SettingsService } from '../settings/settings.service';
 
 @ApiTags('Payments')
 @ApiBearerAuth('JWT-auth')
@@ -30,7 +31,14 @@ export class PaymentsController {
   constructor(
     private readonly paymentsService: PaymentsService,
     private readonly cardsService: PaymentCardsService,
+    private readonly settingsService: SettingsService,
   ) {}
+
+  @Get('methods')
+  @ApiOperation({ summary: 'List payment methods enabled by the platform' })
+  async listMethods() {
+    return this.settingsService.getCheckoutPaymentMethods();
+  }
 
   @Get('cards')
   @ApiOperation({ summary: 'List current user cards (non-sensitive data only)' })

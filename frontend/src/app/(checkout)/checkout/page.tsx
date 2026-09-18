@@ -44,6 +44,12 @@ export default function CheckoutPage() {
   const total = selectedSubtotal + shipping - discount;
   const selectedAddress = addresses.find((a) => a.id === selectedAddressId);
 
+  const [payMethods, setPayMethods] = useState<{ id: string; label: string; desc: string }[]>([
+    { id: 'CREDIT_CARD', label: 'Cartão de Crédito', desc: 'Parcele em até 12x' },
+    { id: 'PIX', label: 'Pix', desc: 'Pagamento imediato' },
+    { id: 'BOLETO', label: 'Boleto Bancário', desc: 'Vencimento em 3 dias úteis' },
+  ]);
+
   useEffect(() => {
     const load = async () => {
       try {
@@ -55,6 +61,16 @@ export default function CheckoutPage() {
         setSelectedAddressId((main?.id) || list[0]?.id || '');
       } catch {
         setAddresses([]);
+      }
+      try {
+        const mRes = await api.get('/payments/methods');
+        const mData = mRes.data.data ?? {};
+        if (Array.isArray(mData.methods) && mData.methods.length > 0) {
+          setPayMethods(mData.methods);
+          setPaymentMethod((prev) => (mData.methods.some((m: any) => m.id === prev) ? prev : mData.methods[0].id));
+        }
+      } catch {
+        // mantém os métodos padrão
       }
     };
     load();
@@ -262,11 +278,7 @@ export default function CheckoutPage() {
                   <CreditCard className="h-5 w-5 text-primary-600" /> Forma de Pagamento
                 </h2>
                 <div className="space-y-3 mb-6">
-                  {[
-                    { id: 'CREDIT_CARD', label: 'Cartão de Crédito', desc: 'Parcele em até 12x' },
-                    { id: 'PIX', label: 'Pix', desc: 'Pagamento imediato' },
-                    { id: 'BOLETO', label: 'Boleto Bancário', desc: 'Vencimento em 3 dias úteis' },
-                  ].map((p) => (
+                  {payMethods.map((p) => (
                     <label key={p.id} className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-gray-700 cursor-pointer hover:border-primary-300 transition-colors">
                       <input
                         type="radio"

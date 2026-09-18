@@ -30,6 +30,7 @@ import { SupportModule } from './support/support.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { StripeModule } from './stripe/stripe.module';
 import { RedisModule } from './common/redis/redis.module';
+import { SettingsModule } from './settings/settings.module';
 import { RedisThrottlerStorage } from './common/redis/redis-throttler.storage';
 
 @Module({
@@ -53,6 +54,7 @@ import { RedisThrottlerStorage } from './common/redis/redis-throttler.storage';
     }),
     PrismaModule,
     RedisModule,
+    SettingsModule,
     AuthModule,
     UsersModule,
     SuppliersModule,

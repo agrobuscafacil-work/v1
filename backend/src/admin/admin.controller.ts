@@ -1,5 +1,5 @@
 import {
-  Controller, Get, Put, Param, Body, Query, UseGuards, HttpCode, HttpStatus,
+  Controller, Get, Post, Put, Param, Body, Query, UseGuards, HttpCode, HttpStatus,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { AdminService } from './admin.service';
@@ -9,6 +9,10 @@ import { Roles } from '../common/decorators/roles.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { AdminActionDto } from './dto/admin-action.dto';
 import { UpdateSettingsDto } from './dto/update-settings.dto';
+import { UpdateEmailSettingsDto, TestEmailDto } from './dto/email-settings.dto';
+import { UpdatePaymentSettingsDto } from './dto/payment-settings.dto';
+import { SettingsService } from '../settings/settings.service';
+import { StripeService } from '../stripe/stripe.service';
 
 @ApiTags('Admin')
 @ApiBearerAuth('JWT-auth')
@@ -16,7 +20,11 @@ import { UpdateSettingsDto } from './dto/update-settings.dto';
 @Roles('ADMIN', 'SUPER_ADMIN')
 @Controller('admin')
 export class AdminController {
-  constructor(private readonly adminService: AdminService) {}
+  constructor(
+    private readonly adminService: AdminService,
+    private readonly settingsService: SettingsService,
+    private readonly stripeService: StripeService,
+  ) {}
 
   @Get('stats')
   @ApiOperation({ summary: 'Get system statistics' })
@@ -56,5 +64,45 @@ export class AdminController {
   @ApiOperation({ summary: 'Update platform settings' })
   async updateSettings(@CurrentUser() user: any, @Body() dto: UpdateSettingsDto) {
     return this.adminService.updateSettings(user.id, dto);
+  }
+
+  @Get('settings/email')
+  @ApiOperation({ summary: 'Get email (SMTP) settings (password never returned)' })
+  async getEmailSettings() {
+    return this.settingsService.getEmailSettings();
+  }
+
+  @Put('settings/email')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Update email (SMTP) settings' })
+  async updateEmailSettings(@CurrentUser() user: any, @Body() dto: UpdateEmailSettingsDto) {
+    return this.settingsService.updateEmailSettings(user.id, dto);
+  }
+
+  @Post('settings/email/test')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Send a test email with current SMTP settings' })
+  async testEmailSettings(@Body() dto: TestEmailDto) {
+    return this.settingsService.testEmailSettings(dto.to);
+  }
+
+  @Get('settings/payments')
+  @ApiOperation({ summary: 'Get payment settings and provider status' })
+  async getPaymentSettings() {
+    return this.settingsService.getPaymentSettings();
+  }
+
+  @Put('settings/payments')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Update payment settings (secrets stay in env)' })
+  async updatePaymentSettings(@CurrentUser() user: any, @Body() dto: UpdatePaymentSettingsDto) {
+    return this.settingsService.updatePaymentSettings(user.id, dto);
+  }
+
+  @Post('settings/payments/test-stripe')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Test Stripe connection with configured secret key' })
+  async testStripeConnection() {
+    return this.stripeService.testConnection();
   }
 }
