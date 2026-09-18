@@ -480,12 +480,30 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
           <div className="rounded-xl border border-gray-200 dark:border-gray-700 p-6">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Sobre a Loja</h2>
             <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{supplier.description || 'Fornecedor parceiro da AgroBusca Fácil.'}</p>
-            {supplier.deliveryInfo && (
-              <div className="mt-4 flex items-start gap-2 text-sm text-gray-600 dark:text-gray-400">
-                <Truck className="h-4 w-4 shrink-0 mt-0.5" />
-                <span>{typeof supplier.deliveryInfo === 'string' ? supplier.deliveryInfo : JSON.stringify(supplier.deliveryInfo)}</span>
-              </div>
-            )}
+            {(() => {
+              const methods = Array.isArray((supplier.deliveryInfo as any)?.methods)
+                ? (supplier.deliveryInfo as any).methods.filter((m: any) => m && m.active !== false)
+                : [];
+              if (!supplier.deliveryInfo || methods.length === 0) return null;
+              return (
+                <div className="mt-4 rounded-lg bg-gray-50 dark:bg-gray-800 p-4">
+                  <p className="flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-white mb-2">
+                    <Truck className="h-4 w-4 text-primary-600" /> Opções de entrega
+                  </p>
+                  <ul className="space-y-1.5">
+                    {methods.map((m: any, i: number) => (
+                      <li key={`${m.name}-${i}`} className="flex items-center justify-between gap-3 text-sm text-gray-600 dark:text-gray-400">
+                        <span>{m.name || `Opção ${i + 1}`}</span>
+                        <span className="text-xs whitespace-nowrap">
+                          {Number(m.baseCost) > 0 ? `R$ ${Number(m.baseCost).toFixed(2)}` : 'Grátis'}
+                          {Number(m.estimatedDays) > 0 ? ` • ${m.estimatedDays} dia(s)` : ''}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })()}
           </div>
 
           <div>

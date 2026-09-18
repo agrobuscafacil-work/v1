@@ -1,4 +1,25 @@
 /** @type {import('next').NextConfig} */
+
+// Libera automaticamente o host da API configurado (dev: localhost, prod: api.agrobuscafacil.com.br, ...)
+// para o next/image aceitar logos e fotos de produtos servidas pelo backend.
+function apiImagePattern() {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api/v1';
+  try {
+    const u = new URL(apiUrl);
+    const pattern = {
+      protocol: u.protocol.replace(':', ''),
+      hostname: u.hostname,
+      pathname: `${u.pathname.replace(/\/$/, '')}/**`,
+    };
+    if (u.port) pattern.port = u.port;
+    return pattern;
+  } catch {
+    return null;
+  }
+}
+
+const apiPattern = apiImagePattern();
+
 const nextConfig = {
   turbopack: {
     root: __dirname,
@@ -13,8 +34,9 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'api.agrobuscafacil.com.br',
-        pathname: '/uploads/**',
+        pathname: '/**',
       },
+      ...(apiPattern ? [apiPattern] : []),
     ],
   },
   experimental: {

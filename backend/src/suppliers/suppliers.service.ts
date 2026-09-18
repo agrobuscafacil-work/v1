@@ -19,6 +19,7 @@ const publicSupplierSelect: Prisma.SupplierProfileSelect = {
   bannerUrl: true,
   website: true,
   tier: true,
+  profileTheme: true,
   email: true,
   phone: true,
   rating: true,

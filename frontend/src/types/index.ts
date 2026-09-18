@@ -47,6 +47,7 @@ export interface SupplierProfile {
   email: string;
   status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'BLOCKED';
   tier: SupplierTier;
+  profileTheme?: string;
   rating: number;
   totalReviews: number;
   totalProducts: number;

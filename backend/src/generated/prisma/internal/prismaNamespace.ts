@@ -4189,6 +4189,7 @@ export const SupplierProfileScalarFieldEnum = {
   email: 'email',
   status: 'status',
   tier: 'tier',
+  profileTheme: 'profileTheme',
   statusReason: 'statusReason',
   approvedAt: 'approvedAt',
   reviewedBy: 'reviewedBy',

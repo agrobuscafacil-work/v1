@@ -54,4 +54,10 @@ export class UpdateSupplierAdminDto {
   @IsOptional()
   @IsEnum(SupplierTier)
   tier?: SupplierTier;
+
+  @ApiPropertyOptional({ description: 'Tema do perfil público: A ou E' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(10)
+  profileTheme?: string;
 }

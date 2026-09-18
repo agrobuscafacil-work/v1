@@ -69,6 +69,7 @@ export type SupplierProfileMinAggregateOutputType = {
   email: string | null
   status: $Enums.SupplierStatus | null
   tier: $Enums.SupplierTier | null
+  profileTheme: string | null
   statusReason: string | null
   approvedAt: Date | null
   reviewedBy: string | null
@@ -105,6 +106,7 @@ export type SupplierProfileMaxAggregateOutputType = {
   email: string | null
   status: $Enums.SupplierStatus | null
   tier: $Enums.SupplierTier | null
+  profileTheme: string | null
   statusReason: string | null
   approvedAt: Date | null
   reviewedBy: string | null
@@ -141,6 +143,7 @@ export type SupplierProfileCountAggregateOutputType = {
   email: number
   status: number
   tier: number
+  profileTheme: number
   statusReason: number
   approvedAt: number
   reviewedBy: number
@@ -210,6 +213,7 @@ export type SupplierProfileMinAggregateInputType = {
   email?: true
   status?: true
   tier?: true
+  profileTheme?: true
   statusReason?: true
   approvedAt?: true
   reviewedBy?: true
@@ -246,6 +250,7 @@ export type SupplierProfileMaxAggregateInputType = {
   email?: true
   status?: true
   tier?: true
+  profileTheme?: true
   statusReason?: true
   approvedAt?: true
   reviewedBy?: true
@@ -282,6 +287,7 @@ export type SupplierProfileCountAggregateInputType = {
   email?: true
   status?: true
   tier?: true
+  profileTheme?: true
   statusReason?: true
   approvedAt?: true
   reviewedBy?: true
@@ -410,6 +416,7 @@ export type SupplierProfileGroupByOutputType = {
   email: string
   status: $Enums.SupplierStatus
   tier: $Enums.SupplierTier
+  profileTheme: string
   statusReason: string | null
   approvedAt: Date | null
   reviewedBy: string | null
@@ -474,6 +481,7 @@ export type SupplierProfileWhereInput = {
   email?: Prisma.StringFilter<"SupplierProfile"> | string
   status?: Prisma.EnumSupplierStatusFilter<"SupplierProfile"> | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFilter<"SupplierProfile"> | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFilter<"SupplierProfile"> | string
   statusReason?: Prisma.StringNullableFilter<"SupplierProfile"> | string | null
   approvedAt?: Prisma.DateTimeNullableFilter<"SupplierProfile"> | Date | string | null
   reviewedBy?: Prisma.StringNullableFilter<"SupplierProfile"> | string | null
@@ -534,6 +542,7 @@ export type SupplierProfileOrderByWithRelationInput = {
   email?: Prisma.SortOrder
   status?: Prisma.SortOrder
   tier?: Prisma.SortOrder
+  profileTheme?: Prisma.SortOrder
   statusReason?: Prisma.SortOrderInput | Prisma.SortOrder
   approvedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   reviewedBy?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -597,6 +606,7 @@ export type SupplierProfileWhereUniqueInput = Prisma.AtLeast<{
   email?: Prisma.StringFilter<"SupplierProfile"> | string
   status?: Prisma.EnumSupplierStatusFilter<"SupplierProfile"> | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFilter<"SupplierProfile"> | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFilter<"SupplierProfile"> | string
   statusReason?: Prisma.StringNullableFilter<"SupplierProfile"> | string | null
   approvedAt?: Prisma.DateTimeNullableFilter<"SupplierProfile"> | Date | string | null
   reviewedBy?: Prisma.StringNullableFilter<"SupplierProfile"> | string | null
@@ -657,6 +667,7 @@ export type SupplierProfileOrderByWithAggregationInput = {
   email?: Prisma.SortOrder
   status?: Prisma.SortOrder
   tier?: Prisma.SortOrder
+  profileTheme?: Prisma.SortOrder
   statusReason?: Prisma.SortOrderInput | Prisma.SortOrder
   approvedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   reviewedBy?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -706,6 +717,7 @@ export type SupplierProfileScalarWhereWithAggregatesInput = {
   email?: Prisma.StringWithAggregatesFilter<"SupplierProfile"> | string
   status?: Prisma.EnumSupplierStatusWithAggregatesFilter<"SupplierProfile"> | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierWithAggregatesFilter<"SupplierProfile"> | $Enums.SupplierTier
+  profileTheme?: Prisma.StringWithAggregatesFilter<"SupplierProfile"> | string
   statusReason?: Prisma.StringNullableWithAggregatesFilter<"SupplierProfile"> | string | null
   approvedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"SupplierProfile"> | Date | string | null
   reviewedBy?: Prisma.StringNullableWithAggregatesFilter<"SupplierProfile"> | string | null
@@ -746,6 +758,7 @@ export type SupplierProfileCreateInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -806,6 +819,7 @@ export type SupplierProfileUncheckedCreateInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -864,6 +878,7 @@ export type SupplierProfileUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -924,6 +939,7 @@ export type SupplierProfileUncheckedUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -983,6 +999,7 @@ export type SupplierProfileCreateManyInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -1023,6 +1040,7 @@ export type SupplierProfileUpdateManyMutationInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1064,6 +1082,7 @@ export type SupplierProfileUncheckedUpdateManyInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1118,6 +1137,7 @@ export type SupplierProfileCountOrderByAggregateInput = {
   email?: Prisma.SortOrder
   status?: Prisma.SortOrder
   tier?: Prisma.SortOrder
+  profileTheme?: Prisma.SortOrder
   statusReason?: Prisma.SortOrder
   approvedAt?: Prisma.SortOrder
   reviewedBy?: Prisma.SortOrder
@@ -1172,6 +1192,7 @@ export type SupplierProfileMaxOrderByAggregateInput = {
   email?: Prisma.SortOrder
   status?: Prisma.SortOrder
   tier?: Prisma.SortOrder
+  profileTheme?: Prisma.SortOrder
   statusReason?: Prisma.SortOrder
   approvedAt?: Prisma.SortOrder
   reviewedBy?: Prisma.SortOrder
@@ -1208,6 +1229,7 @@ export type SupplierProfileMinOrderByAggregateInput = {
   email?: Prisma.SortOrder
   status?: Prisma.SortOrder
   tier?: Prisma.SortOrder
+  profileTheme?: Prisma.SortOrder
   statusReason?: Prisma.SortOrder
   approvedAt?: Prisma.SortOrder
   reviewedBy?: Prisma.SortOrder
@@ -1589,6 +1611,7 @@ export type SupplierProfileCreateWithoutUserInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -1647,6 +1670,7 @@ export type SupplierProfileUncheckedCreateWithoutUserInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -1721,6 +1745,7 @@ export type SupplierProfileUpdateWithoutUserInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1779,6 +1804,7 @@ export type SupplierProfileUncheckedUpdateWithoutUserInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1837,6 +1863,7 @@ export type SupplierProfileCreateWithoutSubscriptionsInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -1896,6 +1923,7 @@ export type SupplierProfileUncheckedCreateWithoutSubscriptionsInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -1969,6 +1997,7 @@ export type SupplierProfileUpdateWithoutSubscriptionsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2028,6 +2057,7 @@ export type SupplierProfileUncheckedUpdateWithoutSubscriptionsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2085,6 +2115,7 @@ export type SupplierProfileCreateWithoutFoundationHistoryInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -2144,6 +2175,7 @@ export type SupplierProfileUncheckedCreateWithoutFoundationHistoryInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -2217,6 +2249,7 @@ export type SupplierProfileUpdateWithoutFoundationHistoryInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2276,6 +2309,7 @@ export type SupplierProfileUncheckedUpdateWithoutFoundationHistoryInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2333,6 +2367,7 @@ export type SupplierProfileCreateWithoutAddressesInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -2392,6 +2427,7 @@ export type SupplierProfileUncheckedCreateWithoutAddressesInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -2465,6 +2501,7 @@ export type SupplierProfileUpdateWithoutAddressesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2524,6 +2561,7 @@ export type SupplierProfileUncheckedUpdateWithoutAddressesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2581,6 +2619,7 @@ export type SupplierProfileCreateWithoutCategoriesInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -2640,6 +2679,7 @@ export type SupplierProfileUncheckedCreateWithoutCategoriesInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -2713,6 +2753,7 @@ export type SupplierProfileUpdateWithoutCategoriesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2772,6 +2813,7 @@ export type SupplierProfileUncheckedUpdateWithoutCategoriesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2829,6 +2871,7 @@ export type SupplierProfileCreateWithoutProductsInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -2888,6 +2931,7 @@ export type SupplierProfileUncheckedCreateWithoutProductsInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -2961,6 +3005,7 @@ export type SupplierProfileUpdateWithoutProductsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3020,6 +3065,7 @@ export type SupplierProfileUncheckedUpdateWithoutProductsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3077,6 +3123,7 @@ export type SupplierProfileCreateWithoutServicesInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -3136,6 +3183,7 @@ export type SupplierProfileUncheckedCreateWithoutServicesInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -3209,6 +3257,7 @@ export type SupplierProfileUpdateWithoutServicesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3268,6 +3317,7 @@ export type SupplierProfileUncheckedUpdateWithoutServicesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3325,6 +3375,7 @@ export type SupplierProfileCreateWithoutPromotionsInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -3384,6 +3435,7 @@ export type SupplierProfileUncheckedCreateWithoutPromotionsInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -3457,6 +3509,7 @@ export type SupplierProfileUpdateWithoutPromotionsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3516,6 +3569,7 @@ export type SupplierProfileUncheckedUpdateWithoutPromotionsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3573,6 +3627,7 @@ export type SupplierProfileCreateWithoutCouponsInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -3632,6 +3687,7 @@ export type SupplierProfileUncheckedCreateWithoutCouponsInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -3705,6 +3761,7 @@ export type SupplierProfileUpdateWithoutCouponsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3764,6 +3821,7 @@ export type SupplierProfileUncheckedUpdateWithoutCouponsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3821,6 +3879,7 @@ export type SupplierProfileCreateWithoutWorkingHoursInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -3880,6 +3939,7 @@ export type SupplierProfileUncheckedCreateWithoutWorkingHoursInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -3953,6 +4013,7 @@ export type SupplierProfileUpdateWithoutWorkingHoursInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4012,6 +4073,7 @@ export type SupplierProfileUncheckedUpdateWithoutWorkingHoursInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4069,6 +4131,7 @@ export type SupplierProfileCreateWithoutOrdersInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -4128,6 +4191,7 @@ export type SupplierProfileUncheckedCreateWithoutOrdersInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -4201,6 +4265,7 @@ export type SupplierProfileUpdateWithoutOrdersInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4260,6 +4325,7 @@ export type SupplierProfileUncheckedUpdateWithoutOrdersInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4317,6 +4383,7 @@ export type SupplierProfileCreateWithoutReviewsInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -4376,6 +4443,7 @@ export type SupplierProfileUncheckedCreateWithoutReviewsInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -4449,6 +4517,7 @@ export type SupplierProfileUpdateWithoutReviewsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4508,6 +4577,7 @@ export type SupplierProfileUncheckedUpdateWithoutReviewsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4565,6 +4635,7 @@ export type SupplierProfileCreateWithoutSellerResponsesInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -4624,6 +4695,7 @@ export type SupplierProfileUncheckedCreateWithoutSellerResponsesInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -4697,6 +4769,7 @@ export type SupplierProfileUpdateWithoutSellerResponsesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4756,6 +4829,7 @@ export type SupplierProfileUncheckedUpdateWithoutSellerResponsesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4813,6 +4887,7 @@ export type SupplierProfileCreateWithoutSellerReviewsInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -4872,6 +4947,7 @@ export type SupplierProfileUncheckedCreateWithoutSellerReviewsInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -4945,6 +5021,7 @@ export type SupplierProfileUpdateWithoutSellerReviewsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5004,6 +5081,7 @@ export type SupplierProfileUncheckedUpdateWithoutSellerReviewsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5061,6 +5139,7 @@ export type SupplierProfileCreateWithoutReviewResponsesInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -5120,6 +5199,7 @@ export type SupplierProfileUncheckedCreateWithoutReviewResponsesInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -5193,6 +5273,7 @@ export type SupplierProfileUpdateWithoutReviewResponsesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5252,6 +5333,7 @@ export type SupplierProfileUncheckedUpdateWithoutReviewResponsesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5309,6 +5391,7 @@ export type SupplierProfileCreateWithoutFavoritesInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -5368,6 +5451,7 @@ export type SupplierProfileUncheckedCreateWithoutFavoritesInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -5441,6 +5525,7 @@ export type SupplierProfileUpdateWithoutFavoritesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5500,6 +5585,7 @@ export type SupplierProfileUncheckedUpdateWithoutFavoritesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5557,6 +5643,7 @@ export type SupplierProfileCreateWithoutConversationsInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -5616,6 +5703,7 @@ export type SupplierProfileUncheckedCreateWithoutConversationsInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -5689,6 +5777,7 @@ export type SupplierProfileUpdateWithoutConversationsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5748,6 +5837,7 @@ export type SupplierProfileUncheckedUpdateWithoutConversationsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5805,6 +5895,7 @@ export type SupplierProfileCreateWithoutChatSettingsInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -5864,6 +5955,7 @@ export type SupplierProfileUncheckedCreateWithoutChatSettingsInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -5937,6 +6029,7 @@ export type SupplierProfileUpdateWithoutChatSettingsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5996,6 +6089,7 @@ export type SupplierProfileUncheckedUpdateWithoutChatSettingsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6053,6 +6147,7 @@ export type SupplierProfileCreateWithoutBannersInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -6112,6 +6207,7 @@ export type SupplierProfileUncheckedCreateWithoutBannersInput = {
   email: string
   status?: $Enums.SupplierStatus
   tier?: $Enums.SupplierTier
+  profileTheme?: string
   statusReason?: string | null
   approvedAt?: Date | string | null
   reviewedBy?: string | null
@@ -6185,6 +6281,7 @@ export type SupplierProfileUpdateWithoutBannersInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6244,6 +6341,7 @@ export type SupplierProfileUncheckedUpdateWithoutBannersInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSupplierStatusFieldUpdateOperationsInput | $Enums.SupplierStatus
   tier?: Prisma.EnumSupplierTierFieldUpdateOperationsInput | $Enums.SupplierTier
+  profileTheme?: Prisma.StringFieldUpdateOperationsInput | string
   statusReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   reviewedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6477,6 +6575,7 @@ export type SupplierProfileSelect<ExtArgs extends runtime.Types.Extensions.Inter
   email?: boolean
   status?: boolean
   tier?: boolean
+  profileTheme?: boolean
   statusReason?: boolean
   approvedAt?: boolean
   reviewedBy?: boolean
@@ -6538,6 +6637,7 @@ export type SupplierProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   email?: boolean
   status?: boolean
   tier?: boolean
+  profileTheme?: boolean
   statusReason?: boolean
   approvedAt?: boolean
   reviewedBy?: boolean
@@ -6580,6 +6680,7 @@ export type SupplierProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   email?: boolean
   status?: boolean
   tier?: boolean
+  profileTheme?: boolean
   statusReason?: boolean
   approvedAt?: boolean
   reviewedBy?: boolean
@@ -6622,6 +6723,7 @@ export type SupplierProfileSelectScalar = {
   email?: boolean
   status?: boolean
   tier?: boolean
+  profileTheme?: boolean
   statusReason?: boolean
   approvedAt?: boolean
   reviewedBy?: boolean
@@ -6646,7 +6748,7 @@ export type SupplierProfileSelectScalar = {
   deletedAt?: boolean
 }
 
-export type SupplierProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "companyName" | "tradingName" | "document" | "stateRegistration" | "municipalRegistration" | "description" | "logoUrl" | "bannerUrl" | "website" | "phone" | "whatsapp" | "email" | "status" | "tier" | "statusReason" | "approvedAt" | "reviewedBy" | "rating" | "totalReviews" | "sellerRating" | "sellerTotalReviews" | "totalProducts" | "totalOrders" | "totalSales" | "foundedYear" | "employeesCount" | "businessHours" | "deliveryInfo" | "certifications" | "badges" | "socialNetworks" | "featured" | "viewCount" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["supplierProfile"]>
+export type SupplierProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "companyName" | "tradingName" | "document" | "stateRegistration" | "municipalRegistration" | "description" | "logoUrl" | "bannerUrl" | "website" | "phone" | "whatsapp" | "email" | "status" | "tier" | "profileTheme" | "statusReason" | "approvedAt" | "reviewedBy" | "rating" | "totalReviews" | "sellerRating" | "sellerTotalReviews" | "totalProducts" | "totalOrders" | "totalSales" | "foundedYear" | "employeesCount" | "businessHours" | "deliveryInfo" | "certifications" | "badges" | "socialNetworks" | "featured" | "viewCount" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["supplierProfile"]>
 export type SupplierProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   products?: boolean | Prisma.SupplierProfile$productsArgs<ExtArgs>
@@ -6716,6 +6818,7 @@ export type $SupplierProfilePayload<ExtArgs extends runtime.Types.Extensions.Int
     email: string
     status: $Enums.SupplierStatus
     tier: $Enums.SupplierTier
+    profileTheme: string
     statusReason: string | null
     approvedAt: Date | null
     reviewedBy: string | null
@@ -7196,6 +7299,7 @@ export interface SupplierProfileFieldRefs {
   readonly email: Prisma.FieldRef<"SupplierProfile", 'String'>
   readonly status: Prisma.FieldRef<"SupplierProfile", 'SupplierStatus'>
   readonly tier: Prisma.FieldRef<"SupplierProfile", 'SupplierTier'>
+  readonly profileTheme: Prisma.FieldRef<"SupplierProfile", 'String'>
   readonly statusReason: Prisma.FieldRef<"SupplierProfile", 'String'>
   readonly approvedAt: Prisma.FieldRef<"SupplierProfile", 'DateTime'>
   readonly reviewedBy: Prisma.FieldRef<"SupplierProfile", 'String'>

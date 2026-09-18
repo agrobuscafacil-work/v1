@@ -214,6 +214,7 @@ model SupplierProfile {
   email                 String
   status                SupplierStatus @default(PENDING)
   tier                  SupplierTier   @default(BASIC)
+  profileTheme          String         @default("A")
   statusReason          String?
   approvedAt            DateTime?
   reviewedBy            String?
