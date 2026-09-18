@@ -358,7 +358,10 @@ export class AuthService {
     });
 
     const resetUrl = `${this.configService.get('FRONTEND_URL') || 'https://agrobuscafacil.com'}/auth/reset-password`;
-    await this.mailService.sendPasswordResetEmail(user.email, user.name || 'Usuário', resetToken, resetUrl);
+    const sent = await this.mailService.sendPasswordResetEmail(user.email, user.name || 'Usuário', resetToken, resetUrl);
+    if (!sent) {
+      throw new BadRequestException('Falha ao enviar e-mail. Verifique a configuração SMTP do servidor.');
+    }
 
     this.logger.log(`Password reset email sent to: ${user.email}`);
     return { message: 'Se o e-mail estiver cadastrado, você receberá instruções para redefinir a senha.' };
@@ -445,7 +448,10 @@ export class AuthService {
     });
 
     const confirmUrl = `${this.configService.get('FRONTEND_URL') || 'https://agrobuscafacil.com'}/auth/confirm-email`;
-    await this.mailService.sendEmailConfirmation(user.email, user.name || 'Usuário', confirmationToken, confirmUrl);
+    const sent = await this.mailService.sendEmailConfirmation(user.email, user.name || 'Usuário', confirmationToken, confirmUrl);
+    if (!sent) {
+      throw new BadRequestException('Falha ao enviar e-mail. Verifique a configuração SMTP do servidor.');
+    }
 
     this.logger.log(`Confirmation email resent to: ${user.email}`);
     return { message: 'Se o e-mail estiver cadastrado, você receberá um novo e-mail de confirmação.' };
@@ -457,11 +463,15 @@ export class AuthService {
       throw new BadRequestException('Usuário não encontrado');
     }
 
+    let sent: boolean;
     if (user.role === 'SUPPLIER') {
       const supplier = await this.prisma.supplierProfile.findUnique({ where: { userId: user.id } });
-      await this.mailService.sendSupplierWelcomeEmail(user.email, user.name || 'Usuário', supplier?.companyName || 'Sua Empresa');
+      sent = await this.mailService.sendSupplierWelcomeEmail(user.email, user.name || 'Usuário', supplier?.companyName || 'Sua Empresa');
     } else {
-      await this.mailService.sendWelcomeEmail(user.email, user.name || 'Usuário');
+      sent = await this.mailService.sendWelcomeEmail(user.email, user.name || 'Usuário');
+    }
+    if (!sent) {
+      throw new BadRequestException('Falha ao enviar e-mail. Verifique a configuração SMTP do servidor.');
     }
 
     this.logger.log(`Welcome email resent to: ${user.email}`);
@@ -486,7 +496,10 @@ export class AuthService {
     });
 
     const resetUrl = `${this.configService.get('FRONTEND_URL') || 'https://agrobuscafacil.com'}/auth/reset-password`;
-    await this.mailService.sendAdminPasswordResetEmail(user.email, user.name || 'Usuário', resetToken, resetUrl);
+    const sent = await this.mailService.sendAdminPasswordResetEmail(user.email, user.name || 'Usuário', resetToken, resetUrl);
+    if (!sent) {
+      throw new BadRequestException('Falha ao enviar e-mail. Verifique a configuração SMTP do servidor.');
+    }
 
     this.logger.log(`Admin password reset email sent to: ${user.email}`);
     return { message: 'E-mail de redefinição de senha enviado com sucesso.' };
