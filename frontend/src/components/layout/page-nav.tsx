@@ -18,7 +18,7 @@ export function PageNav() {
             className="btn-ghost p-2"
             aria-label="Voltar para a página anterior"
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft className="h-5 w-5" data-tooltip="Voltar" />
             <span className="hidden sm:inline text-sm">Voltar</span>
           </button>
 

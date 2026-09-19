@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { Minus, Plus, Trash2, ShoppingCart as CartIcon, Leaf, ArrowLeft, ArrowRight, Shield, Truck, Check } from 'lucide-react';
 import { toast } from '@/lib/toast';
 import { useCart } from '@/hooks/use-cart';
+import { PRODUCT_FILE_URL } from '@/lib/products';
 
 export default function CartPage() {
   const { items, selectedProductIds, updateQuantity, removeItem, clearCart, toggleItemSelection, selectAllItems, clearItemSelection } = useCart();
@@ -29,7 +30,7 @@ export default function CartPage() {
           </div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Seu carrinho está vazio</h1>
           <p className="text-gray-500 mb-8">Adicione produtos para começar suas compras.</p>
-          <Link href="/products" className="btn-primary">
+          <Link href="/products" className="btn-primary" data-tooltip="Ver produtos">
             <ArrowLeft className="h-4 w-4 mr-2" /> Ver Produtos
           </Link>
         </div>
@@ -68,7 +69,17 @@ export default function CartPage() {
                 </span>
               </label>
               <Link href={'/products/' + item.product.slug} className="h-24 w-24 shrink-0 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                <Leaf className="h-10 w-10 text-gray-400" />
+                {item.product.image ? (
+                  <Image
+                    src={PRODUCT_FILE_URL(item.product.image)}
+                    alt={item.product.name}
+                    width={96}
+                    height={96}
+                    className="h-full w-full rounded-xl object-cover"
+                  />
+                ) : (
+                  <Leaf className="h-10 w-10 text-gray-400" />
+                )}
               </Link>
               <div className="flex-1 min-w-0">
                 <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{item.product.supplierName}</p>
@@ -80,25 +91,25 @@ export default function CartPage() {
                 </p>
                 <div className="flex items-center justify-between mt-2">
                   <div className="flex items-center gap-2">
-                    <button onClick={() => updateQuantity(item.product.id, -1)} className="btn-outline p-1.5">
+                    <button onClick={() => updateQuantity(item.product.id, -1)} className="btn-outline p-1.5" data-tooltip="Diminuir quantidade">
                       <Minus className="h-3.5 w-3.5" />
                     </button>
                     <span className="w-8 text-center text-sm font-medium">{item.quantity}</span>
-                    <button onClick={() => updateQuantity(item.product.id, 1)} className="btn-outline p-1.5">
+                    <button onClick={() => updateQuantity(item.product.id, 1)} className="btn-outline p-1.5" data-tooltip="Aumentar quantidade">
                       <Plus className="h-3.5 w-3.5" />
                     </button>
                     <span className="text-xs text-gray-500 ml-2">R$ {item.product.price.toFixed(2)}/{item.product.unit}</span>
                   </div>
-                  <button onClick={() => removeItem(item.product.id)} className="btn-ghost p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-950">
-                    <Trash2 className="h-4 w-4" />
-                  </button>
+<button onClick={() => removeItem(item.product.id)} className="btn-ghost p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-950" data-tooltip="Remover item">
+                      <Trash2 className="h-4 w-4" />
+                    </button>
                 </div>
               </div>
             </div>
           ))}
 
           <div className="flex items-center justify-between pt-4">
-            <Link href="/products" className="btn-ghost text-sm gap-2">
+            <Link href="/products" className="btn-ghost text-sm gap-2" data-tooltip="Continuar comprando">
               <ArrowLeft className="h-4 w-4" /> Continuar Comprando
             </Link>
             <button onClick={clearCart} className="btn-ghost text-sm text-red-500 hover:bg-red-50">
@@ -155,7 +166,7 @@ export default function CartPage() {
                   event.preventDefault();
                   toast.error('Selecione pelo menos um produto para continuar.');
                 }
-              }} className={`btn-primary w-full gap-2 ${selectedItems.length === 0 ? 'pointer-events-auto opacity-50' : ''}`}>
+              }} className={`btn-primary w-full gap-2 ${selectedItems.length === 0 ? 'pointer-events-auto opacity-50' : ''}`} data-tooltip="Ir para pagamento">
                 Seguir para Pagamento <ArrowRight className="h-4 w-4" />
               </Link>
             </div>

@@ -124,6 +124,23 @@ export class AuthService {
       throw new UnauthorizedException('E-mail ou senha incorretos. Verifique os dados informados e tente novamente.');
     }
 
+    if (user.role === 'SUPPLIER') {
+      const supplier = await this.prisma.supplierProfile.findUnique({
+        where: { userId: user.id },
+        select: { status: true },
+      });
+      if (supplier?.status === 'BLOCKED') {
+        throw new UnauthorizedException(
+          'Sua conta foi bloqueada, entre em contato conosco para obter mais informações.',
+        );
+      }
+      if (supplier?.status === 'REJECTED') {
+        throw new UnauthorizedException(
+          'Sua conta foi rejeitada, entre em contato conosco para obter mais informações.',
+        );
+      }
+    }
+
     if (!user.active) {
       throw new UnauthorizedException('Account is inactive. Contact support.');
     }

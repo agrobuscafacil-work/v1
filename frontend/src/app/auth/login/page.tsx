@@ -8,7 +8,7 @@ import { z } from 'zod';
 import { toast } from '@/lib/toast';
 import { useAuth } from '@/hooks/use-auth';
 import PasswordInput from '@/components/ui/password-input';
-import { Leaf, Loader2 } from 'lucide-react';
+import { Leaf, Loader2, Mail, MessageCircle } from 'lucide-react';
 import { useState } from 'react';
 
 const loginSchema = z.object({
@@ -22,6 +22,7 @@ export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [accountMessage, setAccountMessage] = useState('');
 
   const {
     register,
@@ -33,6 +34,7 @@ export default function LoginPage() {
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
+    setAccountMessage('');
     try {
       await login(data.email, data.password);
       toast.success('Login realizado com sucesso!');
@@ -41,7 +43,11 @@ export default function LoginPage() {
       const data = error?.response?.data;
       const message =
         data?.error?.message || data?.message || 'E-mail ou senha incorretos. Verifique os dados informados e tente novamente.';
-      toast.error(message);
+      if (message === 'Sua conta foi bloqueada, entre em contato conosco para obter mais informações.' || message === 'Sua conta foi rejeitada, entre em contato conosco para obter mais informações.') {
+        setAccountMessage(message);
+      } else {
+        toast.error(message);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -61,6 +67,31 @@ export default function LoginPage() {
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {accountMessage && (
+            <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800 dark:border-red-900 dark:bg-red-950 dark:text-red-200">
+              <p>{accountMessage}</p>
+              <div className="mt-3 flex items-center gap-3">
+                <a
+                  href="mailto:agrobuscafacil@gmail.com"
+                  aria-label="Enviar e-mail para AgroBuscaFácil"
+                  title="Enviar e-mail"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-red-700 shadow-sm hover:bg-red-100 dark:bg-red-900 dark:text-red-100 dark:hover:bg-red-800"
+                >
+                  <Mail className="h-4 w-4" />
+                </a>
+                <a
+                  href="https://wa.me/5519997708578"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Falar com AgroBuscaFácil pelo WhatsApp"
+                  title="Falar pelo WhatsApp"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-green-700 shadow-sm hover:bg-green-100 dark:bg-green-900 dark:text-green-100 dark:hover:bg-green-800"
+                >
+                  <MessageCircle className="h-4 w-4" />
+                </a>
+              </div>
+            </div>
+          )}
           <div>
             <label htmlFor="email" className="label-field">E-mail</label>
             <input

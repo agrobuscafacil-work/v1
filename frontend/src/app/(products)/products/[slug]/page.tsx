@@ -520,6 +520,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   className="btn-outline p-2"
+                  data-tooltip="Diminuir quantidade"
                 >
                   <Minus className="h-4 w-4" />
                 </button>
@@ -527,6 +528,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                 <button
                   onClick={() => setQuantity(Math.min(product.stock || 1, quantity + 1))}
                   className="btn-outline p-2"
+                  data-tooltip="Aumentar quantidade"
                 >
                   <Plus className="h-4 w-4" />
                 </button>
@@ -537,16 +539,17 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
             <div className="flex gap-3">
               {product.saleMode === 'CONTACT_ONLY' ? (
                 <>
-                  {product.supplier.whatsapp && <a href={`https://wa.me/${product.supplier.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="btn-primary flex-1 gap-2"><MessageCircle className="h-4 w-4" /> WhatsApp</a>}
-                  <button type="button" onClick={handleProductContact} className="btn-outline flex-1 gap-2"><MessageCircle className="h-4 w-4" /> Chat Online</button>
+                  {product.supplier.whatsapp && <a href={`https://wa.me/${product.supplier.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="btn-primary flex-1 gap-2" data-tooltip="WhatsApp"><MessageCircle className="h-4 w-4" /> WhatsApp</a>}
+                  <button type="button" onClick={handleProductContact} className="btn-outline flex-1 gap-2" data-tooltip="Chat Online"><MessageCircle className="h-4 w-4" /> Chat Online</button>
                 </>
               ) : <>
-                <button onClick={handleBuy} className="btn-primary flex-1 gap-2"><ShoppingCart className="h-4 w-4" /> Comprar</button>
-                <button onClick={handleAddToCart} className="btn-outline flex-1 gap-2"><ShoppingCart className="h-4 w-4" /> Adicionar ao Carrinho</button>
+                <button onClick={handleBuy} className="btn-primary flex-1 gap-2" data-tooltip="Comprar"><ShoppingCart className="h-4 w-4" /> Comprar</button>
+                <button onClick={handleAddToCart} className="btn-outline flex-1 gap-2" data-tooltip="Adicionar ao carrinho"><ShoppingCart className="h-4 w-4" /> Adicionar ao Carrinho</button>
               </>}
               <button
                 onClick={toggleFavorite}
                 className={`btn-outline px-3 ${isFavorited ? 'text-red-500 border-red-300' : ''}`}
+                data-tooltip={isFavorited ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
               >
                 <Heart className={`h-5 w-5 ${isFavorited ? 'fill-red-500' : ''}`} />
               </button>
@@ -555,8 +558,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                   type="button"
                   onClick={() => { setShareOpen((open) => !open); setShareCopied(false); }}
                   aria-label="Compartilhar produto"
-                  title="Compartilhar produto"
                   className="btn-outline px-3"
+                  data-tooltip="Compartilhar"
                 >
                   <Share2 className="h-5 w-5" />
                 </button>
@@ -689,7 +692,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                 <textarea value={reviewComment} onChange={(e) => setReviewComment(e.target.value)} placeholder="Seu comentário..." maxLength={1000} rows={3} className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm" />
                 <div className="flex gap-2">
                   <button onClick={handleUpdateReview} disabled={submittingReview} className="btn-primary gap-2">{submittingReview ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />} Salvar</button>
-                  <button onClick={() => setConfirmDeleteReview(editingReview)} disabled={deletingReviewId === editingReview.id} className="btn-outline gap-2 text-red-600 border-red-200">{deletingReviewId === editingReview.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />} Remover</button>
+                  <button onClick={() => setConfirmDeleteReview(editingReview)} disabled={deletingReviewId === editingReview.id} className="btn-outline gap-2 text-red-600 border-red-200" data-tooltip="Remover avaliação">{deletingReviewId === editingReview.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />} Remover</button>
                 </div>
               </div>
             )}
@@ -726,8 +729,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                           const isMine = user?.id && review.userId === user.id;
                           return isMine ? (
                             <div className="flex items-center gap-1">
-                              <button type="button" onClick={() => startEditReview(review)} className="p-1.5 rounded-lg text-gray-400 hover:text-primary-600 hover:bg-gray-100 dark:hover:bg-gray-800" title="Editar"><Pencil className="h-4 w-4" /></button>
-                              <button type="button" onClick={() => setConfirmDeleteReview(review)} disabled={deletingReviewId === review.id} className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50" title="Remover">{deletingReviewId === review.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}</button>
+                              <button type="button" onClick={() => startEditReview(review)} className="p-1.5 rounded-lg text-gray-400 hover:text-primary-600 hover:bg-gray-100 dark:hover:bg-gray-800" data-tooltip="Editar avaliação"><Pencil className="h-4 w-4" /></button>
+                              <button type="button" onClick={() => setConfirmDeleteReview(review)} disabled={deletingReviewId === review.id} className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50" data-tooltip="Remover avaliação">{deletingReviewId === review.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}</button>
                             </div>
                           ) : null;
                         })()}
@@ -738,9 +741,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                           aria-label={expanded ? 'Esconder comentário' : 'Mostrar comentário'}
                         >
                           {expanded ? (
-                            <ChevronUp className="h-4 w-4" />
+                            <ChevronUp className="h-4 w-4" data-tooltip="Recolher comentário" />
                           ) : (
-                            <ChevronDown className="h-4 w-4" />
+                            <ChevronDown className="h-4 w-4" data-tooltip="Expandir comentário" />
                           )}
                         </button>
                       </div>
@@ -751,7 +754,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                       )}
                       <div className="mt-3 flex justify-end">
                         <button type="button" onClick={() => handleLikeReview(review)} disabled={likingReviewId === review.id} className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs transition-colors ${review.liked ? 'text-primary-700 bg-primary-50 dark:bg-primary-900/40' : 'text-gray-500 hover:text-primary-600 hover:bg-gray-100 dark:hover:bg-gray-800'}`} aria-label={review.liked ? 'Remover curtida' : 'Curtir avaliação'}>
-                          {likingReviewId === review.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ThumbsUp className={`h-3.5 w-3.5 ${review.liked ? 'fill-current' : ''}`} />}
+                          {likingReviewId === review.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ThumbsUp className={`h-3.5 w-3.5 ${review.liked ? 'fill-current' : ''}`} data-tooltip={review.liked ? 'Descurtir avaliação' : 'Curtir avaliação'} />}
                           {review.helpfulCount}
                         </button>
                       </div>
@@ -825,7 +828,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                   <div className="aspect-[4/3] bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
                     {p.image ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={p.image} alt={p.name} className="h-full w-full object-cover" />
+                      <img src={PRODUCT_FILE_URL(p.image)} alt={p.name} className="h-full w-full object-cover" />
                     ) : (
                       <Leaf className="h-12 w-12 text-gray-400" />
                     )}
@@ -845,8 +848,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                 </Link>
                 <div className="p-3 pt-0">
                   {p.saleMode === 'CONTACT_ONLY' ? <div className="flex gap-2">
-                    {p.supplierWhatsapp && <a href={`https://wa.me/${p.supplierWhatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="btn-primary flex-1 gap-2 text-xs"><MessageCircle className="h-4 w-4" /> WhatsApp</a>}
-                    <Link href={`/suppliers/${p.supplierId}`} className="btn-outline flex-1 gap-2 text-xs"><MessageCircle className="h-4 w-4" /> Chat Online</Link>
+                    {p.supplierWhatsapp && <a href={`https://wa.me/${p.supplierWhatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="btn-primary flex-1 gap-2 text-xs" data-tooltip="WhatsApp"><MessageCircle className="h-4 w-4" /> WhatsApp</a>}
+                    <Link href={`/suppliers/${p.supplierId}`} className="btn-outline flex-1 gap-2 text-xs" data-tooltip="Chat Online"><MessageCircle className="h-4 w-4" /> Chat Online</Link>
                   </div> : <button
                     onClick={() => {
                       addItem({
@@ -861,7 +864,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                       }, 1);
                       router.push('/checkout');
                     }}
-                    className="btn-primary w-full gap-2 text-sm"
+                    className="btn-primary w-full gap-2 text-sm" data-tooltip="Comprar"
                   >
                     <ShoppingCart className="h-4 w-4" /> Comprar
                   </button>}

@@ -138,7 +138,7 @@ export default function DashboardPage() {
           </h1>
           <p className="text-sm text-gray-500">Bem-vindo ao seu painel de controle</p>
         </div>
-        <button onClick={handleLogout} disabled={isLoggingOut} className="btn-outline text-sm gap-2">
+        <button onClick={handleLogout} disabled={isLoggingOut} className="btn-outline text-sm gap-2" data-tooltip="Sair">
           {isLoggingOut ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogOut className="h-4 w-4" />}
           Sair
         </button>
@@ -217,7 +217,7 @@ export default function DashboardPage() {
                     <p className="font-medium">{link.label}</p>
                     <p className="text-xs text-gray-500">{link.description}</p>
                   </div>
-                  <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-primary-600" />
+                  <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-primary-600" data-tooltip="Acessar" />
                 </Link>
               ))}
             </div>

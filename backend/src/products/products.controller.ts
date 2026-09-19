@@ -95,7 +95,8 @@ export class ProductsController {
       limits: { fileSize: PRODUCT_IMAGE_MAX_SIZE },
     }),
   )
-  async uploadImage(@UploadedFile() file?: Express.Multer.File) {
+  async uploadImage(@CurrentUser() user: any, @UploadedFile() file?: Express.Multer.File) {
+    await this.productsService.ensureSupplierApproved(user.id);
     if (!file) {
       throw new BadRequestException('Nenhuma imagem enviada');
     }

@@ -138,7 +138,7 @@ export function Header() {
                 onClick={() => router.back()}
                 className="btn-ghost p-2"
                 aria-label="Voltar para a página anterior"
-                title="Voltar"
+                data-tooltip="Voltar"
               >
                 <ArrowLeft className="h-5 w-5" />
               </button>
@@ -178,6 +178,7 @@ export function Header() {
               href="/favorites"
               className="btn-ghost p-2"
               aria-label="Favoritos"
+              data-tooltip="Favoritos"
             >
               <Heart className="h-5 w-5" />
             </Link>
@@ -186,6 +187,7 @@ export function Header() {
               href="/cart"
               className="btn-ghost p-2 relative"
               aria-label="Carrinho"
+              data-tooltip="Carrinho de compras"
             >
               <ShoppingCart className="h-5 w-5" />
               {mounted && totalItems() > 0 && (
@@ -199,6 +201,7 @@ export function Header() {
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
               className="btn-ghost p-2"
               aria-label="Alternar tema"
+              data-tooltip={theme === 'dark' ? 'Modo claro' : 'Modo escuro'}
             >
               {theme === 'dark' ? (
                 <Sun className="h-5 w-5" />
@@ -217,6 +220,7 @@ export function Header() {
                     }}
                     className="btn-ghost p-2 relative"
                     aria-label="Notificações"
+                    data-tooltip="Notificações"
                   >
                     <Bell className="h-5 w-5" />
                     {unreadCount > 0 && (
@@ -242,7 +246,7 @@ export function Header() {
                               onClick={markAllRead}
                               className="inline-flex items-center gap-1 text-xs text-primary-600 hover:underline"
                             >
-                              <CheckCheck className="h-3.5 w-3.5" />
+                              <CheckCheck className="h-3.5 w-3.5" data-tooltip="Marcar como lida" />
                               Marcar todas como lidas
                             </button>
                           )}
@@ -291,7 +295,7 @@ export function Header() {
                                   aria-label="Remover notificação"
                                   className="mt-0.5 flex-shrink-0 rounded-md p-1 text-gray-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950"
                                 >
-                                  <X className="h-3.5 w-3.5" />
+                                  <X className="h-3.5 w-3.5" data-tooltip="Remover notificação" />
                                 </button>
                               </div>
                             ))
@@ -313,7 +317,7 @@ export function Header() {
                   <span className="hidden lg:block text-sm font-medium">
                     {user?.name?.split(' ')[0]}
                   </span>
-                  <ChevronDown className="h-4 w-4" />
+                  <ChevronDown className="h-4 w-4" data-tooltip="Menu do usuário" />
                 </button>
 
                 {userMenuOpen && (
@@ -335,7 +339,7 @@ export function Header() {
                           className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                           onClick={() => setUserMenuOpen(false)}
                         >
-                          <Package className="h-4 w-4" />
+                          <Package className="h-4 w-4" data-tooltip="Meus pedidos" />
                           Meus Pedidos
                         </Link>
                         <Link
@@ -343,7 +347,7 @@ export function Header() {
                           className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                           onClick={() => setUserMenuOpen(false)}
                         >
-                          <Heart className="h-4 w-4" />
+                          <Heart className="h-4 w-4" data-tooltip="Favoritos" />
                           Favoritos
                         </Link>
                         {user?.role === 'SUPPLIER' && (
@@ -352,7 +356,7 @@ export function Header() {
                             className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                             onClick={() => setUserMenuOpen(false)}
                           >
-                            <Store className="h-4 w-4" />
+                            <Store className="h-4 w-4" data-tooltip="Painel do Fornecedor" />
                             Painel do Fornecedor
                           </Link>
                         )}
@@ -362,7 +366,7 @@ export function Header() {
                             className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                             onClick={() => setUserMenuOpen(false)}
                           >
-                            <Shield className="h-4 w-4" />
+                            <Shield className="h-4 w-4" data-tooltip="Painel Administrativo" />
                             Painel Administrativo
                           </Link>
                         )}
@@ -371,7 +375,7 @@ export function Header() {
                           className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                           onClick={() => setUserMenuOpen(false)}
                         >
-                          <MessageCircle className="h-4 w-4" />
+                          <MessageCircle className="h-4 w-4" data-tooltip="Chat" />
                           Chat
                         </Link>
                         <Link
@@ -379,7 +383,7 @@ export function Header() {
                           className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                           onClick={() => setUserMenuOpen(false)}
                         >
-                          <User className="h-4 w-4" />
+                          <User className="h-4 w-4" data-tooltip="Meu Perfil" />
                           Meu Perfil
                         </Link>
                         <Link
@@ -387,7 +391,7 @@ export function Header() {
                           className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                           onClick={() => setUserMenuOpen(false)}
                         >
-                          <LifeBuoy className="h-4 w-4" />
+                          <LifeBuoy className="h-4 w-4" data-tooltip="Meus Relatos" />
                           Meus Relatos
                         </Link>
                         <Link
@@ -395,7 +399,7 @@ export function Header() {
                           className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                           onClick={() => setUserMenuOpen(false)}
                         >
-                          <LifeBuoy className="h-4 w-4" />
+                          <LifeBuoy className="h-4 w-4" data-tooltip="Relatar Problema" />
                           Relatar Problema
                         </Link>
                       </div>
@@ -407,7 +411,7 @@ export function Header() {
                           }}
                           className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950"
                         >
-                          <LogOut className="h-4 w-4" />
+                          <LogOut className="h-4 w-4" data-tooltip="Sair" />
                           Sair
                         </button>
                       </div>
@@ -426,11 +430,12 @@ export function Header() {
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="md:hidden btn-ghost p-2"
               aria-label="Menu"
+              data-tooltip="Menu"
             >
               {mobileMenuOpen ? (
-                <X className="h-5 w-5" />
+                <X className="h-5 w-5" data-tooltip="Fechar menu" />
               ) : (
-                <Menu className="h-5 w-5" />
+                <Menu className="h-5 w-5" data-tooltip="Abrir menu" />
               )}
             </button>
           </div>

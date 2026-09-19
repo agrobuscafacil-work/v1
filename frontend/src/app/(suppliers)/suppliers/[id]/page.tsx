@@ -523,7 +523,7 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
                     <Link href={`/products/${product.slug}`} className="flex gap-4 flex-1 min-w-0">
                       {product.image ? (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img src={product.image} alt={product.name} className="h-20 w-20 shrink-0 rounded-xl object-cover bg-gray-100 dark:bg-gray-800" />
+                        <img src={PRODUCT_FILE_URL(product.image)} alt={product.name} className="h-20 w-20 shrink-0 rounded-xl object-cover bg-gray-100 dark:bg-gray-800" />
                       ) : (
                         <div className="h-20 w-20 shrink-0 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
                           <Leaf className="h-8 w-8 text-gray-400" />
@@ -543,8 +543,8 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
                       </div>
                     </Link>
                     {product.saleMode === 'CONTACT_ONLY' ? <div className="flex flex-col gap-2 self-center shrink-0">
-                      {supplier.whatsapp && <a href={`https://wa.me/${supplier.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="btn-primary gap-2 text-xs px-3 py-2"><MessageCircle className="h-4 w-4" /> WhatsApp</a>}
-                      <Link href={`/suppliers/${supplier.id}`} className="btn-outline gap-2 text-xs px-3 py-2"><MessageCircle className="h-4 w-4" /> Chat Online</Link>
+                      {supplier.whatsapp && <a href={`https://wa.me/${supplier.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="btn-primary gap-2 text-xs px-3 py-2" data-tooltip="WhatsApp"><MessageCircle className="h-4 w-4" /> WhatsApp</a>}
+                      <Link href={`/suppliers/${supplier.id}`} className="btn-outline gap-2 text-xs px-3 py-2" data-tooltip="Chat Online"><MessageCircle className="h-4 w-4" /> Chat Online</Link>
                     </div> : <button
                       onClick={() => {
                         if (!supplier) return;
@@ -560,7 +560,7 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
                         }, 1);
                         router.push('/checkout');
                       }}
-                      className="btn-primary self-center gap-2 text-xs px-3 py-2 shrink-0"
+                      className="btn-primary self-center gap-2 text-xs px-3 py-2 shrink-0" data-tooltip="Comprar"
                     >
                       <ShoppingCart className="h-4 w-4" /> Comprar
                     </button>}
@@ -634,17 +634,17 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
                       </div>
                       {isMine && (
                         <div className="flex items-center gap-1">
-                          <button type="button" onClick={() => startEditSellerReview(review)} className="p-1.5 rounded-lg text-gray-400 hover:text-primary-600 hover:bg-gray-100" title="Editar"><Pencil className="h-4 w-4" /></button>
-                          <button type="button" onClick={() => setConfirmDelete(review as any)} disabled={deletingId === review.id} className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50" title="Remover">{deletingId === review.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}</button>
+                          <button type="button" onClick={() => startEditSellerReview(review)} className="p-1.5 rounded-lg text-gray-400 hover:text-primary-600 hover:bg-gray-100" data-tooltip="Editar avaliação"><Pencil className="h-4 w-4" /></button>
+                          <button type="button" onClick={() => setConfirmDelete(review as any)} disabled={deletingId === review.id} className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50" data-tooltip="Remover avaliação">{deletingId === review.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}</button>
                         </div>
                       )}
-                      <button type="button" onClick={() => toggleSellerReview(review.id)} className="p-1.5 rounded-lg text-gray-400 hover:text-primary-600 hover:bg-gray-100"><span className="text-xs">{expanded ? '▲' : '▼'}</span></button>
+                      <button type="button" onClick={() => toggleSellerReview(review.id)} className="p-1.5 rounded-lg text-gray-400 hover:text-primary-600 hover:bg-gray-100" data-tooltip={expanded ? 'Recolher' : 'Expandir'}><span className="text-xs">{expanded ? '▲' : '▼'}</span></button>
                     </div>
                     {(expanded || review.title) && review.title && <p className="mt-2 text-sm font-semibold">{review.title}</p>}
                     {expanded && review.comment && <p className="mt-1 text-sm text-gray-600 dark:text-gray-400 border-t pt-2">{review.comment}</p>}
                     <div className="mt-3 flex justify-end">
                       <button type="button" onClick={() => handleLikeReview(review, true)} disabled={likingReviewId === review.id} className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs transition-colors ${review.liked ? 'text-primary-700 bg-primary-50 dark:bg-primary-900/40' : 'text-gray-500 hover:text-primary-600 hover:bg-gray-100 dark:hover:bg-gray-800'}`} aria-label={review.liked ? 'Remover curtida' : 'Curtir avaliação'}>
-                        {likingReviewId === review.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ThumbsUp className={`h-3.5 w-3.5 ${review.liked ? 'fill-current' : ''}`} />}
+                        {likingReviewId === review.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ThumbsUp className={`h-3.5 w-3.5 ${review.liked ? 'fill-current' : ''}`} data-tooltip={review.liked ? 'Descurtir' : 'Curtir'} />}
                         {review.helpfulCount}
                       </button>
                     </div>
@@ -678,16 +678,16 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
             </div>
             <div className="mt-4 space-y-2">
               {supplier.phone ? (
-                <a href={`tel:${supplier.phone}`} className="btn-outline w-full gap-2">
+                <a href={`tel:${supplier.phone}`} className="btn-outline w-full gap-2" data-tooltip="Ligar">
                   <Phone className="h-4 w-4" /> Ligar
                 </a>
               ) : null}
               {supplier.whatsapp ? (
-                <a href={`https://wa.me/${supplier.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="btn-primary w-full gap-2">
+                <a href={`https://wa.me/${supplier.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="btn-primary w-full gap-2" data-tooltip="WhatsApp">
                   <MessageCircle className="h-4 w-4" /> WhatsApp
                 </a>
               ) : null}
-              <button onClick={() => setIsChatOpen(true)} className="btn-outline w-full gap-2">
+              <button onClick={() => setIsChatOpen(true)} className="btn-outline w-full gap-2" data-tooltip="Chat Online">
                 <MessageCircle className="h-4 w-4" /> Chat Online
               </button>
             </div>
@@ -704,7 +704,7 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
                     CEP {supplier.address.zipCode}</span>
                 </p>
                 {supplier.address.latitude != null && supplier.address.longitude != null && (
-                  <a href={`https://www.google.com/maps?q=${supplier.address.latitude},${supplier.address.longitude}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-md border border-primary-200 px-2.5 py-1.5 text-xs font-medium text-primary-700 hover:bg-primary-50 dark:border-primary-800 dark:text-primary-300 dark:hover:bg-primary-950" title="Abrir localização da loja no mapa">
+                  <a href={`https://www.google.com/maps?q=${supplier.address.latitude},${supplier.address.longitude}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-md border border-primary-200 px-2.5 py-1.5 text-xs font-medium text-primary-700 hover:bg-primary-50 dark:border-primary-800 dark:text-primary-300 dark:hover:bg-primary-950" data-tooltip="Ver no mapa">
                     <MapPin className="h-3.5 w-3.5" /> Ver no mapa
                   </a>
                 )}
@@ -761,7 +761,7 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
                 {isOnline ? <Wifi className="h-5 w-5 text-green-500" /> : <WifiOff className="h-5 w-5 text-red-500" />}
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Chat com {supplier.companyName}</h2>
               </div>
-              <button onClick={() => setIsChatOpen(false)} className="btn-ghost p-1">
+              <button onClick={() => setIsChatOpen(false)} className="btn-ghost p-1" data-tooltip="Fechar chat">
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -803,7 +803,7 @@ export default function SupplierDetailPage({ params }: { params: Promise<{ id: s
                     className="flex-1 px-4 py-2 text-sm rounded-lg bg-gray-50 dark:bg-gray-800 border-0 focus:ring-2 focus:ring-primary-500"
                     onKeyDown={(e) => { if (e.key === 'Enter') handleChatSend(); }}
                   />
-                  <button onClick={handleChatSend} disabled={!chatMessage.trim() || chatSending} className="p-2 rounded-lg bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50">
+                  <button onClick={handleChatSend} disabled={!chatMessage.trim() || chatSending} className="p-2 rounded-lg bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50" data-tooltip="Enviar">
                     <Send className="h-4 w-4" />
                   </button>
                 </div>

@@ -84,6 +84,20 @@ export class ProductsService {
     return value === 'LOCAL_REGION' ? 'LOCAL_REGION' : 'ALL_BRAZIL';
   }
 
+  async ensureSupplierApproved(userId: string) {
+    const supplier = await this.prisma.supplierProfile.findUnique({
+      where: { userId },
+      select: { id: true, status: true },
+    });
+    if (!supplier) throw new NotFoundException('Supplier profile not found');
+    if (supplier.status !== 'APPROVED') {
+      throw new ForbiddenException(
+        'Sua conta de fornecedor ainda está pendente de aprovação. Você poderá criar produtos após a aprovação do administrador.',
+      );
+    }
+    return supplier;
+  }
+
   private async safeDeleteImageFiles(images: string[], exceptProductId?: string) {
     for (const img of images) {
       if (typeof img !== 'string' || !INTERNAL_IMAGE_PATTERN.test(img)) continue;
@@ -123,8 +137,7 @@ export class ProductsService {
   }
 
   async create(userId: string, dto: CreateProductDto) {
-    const supplier = await this.prisma.supplierProfile.findUnique({ where: { userId } });
-    if (!supplier) throw new NotFoundException('Supplier profile not found');
+    const supplier = await this.ensureSupplierApproved(userId);
     const category = await this.resolveCategory(dto.categoryId);
 
     const product = await this.prisma.$transaction(async (tx) => {

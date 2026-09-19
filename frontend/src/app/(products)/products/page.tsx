@@ -149,6 +149,7 @@ export default function ProductsPage() {
           <button
             onClick={() => setMobileFiltersOpen(true)}
             className="btn-outline lg:hidden"
+            data-tooltip="Filtros"
           >
             <SlidersHorizontal className="h-4 w-4" />
             <span className="ml-2">Filtros</span>
@@ -157,12 +158,14 @@ export default function ProductsPage() {
             <button
               onClick={() => setViewMode('grid')}
               className={`p-2 ${viewMode === 'grid' ? 'bg-gray-100 dark:bg-gray-800 text-primary-600' : 'text-gray-500'}`}
+              data-tooltip="Visualização em grade"
             >
               <Grid3X3 className="h-4 w-4" />
             </button>
             <button
               onClick={() => setViewMode('list')}
               className={`p-2 ${viewMode === 'list' ? 'bg-gray-100 dark:bg-gray-800 text-primary-600' : 'text-gray-500'}`}
+              data-tooltip="Visualização em lista"
             >
               <List className="h-4 w-4" />
             </button>
@@ -257,6 +260,7 @@ export default function ProductsPage() {
                     className={`h-5 w-5 ${
                       star <= minRating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300 dark:text-gray-600'
                     }`}
+                    data-tooltip={`${star} estrela${star > 1 ? 's' : ''} ou mais`}
                   />
                 </button>
               ))}
@@ -359,8 +363,8 @@ export default function ProductsPage() {
                   </Link>
                   <div className="p-3 pt-0">
                     {product.saleMode === 'CONTACT_ONLY' ? <div className="flex gap-2">
-                      {product.supplierWhatsapp && <a href={`https://wa.me/${product.supplierWhatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }} className="btn-primary flex-1 gap-2 text-xs"><MessageCircle className="h-4 w-4" /> WhatsApp</a>}
-                      <Link href={`/suppliers/${product.supplierId}`} onClick={(e) => { e.stopPropagation(); }} className="btn-outline flex-1 gap-2 text-xs"><MessageCircle className="h-4 w-4" /> Chat Online</Link>
+                      {product.supplierWhatsapp && <a href={`https://wa.me/${product.supplierWhatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }} className="btn-primary flex-1 gap-2 text-xs"><MessageCircle className="h-4 w-4" data-tooltip="WhatsApp" /> WhatsApp</a>}
+                      <Link href={`/suppliers/${product.supplierId}`} onClick={(e) => { e.stopPropagation(); }} className="btn-outline flex-1 gap-2 text-xs"><MessageCircle className="h-4 w-4" data-tooltip="Chat Online" /> Chat Online</Link>
                     </div> : <button
                       onClick={(e) => {
                         e.preventDefault();
@@ -379,7 +383,7 @@ export default function ProductsPage() {
                       }}
                       className="btn-primary w-full gap-2 text-sm"
                     >
-                      <ShoppingCart className="h-4 w-4" /> Comprar
+                      <ShoppingCart className="h-4 w-4" data-tooltip="Comprar" /> Comprar
                     </button>}
                   </div>
                 </div>
@@ -404,7 +408,7 @@ export default function ProductsPage() {
           <div className="absolute right-0 top-0 bottom-0 w-80 max-w-full bg-white dark:bg-gray-900 p-6 overflow-y-auto shadow-xl animate-slide-up">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Filtros</h2>
-              <button onClick={() => setMobileFiltersOpen(false)} className="btn-ghost p-1">
+              <button onClick={() => setMobileFiltersOpen(false)} className="btn-ghost p-1" data-tooltip="Fechar filtros">
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -438,6 +442,7 @@ export default function ProductsPage() {
               <button
                 onClick={() => { setSearchTerm(''); setSelectedCategory('all'); setPriceRange([0, priceCap]); setMinRating(0); setMobileFiltersOpen(false); }}
                 className="btn-primary w-full"
+                data-tooltip="Aplicar Filtros"
               >
                 Aplicar Filtros
               </button>

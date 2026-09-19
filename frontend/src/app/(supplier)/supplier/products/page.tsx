@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Package, Search, Plus, Edit2, Trash2, Save, Loader2, Eye, X, DollarSign, Tag, Hash, Upload, Truck } from 'lucide-react';
 import { toast } from '@/lib/toast';
+import { api } from '@/lib/api';
 import { getCategorySaleMode, productCategories } from '@/lib/categories';
 import { fetchMyProducts, updateProduct, removeProduct, fetchCategories, uploadProductImage, PRODUCT_FILE_URL } from '@/lib/products';
 import type { Product, Category } from '@/types';
@@ -44,13 +45,17 @@ export default function SupplierProductsPage() {
   const [deleteItem, setDeleteItem] = useState<EditableProduct | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [uploadingEditImage, setUploadingEditImage] = useState(false);
+  const [supplierStatus, setSupplierStatus] = useState<string | null>(null);
+  const [supplierStatusLoaded, setSupplierStatusLoaded] = useState(false);
   const editFileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     let cancelled = false;
-    Promise.all([fetchMyProducts(), fetchCategories()])
-      .then(([prods, cats]) => {
+    Promise.all([fetchMyProducts(), fetchCategories(), api.get('/suppliers/me')])
+      .then(([prods, cats, supplierRes]) => {
         if (cancelled) return;
+        setSupplierStatus(supplierRes.data.data?.status ?? null);
+        setSupplierStatusLoaded(true);
         setCategories(cats.filter((c) => c.active));
         setItems(
           prods.map((p) => ({
@@ -72,7 +77,10 @@ export default function SupplierProductsPage() {
         );
       })
       .catch(() => {
-        if (!cancelled) toast.error('Erro ao carregar produtos.');
+        if (!cancelled) {
+          setSupplierStatusLoaded(true);
+          toast.error('Erro ao carregar produtos.');
+        }
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -89,6 +97,13 @@ export default function SupplierProductsPage() {
   );
 
   const isActive = (status: string) => status === 'ACTIVE' || status === 'OUT_OF_STOCK';
+  const canCreateProducts = supplierStatus === 'APPROVED';
+
+  function handleCreateProductClick() {
+    if (!canCreateProducts) {
+      toast.error('Sua conta ainda está pendente de aprovação. Você poderá criar produtos após a aprovação do administrador.');
+    }
+  }
 
   function startEdit(p: EditableProduct) {
     setEditItem({ ...p });
@@ -223,10 +238,21 @@ export default function SupplierProductsPage() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Meus Produtos</h1>
           <p className="text-sm text-gray-500 mt-1">Gerencie o catálogo da sua loja.</p>
         </div>
-        <Link href="/supplier/products/new" className="btn-primary text-sm gap-2 inline-flex items-center">
-          <Plus className="h-4 w-4" /> Novo Produto
-        </Link>
+              {canCreateProducts ? (
+                <Link href="/supplier/products/new" className="btn-primary text-sm gap-2 inline-flex items-center">
+                  <Plus className="h-4 w-4" /> Novo Produto
+                </Link>
+              ) : (
+                <button type="button" onClick={handleCreateProductClick} disabled={!supplierStatusLoaded} className="btn-primary text-sm gap-2 inline-flex items-center disabled:opacity-60">
+                  <Plus className="h-4 w-4" /> Novo Produto
+                </button>
+              )}
       </div>
+            {supplierStatusLoaded && !canCreateProducts && (
+              <div className="mb-5 rounded-lg border border-yellow-200 bg-yellow-50 p-4 text-sm text-yellow-800 dark:border-yellow-800 dark:bg-yellow-950 dark:text-yellow-200">
+                Sua conta de fornecedor ainda está pendente de aprovação. A criação de produtos será liberada após a aprovação do administrador.
+              </div>
+            )}
 
       <div className="relative mb-6">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />

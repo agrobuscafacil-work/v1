@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/use-auth';
-import { getChatSettings } from '@/lib/chat-settings';
 import { api } from '@/lib/api';
 import {
   Package, ShoppingBag, TrendingUp, DollarSign, Users,
@@ -22,19 +21,42 @@ const statusLabels: Record<string, { label: string; color: string }> = {
   CANCELLED: { label: 'Cancelado', color: 'text-red-600 bg-red-50 dark:bg-red-950' },
 };
 
-const custChats = [
-  { id: 'cc1', name: 'João Silva', email: 'joao@email.com', lastMsg: 'Meu pedido ABF-2024-0010 ainda não chegou.', time: '5 min atrás', unread: true, avatar: 'J' },
-  { id: 'cc2', name: 'Maria Oliveira', email: 'maria@email.com', lastMsg: 'O trator está disponível para entrega?', time: '1 hora atrás', unread: true, avatar: 'M' },
-  { id: 'cc3', name: 'Carlos Pereira', email: 'carlos@email.com', lastMsg: 'Quero cancelar o pedido #0005.', time: '3 horas atrás', unread: false, avatar: 'C' },
-  { id: 'cc4', name: 'Ana Souza', email: 'ana@email.com', lastMsg: 'Recebi o produto. Obrigado!', time: '1 dia atrás', unread: false, avatar: 'A' },
-  { id: 'cc5', name: 'Pedro Santos', email: 'pedro@email.com', lastMsg: 'Tem desconto para compra em volume?', time: '2 dias atrás', unread: false, avatar: 'P' },
-];
+interface CustomerConversation {
+  id: string;
+  subject: string;
+  updatedAt: string;
+  customer: { id: string; name: string; email?: string } | null;
+  messages?: { id: string; content: string; senderId: string; readAt: string | null; createdAt: string }[];
+}
+
+interface DashboardMessage {
+  id: string;
+  senderId: string;
+  content: string;
+  createdAt: string;
+}
+
+function formatChatTime(value: string) {
+  const date = new Date(value);
+  const elapsed = Date.now() - date.getTime();
+  if (elapsed < 60_000) return 'agora';
+  if (elapsed < 3_600_000) return `${Math.floor(elapsed / 60_000)} min`;
+  if (elapsed < 86_400_000) return `${Math.floor(elapsed / 3_600_000)} h`;
+  return date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+}
+
+function formatMessageTime(value: string) {
+  return new Date(value).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+}
 
 export default function SupplierDashboardPage() {
   const { user } = useAuth();
-  const [chatCust, setChatCust] = useState<typeof custChats[0] | null>(null);
+  const [chatCust, setChatCust] = useState<CustomerConversation | null>(null);
   const [chatMsg, setChatMsg] = useState('');
-  const [chatMessages, setChatMessages] = useState<{ id: string; sender: string; text: string; time: string }[]>([]);
+  const [chatMessages, setChatMessages] = useState<DashboardMessage[]>([]);
+  const [chatLoading, setChatLoading] = useState(false);
+  const [chatSending, setChatSending] = useState(false);
+  const [customerConversations, setCustomerConversations] = useState<CustomerConversation[]>([]);
   const [stats, setStats] = useState<{
     totalProducts: number; totalServices: number; totalOrders: number; totalRevenue: number;
   } | null>(null);
@@ -43,9 +65,10 @@ export default function SupplierDashboardPage() {
   useEffect(() => {
     const load = async () => {
       try {
-        const [statsRes, ordersRes] = await Promise.all([
+        const [statsRes, ordersRes, conversationsRes] = await Promise.all([
           api.get('/dashboard/supplier/stats'),
           api.get('/orders'),
+          api.get('/chat/conversations'),
         ]);
         setStats(statsRes.data.data ?? null);
         const ordersData = ordersRes.data.data?.data ?? [];
@@ -60,9 +83,11 @@ export default function SupplierDashboardPage() {
             createdAt: o.createdAt,
           })),
         );
+        setCustomerConversations(conversationsRes.data.data ?? []);
       } catch {
         setStats(null);
         setOrders([]);
+        setCustomerConversations([]);
       }
     };
     load();
@@ -77,23 +102,40 @@ export default function SupplierDashboardPage() {
     { label: 'Taxa Conversão', value: '—', icon: TrendingUp, color: 'text-yellow-600', bg: 'bg-yellow-50 dark:bg-yellow-950' },
   ];
 
-  function openChat(c: typeof custChats[0]) {
+  async function openChat(c: CustomerConversation) {
     setChatCust(c);
-    setChatMessages([
-      { id: '1', sender: 'customer', text: c.lastMsg, time: '10:00' },
-    ]);
+    setChatLoading(true);
+    try {
+      const res = await api.get(`/chat/conversations/${c.id}`);
+      setChatMessages(res.data.data?.messages ?? []);
+      await api.post(`/chat/conversations/${c.id}/read`);
+      setCustomerConversations((previous) => previous.map((conversation) => (
+        conversation.id === c.id
+          ? { ...conversation, messages: (conversation.messages ?? []).map((message) => ({ ...message, readAt: message.readAt ?? new Date().toISOString() })) }
+          : conversation
+      )));
+    } catch {
+      setChatMessages([]);
+    } finally {
+      setChatLoading(false);
+    }
   }
 
-  function sendChat() {
+  async function sendChat() {
     if (!chatMsg.trim() || !chatCust) return;
-    const m = { id: Date.now().toString(), sender: 'supplier', text: chatMsg.trim(), time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) };
-    setChatMessages((p) => [...p, m]);
+    setChatSending(true);
+    const content = chatMsg.trim();
     setChatMsg('');
-    const settings = getChatSettings();
-    if (settings.autoReplyEnabled) {
-      setTimeout(() => {
-        setChatMessages((p) => [...p, { id: (Date.now() + 1).toString(), sender: 'customer', text: settings.autoReplyMessage, time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) }]);
-      }, 1200);
+    try {
+      await api.post(`/chat/conversations/${chatCust.id}/messages`, { content, messageType: 'TEXT' });
+      const res = await api.get(`/chat/conversations/${chatCust.id}`);
+      setChatMessages(res.data.data?.messages ?? []);
+      const conversationsRes = await api.get('/chat/conversations');
+      setCustomerConversations(conversationsRes.data.data ?? []);
+    } catch {
+      setChatMsg(content);
+    } finally {
+      setChatSending(false);
     }
   }
 
@@ -217,19 +259,25 @@ export default function SupplierDashboardPage() {
           <Link href="/supplier/messages" className="text-sm text-primary-600 hover:text-primary-700 font-medium">Ver todas</Link>
         </div>
         <div className="space-y-1">
-          {custChats.map((c) => (
+          {customerConversations.length === 0 && <p className="text-sm text-gray-500 py-3">Nenhuma conversa com clientes.</p>}
+          {customerConversations.slice(0, 5).map((c) => {
+            const lastMessage = c.messages?.[0];
+            const unread = !!lastMessage && lastMessage.senderId !== user?.id && !lastMessage.readAt;
+            const name = c.customer?.name || 'Cliente';
+            return (
             <button key={c.id} onClick={() => openChat(c)} className="w-full flex items-center gap-3 rounded-lg p-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-left">
-              <div className={'h-10 w-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ' + (c.unread ? 'bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-300' : 'bg-gray-100 text-gray-500 dark:bg-gray-800')}>{c.avatar}</div>
+              <div className={'h-10 w-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ' + (unread ? 'bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-300' : 'bg-gray-100 text-gray-500 dark:bg-gray-800')}>{name.charAt(0).toUpperCase()}</div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
-                  <p className={'text-sm ' + (c.unread ? 'font-semibold text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-300')}>{c.name}</p>
-                  <span className="text-xs text-gray-400 flex-shrink-0">{c.time}</span>
+                  <p className={'text-sm ' + (unread ? 'font-semibold text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-300')}>{name}</p>
+                  <span className="text-xs text-gray-400 flex-shrink-0">{formatChatTime(lastMessage?.createdAt ?? c.updatedAt)}</span>
                 </div>
-                <p className="text-xs text-gray-500 truncate">{c.lastMsg}</p>
+                <p className="text-xs text-gray-500 truncate">{lastMessage?.content ?? c.subject}</p>
               </div>
-              {c.unread && <span className="h-2 w-2 rounded-full bg-primary-500 flex-shrink-0" />}
+              {unread && <span className="h-2 w-2 rounded-full bg-primary-500 flex-shrink-0" />}
             </button>
-          ))}
+            );
+          })}
         </div>
       </div>
 
@@ -244,10 +292,10 @@ export default function SupplierDashboardPage() {
         <div className="w-full max-w-lg max-h-[90dvh] overflow-y-auto rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-2xl flex flex-col">
           <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-800">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-sm font-bold text-primary-600">{chatCust.avatar}</div>
+              <div className="h-10 w-10 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-sm font-bold text-primary-600">{(chatCust.customer?.name || 'C').charAt(0).toUpperCase()}</div>
               <div>
-                <p className="text-sm font-semibold text-gray-900 dark:text-white">{chatCust.name}</p>
-                <p className="text-xs text-gray-500">{chatCust.email}</p>
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">{chatCust.customer?.name || 'Cliente'}</p>
+                <p className="text-xs text-gray-500">{chatCust.customer?.email || chatCust.subject}</p>
               </div>
             </div>
             <button onClick={() => setChatCust(null)} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400">
@@ -255,19 +303,22 @@ export default function SupplierDashboardPage() {
             </button>
           </div>
           <div className="flex-1 overflow-y-auto p-4 space-y-3" style={{ minHeight: 0 }}>
-            {chatMessages.map((m) => (
-              <div key={m.id} className={'flex ' + (m.sender === 'supplier' ? 'justify-end' : 'justify-start')}>
-                <div className={'max-w-[80%] rounded-xl px-4 py-2 text-sm ' + (m.sender === 'supplier' ? 'bg-primary-500 text-white rounded-br-sm' : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-bl-sm')}>
-                  <p>{m.text}</p>
-                  <p className={'text-xs mt-1 ' + (m.sender === 'supplier' ? 'text-primary-100' : 'text-gray-400')}>{m.time}</p>
+            {chatLoading ? <Loader2 className="h-5 w-5 animate-spin text-primary-500 mx-auto" /> : chatMessages.map((m) => {
+              const sentBySupplier = m.senderId === user?.id;
+              return (
+              <div key={m.id} className={'flex ' + (sentBySupplier ? 'justify-end' : 'justify-start')}>
+                <div className={'max-w-[80%] rounded-xl px-4 py-2 text-sm ' + (sentBySupplier ? 'bg-primary-500 text-white rounded-br-sm' : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-bl-sm')}>
+                  <p>{m.content}</p>
+                  <p className={'text-xs mt-1 ' + (sentBySupplier ? 'text-primary-100' : 'text-gray-400')}>{formatMessageTime(m.createdAt)}</p>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
           <div className="border-t border-gray-100 dark:border-gray-800 p-4">
             <form onSubmit={(e) => { e.preventDefault(); sendChat(); }} className="flex gap-2">
               <input type="text" value={chatMsg} onChange={(e) => setChatMsg(e.target.value)} placeholder="Digite sua mensagem..." className="input-field flex-1 text-sm" />
-              <button type="submit" disabled={!chatMsg.trim()} className="btn-primary p-2.5 rounded-lg">
+              <button type="submit" disabled={!chatMsg.trim() || chatSending || chatLoading} className="btn-primary p-2.5 rounded-lg">
                 <Send className="h-4 w-4" />
               </button>
             </form>

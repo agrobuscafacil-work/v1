@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import { Providers } from '@/lib/providers';
 import { AuthInitializer } from '@/components/auth/auth-initializer';
 import { PageViewTracker } from '@/components/tracking/page-view-tracker';
+import IconTooltipEnhancer from '@/components/ui/icon-tooltip-enhancer';
 import '@/styles/globals.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
@@ -74,6 +75,7 @@ export default function RootLayout({
         <Providers>
           <AuthInitializer>
             <PageViewTracker />
+            <IconTooltipEnhancer />
             {children}
           </AuthInitializer>
         </Providers>

@@ -140,7 +140,7 @@ export default function FavoritesPage() {
                 <div className="aspect-[4/3] bg-gray-100 dark:bg-gray-800 flex items-center justify-center relative">
                   {product.image ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
+                    <img src={PRODUCT_FILE_URL(product.image)} alt={product.name} className="h-full w-full object-cover" />
                   ) : (
                     <Leaf className="h-12 w-12 text-gray-400" />
                   )}

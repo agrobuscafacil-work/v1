@@ -2,8 +2,9 @@ export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000
 
 export const SUPPORT_FILE_URL = (path: string) => {
   if (!path) return '';
-  if (/^https?:\/\//.test(path)) return path;
-  return `${API_URL}${path.startsWith('/') ? path : `/${path}`}`;
+  const normalizedPath = path.trim();
+  if (/^https?:\/\//i.test(normalizedPath)) return normalizedPath;
+  return `${API_URL.replace(/\/$/, '')}/${normalizedPath.replace(/^\/+/, '')}`;
 };
 
 export const SUPPORT_STATUS_LABELS: Record<string, string> = {

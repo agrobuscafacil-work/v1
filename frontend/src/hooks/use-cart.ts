@@ -4,6 +4,7 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { toast } from '@/lib/toast';
 import { api } from '@/lib/api';
+import { PRODUCT_FILE_URL } from '@/lib/products';
 
 export interface CartProduct {
   id: string;
@@ -73,7 +74,7 @@ export async function syncCartWithServer() {
         slug: it.product.slug ?? '',
         price: Number(it.product.price),
         unit: it.product.unit || 'un',
-        image: it.product.images?.[0] || '',
+        image: PRODUCT_FILE_URL(it.product.images?.[0] || ''),
         supplierName:
           it.product.supplier?.tradingName ||
           it.product.supplier?.companyName ||

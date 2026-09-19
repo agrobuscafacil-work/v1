@@ -75,10 +75,10 @@ export default function SuppliersPage() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Fornecedores</h1>
           <p className="text-sm text-gray-500">{suppliers.length} fornecedores cadastrados</p>
         </div>
-        <button onClick={() => setMobileFiltersOpen(true)} className="btn-outline lg:hidden">
-          <SlidersHorizontal className="h-4 w-4" />
-          <span className="ml-2">Filtros</span>
-        </button>
+<button onClick={() => setMobileFiltersOpen(true)} className="btn-outline lg:hidden" data-tooltip="Filtros">
+            <SlidersHorizontal className="h-4 w-4" />
+            <span className="ml-2">Filtros</span>
+          </button>
       </div>
 
       <div className="flex gap-8">
@@ -121,7 +121,7 @@ export default function SuppliersPage() {
             <div className="flex items-center gap-1">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button key={star} onClick={() => setMinRating(minRating === star ? 0 : star)}>
-                  <Star className={`h-5 w-5 ${star <= minRating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300 dark:text-gray-600'}`} />
+                  <Star className={`h-5 w-5 ${star <= minRating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300 dark:text-gray-600'}`} data-tooltip={`${star} estrela${star > 1 ? 's' : ''} ou mais`} />
                 </button>
               ))}
             </div>
@@ -206,7 +206,7 @@ export default function SuppliersPage() {
           <div className="absolute right-0 top-0 bottom-0 w-80 max-w-full bg-white dark:bg-gray-900 p-6 overflow-y-auto shadow-xl">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-semibold">Filtros</h2>
-              <button onClick={() => setMobileFiltersOpen(false)} className="btn-ghost p-1">
+              <button onClick={() => setMobileFiltersOpen(false)} className="btn-ghost p-1" data-tooltip="Fechar filtros">
                 <X className="h-5 w-5" />
               </button>
             </div>

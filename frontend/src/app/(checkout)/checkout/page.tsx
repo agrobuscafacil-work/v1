@@ -8,6 +8,7 @@ import { ShoppingBag, MapPin, CreditCard, Truck, Shield, Loader2, ChevronRight, 
 import { toast } from '@/lib/toast';
 import { api } from '@/lib/api';
 import { useCart } from '@/hooks/use-cart';
+import { PRODUCT_FILE_URL } from '@/lib/products';
 
 interface Address {
   id: string;
@@ -330,7 +331,7 @@ export default function CheckoutPage() {
                     <div key={item.product.id} className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-800 last:border-0">
                       <div className="flex items-center gap-3">
                         <div className="h-10 w-10 rounded-lg bg-primary-50 dark:bg-primary-950 flex items-center justify-center text-xs font-bold text-primary-600 relative overflow-hidden">
-                          {item.product.image ? <Image src={item.product.image} alt="" fill sizes="40px" className="object-cover" /> : <Leaf className="h-5 w-5" />}
+                          {item.product.image ? <Image src={PRODUCT_FILE_URL(item.product.image)} alt="" fill sizes="40px" className="object-cover" /> : <Leaf className="h-5 w-5" />}
                         </div>
                         <div>
                           <p className="text-sm font-medium text-gray-900 dark:text-white">{item.product.name}</p>

@@ -5,9 +5,9 @@ export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000
 
 export const PRODUCT_FILE_URL = (path: string) => {
   if (!path) return '';
-  if (/^https?:\/\//.test(path)) return path;
-  if (path.startsWith('/')) return `${API_URL}${path}`;
-  return `${API_URL}/${path}`;
+  const normalizedPath = path.trim();
+  if (/^https?:\/\//i.test(normalizedPath)) return normalizedPath;
+  return `${API_URL.replace(/\/$/, '')}/${normalizedPath.replace(/^\/+/, '')}`;
 };
 
 export interface CreateProductPayload {

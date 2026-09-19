@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Package, Loader2, Upload, Save, X, AlertTriangle, Truck } from 'lucide-react';
 import { toast } from '@/lib/toast';
+import { api } from '@/lib/api';
 import { getCategorySaleMode, productCategories } from '@/lib/categories';
 import { fetchCategories, createProduct, uploadProductImage } from '@/lib/products';
 import type { Category } from '@/types';
@@ -64,15 +65,26 @@ export default function NewProductPage() {
   const [fileError, setFileError] = useState('');
   const [uploading, setUploading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [supplierStatus, setSupplierStatus] = useState<string | null>(null);
+  const [supplierStatusLoaded, setSupplierStatusLoaded] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     let active = true;
-    fetchCategories()
-      .then((cats) => {
+    Promise.all([fetchCategories(), api.get('/suppliers/me')])
+      .then(([cats, supplierRes]) => {
         if (active) setCategories(cats.filter((c) => c.active));
+        if (active) {
+          setSupplierStatus(supplierRes.data.data?.status ?? null);
+          setSupplierStatusLoaded(true);
+        }
       })
-      .catch(() => toast.error('Não foi possível carregar as categorias'))
+      .catch(() => {
+        if (active) {
+          setSupplierStatusLoaded(true);
+          toast.error('Não foi possível carregar os dados da conta');
+        }
+      })
       .finally(() => {
         if (active) setLoadingCats(false);
       });
@@ -165,6 +177,27 @@ export default function NewProductPage() {
       setIsLoading(false);
     }
   };
+
+  if (supplierStatusLoaded && supplierStatus !== 'APPROVED') {
+    return (
+      <div className="p-6 lg:p-8 max-w-3xl">
+        <div className="rounded-xl border border-yellow-200 bg-yellow-50 p-6 dark:border-yellow-800 dark:bg-yellow-950">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="mt-0.5 h-6 w-6 shrink-0 text-yellow-600" />
+            <div>
+              <h1 className="text-lg font-semibold text-yellow-900 dark:text-yellow-100">Conta aguardando aprovação</h1>
+              <p className="mt-2 text-sm text-yellow-800 dark:text-yellow-200">
+                Sua conta de fornecedor ainda está pendente de aprovação. Você só poderá criar um produto após a aprovação do administrador.
+              </p>
+              <button type="button" onClick={() => router.push('/supplier/products')} className="btn-primary mt-4 text-sm">
+                Voltar para produtos
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 lg:p-8 max-w-3xl">

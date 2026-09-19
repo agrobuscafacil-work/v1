@@ -231,7 +231,7 @@ export default function OrdersPage() {
                   <span className="text-sm font-semibold text-gray-900 dark:text-white">{order.orderNumber}</span>
                   <div className="flex items-center gap-2">
                     <span className={status.color}>{status.label}</span>
-                    <Eye className="h-4 w-4 text-gray-400" />
+                    <Eye className="h-4 w-4 text-gray-400" data-tooltip="Ver detalhes" />
                   </div>
                 </div>
                 <div className="flex items-center justify-between text-sm">
@@ -253,7 +253,7 @@ export default function OrdersPage() {
           <div className="w-full max-w-lg rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-2xl">
             <div className="flex items-center justify-between p-5 border-b border-gray-100 dark:border-gray-800">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Detalhes do Pedido</h2>
-              <button onClick={() => { setDetailOrder(null); setEvaluateTab(null); }} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400">
+              <button onClick={() => { setDetailOrder(null); setEvaluateTab(null); }} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400" data-tooltip="Fechar">
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -367,7 +367,7 @@ export default function OrdersPage() {
                           const star = i + 1;
                           const filled = star <= (productRatingHover || productRating);
                           return (
-                            <button key={star} type="button" onClick={() => setProductRating(star)} onMouseEnter={() => setProductRatingHover(star)} onMouseLeave={() => setProductRatingHover(0)} className="p-0.5">
+                            <button key={star} type="button" onClick={() => setProductRating(star)} onMouseEnter={() => setProductRatingHover(star)} onMouseLeave={() => setProductRatingHover(0)} className="p-0.5" data-tooltip={`${star} estrela${star > 1 ? 's' : ''}`}>
                               <Star className={`h-6 w-6 ${filled ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />
                             </button>
                           );
@@ -417,7 +417,7 @@ export default function OrdersPage() {
                           const star = i + 1;
                           const filled = star <= (supplierRatingHover || supplierRating);
                           return (
-                            <button key={star} type="button" onClick={() => setSupplierRating(star)} onMouseEnter={() => setSupplierRatingHover(star)} onMouseLeave={() => setSupplierRatingHover(0)} className="p-0.5">
+                            <button key={star} type="button" onClick={() => setSupplierRating(star)} onMouseEnter={() => setSupplierRatingHover(star)} onMouseLeave={() => setSupplierRatingHover(0)} className="p-0.5" data-tooltip={`${star} estrela${star > 1 ? 's' : ''}`}>
                               <Star className={`h-6 w-6 ${filled ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />
                             </button>
                           );
@@ -479,7 +479,7 @@ export default function OrdersPage() {
                     }}
                     className="btn-primary w-full gap-2"
                   >
-                    <Package className="h-4 w-4" /> Confirmar Recebimento
+                    <Package className="h-4 w-4" data-tooltip="Confirmar recebimento" /> Confirmar Recebimento
                   </button>
                 </div>
               )}

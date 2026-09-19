@@ -157,6 +157,48 @@
   .text-agro {
     @apply bg-gradient-to-r from-primary-700 via-primary-500 to-primary-600 bg-clip-text text-transparent;
   }
+
+  [data-tooltip] {
+    position: relative;
+  }
+
+  [data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    z-index: 100;
+    left: 50%;
+    bottom: calc(100% + 8px);
+    max-width: 220px;
+    padding: 5px 8px;
+    border-radius: 6px;
+    background: rgb(17 24 39 / 0.96);
+    color: white;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.25;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, 4px);
+    transition: opacity 120ms ease, transform 120ms ease;
+  }
+
+  [data-tooltip]:hover::after,
+  [data-tooltip]:focus-visible::after {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  [data-tooltip][data-tooltip-placement="bottom"]::after {
+    top: calc(100% + 8px);
+    bottom: auto;
+    transform: translate(-50%, -4px);
+  }
+
+  [data-tooltip][data-tooltip-placement="bottom"]:hover::after,
+  [data-tooltip][data-tooltip-placement="bottom"]:focus-visible::after {
+    transform: translate(-50%, 0);
+  }
 }
 
 @layer utilities {
